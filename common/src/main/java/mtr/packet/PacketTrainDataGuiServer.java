@@ -18,6 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.scores.ScoreAccess;
 
 import java.util.*;
@@ -673,8 +675,9 @@ public class PacketTrainDataGuiServer extends PacketTrainDataBase {
 		final RailwayData railwayData = RailwayData.getInstance(player.level());
 
 		if (railwayData != null && entities.length > 0) {
-			final CompoundTag compoundTagOld = new CompoundTag();
-			entities[0].writeCompoundTag(compoundTagOld);
+			// TODO: Maybe consider scrapping this logging feature?
+			final TagValueOutput beDataDiffOld = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, player.level().registryAccess());
+			entities[0].writeCompoundTag(beDataDiffOld);
 
 			BlockPos blockPos = null;
 			long posLong = 0;
@@ -687,10 +690,10 @@ public class PacketTrainDataGuiServer extends PacketTrainDataBase {
 				}
 			}
 
-			final CompoundTag compoundTagNew = new CompoundTag();
-			entities[0].writeCompoundTag(compoundTagNew);
+			final TagValueOutput beDataDiffNew = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, player.level().registryAccess());
+			entities[0].writeCompoundTag(beDataDiffNew);
 
-			railwayData.railwayDataLoggingModule.addEvent(player, entities[0].getClass(), RailwayDataLoggingModule.getData(compoundTagOld), RailwayDataLoggingModule.getData(compoundTagNew), blockPos);
+			railwayData.railwayDataLoggingModule.addEvent(player, entities[0].getClass(), RailwayDataLoggingModule.getData(beDataDiffOld.buildResult()), RailwayDataLoggingModule.getData(beDataDiffNew.buildResult()), blockPos);
 		}
 	}
 }

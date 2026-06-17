@@ -46,8 +46,8 @@ public interface UtilitiesClient {
 		RenderSystem.setShaderTexture(0, textureId);
 	}
 
-	static int drawInBatch(Font textRenderer, FormattedCharSequence formattedCharSequence, float x, float y, int color, boolean shadow, Matrix4f matrix4f, MultiBufferSource immediate, int overlay, int light) {
-		return textRenderer.drawInBatch(formattedCharSequence, x, y, color, shadow, matrix4f, immediate, Font.DisplayMode.NORMAL, overlay, light);
+	static void drawInBatch(Font textRenderer, FormattedCharSequence formattedCharSequence, float x, float y, int color, boolean shadow, Matrix4f matrix4f, MultiBufferSource immediate, int overlay, int light) {
+		textRenderer.drawInBatch(formattedCharSequence, x, y, color, shadow, matrix4f, immediate, Font.DisplayMode.NORMAL, overlay, light);
 	}
 
 	static void setScreen(Minecraft client, ScreenMapper screen) {

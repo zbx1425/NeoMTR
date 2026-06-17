@@ -128,24 +128,24 @@ public class Rail extends SerializedDataBase {
 
 	@Deprecated
 	public Rail(CompoundTag compoundTag) {
-		h1 = compoundTag.getDouble(KEY_H_1);
-		k1 = compoundTag.getDouble(KEY_K_1);
-		h2 = compoundTag.getDouble(KEY_H_2);
-		k2 = compoundTag.getDouble(KEY_K_2);
-		r1 = compoundTag.getDouble(KEY_R_1);
-		r2 = compoundTag.getDouble(KEY_R_2);
-		tStart1 = compoundTag.getDouble(KEY_T_START_1);
-		tEnd1 = compoundTag.getDouble(KEY_T_END_1);
-		tStart2 = compoundTag.getDouble(KEY_T_START_2);
-		tEnd2 = compoundTag.getDouble(KEY_T_END_2);
-		yStart = compoundTag.getInt(KEY_Y_START);
-		yEnd = compoundTag.getInt(KEY_Y_END);
-		reverseT1 = compoundTag.getBoolean(KEY_REVERSE_T_1);
-		isStraight1 = compoundTag.getBoolean(KEY_IS_STRAIGHT_1);
-		reverseT2 = compoundTag.getBoolean(KEY_REVERSE_T_2);
-		isStraight2 = compoundTag.getBoolean(KEY_IS_STRAIGHT_2);
-		railType = EnumHelper.valueOf(RailType.IRON, compoundTag.getString(KEY_RAIL_TYPE));
-		transportMode = EnumHelper.valueOf(TransportMode.TRAIN, compoundTag.getString(KEY_TRANSPORT_MODE));
+		h1 = compoundTag.getDoubleOr(KEY_H_1, 0);
+		k1 = compoundTag.getDoubleOr(KEY_K_1, 0);
+		h2 = compoundTag.getDoubleOr(KEY_H_2, 0);
+		k2 = compoundTag.getDoubleOr(KEY_K_2, 0);
+		r1 = compoundTag.getDoubleOr(KEY_R_1, 0);
+		r2 = compoundTag.getDoubleOr(KEY_R_2, 0);
+		tStart1 = compoundTag.getDoubleOr(KEY_T_START_1, 0);
+		tEnd1 = compoundTag.getDoubleOr(KEY_T_END_1, 0);
+		tStart2 = compoundTag.getDoubleOr(KEY_T_START_2, 0);
+		tEnd2 = compoundTag.getDoubleOr(KEY_T_END_2, 0);
+		yStart = compoundTag.getIntOr(KEY_Y_START, 0);
+		yEnd = compoundTag.getIntOr(KEY_Y_END, 0);
+		reverseT1 = compoundTag.getBooleanOr(KEY_REVERSE_T_1, false);
+		isStraight1 = compoundTag.getBooleanOr(KEY_IS_STRAIGHT_1, false);
+		reverseT2 = compoundTag.getBooleanOr(KEY_REVERSE_T_2, false);
+		isStraight2 = compoundTag.getBooleanOr(KEY_IS_STRAIGHT_2, false);
+		railType = EnumHelper.valueOf(RailType.IRON, compoundTag.getStringOr(KEY_RAIL_TYPE, ""));
+		transportMode = EnumHelper.valueOf(TransportMode.TRAIN, compoundTag.getStringOr(KEY_TRANSPORT_MODE, "TRAIN"));
 
 		facingStart = getRailAngle(false);
 		facingEnd = getRailAngle(true);

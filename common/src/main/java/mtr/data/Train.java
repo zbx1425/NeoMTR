@@ -184,24 +184,24 @@ public abstract class Train extends NameColorDataBase implements IPacket {
 		this.maxManualSpeed = maxManualSpeed;
 		this.manualToAutomaticTime = manualToAutomaticTime;
 
-		speed = compoundTag.getFloat(KEY_SPEED);
-		railProgress = compoundTag.getDouble(KEY_RAIL_PROGRESS);
-		elapsedDwellTicks = compoundTag.getFloat(KEY_ELAPSED_DWELL_TICKS);
-		nextStoppingIndex = compoundTag.getInt(KEY_NEXT_STOPPING_INDEX);
-		nextPlatformIndex = compoundTag.getInt(KEY_NEXT_PLATFORM_INDEX);
-		reversed = compoundTag.getBoolean(KEY_REVERSED);
+		speed = compoundTag.getFloatOr(KEY_SPEED, 0);
+		railProgress = compoundTag.getDoubleOr(KEY_RAIL_PROGRESS, 0);
+		elapsedDwellTicks = compoundTag.getFloatOr(KEY_ELAPSED_DWELL_TICKS, 0);
+		nextStoppingIndex = compoundTag.getIntOr(KEY_NEXT_STOPPING_INDEX, 0);
+		nextPlatformIndex = compoundTag.getIntOr(KEY_NEXT_PLATFORM_INDEX, 0);
+		reversed = compoundTag.getBooleanOr(KEY_REVERSED, false);
 
-		trainId = compoundTag.getString(KEY_TRAIN_CUSTOM_ID);
-		baseTrainType = compoundTag.getString(KEY_TRAIN_TYPE);
+		trainId = compoundTag.getStringOr(KEY_TRAIN_CUSTOM_ID, "");
+		baseTrainType = compoundTag.getStringOr(KEY_TRAIN_TYPE, "");
 		transportMode = TrainType.getTransportMode(baseTrainType);
 		spacing = TrainType.getSpacing(baseTrainType);
 		width = TrainType.getWidth(baseTrainType);
 		trainCars = Math.min(transportMode.maxLength, (int) Math.floor(railLength / spacing));
-		isCurrentlyManual = compoundTag.getBoolean(KEY_IS_CURRENTLY_MANUAL);
+		isCurrentlyManual = compoundTag.getBooleanOr(KEY_IS_CURRENTLY_MANUAL, false);
 
-		isOnRoute = compoundTag.getBoolean(KEY_IS_ON_ROUTE);
-		final CompoundTag tagRidingEntities = compoundTag.getCompound(KEY_RIDING_ENTITIES);
-		tagRidingEntities.getAllKeys().forEach(key -> ridingEntities.add(tagRidingEntities.getUUID(key)));
+		isOnRoute = compoundTag.getBooleanOr(KEY_IS_ON_ROUTE, false);
+		final CompoundTag tagRidingEntities = compoundTag.getCompoundOrEmpty(KEY_RIDING_ENTITIES);
+		tagRidingEntities.keySet().forEach(key -> ridingEntities.add(UUID.fromString(tagRidingEntities.getStringOr(key, ""))));
 
 		final NonNullList<ItemStack> stacks = NonNullList.withSize(trainCars, ItemStack.EMPTY);
 	}

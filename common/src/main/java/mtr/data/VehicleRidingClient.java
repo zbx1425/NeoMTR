@@ -99,7 +99,7 @@ public class VehicleRidingClient {
 			clientPlayer.setDeltaMovement(0, 0, 0);
 			clientPlayer.setSpeed(0);
 			if (MTRClient.getGameTick() > 40) {
-				clientPlayer.absMoveTo(moveX, moveY, moveZ);
+				clientPlayer.absSnapTo(moveX, moveY, moveZ);
 			}
 
 			clientPlayerCallback.run();

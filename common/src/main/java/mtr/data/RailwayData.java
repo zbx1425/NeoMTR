@@ -120,7 +120,7 @@ public class RailwayData extends PersistentStateMapper implements IPacket {
 		// TODO temporary code start
 		if (compoundTag.contains(KEY_RAW_MESSAGE_PACK)) {
 			try {
-				final MessageUnpacker messageUnpacker = MessagePack.newDefaultUnpacker(compoundTag.getByteArray(KEY_RAW_MESSAGE_PACK));
+				final MessageUnpacker messageUnpacker = MessagePack.newDefaultUnpacker(compoundTag.getByteArray(KEY_RAW_MESSAGE_PACK).orElse(new byte[]{}));
 				final int mapSize = messageUnpacker.unpackMapHeader();
 
 				for (int i = 0; i < mapSize; ++i) {
@@ -182,40 +182,40 @@ public class RailwayData extends PersistentStateMapper implements IPacket {
 			}
 		} else {
 			try {
-				final CompoundTag tagStations = compoundTag.getCompound(KEY_STATIONS);
-				for (final String key : tagStations.getAllKeys()) {
-					stations.add(new Station(tagStations.getCompound(key)));
+				final CompoundTag tagStations = compoundTag.getCompoundOrEmpty(KEY_STATIONS);
+				for (final String key : tagStations.keySet()) {
+					stations.add(new Station(tagStations.getCompoundOrEmpty(key)));
 				}
 
-				final CompoundTag tagNewPlatforms = compoundTag.getCompound(KEY_PLATFORMS);
-				for (final String key : tagNewPlatforms.getAllKeys()) {
-					platforms.add(new Platform(tagNewPlatforms.getCompound(key)));
+				final CompoundTag tagNewPlatforms = compoundTag.getCompoundOrEmpty(KEY_PLATFORMS);
+				for (final String key : tagNewPlatforms.keySet()) {
+					platforms.add(new Platform(tagNewPlatforms.getCompoundOrEmpty(key)));
 				}
 
-				final CompoundTag tagNewSidings = compoundTag.getCompound(KEY_SIDINGS);
-				for (final String key : tagNewSidings.getAllKeys()) {
-					sidings.add(new Siding(tagNewSidings.getCompound(key)));
+				final CompoundTag tagNewSidings = compoundTag.getCompoundOrEmpty(KEY_SIDINGS);
+				for (final String key : tagNewSidings.keySet()) {
+					sidings.add(new Siding(tagNewSidings.getCompoundOrEmpty(key)));
 				}
 
-				final CompoundTag tagNewRoutes = compoundTag.getCompound(KEY_ROUTES);
-				for (final String key : tagNewRoutes.getAllKeys()) {
-					routes.add(new Route(tagNewRoutes.getCompound(key)));
+				final CompoundTag tagNewRoutes = compoundTag.getCompoundOrEmpty(KEY_ROUTES);
+				for (final String key : tagNewRoutes.keySet()) {
+					routes.add(new Route(tagNewRoutes.getCompoundOrEmpty(key)));
 				}
 
-				final CompoundTag tagNewDepots = compoundTag.getCompound(KEY_DEPOTS);
-				for (final String key : tagNewDepots.getAllKeys()) {
-					depots.add(new Depot(tagNewDepots.getCompound(key)));
+				final CompoundTag tagNewDepots = compoundTag.getCompoundOrEmpty(KEY_DEPOTS);
+				for (final String key : tagNewDepots.keySet()) {
+					depots.add(new Depot(tagNewDepots.getCompoundOrEmpty(key)));
 				}
 
-				final CompoundTag tagNewRails = compoundTag.getCompound(KEY_RAILS);
-				for (final String key : tagNewRails.getAllKeys()) {
-					final RailEntry railEntry = new RailEntry(tagNewRails.getCompound(key));
+				final CompoundTag tagNewRails = compoundTag.getCompoundOrEmpty(KEY_RAILS);
+				for (final String key : tagNewRails.keySet()) {
+					final RailEntry railEntry = new RailEntry(tagNewRails.getCompoundOrEmpty(key));
 					rails.put(railEntry.pos, railEntry.connections);
 				}
 
-				final CompoundTag tagNewSignalBlocks = compoundTag.getCompound(KEY_SIGNAL_BLOCKS);
-				for (final String key : tagNewSignalBlocks.getAllKeys()) {
-					signalBlocks.signalBlocks.add(new SignalBlocks.SignalBlock(tagNewSignalBlocks.getCompound(key)));
+				final CompoundTag tagNewSignalBlocks = compoundTag.getCompoundOrEmpty(KEY_SIGNAL_BLOCKS);
+				for (final String key : tagNewSignalBlocks.keySet()) {
+					signalBlocks.signalBlocks.add(new SignalBlocks.SignalBlock(tagNewSignalBlocks.getCompoundOrEmpty(key)));
 				}
 			} catch (Exception e) {
 				MTR.LOGGER.error("", e);
@@ -227,7 +227,7 @@ public class RailwayData extends PersistentStateMapper implements IPacket {
 		dataCache.sync();
 		signalBlocks.writeCache();
 
-		useTimeAndWindSync = compoundTag.getBoolean(KEY_USE_TIME_AND_WIND_SYNC);
+		useTimeAndWindSync = compoundTag.getBooleanOr(KEY_USE_TIME_AND_WIND_SYNC, false);
 		runRealTimeSync();
 
 		try {
@@ -842,12 +842,12 @@ public class RailwayData extends PersistentStateMapper implements IPacket {
 		}
 
 		public RailEntry(CompoundTag compoundTag) {
-			pos = BlockPos.of(compoundTag.getLong(KEY_NODE_POS));
+			pos = BlockPos.of(compoundTag.getLongOr(KEY_NODE_POS, 0));
 			connections = new HashMap<>();
 
-			final CompoundTag tagConnections = compoundTag.getCompound(KEY_RAIL_CONNECTIONS);
-			for (final String keyConnection : tagConnections.getAllKeys()) {
-				connections.put(BlockPos.of(tagConnections.getCompound(keyConnection).getLong(KEY_NODE_POS)), new Rail(tagConnections.getCompound(keyConnection)));
+			final CompoundTag tagConnections = compoundTag.getCompoundOrEmpty(KEY_RAIL_CONNECTIONS);
+			for (final String keyConnection : tagConnections.keySet()) {
+				connections.put(BlockPos.of(tagConnections.getCompoundOrEmpty(keyConnection).getLongOr(KEY_NODE_POS, 0)), new Rail(tagConnections.getCompoundOrEmpty(keyConnection)));
 			}
 		}
 

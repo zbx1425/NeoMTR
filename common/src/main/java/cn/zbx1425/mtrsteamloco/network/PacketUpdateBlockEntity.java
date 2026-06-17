@@ -13,8 +13,11 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
 
 public class PacketUpdateBlockEntity {
 
@@ -29,7 +32,7 @@ public class PacketUpdateBlockEntity {
         packet.writeBlockPos(blockEntity.getBlockPos());
         packet.writeVarInt(BuiltInRegistries.BLOCK_ENTITY_TYPE.getId(blockEntity.getType()));
         CompoundTag tag = new CompoundTag();
-        blockEntity.writeCompoundTag(tag);
+        blockEntity.writeCompoundTag(TagValueOutput.createWithContext(ProblemReporter.DISCARDING, blockEntity.getLevel().registryAccess()));
         packet.writeNbt(tag);
 
         RegistryClient.sendToServer(PACKET_UPDATE_BLOCK_ENTITY, packet);
@@ -47,7 +50,7 @@ public class PacketUpdateBlockEntity {
             if (level == null || blockEntityType == null) return;
             level.getBlockEntity(blockPos, blockEntityType).ifPresent(blockEntity -> {
                 if (compoundTag != null) {
-                    blockEntity.loadCustomOnly(compoundTag, server.overworld().registryAccess());
+                    blockEntity.loadCustomOnly(TagValueInput.create(ProblemReporter.DISCARDING, server.overworld().registryAccess(), compoundTag));
                     blockEntity.setChanged();
                     level.getChunkSource().blockChanged(blockPos);
                 }

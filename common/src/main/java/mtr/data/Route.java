@@ -73,17 +73,17 @@ public final class Route extends NameColorDataBase implements IGui {
 		super(compoundTag);
 
 		platformIds = new ArrayList<>();
-		final long[] platformIdsArray = compoundTag.getLongArray(KEY_PLATFORM_IDS);
+		final long[] platformIdsArray = compoundTag.getLongArray(KEY_PLATFORM_IDS).orElse(new long[]{});
 		for (final long platformId : platformIdsArray) {
 			platformIds.add(new RoutePlatform(platformId));
 		}
 
-		routeType = EnumHelper.valueOf(RouteType.NORMAL, compoundTag.getString(KEY_ROUTE_TYPE));
-		isLightRailRoute = compoundTag.getBoolean(KEY_IS_LIGHT_RAIL_ROUTE);
-		isHidden = compoundTag.getBoolean(KEY_IS_ROUTE_HIDDEN);
-		disableNextStationAnnouncements = compoundTag.getBoolean(KEY_DISABLE_NEXT_STATION_ANNOUNCEMENTS);
-		lightRailRouteNumber = compoundTag.getString(KEY_LIGHT_RAIL_ROUTE_NUMBER);
-		circularState = EnumHelper.valueOf(CircularState.NONE, compoundTag.getString(KEY_CIRCULAR_STATE));
+		routeType = EnumHelper.valueOf(RouteType.NORMAL, compoundTag.getStringOr(KEY_ROUTE_TYPE, ""));
+		isLightRailRoute = compoundTag.getBooleanOr(KEY_IS_LIGHT_RAIL_ROUTE, false);
+		isHidden = compoundTag.getBooleanOr(KEY_IS_ROUTE_HIDDEN, false);
+		disableNextStationAnnouncements = compoundTag.getBooleanOr(KEY_DISABLE_NEXT_STATION_ANNOUNCEMENTS, false);
+		lightRailRouteNumber = compoundTag.getStringOr(KEY_LIGHT_RAIL_ROUTE_NUMBER, "");
+		circularState = EnumHelper.valueOf(CircularState.NONE, compoundTag.getStringOr(KEY_CIRCULAR_STATE, ""));
 	}
 
 	public Route(FriendlyByteBuf packet) {

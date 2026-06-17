@@ -1,14 +1,15 @@
 package mtr.data;
 
+import com.mojang.serialization.Codec;
 import mtr.block.IBlock;
 import mtr.mappings.BlockEntityClientSerializableMapper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,30 +33,28 @@ public interface IPIDS extends IBlock {
 		}
 
 		@Override
-		public void readCompoundTag(CompoundTag compoundTag) {
+		public void readCompoundTag(ValueInput compoundTag) {
 			for (int i = 0; i < getMaxArrivals() * getLinesPerArrival(); i++) {
-				messages[i] = compoundTag.getString(KEY_MESSAGE + i);
+				messages[i] = compoundTag.getStringOr(KEY_MESSAGE + i, "");
 			}
 			for (int i = 0; i < getMaxArrivals(); i++) {
-				hideArrival[i] = compoundTag.getBoolean(KEY_HIDE_ARRIVAL + i);
+				hideArrival[i] = compoundTag.getBooleanOr(KEY_HIDE_ARRIVAL + i, false);
 			}
 			platformIds.clear();
-			final long[] platformIdsArray = compoundTag.getLongArray(KEY_PLATFORM_IDS);
-			for (final long platformId : platformIdsArray) {
-				platformIds.add(platformId);
-			}
-			displayPage = compoundTag.getInt(KEY_DISPLAY_PAGE);
+			compoundTag.listOrEmpty(KEY_PLATFORM_IDS, Codec.LONG).forEach(platformIds::add);
+			displayPage = compoundTag.getIntOr(KEY_DISPLAY_PAGE, 0);
 		}
 
 		@Override
-		public void writeCompoundTag(CompoundTag compoundTag) {
+		public void writeCompoundTag(ValueOutput compoundTag) {
 			for (int i = 0; i < getMaxArrivals() * getLinesPerArrival(); i++) {
 				compoundTag.putString(KEY_MESSAGE + i, messages[i] == null ? "" : messages[i]);
 			}
 			for (int i = 0; i < getMaxArrivals(); i++) {
 				compoundTag.putBoolean(KEY_HIDE_ARRIVAL + i, hideArrival[i]);
 			}
-			compoundTag.putLongArray(KEY_PLATFORM_IDS, new ArrayList<>(platformIds));
+			ValueOutput.TypedOutputList<Long> platformIdOutputList = compoundTag.list(KEY_PLATFORM_IDS, Codec.LONG);
+			platformIds.forEach(platformIdOutputList::add);
 			compoundTag.putInt(KEY_DISPLAY_PAGE, displayPage);
 		}
 

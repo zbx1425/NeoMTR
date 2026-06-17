@@ -4,37 +4,26 @@ import cn.zbx1425.mtrsteamloco.MainClient;
 import cn.zbx1425.mtrsteamloco.block.BlockEyeCandy;
 import cn.zbx1425.mtrsteamloco.data.EyeCandyProperties;
 import cn.zbx1425.mtrsteamloco.data.EyeCandyRegistry;
-import cn.zbx1425.mtrsteamloco.render.ShadersModHandler;
 import cn.zbx1425.mtrsteamloco.render.rail.RailRenderDispatcher;
-import cn.zbx1425.mtrsteamloco.render.scripting.ScriptContextManager;
-import cn.zbx1425.mtrsteamloco.render.scripting.eyecandy.EyeCandyScriptContext;
-import cn.zbx1425.mtrsteamloco.render.scripting.train.ScriptedTrainRenderer;
 import cn.zbx1425.sowcer.math.Matrix4f;
 import cn.zbx1425.sowcer.math.PoseStackUtil;
-import cn.zbx1425.sowcerext.model.ModelCluster;
-import cn.zbx1425.sowcerext.model.integration.BufferSourceProxy;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mtr.RegistryObject;
 import mtr.block.IBlock;
-import mtr.client.ClientData;
-import mtr.data.TrainClient;
 import mtr.mappings.BlockEntityRendererMapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 
 public class BlockEntityEyeCandyRenderer extends BlockEntityRendererMapper<BlockEyeCandy.BlockEntityEyeCandy> {
 
@@ -45,6 +34,8 @@ public class BlockEntityEyeCandyRenderer extends BlockEntityRendererMapper<Block
     private static final RegistryObject<ItemStack> BRUSH_ITEM_STACK = new RegistryObject<>(() -> new ItemStack(mtr.Items.BRUSH.get(), 1));
 
     private static final RegistryObject<ItemStack> BARRIER_ITEM_STACK = new RegistryObject<>(() -> new ItemStack(net.minecraft.world.item.Items.BARRIER, 1));
+
+    private static final ItemStackRenderState itemBlockRenderState = new ItemStackRenderState();
 
     @Override
     public void render(BlockEyeCandy.BlockEntityEyeCandy blockEntity, float f, @NotNull PoseStack matrices, @NotNull MultiBufferSource vertexConsumers, int light, int overlay) {
@@ -60,10 +51,11 @@ public class BlockEntityEyeCandyRenderer extends BlockEntityRendererMapper<Block
             matrices.translate(0.5f, 0.5f, 0.5f);
             PoseStackUtil.rotY(matrices, (float) ((System.currentTimeMillis() % 1000) * (Math.PI * 2 / 1000)));
             if (blockEntity.prefabId != null && prop == null) {
-                Minecraft.getInstance().getItemRenderer().renderStatic(BARRIER_ITEM_STACK.get(), ItemDisplayContext.GROUND, lightToUse, 0, matrices, vertexConsumers, world, 0);
+                Minecraft.getInstance().getItemModelResolver().updateForTopItem(itemBlockRenderState, BARRIER_ITEM_STACK.get(), ItemDisplayContext.GROUND, world, null, 0);
             } else {
-                Minecraft.getInstance().getItemRenderer().renderStatic(BRUSH_ITEM_STACK.get(), ItemDisplayContext.GROUND, lightToUse, 0, matrices, vertexConsumers, world, 0);
+                Minecraft.getInstance().getItemModelResolver().updateForTopItem(itemBlockRenderState, BRUSH_ITEM_STACK.get(), ItemDisplayContext.GROUND, world, null, 0);
             }
+            itemBlockRenderState.submit(matrices, 0, lightToUse, OverlayTexture.NO_OVERLAY, 0);
             matrices.popPose();
         }
         if (prop == null) return;

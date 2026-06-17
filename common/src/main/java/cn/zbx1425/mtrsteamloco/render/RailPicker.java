@@ -85,7 +85,7 @@ public class RailPicker {
         for (var text : contents) {
             if (text != null && !StringUtils.isEmpty(text)) {
                 float xOffset = (float) (-font.width(text) / 2);
-                font.drawInBatch(text, xOffset, yOffset, 0xFFFFFFFF, false, matrices.last().pose(), vertexConsumers, Font.DisplayMode.SEE_THROUGH, bgColor, LightCoordsUtil.FULL_BRIGHT, false);
+                font.drawInBatch(text, xOffset, yOffset, 0xFFFFFFFF, false, matrices.last().pose(), vertexConsumers, Font.DisplayMode.SEE_THROUGH, bgColor, LightCoordsUtil.FULL_BRIGHT);
             }
             yOffset += font.lineHeight + 2;
         }

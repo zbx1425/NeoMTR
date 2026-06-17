@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(BlockEntityRendererMapper.class)
-public abstract class BlockEntityRendererMapperMixin<T extends BlockEntityMapper, R extends BlockEntityRenderState> implements BlockEntityRenderer<T, R> {
+public abstract class BlockEntityRendererMapperMixin<T extends BlockEntityMapper, S extends BlockEntityRenderState> implements BlockEntityRenderer<T, S> {
     @Override
     public @NotNull AABB getRenderBoundingBox(@NotNull T blockEntity) {
         return AABB.INFINITE;

@@ -214,14 +214,14 @@ public class SignalBlocks {
 			super(compoundTag);
 			DyeColor savedColor;
 			try {
-				savedColor = DyeColor.values()[compoundTag.getInt(KEY_COLOR)];
+				savedColor = DyeColor.values()[compoundTag.getIntOr(KEY_COLOR, 0)];
 			} catch (Exception e) {
 				MTR.LOGGER.error("", e);
 				savedColor = DyeColor.RED;
 			}
 			color = savedColor;
-			final CompoundTag compoundTagRails = compoundTag.getCompound(KEY_RAILS);
-			compoundTagRails.getAllKeys().forEach(key -> rails.add(compoundTagRails.getUUID(key)));
+			final CompoundTag compoundTagRails = compoundTag.getCompoundOrEmpty(KEY_RAILS);
+			compoundTagRails.keySet().forEach(key -> rails.add(UUID.fromString(compoundTagRails.getStringOr(key, ""))));
 		}
 
 		public SignalBlock(FriendlyByteBuf packet) {

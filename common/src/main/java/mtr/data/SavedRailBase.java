@@ -54,9 +54,9 @@ public abstract class SavedRailBase extends NameColorDataBase {
 	public SavedRailBase(CompoundTag compoundTag) {
 		super(compoundTag);
 		positions = new HashSet<>(2);
-		positions.add(BlockPos.of(compoundTag.getLong(KEY_POS_1)));
-		positions.add(BlockPos.of(compoundTag.getLong(KEY_POS_2)));
-		dwellTime = transportMode.continuousMovement ? 1 : compoundTag.getInt(KEY_DWELL_TIME);
+		positions.add(BlockPos.of(compoundTag.getLongOr(KEY_POS_1, 0)));
+		positions.add(BlockPos.of(compoundTag.getLongOr(KEY_POS_2, 0)));
+		dwellTime = transportMode.continuousMovement ? 1 : compoundTag.getIntOr(KEY_DWELL_TIME, 0);
 	}
 
 	public SavedRailBase(FriendlyByteBuf packet) {

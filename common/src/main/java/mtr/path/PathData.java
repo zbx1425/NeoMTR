@@ -52,12 +52,12 @@ public class PathData extends SerializedDataBase {
 
 	@Deprecated
 	public PathData(CompoundTag compoundTag) {
-		rail = new Rail(compoundTag.getCompound(KEY_RAIL));
-		savedRailBaseId = compoundTag.getLong(KEY_SAVED_RAIL_BASE_ID);
-		dwellTime = compoundTag.getInt(KEY_DWELL_TIME);
-		stopIndex = compoundTag.getInt(KEY_STOP_INDEX);
-		startingPos = BlockPos.of(compoundTag.getLong(KEY_STARTING_POS));
-		endingPos = BlockPos.of(compoundTag.getLong(KEY_ENDING_POS));
+		rail = new Rail(compoundTag.getCompoundOrEmpty(KEY_RAIL));
+		savedRailBaseId = compoundTag.getLongOr(KEY_SAVED_RAIL_BASE_ID, 0);
+		dwellTime = compoundTag.getIntOr(KEY_DWELL_TIME, 0);
+		stopIndex = compoundTag.getIntOr(KEY_STOP_INDEX, 0);
+		startingPos = BlockPos.of(compoundTag.getLongOr(KEY_STARTING_POS, 0));
+		endingPos = BlockPos.of(compoundTag.getLongOr(KEY_ENDING_POS, 0));
 	}
 
 	public PathData(FriendlyByteBuf packet) {
