@@ -17,7 +17,7 @@ public abstract class BlockPSDAPGBase extends BlockDirectionalDoubleBlockBase {
 	}
 
 	@Override
-	public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+	public ItemStack getCloneItemStack(LevelReader blockGetter, BlockPos blockPos, BlockState blockState, boolean includeData) {
 		return new ItemStack(asItem());
 	}
 

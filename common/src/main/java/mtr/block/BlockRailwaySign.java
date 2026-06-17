@@ -1,33 +1,28 @@
 package mtr.block;
 
+import com.mojang.serialization.Codec;
 import mtr.BlockEntityTypes;
 import mtr.MTR;
 import mtr.mappings.*;
 import mtr.packet.PacketTrainDataGuiServer;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -64,7 +59,7 @@ public class BlockRailwaySign extends BlockDirectionalMapper implements EntityBl
 	}
 
 	@Override
-	public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
+	protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos posFrom, BlockState newState, RandomSource random) {
 		final Direction facing = IBlock.getStatePropertySafe(state, FACING);
 		final boolean isNext = direction == facing.getClockWise() || state.is(mtr.Blocks.RAILWAY_SIGN_MIDDLE.get()) && direction == facing.getCounterClockWise();
 		if (isNext && !(newState.getBlock() instanceof BlockRailwaySign)) {
@@ -94,7 +89,7 @@ public class BlockRailwaySign extends BlockDirectionalMapper implements EntityBl
 
 	@Override
 	public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-		if (!world.isClientSide) {
+		if (!world.isClientSide()) {
 			final Direction facing = IBlock.getStatePropertySafe(state, FACING);
 			for (int i = 1; i <= getMiddleLength(); i++) {
 				world.setBlock(pos.relative(facing.getClockWise(), i), mtr.Blocks.RAILWAY_SIGN_MIDDLE.get().defaultBlockState().setValue(FACING, facing), 3);
@@ -118,16 +113,16 @@ public class BlockRailwaySign extends BlockDirectionalMapper implements EntityBl
 		}
 	}
 
-	@Override
-	public String getDescriptionId() {
-		return "block.mtr.railway_sign";
-	}
+//	@Override
+//	public String getDescriptionId() {
+//		return "block.mtr.railway_sign";
+//	}
 
-	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
-		tooltip.add(Text.translatable("tooltip.mtr.railway_sign_length", length).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
-		tooltip.add(Text.translatable(isOdd ? "tooltip.mtr.railway_sign_odd" : "tooltip.mtr.railway_sign_even").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
-	}
+//	@Override
+//	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+//		tooltip.add(Text.translatable("tooltip.mtr.railway_sign_length", length).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+//		tooltip.add(Text.translatable(isOdd ? "tooltip.mtr.railway_sign_odd" : "tooltip.mtr.railway_sign_even").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+//	}
 
 	@Override
 	public BlockEntityMapper createBlockEntity(BlockPos pos, BlockState state) {
@@ -191,18 +186,21 @@ public class BlockRailwaySign extends BlockDirectionalMapper implements EntityBl
 		}
 
 		@Override
-		public void readCompoundTag(CompoundTag compoundTag) {
+		public void readCompoundTag(ValueInput compoundTag) {
 			selectedIds.clear();
-			Arrays.stream(compoundTag.getLongArray(KEY_SELECTED_IDS)).forEach(selectedIds::add);
+			ValueInput.TypedInputList<Long> platformIds = compoundTag.listOrEmpty(KEY_SELECTED_IDS, Codec.LONG);
+			platformIds.forEach(selectedIds::add);
 			for (int i = 0; i < signIds.length; i++) {
-				final String signId = compoundTag.getString(KEY_SIGN_LENGTH + i);
+				final String signId = compoundTag.getStringOr(KEY_SIGN_LENGTH + i, "");
 				signIds[i] = signId.isEmpty() ? null : signId;
 			}
 		}
 
 		@Override
-		public void writeCompoundTag(CompoundTag compoundTag) {
-			compoundTag.putLongArray(KEY_SELECTED_IDS, new ArrayList<>(selectedIds));
+		public void writeCompoundTag(ValueOutput compoundTag) {
+			ValueOutput.TypedOutputList<Long> platformIds = compoundTag.list(KEY_SELECTED_IDS, Codec.LONG);
+			selectedIds.forEach(platformIds::add);
+
 			for (int i = 0; i < signIds.length; i++) {
 				compoundTag.putString(KEY_SIGN_LENGTH + i, signIds[i] == null ? "" : signIds[i]);
 			}
@@ -382,7 +380,7 @@ public class BlockRailwaySign extends BlockDirectionalMapper implements EntityBl
 		LOGO_TEXT("logo", false, false, true),
 		LOGO_TEXT_FLIPPED("logo", false, true, true);
 
-		public final ResourceLocation textureId;
+		public final Identifier textureId;
 		public final String customText;
 		public final boolean small;
 		public final boolean flipTexture;

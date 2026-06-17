@@ -18,6 +18,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 
 public abstract class BlockRouteSignBase extends BlockDirectionalDoubleBlockBase implements EntityBlockMapper, IBlock {
@@ -60,12 +62,12 @@ public abstract class BlockRouteSignBase extends BlockDirectionalDoubleBlockBase
 		}
 
 		@Override
-		public void readCompoundTag(CompoundTag compoundTag) {
-			platformId = compoundTag.getLong(KEY_PLATFORM_ID);
+		public void readCompoundTag(ValueInput compoundTag) {
+			platformId = compoundTag.getLongOr(KEY_PLATFORM_ID, 0);
 		}
 
 		@Override
-		public void writeCompoundTag(CompoundTag compoundTag) {
+		public void writeCompoundTag(ValueOutput compoundTag) {
 			compoundTag.putLong(KEY_PLATFORM_ID, platformId);
 		}
 

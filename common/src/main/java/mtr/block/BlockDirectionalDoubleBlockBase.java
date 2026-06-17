@@ -3,12 +3,15 @@ package mtr.block;
 import mtr.mappings.BlockDirectionalMapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -22,7 +25,7 @@ public abstract class BlockDirectionalDoubleBlockBase extends BlockDirectionalMa
 	}
 
 	@Override
-	public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
+	protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos posFrom, BlockState newState, RandomSource random) {
 		final boolean isTop = IBlock.getStatePropertySafe(state, HALF) == DoubleBlockHalf.UPPER;
 		if ((isTop && direction == Direction.DOWN || !isTop && direction == Direction.UP) && !newState.is(this)) {
 			return Blocks.AIR.defaultBlockState();
@@ -33,7 +36,7 @@ public abstract class BlockDirectionalDoubleBlockBase extends BlockDirectionalMa
 
 	@Override
 	public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity livingEntity, ItemStack itemStack) {
-		if (!world.isClientSide) {
+		if (!world.isClientSide()) {
 			final Direction facing = IBlock.getStatePropertySafe(state, FACING);
 			world.setBlock(pos.above(), getAdditionalState(pos, facing).setValue(FACING, facing).setValue(HALF, DoubleBlockHalf.UPPER), 3);
 			world.updateNeighborsAt(pos, Blocks.AIR);

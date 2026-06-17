@@ -11,12 +11,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class BlockLiftTrackFloor extends BlockLiftTrack implements EntityBlockMapper {
@@ -43,7 +44,7 @@ public class BlockLiftTrackFloor extends BlockLiftTrack implements EntityBlockMa
 
 	@Override
 	public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
-		if (!world.isClientSide) {
+		if (!world.isClientSide()) {
 			final RailwayData railwayData = RailwayData.getInstance(world);
 			if (railwayData != null) {
 				railwayData.removeLiftFloorTrack(pos);
@@ -70,15 +71,15 @@ public class BlockLiftTrackFloor extends BlockLiftTrack implements EntityBlockMa
 		}
 
 		@Override
-		public void readCompoundTag(CompoundTag compoundTag) {
-			floorNumber = compoundTag.getString(KEY_FLOOR_NUMBER);
-			floorDescription = compoundTag.getString(KEY_FLOOR_DESCRIPTION);
-			shouldDing = compoundTag.getBoolean(KEY_SHOULD_DING);
-			disableCarCall = compoundTag.getBoolean(KEY_DISABLE_CAR_CALL);
+		public void readCompoundTag(ValueInput compoundTag) {
+			floorNumber = compoundTag.getStringOr(KEY_FLOOR_NUMBER, "");
+			floorDescription = compoundTag.getStringOr(KEY_FLOOR_DESCRIPTION, "");
+			shouldDing = compoundTag.getBooleanOr(KEY_SHOULD_DING, false);
+			disableCarCall = compoundTag.getBooleanOr(KEY_DISABLE_CAR_CALL, false);
 		}
 
 		@Override
-		public void writeCompoundTag(CompoundTag compoundTag) {
+		public void writeCompoundTag(ValueOutput compoundTag) {
 			compoundTag.putString(KEY_FLOOR_NUMBER, floorNumber);
 			compoundTag.putString(KEY_FLOOR_DESCRIPTION, floorDescription);
 			compoundTag.putBoolean(KEY_SHOULD_DING, shouldDing);

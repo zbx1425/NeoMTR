@@ -4,12 +4,14 @@ import mtr.Items;
 import mtr.mappings.HorizontalBlockWithSoftLanding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
@@ -28,7 +30,7 @@ public abstract class BlockEscalatorBase extends HorizontalBlockWithSoftLanding 
 	}
 
 	@Override
-	public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
+	protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos posFrom, BlockState newState, RandomSource random) {
 		if (getSideDirection(state) == direction && !newState.is(this)) {
 			return Blocks.AIR.defaultBlockState();
 		} else {
@@ -58,10 +60,9 @@ public abstract class BlockEscalatorBase extends HorizontalBlockWithSoftLanding 
 	}
 
 	@Override
-	public ItemStack getCloneItemStack(LevelReader blockGetter, BlockPos blockPos, BlockState blockState) {
+	public ItemStack getCloneItemStack(LevelReader blockGetter, BlockPos blockPos, BlockState blockState, boolean includeData) {
 		return new ItemStack(asItem());
 	}
-
 
 	protected final EnumEscalatorOrientation getOrientation(BlockGetter world, BlockPos pos, BlockState state) {
 		final Direction facing = IBlock.getStatePropertySafe(state, FACING);

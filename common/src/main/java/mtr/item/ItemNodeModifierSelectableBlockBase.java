@@ -47,7 +47,7 @@ public abstract class ItemNodeModifierSelectableBlockBase extends ItemNodeModifi
 	public InteractionResult useOn(UseOnContext context) {
 		if (canSaveBlock) {
 			final Level world = context.getLevel();
-			if (!world.isClientSide) {
+			if (!world.isClientSide()) {
 				final Player player = context.getPlayer();
 				if (player != null && player.isShiftKeyDown()) {
 					final BlockState state = world.getBlockState(context.getClickedPos());

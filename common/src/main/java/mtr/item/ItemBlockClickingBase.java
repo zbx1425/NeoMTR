@@ -28,7 +28,7 @@ public abstract class ItemBlockClickingBase extends ItemWithCreativeTabBase {
 
 	@Override
 	public InteractionResult useOn(UseOnContext context) {
-		if (!context.getLevel().isClientSide) {
+		if (!context.getLevel().isClientSide()) {
 			if (clickCondition(context)) {
 				final CustomData customData = context.getItemInHand()
 						.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);

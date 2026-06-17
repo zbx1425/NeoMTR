@@ -25,7 +25,7 @@ public class BlockTicketMachine extends BlockDirectionalDoubleBlockBase {
 
 	@Override
 	public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult blockHitResult) {
-		if (!world.isClientSide) {
+		if (!world.isClientSide()) {
 			PacketTrainDataGuiServer.openTicketMachineScreenS2C(world, (ServerPlayer) player);
 		}
 		return InteractionResult.SUCCESS;

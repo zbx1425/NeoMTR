@@ -9,18 +9,15 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -28,6 +25,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -56,9 +55,9 @@ public abstract class BlockLiftPanelBase extends BlockDirectionalMapper implemen
 	}
 
 	@Override
-	public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
+	protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos posFrom, BlockState newState, RandomSource random) {
 		if (isOdd) {
-			return ITripleBlock.updateShape(state, direction, newState.is(this), () -> super.updateShape(state, direction, newState, world, pos, posFrom));
+			return ITripleBlock.updateShape(state, direction, newState.is(this), () -> super.updateShape(state, world, ticks, pos, direction, posFrom, newState, random));
 		} else {
 			if (IBlock.getSideDirection(state) == direction && !newState.is(this)) {
 				return Blocks.AIR.defaultBlockState();
@@ -89,7 +88,7 @@ public abstract class BlockLiftPanelBase extends BlockDirectionalMapper implemen
 
 	@Override
 	public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-		if (!world.isClientSide) {
+		if (!world.isClientSide()) {
 			final Direction direction = IBlock.getStatePropertySafe(state, FACING);
 
 			if (isOdd) {
@@ -124,7 +123,7 @@ public abstract class BlockLiftPanelBase extends BlockDirectionalMapper implemen
 
 	@Override
 	public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
-		if (world.isClientSide) {
+		if (world.isClientSide()) {
 			return InteractionResult.SUCCESS;
 		} else {
 			return player.isHolding(Items.LIFT_BUTTONS_LINK_CONNECTOR.get()) || player.isHolding(Items.LIFT_BUTTONS_LINK_REMOVER.get()) ? InteractionResult.PASS : InteractionResult.FAIL;
@@ -136,10 +135,10 @@ public abstract class BlockLiftPanelBase extends BlockDirectionalMapper implemen
 		TileEntityLiftPanel1Base.tick(world, pos, blockEntity);
 	}
 
-	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
-		tooltip.add(Text.translatable("tooltip.mtr.railway_sign_" + (isOdd ? "odd" : "even")).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
-	}
+//	@Override
+//	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+//		tooltip.add(Text.translatable("tooltip.mtr.railway_sign_" + (isOdd ? "odd" : "even")).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+//	}
 
 	public abstract static class TileEntityLiftPanel1Base extends BlockEntityClientSerializableMapper implements TickableMapper {
 
@@ -158,15 +157,15 @@ public abstract class BlockLiftPanelBase extends BlockDirectionalMapper implemen
 		}
 
 		@Override
-		public void readCompoundTag(CompoundTag compoundTag) {
-			final long data = compoundTag.getLong(KEY_TRACK_FLOOR_POS);
+		public void readCompoundTag(ValueInput compoundTag) {
+			final long data = compoundTag.getLongOr(KEY_TRACK_FLOOR_POS, 0);
 			trackPosition = data == 0 ? null : BlockPos.of(data);
-			converted = compoundTag.getBoolean(KEY_CONVERTED);
+			converted = compoundTag.getBooleanOr(KEY_CONVERTED, false);
 			super.readCompoundTag(compoundTag);
 		}
 
 		@Override
-		public void writeCompoundTag(CompoundTag compoundTag) {
+		public void writeCompoundTag(ValueOutput compoundTag) {
 			compoundTag.putLong(KEY_TRACK_FLOOR_POS, trackPosition == null ? 0 : trackPosition.asLong());
 			compoundTag.putBoolean(KEY_CONVERTED, converted);
 		}
@@ -213,12 +212,12 @@ public abstract class BlockLiftPanelBase extends BlockDirectionalMapper implemen
 		// TODO temp code end
 
 		public static <T extends BlockEntityMapper> void tick(Level world, BlockPos pos, T blockEntity) {
-			if (world != null && world.getNearestPlayer(pos.getX(), pos.getY(), pos.getZ(), 16, entity -> true) != null && blockEntity instanceof TileEntityLiftPanel1Base && !world.isClientSide && MTR.isGameTickInterval(UPDATE_INTERVAL, (int) pos.asLong())) {
+			if (world != null && world.getNearestPlayer(pos.getX(), pos.getY(), pos.getZ(), 16, entity -> true) != null && blockEntity instanceof TileEntityLiftPanel1Base && !world.isClientSide() && MTR.isGameTickInterval(UPDATE_INTERVAL, (int) pos.asLong())) {
 				((TileEntityLiftPanel1Base) blockEntity).getTrackPosition(world);
 				blockEntity.setChanged();
 				((TileEntityLiftPanel1Base) blockEntity).syncData();
 			}
-			if (world != null && !world.isClientSide && blockEntity instanceof TileEntityLiftPanel1Base) {
+			if (world != null && !world.isClientSide() && blockEntity instanceof TileEntityLiftPanel1Base) {
 				((TileEntityLiftPanel1Base) blockEntity).convert();
 			}
 		}

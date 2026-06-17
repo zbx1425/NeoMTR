@@ -60,7 +60,7 @@ public interface IBlock {
 		}
 
 		if (holdingItem != null) {
-			if (!world.isClientSide) {
+			if (!world.isClientSide()) {
 				callbackItem.accept(holdingItem);
 			}
 			return InteractionResult.SUCCESS;
@@ -68,7 +68,7 @@ public interface IBlock {
 			if (callbackNoItem == null) {
 				return InteractionResult.FAIL;
 			} else {
-				if (!world.isClientSide) {
+				if (!world.isClientSide()) {
 					callbackNoItem.run();
 					return InteractionResult.CONSUME;
 				} else {
@@ -107,7 +107,7 @@ public interface IBlock {
 	}
 
 	static void onBreakCreative(Level world, Player player, BlockPos pos) {
-		if (!world.isClientSide && (player == null || player.isCreative())) {
+		if (!world.isClientSide() && (player == null || player.isCreative())) {
 			final BlockState state = world.getBlockState(pos);
 			world.setBlock(pos, Blocks.AIR.defaultBlockState(), 35);
 			world.levelEvent(player, 2001, pos, Block.getId(state));

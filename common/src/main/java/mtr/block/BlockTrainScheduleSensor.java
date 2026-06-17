@@ -12,6 +12,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,13 +63,13 @@ public class BlockTrainScheduleSensor extends BlockTrainPoweredSensorBase {
 		}
 
 		@Override
-		public void readCompoundTag(CompoundTag compoundTag) {
-			seconds = compoundTag.getInt(KEY_SECONDS);
+		public void readCompoundTag(ValueInput compoundTag) {
+			seconds = compoundTag.getIntOr(KEY_SECONDS, 0);
 			super.readCompoundTag(compoundTag);
 		}
 
 		@Override
-		public void writeCompoundTag(CompoundTag compoundTag) {
+		public void writeCompoundTag(ValueOutput compoundTag) {
 			compoundTag.putInt(KEY_SECONDS, seconds);
 			super.writeCompoundTag(compoundTag);
 		}
@@ -83,7 +85,7 @@ public class BlockTrainScheduleSensor extends BlockTrainPoweredSensorBase {
 		}
 
 		public static <T extends BlockEntityMapper> void tick(Level world, BlockPos pos, T blockEntity) {
-			if (world != null && !world.isClientSide) {
+			if (world != null && !world.isClientSide()) {
 				final BlockState state = world.getBlockState(pos);
 				final Block block = state.getBlock();
 				final boolean isActive = IBlock.getStatePropertySafe(state, POWERED) > 1 && world.getBlockTicks().hasScheduledTick(pos, block);

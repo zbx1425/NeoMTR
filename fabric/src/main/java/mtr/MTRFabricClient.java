@@ -13,15 +13,15 @@ import mtr.render.RenderDrivingOverlay;
 import mtr.render.RenderTrains;
 import mtr.screen.ResourcePackCreatorScreen;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.phys.Vec3;
@@ -34,7 +34,7 @@ public class MTRFabricClient implements ClientModInitializer, ICustomResources {
 		MTRClient.initItemModelPredicate();
 		MainClient.init();
 
-		WorldRenderEvents.AFTER_ENTITIES.register(context -> {
+		LevelRenderEvents.AFTER_ENTITIES.register(context -> {
 			final PoseStack matrices = context.matrixStack();
 			matrices.pushPose();
 			final Vec3 cameraPos = context.camera().getPosition();
@@ -42,32 +42,32 @@ public class MTRFabricClient implements ClientModInitializer, ICustomResources {
 			RenderTrains.render(0, matrices, context.consumers());
 			matrices.popPose();
 		});
-		WorldRenderEvents.BEFORE_BLOCK_OUTLINE.register((worldRenderContext, hitResult) -> {
+		LevelRenderEvents.BEFORE_BLOCK_OUTLINE.register((worldRenderContext, hitResult) -> {
 			Minecraft.getInstance().level.getProfiler().popPush("NTEBlockEntities");
 			BufferSourceProxy vertexConsumersProxy = new BufferSourceProxy(Minecraft.getInstance().renderBuffers().bufferSource());
 			MainClient.drawScheduler.commit(vertexConsumersProxy, MainClient.drawContext);
 			vertexConsumersProxy.commit();
             return true;
         });
-		WorldRenderEvents.LAST.register(event -> {
-			ResourcePackCreatorScreen.render(event.matrixStack());
+		LevelRenderEvents.END_MAIN.register(event -> {
+			ResourcePackCreatorScreen.render(event.poseStack());
 			MainClient.drawContext.resetFrameProfiler();
 		});
-		HudRenderCallback.EVENT.register((guiGraphics, tickDelta) -> RenderDrivingOverlay.render(guiGraphics));
+		HudElementRegistry.addFirst(MTR.id("driving_hud"), (guiGraphics, tickDelta) -> RenderDrivingOverlay.render(guiGraphics);
 		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new CustomResourcesWrapper());
 		MTRFabric.PACKET_REGISTRY.commitClient();
 
-		ParticleFactoryRegistry.getInstance().register(Main.PARTICLE_STEAM_SMOKE, SteamSmokeParticle.Provider::new);
+		ParticleProviderRegistry.getInstance().register(Main.PARTICLE_STEAM_SMOKE, SteamSmokeParticle.Provider::new);
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-			NTEClientCommand.register(dispatcher, ClientCommandManager::literal);
+			NTEClientCommand.register(dispatcher, ClientCommands::literal);
 		});
-		HudRenderCallback.EVENT.register((guiGraphics, tickDelta) -> ScriptDebugOverlay.render(guiGraphics));
+		HudElementRegistry.addLast(MTR.id("js_debug_hud"), (guiGraphics, tickDelta) -> ScriptDebugOverlay.render(guiGraphics));
 	}
 
 	private static class CustomResourcesWrapper implements SimpleSynchronousResourceReloadListener {
 
 		@Override
-		public ResourceLocation getFabricId() {
+		public Identifier getFabricId() {
 			return MTR.id(CUSTOM_RESOURCES_ID);
 		}
 

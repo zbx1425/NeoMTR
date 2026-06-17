@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,6 +21,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class BlockGlassFence extends BlockDirectionalDoubleBlockBase {
 
@@ -50,10 +52,10 @@ public class BlockGlassFence extends BlockDirectionalDoubleBlockBase {
 		return Shapes.empty();
 	}
 
-	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
-		tooltip.add(Text.translatable("tooltip." + stack.getItem().getDescriptionId()).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
-	}
+//	@Override
+//	public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag tooltipFlag) {
+//		tooltipAdder.accept(Text.translatable("tooltip." + stack.getItem().getDescriptionId()).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+//	}
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {

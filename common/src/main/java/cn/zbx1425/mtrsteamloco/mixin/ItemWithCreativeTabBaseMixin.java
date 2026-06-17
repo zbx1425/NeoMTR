@@ -31,14 +31,14 @@ public abstract class ItemWithCreativeTabBaseMixin extends Item {
             BlockState blockState = level.getBlockState(context.getClickedPos());
             if (blockState.getBlock() instanceof mtr.block.BlockNode) {
                 if (context.isSecondaryUseActive()) {
-                    if (level.isClientSide) {
+                    if (level.isClientSide()) {
                         RailEditorVisualScreen.acquirePickInfoWhenUse();
                         return super.useOn(context);
                     } else {
                         PacketScreen.sendScreenBlockS2C((ServerPlayer) context.getPlayer(), "rail_editor_visual", BlockPos.ZERO);
                     }
                 } else {
-                    if (level.isClientSide) {
+                    if (level.isClientSide()) {
                         RailEditorVisualScreen.acquirePickInfoWhenUse();
                         CompoundTag toolTag = context.getPlayer().getMainHandItem().getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
                         RailEditorVisualScreen.batchApplyBrushTemplate(toolTag);
@@ -47,7 +47,7 @@ public abstract class ItemWithCreativeTabBaseMixin extends Item {
                     }
                 }
                 return InteractionResult.SUCCESS;
-            } else if (context.isSecondaryUseActive() && level.isClientSide) {
+            } else if (context.isSecondaryUseActive() && level.isClientSide()) {
                 if (RailEditorVisualScreen.hasValidLastPick()) {
                     RailEditorVisualScreen.openLastPickedScreen();
                 }
@@ -60,14 +60,14 @@ public abstract class ItemWithCreativeTabBaseMixin extends Item {
             BlockState blockState = level.getBlockState(context.getClickedPos());
             if (blockState.getBlock() instanceof mtr.block.BlockNode) {
                 if (context.isSecondaryUseActive()) {
-                    if (level.isClientSide) {
+                    if (level.isClientSide()) {
                         RailEditorGeometryScreen.acquirePickInfoWhenUse();
                         return super.useOn(context);
                     } else {
                         PacketScreen.sendScreenBlockS2C((ServerPlayer) context.getPlayer(), "rail_editor_geometry", BlockPos.ZERO);
                     }
                 } else {
-                    if (level.isClientSide) {
+                    if (level.isClientSide()) {
                         RailEditorGeometryScreen.acquirePickInfoWhenUse();
                         CompoundTag toolTag = context.getPlayer().getMainHandItem().getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
                         RailEditorGeometryScreen.batchApply(toolTag);

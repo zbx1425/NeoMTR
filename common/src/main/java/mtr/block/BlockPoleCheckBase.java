@@ -31,13 +31,13 @@ public abstract class BlockPoleCheckBase extends BlockDirectionalMapper {
 		}
 	}
 
-	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
-		final String[] strings = Text.translatable("tooltip.mtr.pole_placement", getTooltipBlockText()).getString().split("\n");
-		for (final String string : strings) {
-			tooltip.add(Text.literal(string).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
-		}
-	}
+//	@Override
+//	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+//		final String[] strings = Text.translatable("tooltip.mtr.pole_placement", getTooltipBlockText()).getString().split("\n");
+//		for (final String string : strings) {
+//			tooltip.add(Text.literal(string).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+//		}
+//	}
 
 	protected BlockState placeWithState(BlockState stateBelow) {
 		return defaultBlockState().setValue(FACING, IBlock.getStatePropertySafe(stateBelow, FACING));

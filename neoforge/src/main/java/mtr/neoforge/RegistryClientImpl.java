@@ -12,9 +12,9 @@ import mtr.neoforge.mappings.ForgeUtilities;
 import mtr.mappings.*;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.color.block.BlockColor;
+import net.minecraft.client.color.block.BlockTintSource;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;
@@ -35,10 +35,6 @@ import java.util.function.Function;
 
 public class RegistryClientImpl {
 
-	public static void registerBlockRenderType(RenderType type, Block block) {
-		RegistryUtilitiesClient.registerRenderType(type, block);
-	}
-
 	public static void registerItemModelPredicate(String id, Item item, String tag) {
 		RegistryUtilitiesClient.registerItemModelPredicate(id, item, tag);
 	}
@@ -56,7 +52,7 @@ public class RegistryClientImpl {
 	}
 
 	public static void registerBlockColors(Block block) {
-		RegistryUtilitiesClient.registerBlockColors(new StationColor(), block);
+		RegistryUtilitiesClient.registerBlockColors( new StationColor(), block);
 	}
 
 	public static void registerNetworkReceiver(ResourceLocation resourceLocation, Consumer<FriendlyByteBuf> consumer) {
@@ -76,10 +72,15 @@ public class RegistryClientImpl {
 		MTRForge.PACKET_REGISTRY.sendC2S(id, packet);
 	}
 
-	private static class StationColor implements BlockColor {
+	private static class StationColor implements BlockTintSource {
 
 		@Override
-		public int getColor(BlockState blockState, BlockAndTintGetter blockAndTintGetter, BlockPos pos, int i) {
+		public int color(BlockState blockState) {
+			return MTRClient.getStationColor(null);
+		}
+
+		@Override
+		public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
 			return MTRClient.getStationColor(pos);
 		}
 	}
@@ -99,11 +100,7 @@ public class RegistryClientImpl {
 		static <T extends Entity> void registerEntityRenderer(EntityType<T> type, Function<EntityRendererProvider.Context, EntityRendererMapper<T>> factory) {
 		}
 
-		static void registerRenderType(RenderType renderType, Block block) {
-			RenderTypeRegistry.register(renderType, block);
-		}
-
-		static void registerBlockColors(BlockColor blockColor, Block block) {
+		static void registerBlockColors(BlockTintSource blockColor, Block block) {
 			ColorHandlerRegistry.registerBlockColors(blockColor, block);
 		}
 

@@ -21,7 +21,7 @@ configurations {
 
 dependencies {
 	neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
-	modApi "${rootProject.architectury_id}:architectury-neoforge:${rootProject.architectury_version}"
+	api "${rootProject.architectury_id}:architectury-neoforge:${rootProject.architectury_version}"
 
 	forgeRuntimeLibrary "org.eclipse.jetty:jetty-http:9.+"
 	forgeRuntimeLibrary "org.eclipse.jetty:jetty-io:9.+"
@@ -35,12 +35,12 @@ dependencies {
 
 	forgeRuntimeLibrary project(":rhino")
 
-	modApi("me.shedaniel.cloth:cloth-config-neoforge:${rootProject.cloth_config_version}") { transitive false }
-	modApi("me.shedaniel.cloth:basic-math:0.6.1") { transitive false }
+	api("me.shedaniel.cloth:cloth-config-neoforge:${rootProject.cloth_config_version}") { transitive false }
+	api("me.shedaniel.cloth:basic-math:0.6.1") { transitive false }
 	clothConfigJar("me.shedaniel.cloth:cloth-config-neoforge:${rootProject.cloth_config_version}") { transitive = false }
 	clothConfigJar("me.shedaniel.cloth:basic-math:0.6.1") { transitive false }
 
-	common(project(path: ":common", configuration: "namedElements")) { transitive false }
+	common(project(path: ":common")) { transitive false }
 	shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive = false }
 }
 
@@ -82,13 +82,13 @@ static boolean matchInnerClass(String path, String... names) {
 	names.any { name -> path.startsWith(name) }
 }
 
-remapJar {
-	input.set shadowJar.archiveFile
-	dependsOn shadowJar
-	archiveClassifier = null
-
-	atAccessWideners.add "mtrsteamloco.accesswidener"
-}
+//remapJar {
+//	input.set shadowJar.archiveFile
+//	dependsOn shadowJar
+//	archiveClassifier = null
+//
+//	atAccessWideners.add "mtrsteamloco.accesswidener"
+//}
 
 components.java {
 	withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {

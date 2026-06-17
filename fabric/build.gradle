@@ -19,15 +19,15 @@ configurations {
 }
 
 dependencies {
-	modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-	modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-	modApi "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
+	implementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+	api "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+	api "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
 
-	common(project(path: ":common", configuration: "namedElements")) { transitive false }
+	common(project(path: ":common")) { transitive false }
 	shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 
-	modApi("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_version}") { transitive false }
-	modApi("me.shedaniel.cloth:basic-math:0.6.1") { transitive false }
+	api("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_version}") { transitive false }
+	api("me.shedaniel.cloth:basic-math:0.6.1") { transitive false }
 	clothConfigJar("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_version}") { transitive false }
 	clothConfigJar("me.shedaniel.cloth:basic-math:0.6.1") { transitive false }
 }
@@ -67,11 +67,11 @@ shadowJar {
 	relocate "me.shedaniel", "cn.zbx1425.mtrsteamloco.vendor.me.shedaniel"
 }
 
-remapJar {
-	input.set shadowJar.archiveFile
-	dependsOn shadowJar
-	archiveClassifier = null
-}
+//jar {
+//	input.set jar.archiveFile
+//	dependsOn jar
+//	archiveClassifier = null
+//}
 
 components.java {
 	withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {

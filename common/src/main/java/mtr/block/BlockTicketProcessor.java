@@ -39,7 +39,7 @@ public class BlockTicketProcessor extends BlockDirectionalDoubleBlockBase {
 
 	@Override
 	public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult blockHitResult) {
-		if (!world.isClientSide && IBlock.getStatePropertySafe(state, HALF) == DoubleBlockHalf.UPPER) {
+		if (!world.isClientSide() && IBlock.getStatePropertySafe(state, HALF) == DoubleBlockHalf.UPPER) {
 			final TicketSystem.EnumTicketBarrierOpen open = TicketSystem.passThrough(world, pos, player, canEnter, canExit, SoundEvents.TICKET_PROCESSOR_ENTRY, SoundEvents.TICKET_PROCESSOR_ENTRY_CONCESSIONARY, SoundEvents.TICKET_PROCESSOR_EXIT, SoundEvents.TICKET_PROCESSOR_EXIT_CONCESSIONARY, SoundEvents.TICKET_PROCESSOR_FAIL, true);
 			world.setBlockAndUpdate(pos, state.setValue(LIGHTS, open.isOpen() ? EnumTicketProcessorLights.GREEN : EnumTicketProcessorLights.RED));
 			Utilities.scheduleBlockTick(world, pos, this, 20);

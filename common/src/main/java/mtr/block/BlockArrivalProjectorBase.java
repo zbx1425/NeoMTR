@@ -1,5 +1,6 @@
 package mtr.block;
 
+import com.mojang.serialization.Codec;
 import mtr.data.IPIDSRenderChild;
 import mtr.mappings.BlockDirectionalMapper;
 import mtr.mappings.BlockEntityClientSerializableMapper;
@@ -7,11 +8,8 @@ import mtr.mappings.EntityBlockMapper;
 import mtr.packet.PacketTrainDataGuiServer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -22,6 +20,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -82,18 +82,19 @@ public abstract class BlockArrivalProjectorBase extends BlockDirectionalMapper i
 		}
 
 		@Override
-		public void readCompoundTag(CompoundTag compoundTag) {
+		public void readCompoundTag(ValueInput valueInput) {
 			platformIds.clear();
-			final long[] platformIdsArray = compoundTag.getLongArray(KEY_PLATFORM_IDS);
+			final ValueInput.TypedInputList<Long> platformIdsArray = valueInput.listOrEmpty(KEY_PLATFORM_IDS, Codec.LONG);
 			for (final long platformId : platformIdsArray) {
 				platformIds.add(platformId);
 			}
-			displayPage = compoundTag.getInt(KEY_DISPLAY_PAGE);
+			displayPage = valueInput.getIntOr(KEY_DISPLAY_PAGE, 0);
 		}
 
 		@Override
-		public void writeCompoundTag(CompoundTag compoundTag) {
-			compoundTag.putLongArray(KEY_PLATFORM_IDS, new ArrayList<>(platformIds));
+		public void writeCompoundTag(ValueOutput compoundTag) {
+			final ValueOutput.TypedOutputList<Long> platformOutputList = compoundTag.list(KEY_PLATFORM_IDS, Codec.LONG);
+			platformIds.forEach(platformOutputList::add);
 			compoundTag.putInt(KEY_DISPLAY_PAGE, displayPage);
 		}
 

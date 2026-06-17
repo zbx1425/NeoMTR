@@ -32,7 +32,7 @@ public class ItemLiftRefresher extends ItemWithCreativeTabBase {
 
 	@Override
 	public InteractionResult useOn(UseOnContext context) {
-		if (!context.getLevel().isClientSide) {
+		if (!context.getLevel().isClientSide()) {
 			return refreshLift(context.getLevel(), context.getClickedPos(), context.getPlayer(), 0, 0, 2, 2, false, null);
 		} else {
 			return super.useOn(context);

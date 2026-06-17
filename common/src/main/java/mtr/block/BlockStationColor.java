@@ -18,13 +18,13 @@ public class BlockStationColor extends BlockMapper {
 		super(settings);
 	}
 
-	@Override
-	public String getDescriptionId() {
-		return super.getDescriptionId().replace("block.mtr.station_color_", "block.minecraft.");
-	}
+//	@Override
+//	public String getDescriptionId() {
+//		return super.getDescriptionId().replace("block.mtr.station_color_", "block.minecraft.");
+//	}
 
-	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
-		tooltip.add(Text.translatable("tooltip.mtr.station_color").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
-	}
+//	@Override
+//	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+//		tooltip.add(Text.translatable("tooltip.mtr.station_color").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+//	}
 }

@@ -31,12 +31,12 @@ public class BlockStationColorPole extends BlockMapper {
 		return getStationPoleShape();
 	}
 
-	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
-		if (showTooltip) {
-			tooltip.add(Text.translatable("tooltip.mtr.station_color").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
-		}
-	}
+//	@Override
+//	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+//		if (showTooltip) {
+//			tooltip.add(Text.translatable("tooltip.mtr.station_color").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+//		}
+//	}
 
 	public static VoxelShape getStationPoleShape() {
 		return Block.box(6, 0, 6, 10, 16, 10);

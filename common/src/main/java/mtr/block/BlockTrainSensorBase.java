@@ -1,5 +1,6 @@
 package mtr.block;
 
+import com.mojang.serialization.Codec;
 import mtr.mappings.BlockEntityClientSerializableMapper;
 import mtr.mappings.BlockMapper;
 import mtr.mappings.EntityBlockMapper;
@@ -16,10 +17,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public abstract class BlockTrainSensorBase extends BlockMapper implements EntityBlockMapper {
@@ -58,20 +62,19 @@ public abstract class BlockTrainSensorBase extends BlockMapper implements Entity
 		}
 
 		@Override
-		public void readCompoundTag(CompoundTag compoundTag) {
-			final long[] routeIdsArray = compoundTag.getLongArray(KEY_ROUTE_IDS);
-			for (final long routeId : routeIdsArray) {
-				filterRouteIds.add(routeId);
-			}
-			stoppedOnly = compoundTag.getBoolean(KEY_STOPPED_ONLY);
-			movingOnly = compoundTag.getBoolean(KEY_MOVING_ONLY);
+		public void readCompoundTag(ValueInput valueInput) {
+			final ValueInput.TypedInputList<Long> routeIdsArray = valueInput.listOrEmpty(KEY_ROUTE_IDS, Codec.LONG);
+			routeIdsArray.forEach(filterRouteIds::add);
+			stoppedOnly = valueInput.getBooleanOr(KEY_STOPPED_ONLY, false);
+			movingOnly = valueInput.getBooleanOr(KEY_MOVING_ONLY, false);
 		}
 
 		@Override
-		public void writeCompoundTag(CompoundTag compoundTag) {
-			compoundTag.putLongArray(KEY_ROUTE_IDS, new ArrayList<>(filterRouteIds));
-			compoundTag.putBoolean(KEY_STOPPED_ONLY, stoppedOnly);
-			compoundTag.putBoolean(KEY_MOVING_ONLY, movingOnly);
+		public void writeCompoundTag(ValueOutput valueOutput) {
+			ValueOutput.TypedOutputList<Long> idList = valueOutput.list(KEY_ROUTE_IDS, Codec.LONG);
+			filterRouteIds.forEach(idList::add);
+			valueOutput.putBoolean(KEY_STOPPED_ONLY, stoppedOnly);
+			valueOutput.putBoolean(KEY_MOVING_ONLY, movingOnly);
 		}
 
 		public boolean matchesFilter(long routeId, float speed) {

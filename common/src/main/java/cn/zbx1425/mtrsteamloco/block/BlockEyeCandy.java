@@ -9,9 +9,7 @@ import mtr.mappings.BlockEntityClientSerializableMapper;
 import mtr.mappings.BlockEntityMapper;
 import mtr.mappings.EntityBlockMapper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -21,10 +19,8 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-#if MC_VERSION < "12000"
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
-#endif
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -32,15 +28,7 @@ import org.jetbrains.annotations.NotNull;
 public class BlockEyeCandy extends BlockDirectionalMapper implements EntityBlockMapper {
 
     public BlockEyeCandy() {
-        super(
-#if MC_VERSION < "12000"
-                BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_GRAY)
-#else
-                BlockBehaviour.Properties.of()
-#endif
-                        .strength(2)
-                        .noCollission()
-        );
+        super(BlockBehaviour.Properties.of().strength(2).noCollision());
     }
 
     @Override
@@ -56,7 +44,7 @@ public class BlockEyeCandy extends BlockDirectionalMapper implements EntityBlock
     @Override
     public InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
         if (player.getMainHandItem().is(mtr.Items.BRUSH.get())) {
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 PacketScreen.sendScreenBlockS2C((ServerPlayer) player, "eye_candy", pos);
             }
             return InteractionResult.SUCCESS;
@@ -72,7 +60,7 @@ public class BlockEyeCandy extends BlockDirectionalMapper implements EntityBlock
 
     @Override
     public RenderShape getRenderShape(@NotNull BlockState blockState) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
+        return RenderShape.INVISIBLE;
     }
 
     public static class BlockEntityEyeCandy extends BlockEntityClientSerializableMapper {
@@ -91,21 +79,21 @@ public class BlockEyeCandy extends BlockDirectionalMapper implements EntityBlock
         }
 
         @Override
-        public void readCompoundTag(CompoundTag compoundTag) {
-            prefabId = compoundTag.getString("prefabId");
+        public void readCompoundTag(ValueInput compoundTag) {
+            prefabId = compoundTag.getStringOr("prefabId", "");
             if (StringUtils.isEmpty(prefabId)) prefabId = null;
-            fullLight = compoundTag.getBoolean("fullLight");
+            fullLight = compoundTag.getBooleanOr("fullLight", false);
 
-            translateX = compoundTag.contains("translateX") ? compoundTag.getFloat("translateX") : 0;
-            translateY = compoundTag.contains("translateY") ? compoundTag.getFloat("translateY") : 0;
-            translateZ = compoundTag.contains("translateZ") ? compoundTag.getFloat("translateZ") : 0;
-            rotateX = compoundTag.contains("rotateX") ? compoundTag.getFloat("rotateX") : 0;
-            rotateY = compoundTag.contains("rotateY") ? compoundTag.getFloat("rotateY") : 0;
-            rotateZ = compoundTag.contains("rotateZ") ? compoundTag.getFloat("rotateZ") : 0;
+            translateX = compoundTag.getFloatOr("translateX", 0);
+            translateY = compoundTag.getFloatOr("translateY", 0);
+            translateZ = compoundTag.getFloatOr("translateZ", 0);
+            rotateX = compoundTag.getFloatOr("rotateX", 0);
+            rotateY = compoundTag.getFloatOr("rotateY", 0);
+            rotateZ = compoundTag.getFloatOr("rotateZ", 0);
         }
 
         @Override
-        public void writeCompoundTag(CompoundTag compoundTag) {
+        public void writeCompoundTag(ValueOutput compoundTag) {
             compoundTag.putString("prefabId", prefabId == null ? "" : prefabId);
             compoundTag.putBoolean("fullLight", fullLight);
             

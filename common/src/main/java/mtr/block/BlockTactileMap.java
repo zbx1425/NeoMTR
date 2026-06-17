@@ -32,7 +32,7 @@ public class BlockTactileMap extends BlockDirectionalDoubleBlockBase implements 
 
 	@Override
 	public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult blockHitResult) {
-		if (world.isClientSide && TileEntityTactileMap.onUse != null) {
+		if (world.isClientSide() && TileEntityTactileMap.onUse != null) {
 			TileEntityTactileMap.onUse.accept(pos);
 			return InteractionResult.SUCCESS;
 		} else {
@@ -86,14 +86,14 @@ public class BlockTactileMap extends BlockDirectionalDoubleBlockBase implements 
 
 		@Override
 		public void setRemoved() {
-			if (level != null && level.isClientSide && updateSoundSource != null) {
+			if (level != null && level.isClientSide() && updateSoundSource != null) {
 				updateSoundSource.accept(worldPosition, true);
 			}
 			super.setRemoved();
 		}
 
 		public static <T extends BlockEntityMapper> void tick(Level world, BlockPos pos) {
-			if (world != null && world.isClientSide && updateSoundSource != null) {
+			if (world != null && world.isClientSide() && updateSoundSource != null) {
 				updateSoundSource.accept(pos, false);
 			}
 		}

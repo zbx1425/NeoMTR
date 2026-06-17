@@ -6,19 +6,16 @@ import mtr.mappings.BlockEntityMapper;
 import mtr.mappings.BlockEntityRendererMapper;
 import mtr.mappings.EntityRendererMapper;
 import mtr.mappings.FabricRegistryUtilities;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorResolverRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -29,10 +26,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class RegistryClientImpl {
-
-	public static void registerBlockRenderType(RenderType type, Block block) {
-		BlockRenderLayerMap.INSTANCE.putBlock(block, type);
-	}
 
 	public static void registerItemModelPredicate(String id, Item item, String tag) {
 		FabricRegistryUtilities.registerItemModelPredicate(id, item, tag);
@@ -47,11 +40,11 @@ public class RegistryClientImpl {
 	}
 
 	public static void registerKeyBinding(KeyMapping keyMapping) {
-		KeyBindingHelper.registerKeyBinding(keyMapping);
+		KeyMappingHelper.registerKeyMapping(keyMapping);
 	}
 
 	public static void registerBlockColors(Block block) {
-		ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> MTRClient.getStationColor(pos), block);
+		BlockColorRegistry.register((state, world, pos, tintIndex) -> MTRClient.getStationColor(pos), block);
 	}
 
 	public static void registerNetworkReceiver(ResourceLocation resourceLocation, Consumer<FriendlyByteBuf> consumer) {

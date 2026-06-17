@@ -16,6 +16,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class BlockFreeNode extends BlockNode implements EntityBlockMapper {
@@ -105,21 +107,17 @@ public class BlockFreeNode extends BlockNode implements EntityBlockMapper {
 		}
 
 		@Override
-		public void readCompoundTag(CompoundTag compoundTag) {
-			if (compoundTag.contains(KEY_ANGLE)) {
-				angleDegrees = compoundTag.getFloat(KEY_ANGLE);
-			} else {
-				angleDegrees = Float.NaN;
-			}
-			transportMode = EnumHelper.valueOf(TransportMode.TRAIN, compoundTag.getString(KEY_TRANSPORT_MODE));
+		public void readCompoundTag(ValueInput compoundTag) {
+			angleDegrees = compoundTag.getFloatOr(KEY_ANGLE, Float.NaN);
+			transportMode = EnumHelper.valueOf(TransportMode.TRAIN, compoundTag.getStringOr(KEY_TRANSPORT_MODE, ""));
 		}
 
 		@Override
-		public void writeCompoundTag(CompoundTag compoundTag) {
+		public void writeCompoundTag(ValueOutput compoundTag) {
 			if (!Float.isNaN(angleDegrees)) {
 				compoundTag.putFloat(KEY_ANGLE, angleDegrees);
 			} else {
-				compoundTag.remove(KEY_ANGLE);
+				compoundTag.discard(KEY_ANGLE);
 			}
 			compoundTag.putString(KEY_TRANSPORT_MODE, transportMode.toString());
 		}

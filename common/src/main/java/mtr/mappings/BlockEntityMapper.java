@@ -6,6 +6,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public abstract class BlockEntityMapper extends BlockEntity {
 
@@ -14,20 +16,20 @@ public abstract class BlockEntityMapper extends BlockEntity {
 	}
 
 	@Override
-	public final void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider registries) {
-		super.loadAdditional(compoundTag, registries);
-		readCompoundTag(compoundTag);
+	public final void loadAdditional(ValueInput valueInput) {
+		super.loadAdditional(valueInput);
+		readCompoundTag(valueInput);
 	}
 
 	@Override
-	public final void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider registries) {
-		super.saveAdditional(compoundTag, registries);
-		writeCompoundTag(compoundTag);
+	public final void saveAdditional(ValueOutput valueOutput) {
+		super.saveAdditional(valueOutput);
+		writeCompoundTag(valueOutput);
 	}
 
-	public void readCompoundTag(CompoundTag compoundTag) {
+	public void readCompoundTag(ValueInput valueInput) {
 	}
 
-	public void writeCompoundTag(CompoundTag compoundTag) {
+	public void writeCompoundTag(ValueOutput valueOutput) {
 	}
 }

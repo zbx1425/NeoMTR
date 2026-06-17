@@ -6,7 +6,6 @@ import mtr.mappings.BlockEntityRendererMapper;
 import mtr.mappings.EntityRendererMapper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -20,11 +19,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class RegistryClient {
-
-	@ExpectPlatform
-	public static void registerBlockRenderType(RenderType type, Block block) {
-		throw new AssertionError();
-	}
 
 	@ExpectPlatform
 	public static void registerItemModelPredicate(String id, Item item, String tag) {

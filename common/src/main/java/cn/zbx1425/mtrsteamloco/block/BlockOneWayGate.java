@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -34,8 +35,8 @@ public class BlockOneWayGate extends BlockDirectionalMapper {
     }
 
     @Override
-    public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
-        if (!world.isClientSide && entity instanceof Player player) {
+    public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+        if (!world.isClientSide() && entity instanceof Player player) {
             final Direction facing = IBlock.getStatePropertySafe(state, FACING);
             final Vec3 playerPosRotated = entity.position().subtract(pos.getX() + 0.5, 0, pos.getZ() + 0.5).yRot((float) Math.toRadians(facing.toYRot()));
             final float deltaFacing = Mth.wrapDegrees(entity.getYHeadRot() - facing.toYRot() + 180f);
@@ -46,7 +47,7 @@ public class BlockOneWayGate extends BlockDirectionalMapper {
                     world.setBlockAndUpdate(pos, state.setValue(OPEN, TicketSystem.EnumTicketBarrierOpen.CLOSED));
                 }
                 if (deltaFacing > -45 && deltaFacing < 45) {
-                    player.displayClientMessage(Text.translatable("gui.mtrsteamloco.one_way_gate.wrong_way_pass"), true);
+                    player.sendOverlayMessage(Text.translatable("gui.mtrsteamloco.one_way_gate.wrong_way_pass"));
                 }
             } else {
                 if (!open.isOpen()) {

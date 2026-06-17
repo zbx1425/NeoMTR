@@ -3,9 +3,9 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
 	id "java"
-	id "architectury-plugin" version "3.4-SNAPSHOT"
+	id "architectury-plugin" version "3.5-SNAPSHOT"
 	id "de.undercouch.download" version "+"
-	id "dev.architectury.loom" version "1.7-SNAPSHOT" apply false
+	id "dev.architectury.loom-no-remap" version "1.14-SNAPSHOT" apply false
 	id "com.github.johnrengelman.shadow" version "8.1.1" apply false
 }
 
@@ -24,14 +24,14 @@ architectury {
 }
 
 configure(subprojects.findAll {it.name != 'rhino'}) {
-	apply plugin: "dev.architectury.loom"
+	apply plugin: "dev.architectury.loom-no-remap"
 	apply plugin: "com.github.johnrengelman.shadow"
 
 	loom {
-		silentMojangMappingsLicense()
+//		silentMojangMappingsLicense()
 
 		mixin {
-			useLegacyMixinAp = true
+//			useLegacyMixinAp = true
 			defaultRefmapName = "mixins.mtr.refmap.json"
 		}
 	}
@@ -42,10 +42,10 @@ configure(subprojects.findAll {it.name != 'rhino'}) {
 
 	dependencies {
 		minecraft "com.mojang:minecraft:${minecraft_version}"
-		mappings loom.layered() {
-			officialMojangMappings()
-			parchment("org.parchmentmc.data:parchment-${parchment_minecraft_version}:${parchment_version}@zip")
-		}
+//		mappings loom.layered() {
+//			officialMojangMappings()
+//			parchment("org.parchmentmc.data:parchment-${parchment_minecraft_version}:${parchment_version}@zip")
+//		}
 		implementation name: "Dynmap-3.2.1"
 		implementation name: "BlueMapAPI-2.1.1"
 		implementation "xyz.jpenilla:squaremap-api:+"
@@ -183,14 +183,14 @@ configure(allprojects.findAll {it.name != 'rhino'}) {
 	tasks.withType(JavaCompile) {
 		options.encoding = "UTF-8"
 	}
-
-	afterEvaluate {
-		for (def task in it.tasks) {
-			if (task != rootProject.tasks.setupFiles) {
-				task.dependsOn rootProject.tasks.setupFiles
-			}
-		}
-	}
+//
+//	afterEvaluate {
+//		for (def task in it.tasks) {
+//			if (task != rootProject.tasks.setupFiles) {
+//				task.dependsOn rootProject.tasks.setupFiles
+//			}
+//		}
+//	}
 }
 
 java {
@@ -228,25 +228,25 @@ static Object getJson(String url) {
 import org.gradle.api.internal.file.copy.CopyAction;
 import org.gradle.api.internal.file.copy.CopyActionProcessingStream;
 
-class DummyArchiveTask extends AbstractArchiveTask {
+//class DummyArchiveTask extends AbstractArchiveTask {
+//
+//	protected CopyAction createCopyAction() {
+//		return new DummyCopyAction();
+//	}
+//
+//	class DummyCopyAction implements CopyAction {
+//
+//		@Override
+//		WorkResult execute(CopyActionProcessingStream stream) {
+//			return WorkResults.didWork(true);
+//		}
+//	}
+//}
 
-	protected CopyAction createCopyAction() {
-		return new DummyCopyAction();
-	}
-
-	class DummyCopyAction implements CopyAction {
-
-		@Override
-		WorkResult execute(CopyActionProcessingStream stream) {
-			return WorkResults.didWork(true);
-		}
-	}
-}
-
-task dummyForgeOutput(type: DummyArchiveTask) {
-	// This is to make github.com/teaconmc/longjing happy.
-	destinationDirectory = file("build/release/")
-	archiveBaseName = "NeoMTR-neoforge"
-	archiveVersion = rootProject.mod_version + "+" + minecraft_version
-	archiveExtension = "jar"
-}
+//task dummyForgeOutput(type: DummyArchiveTask) {
+//	// This is to make github.com/teaconmc/longjing happy.
+//	destinationDirectory = file("build/release/")
+//	archiveBaseName = "NeoMTR-neoforge"
+//	archiveVersion = rootProject.mod_version + "+" + minecraft_version
+//	archiveExtension = "jar"
+//}

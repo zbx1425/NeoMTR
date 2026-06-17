@@ -1,5 +1,6 @@
 package mtr.block;
 
+import com.mojang.serialization.Codec;
 import mtr.BlockEntityTypes;
 import mtr.Items;
 import mtr.MTR;
@@ -20,6 +21,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -43,9 +46,9 @@ public class BlockLiftButtons extends BlockDirectionalMapper implements EntityBl
 		final InteractionResult result = IBlock.checkHoldingBrush(world, player, () -> {
 			final boolean unlocked = !IBlock.getStatePropertySafe(state, UNLOCKED);
 			world.setBlockAndUpdate(pos, state.setValue(UNLOCKED, unlocked));
-			player.displayClientMessage(unlocked ? Text.translatable("gui.mtr.lift_buttons_unlocked") : Text.translatable("gui.mtr.lift_buttons_locked"), true);
+			player.sendOverlayMessage(unlocked ? Text.translatable("gui.mtr.lift_buttons_unlocked") : Text.translatable("gui.mtr.lift_buttons_locked"));
 		});
-		if (world.isClientSide || result == InteractionResult.SUCCESS) {
+		if (world.isClientSide() || result == InteractionResult.SUCCESS) {
 			return InteractionResult.SUCCESS;
 		} else {
 			if (player.isHolding(Items.LIFT_BUTTONS_LINK_CONNECTOR.get()) || player.isHolding(Items.LIFT_BUTTONS_LINK_REMOVER.get())) {
@@ -106,18 +109,18 @@ public class BlockLiftButtons extends BlockDirectionalMapper implements EntityBl
 		}
 
 		@Override
-		public void readCompoundTag(CompoundTag compoundTag) {
+		public void readCompoundTag(ValueInput compoundTag) {
 			trackPositions.clear();
-			for (final long position : compoundTag.getLongArray(KEY_TRACK_FLOOR_POS)) {
+			ValueInput.TypedInputList<Long> floorsPos = compoundTag.listOrEmpty(KEY_TRACK_FLOOR_POS, Codec.LONG);
+			for (final long position : floorsPos) {
 				trackPositions.add(BlockPos.of(position));
 			}
 		}
 
 		@Override
-		public void writeCompoundTag(CompoundTag compoundTag) {
-			final List<Long> trackPositionsList = new ArrayList<>();
+		public void writeCompoundTag(ValueOutput compoundTag) {
+			final ValueOutput.TypedOutputList<Long> trackPositionsList = compoundTag.list(KEY_TRACK_FLOOR_POS, Codec.LONG);
 			trackPositions.forEach(position -> trackPositionsList.add(position.asLong()));
-			compoundTag.putLongArray(KEY_TRACK_FLOOR_POS, trackPositionsList);
 		}
 
 		@Override
@@ -151,7 +154,7 @@ public class BlockLiftButtons extends BlockDirectionalMapper implements EntityBl
 		}
 
 		public static <T extends BlockEntityMapper> void tick(Level world, BlockPos pos, T blockEntity) {
-			if (world != null && world.getNearestPlayer(pos.getX(), pos.getY(), pos.getZ(), 16, entity -> true) != null && blockEntity instanceof TileEntityLiftButtons && !world.isClientSide && MTR.isGameTickInterval(UPDATE_INTERVAL, (int) pos.asLong())) {
+			if (world != null && world.getNearestPlayer(pos.getX(), pos.getY(), pos.getZ(), 16, entity -> true) != null && blockEntity instanceof TileEntityLiftButtons && !world.isClientSide() && MTR.isGameTickInterval(UPDATE_INTERVAL, (int) pos.asLong())) {
 				((TileEntityLiftButtons) blockEntity).forEachTrackPosition(world, null);
 				blockEntity.setChanged();
 				((TileEntityLiftButtons) blockEntity).syncData();
