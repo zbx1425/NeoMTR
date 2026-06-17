@@ -27,10 +27,10 @@ public abstract class BlockStationNameBase extends BlockDirectionalMapper implem
 		super(settings);
 	}
 
-	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
-		tooltip.add(Text.translatable("tooltip.mtr.station_color_name").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
-	}
+//	@Override
+//	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+//		tooltip.add(Text.translatable("tooltip.mtr.station_color_name").setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+//	}
 
 	public abstract static class TileEntityStationNameBase extends BlockEntityMapper implements IGui {
 

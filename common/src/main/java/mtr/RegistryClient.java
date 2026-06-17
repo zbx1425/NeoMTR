@@ -11,7 +11,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -19,11 +18,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class RegistryClient {
-
-	@ExpectPlatform
-	public static void registerItemModelPredicate(String id, Item item, String tag) {
-		throw new AssertionError();
-	}
 
 	@ExpectPlatform
 	public static <T extends BlockEntityMapper> void registerTileEntityRenderer(BlockEntityType<T> type, Function<BlockEntityRenderDispatcher, BlockEntityRendererMapper<T>> function) {

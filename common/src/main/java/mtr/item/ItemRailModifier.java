@@ -12,11 +12,13 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ItemRailModifier extends ItemNodeModifierBase {
 
@@ -36,11 +38,11 @@ public class ItemRailModifier extends ItemNodeModifierBase {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack itemStack, TooltipContext level, List<Component> tooltip, TooltipFlag tooltipFlag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag tooltipFlag) {
 		if (isConnector && railType != null && railType.canAccelerate) {
-			tooltip.add(Text.translatable("tooltip.mtr.rail_speed_limit", railType.speedLimit).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+			tooltipAdder.accept(Text.translatable("tooltip.mtr.rail_speed_limit", railType.speedLimit).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
 		}
-		super.appendHoverText(itemStack, level, tooltip, tooltipFlag);
+		super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, tooltipFlag);
 	}
 
 	@Override

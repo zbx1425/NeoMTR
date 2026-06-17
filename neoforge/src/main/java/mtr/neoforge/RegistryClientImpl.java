@@ -5,8 +5,6 @@ import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
-import dev.architectury.registry.client.rendering.RenderTypeRegistry;
-import dev.architectury.registry.item.ItemPropertiesRegistry;
 import mtr.MTRClient;
 import mtr.neoforge.mappings.ForgeUtilities;
 import mtr.mappings.*;
@@ -18,13 +16,10 @@ import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,10 +28,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class RegistryClientImpl {
-
-	public static void registerItemModelPredicate(String id, Item item, String tag) {
-		RegistryUtilitiesClient.registerItemModelPredicate(id, item, tag);
-	}
 
 	public static <T extends BlockEntityMapper> void registerTileEntityRenderer(BlockEntityType<T> type, Function<BlockEntityRenderDispatcher, BlockEntityRendererMapper<T>> function) {
 		RegistryUtilitiesClient.registerTileEntityRenderer(type, function);
@@ -86,11 +77,6 @@ public class RegistryClientImpl {
 
 
 	public interface RegistryUtilitiesClient {
-
-		static void registerItemModelPredicate(String id, Item item, String tag) {
-			ItemPropertiesRegistry.register(item, Identifier.parse(id), (itemStack, clientWorld, livingEntity, i) ->
-					itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).contains(tag) ? 1 : 0);
-		}
 
 		static <T extends BlockEntityMapper> void registerTileEntityRenderer(BlockEntityType<T> type, Function<BlockEntityRenderDispatcher, BlockEntityRendererMapper<T>> factory) {
 			BlockEntityRendererRegistry.register(type, context -> factory.apply(null));

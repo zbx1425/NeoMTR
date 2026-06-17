@@ -2,13 +2,14 @@
 	"required": true,
 	"minVersion": "0.8",
 	"package": "mtr.mixin",
-	"compatibilityLevel": "JAVA_8",
+	"compatibilityLevel": "JAVA_25",
 	"mixins": [
 		"PlayerTeleportationStateAccessor"
 	],
 	"client": [
-		"PlayerRendererOffsetMixin",
-		"BlockEntityRendererMapperMixin"
+		"BlockEntityRendererMapperMixin",
+		"EntityMixin",
+		"PlayerRendererOffsetMixin"
 	],
 	"server": [],
 	"injectors": {

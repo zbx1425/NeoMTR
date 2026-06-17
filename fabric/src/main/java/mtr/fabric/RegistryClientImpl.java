@@ -28,10 +28,6 @@ import java.util.function.Function;
 
 public class RegistryClientImpl {
 
-	public static void registerItemModelPredicate(String id, Item item, String tag) {
-		FabricRegistryUtilities.registerItemModelPredicate(id, item, tag);
-	}
-
 	public static <T extends BlockEntityMapper> void registerTileEntityRenderer(BlockEntityType<T> type, Function<BlockEntityRenderDispatcher, BlockEntityRendererMapper<T>> function) {
 		FabricRegistryUtilities.registerTileEntityRenderer(type, function);
 	}

@@ -39,7 +39,7 @@ public class MainClient {
 			RegistryClient.registerNetworkReceiver(PacketVirtualDrivingPlayers.PACKET_VIRTUAL_DRIVING_PLAYERS,
 					PacketVirtualDrivingPlayers.Client::receiveVirtualDrivingPlayersS2C);
 
-			RegistryClient.registerItemModelPredicate("mtr:selected", Main.BRIDGE_CREATOR_1.get(), ItemBlockClickingBase.TAG_POS);
+//			RegistryClient.registerItemModelPredicate("mtr:selected", Main.BRIDGE_CREATOR_1.get(), ItemBlockClickingBase.TAG_POS);
 		}
 
 		RegistryClient.registerPlayerJoinEvent(localPlayer -> {

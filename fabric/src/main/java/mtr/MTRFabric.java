@@ -9,6 +9,8 @@ import mtr.mappings.FabricRegistryUtilities;
 import mtr.mappings.RegistryUtilities;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -24,7 +26,7 @@ public class MTRFabric implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		MTR.init(MTRFabric::registerItem, MTRFabric::registerBlock, MTRFabric::registerBlock, MTRFabric::registerEnchantedBlock, MTRFabric::registerBlockEntityType, MTRFabric::registerEntityType, MTRFabric::registerSoundEvent);
+		MTR.init(MTRFabric::registerItem, MTRFabric::registerBlock, MTRFabric::registerBlock, MTRFabric::registerEnchantedBlock, MTRFabric::registerBlockEntityType, MTRFabric::registerEntityType, MTRFabric::registerSoundEvent, MTRFabric::registerDataComponentType);
 		Main.init(REGISTRIES);
 		PACKET_REGISTRY.commitCommon();
 	}
@@ -63,6 +65,10 @@ public class MTRFabric implements ModInitializer {
 
 	private static void registerEntityType(String path, RegistryObject<? extends EntityType<? extends Entity>> entityType) {
 		Registry.register(RegistryUtilities.registryGetEntityType(), MTR.id(path), entityType.get());
+	}
+
+	private static void registerDataComponentType(String path, RegistryObject<? extends DataComponentType<?>> dataComponentType) {
+		Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, MTR.id(path), dataComponentType.get());
 	}
 
 	private static void registerSoundEvent(String path, SoundEvent soundEvent) {

@@ -18,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class ItemNodeModifierSelectableBlockBase extends ItemNodeModifierBase {
 
@@ -71,22 +73,22 @@ public abstract class ItemNodeModifierSelectableBlockBase extends ItemNodeModifi
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag tooltipFlag) {
 		if (height > 0) {
-			tooltip.add(Text.translatable("tooltip.mtr.rail_action_height", height).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+			tooltipAdder.accept(Text.translatable("tooltip.mtr.rail_action_height", height).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
 		}
-		tooltip.add(Text.translatable("tooltip.mtr.rail_action_width", width).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+		tooltipAdder.accept(Text.translatable("tooltip.mtr.rail_action_width", width).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
 
 		if (Registry.isClientEnvironment() && canSaveBlock) {
 			final BlockState state = getSavedState(stack);
 			final String[] textSplit = Text.translatable(state.isAir() ? "tooltip.mtr.shift_right_click_to_select_material" : "tooltip.mtr.shift_right_click_to_clear", Minecraft.getInstance().options.keyShift.getTranslatedKeyMessage(), Text.translatable(mtr.Blocks.RAIL_NODE.get().getDescriptionId())).getString().split("\\|");
 			for (String text : textSplit) {
-				tooltip.add(Text.literal(text).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).applyFormat(ChatFormatting.ITALIC)));
+				tooltipAdder.accept(Text.literal(text).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY).applyFormat(ChatFormatting.ITALIC)));
 			}
-			tooltip.add(Text.translatable("tooltip.mtr.selected_material", Text.translatable(state.getBlock().getDescriptionId())).setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)));
+			tooltipAdder.accept(Text.translatable("tooltip.mtr.selected_material", Text.translatable(state.getBlock().getDescriptionId())).setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)));
 		}
 
-		super.appendHoverText(stack, context, tooltip, tooltipFlag);
+		super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, tooltipFlag);
 	}
 
 	@Override
@@ -104,7 +106,7 @@ public abstract class ItemNodeModifierSelectableBlockBase extends ItemNodeModifi
 		final CustomData customData = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
 		final CompoundTag tag = customData.copyTag();
 		if (tag.contains(TAG_BLOCK_ID)) {
-			return Block.stateById(tag.getInt(TAG_BLOCK_ID));
+			return Block.stateById(tag.getIntOr(TAG_BLOCK_ID, 0));
 		} else {
 			return Blocks.AIR.defaultBlockState();
 		}

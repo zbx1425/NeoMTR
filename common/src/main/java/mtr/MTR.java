@@ -8,6 +8,7 @@ import mtr.mappings.BlockEntityMapper;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiServer;
 import mtr.servlet.Webserver;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
@@ -42,8 +43,11 @@ public class MTR implements IPacket {
 			RegisterBlockItem registerEnchantedBlockItem,
 			BiConsumer<String, RegistryObject<? extends BlockEntityType<? extends BlockEntityMapper>>> registerBlockEntityType,
 			BiConsumer<String, RegistryObject<? extends EntityType<? extends Entity>>> registerEntityType,
-			BiConsumer<String, SoundEvent> registerSoundEvent
+			BiConsumer<String, SoundEvent> registerSoundEvent,
+			BiConsumer<String, RegistryObject<? extends DataComponentType<?>>> registerDataComponentType
 	) {
+		registerDataComponentType.accept("selected", DataComponentTypes.RAIL_MODIFIER_SELECTED);
+
 		registerItem.accept("brush", Items.BRUSH);
 		registerItem.accept("escalator", Items.ESCALATOR);
 		registerItem.accept("lift_buttons_link_connector", Items.LIFT_BUTTONS_LINK_CONNECTOR);

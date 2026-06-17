@@ -4,8 +4,8 @@ import mtr.mappings.NetworkUtilities;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import java.util.HashMap;
@@ -37,11 +37,11 @@ public class CompatPacketRegistry {
             Consumer<FriendlyByteBuf> handlerS2C = packetsS2C.getOrDefault(packets.getKey(), arg -> {});
             NetworkUtilities.PacketCallback handlerC2S = packetsC2S.getOrDefault(packets.getKey(), (server, player, arg) -> {});
             CompatPacket packet = packets.getValue();
-            registrar.playBidirectional(packet.TYPE, packet.STREAM_CODEC, new DirectionalPayloadHandler<>(
+            registrar.playBidirectional(packet.TYPE, packet.STREAM_CODEC,
                     (arg, iPayloadContext) -> handlerS2C.accept(arg.buffer),
                     (arg, iPayloadContext) -> handlerC2S.packetCallback(
-                            iPayloadContext.player().getServer(), (ServerPlayer)iPayloadContext.player(), arg.buffer)
-            ));
+                    ((ServerPlayer)iPayloadContext.player()).level().getServer(), (ServerPlayer)iPayloadContext.player(), arg.buffer)
+            );
         }
     }
 
@@ -52,6 +52,6 @@ public class CompatPacketRegistry {
 
     public void sendC2S(Identifier id, FriendlyByteBuf payload) {
         CompatPacket packet = packets.get(id);
-        PacketDistributor.sendToServer(packet.new Payload(payload));
+        ClientPacketDistributor.sendToServer(packet.new Payload(payload));
     }
 }

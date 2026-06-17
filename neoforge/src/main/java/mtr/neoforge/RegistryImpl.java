@@ -38,7 +38,7 @@ public class RegistryImpl {
 	}
 
 	public static <T extends BlockEntityMapper> BlockEntityType<T> getBlockEntityType(Utilities.TileEntitySupplier<T> supplier, Block block) {
-		return BlockEntityType.Builder.of(supplier::supplier, block).build(null);
+		return new BlockEntityType<>(supplier::supplier, block);
 	}
 
 	public static Supplier<CreativeModeTab> getCreativeModeTab(Identifier id, Supplier<ItemStack> supplier) {

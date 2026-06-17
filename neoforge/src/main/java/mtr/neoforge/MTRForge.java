@@ -17,6 +17,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
@@ -44,6 +45,7 @@ public class MTRForge {
 	private static final DeferredRegisterHolder<Item> ITEMS = new DeferredRegisterHolder<>(MTR.MOD_ID, ForgeUtilities.registryGetItem());
 	private static final DeferredRegisterHolder<Block> BLOCKS = new DeferredRegisterHolder<>(MTR.MOD_ID, ForgeUtilities.registryGetBlock());
 	private static final DeferredRegisterHolder<BlockEntityType<?>> BLOCK_ENTITY_TYPES = new DeferredRegisterHolder<>(MTR.MOD_ID, ForgeUtilities.registryGetBlockEntityType());
+	private static final DeferredRegisterHolder<DataComponentType<?>> DATA_COMPONENT_TYPES = new DeferredRegisterHolder<>(MTR.MOD_ID, Registries.DATA_COMPONENT_TYPE);
 	private static final DeferredRegisterHolder<EntityType<?>> ENTITY_TYPES = new DeferredRegisterHolder<>(MTR.MOD_ID, ForgeUtilities.registryGetEntityType());
 	private static final DeferredRegisterHolder<SoundEvent> SOUND_EVENTS = new DeferredRegisterHolder<>(MTR.MOD_ID, ForgeUtilities.registryGetSoundEvent());
 	private static final DeferredRegisterHolder<CreativeModeTab> CREATIVE_MODE_TABS = new DeferredRegisterHolder<>(MTR.MOD_ID, Registries.CREATIVE_MODE_TAB);
@@ -52,7 +54,7 @@ public class MTRForge {
 	public static final CompatPacketRegistry PACKET_REGISTRY = new CompatPacketRegistry();
 
 	static {
-		MTR.init(MTRForge::registerItem, MTRForge::registerBlock, MTRForge::registerBlock, MTRForge::registerEnchantedBlock, MTRForge::registerBlockEntityType, MTRForge::registerEntityType, MTRForge::registerSoundEvent);
+		MTR.init(MTRForge::registerItem, MTRForge::registerBlock, MTRForge::registerBlock, MTRForge::registerEnchantedBlock, MTRForge::registerBlockEntityType, MTRForge::registerEntityType, MTRForge::registerSoundEvent, MTRForge::registerDataComponentType);
 		cn.zbx1425.mtrsteamloco.Main.init(registries);
 	}
 
@@ -62,6 +64,7 @@ public class MTRForge {
 		BLOCKS.register(eventBus);
 		BLOCK_ENTITY_TYPES.register(eventBus);
 		ENTITY_TYPES.register(eventBus);
+		DATA_COMPONENT_TYPES.register(eventBus);
 		SOUND_EVENTS.register(eventBus);
 		registries.registerAllDeferred(eventBus);
 
@@ -121,6 +124,10 @@ public class MTRForge {
 
 	private static void registerBlockEntityType(String path, RegistryObject<? extends BlockEntityType<? extends BlockEntityMapper>> blockEntityType) {
 		BLOCK_ENTITY_TYPES.register(path, blockEntityType::get);
+	}
+
+	private static void registerDataComponentType(String path, RegistryObject<? extends DataComponentType<?>> dataComponentType) {
+		DATA_COMPONENT_TYPES.register(path, dataComponentType::get);
 	}
 
 	private static void registerEntityType(String path, RegistryObject<? extends EntityType<? extends Entity>> entityType) {

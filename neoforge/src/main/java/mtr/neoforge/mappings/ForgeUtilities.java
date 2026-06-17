@@ -17,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -111,37 +112,39 @@ public class ForgeUtilities {
 	public static class Events {
 
 		@SubscribeEvent
-		public static void onRenderTickEvent(RenderLevelStageEvent event) {
-			if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS) {
-				renderTickAction.run();
-			}
+		public static void onRenderTickEvent(RenderLevelStageEvent.AfterOpaqueBlocks event) {
+			renderTickAction.run();
 		}
 
 		@SubscribeEvent
 		public static void onRenderGameOverlayEvent(RenderGuiLayerEvent.Post event) {
 //			if (event.getLayer() != VanillaGuiLayers.SCOREBOARD_SIDEBAR) return;
-			renderGameOverlayAction.accept(event.getGuiGraphicsExtractor());
+			renderGameOverlayAction.accept(event.getGuiGraphics());
 		}
 
 		@SubscribeEvent
-		public static void onRenderLevelStageEvent(RenderLevelStageEvent event) {
-			if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_ENTITIES) {
-				PoseStack matrices = event.getPoseStack();
-				matrices.pushMatrix();
-				final Vec3 cameraPos = event.getCamera().getPosition();
-				matrices.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
-				RenderTrains.render(0, matrices, Minecraft.getInstance().renderBuffers().bufferSource());
-				matrices.popMatrix();
-			} else if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
-				Minecraft.getInstance().level.getProfiler().popPush("NTEBlockEntities");
-				BufferSourceProxy vertexConsumersProxy = new BufferSourceProxy(Minecraft.getInstance().renderBuffers().bufferSource());
-				MainClient.drawScheduler.commit(vertexConsumersProxy, MainClient.drawContext);
-				vertexConsumersProxy.commit();
-			} else if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_LEVEL) {
-				PoseStack matrices = event.getPoseStack();
-				ResourcePackCreatorScreen.render(matrices);
-				MainClient.drawContext.resetFrameProfiler();
-			}
+		public static void onAfterEntitiesRenderLevelEvent(RenderLevelStageEvent.AfterOpaqueFeatures event) {
+			PoseStack matrices = event.getPoseStack();
+			matrices.pushPose();
+			final Vec3 cameraPos = event.getLevelRenderState().cameraRenderState.pos;
+			matrices.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+			RenderTrains.render(0, matrices, Minecraft.getInstance().renderBuffers().bufferSource());
+			matrices.popPose();
+		}
+
+		@SubscribeEvent
+		public static void onAfterBlockEntitiesRenderLevelEvent(RenderLevelStageEvent.AfterTranslucentFeatures event) {
+			Profiler.get().popPush("NTEBlockEntities");
+			BufferSourceProxy vertexConsumersProxy = new BufferSourceProxy(Minecraft.getInstance().renderBuffers().bufferSource());
+			MainClient.drawScheduler.commit(vertexConsumersProxy, MainClient.drawContext);
+			vertexConsumersProxy.commit();
+		}
+
+		@SubscribeEvent
+		public static void onAfterLevelRenderLevelEvent(RenderLevelStageEvent.AfterLevel event) {
+			PoseStack matrices = event.getPoseStack();
+			ResourcePackCreatorScreen.render(matrices);
+			MainClient.drawContext.resetFrameProfiler();
 		}
 
 		@SubscribeEvent
