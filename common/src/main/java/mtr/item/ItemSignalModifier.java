@@ -27,7 +27,7 @@ public class ItemSignalModifier extends ItemNodeModifierBase {
 		if (railwayData.containsRail(posStart, posEnd)) {
 			PacketTrainDataGuiServer.createSignalS2C(world, railwayData.addSignal(player, color, posStart, posEnd), color, PathData.getRailProduct(posStart, posEnd));
 		} else if (player != null) {
-			player.displayClientMessage(Text.translatable("gui.mtr.rail_not_found"), true);
+			player.sendOverlayMessage(Text.translatable("gui.mtr.rail_not_found"));
 		}
 	}
 

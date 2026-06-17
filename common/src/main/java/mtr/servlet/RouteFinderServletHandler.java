@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import mtr.data.*;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -108,13 +108,13 @@ public class RouteFinderServletHandler extends HttpServlet {
 			} catch (Exception ignored) {
 			}
 			for (final Level world : worlds) {
-				final ResourceLocation dimensionLocation = world.dimension().location();
+				final Identifier dimensionLocation = world.dimension().identifier();
 				if (parameterDimension.equalsIgnoreCase(dimensionLocation.toString()) || parameterDimension.equalsIgnoreCase(dimensionLocation.getPath())) {
 					return world;
 				}
 			}
 			if (worlds.size() > 1) {
-				errors.add(String.format("The 'dimension' parameter must be a world index (0-%s) or a valid world ID (such as %s).", worlds.size() - 1, worlds.get(0).dimension().location().toString()));
+				errors.add(String.format("The 'dimension' parameter must be a world index (0-%s) or a valid world ID (such as %s).", worlds.size() - 1, worlds.get(0).dimension().identifier().toString()));
 			}
 		}
 

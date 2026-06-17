@@ -6,7 +6,7 @@ import mtr.mappings.NetworkUtilities;
 import mtr.mappings.Utilities;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -38,12 +38,12 @@ public class Registry {
 	}
 
 	@ExpectPlatform
-	public static Supplier<CreativeModeTab> getCreativeModeTab(ResourceLocation id, Supplier<ItemStack> supplier) {
+	public static Supplier<CreativeModeTab> getCreativeModeTab(Identifier id, Supplier<ItemStack> supplier) {
 		throw new AssertionError();
 	}
 
 	@ExpectPlatform
-	public static void registerCreativeModeTab(ResourceLocation resourceLocation, Item item) {
+	public static void registerCreativeModeTab(Identifier resourceLocation, Item item) {
 		throw new AssertionError();
 	}
 
@@ -53,12 +53,12 @@ public class Registry {
 	}
 
 	@ExpectPlatform
-	public static void registerNetworkPacket(ResourceLocation resourceLocation) {
+	public static void registerNetworkPacket(Identifier resourceLocation) {
 		throw new AssertionError();
 	}
 
 	@ExpectPlatform
-	public static void registerNetworkReceiver(ResourceLocation resourceLocation, NetworkUtilities.PacketCallback packetCallback) {
+	public static void registerNetworkReceiver(Identifier resourceLocation, NetworkUtilities.PacketCallback packetCallback) {
 		throw new AssertionError();
 	}
 
@@ -88,7 +88,7 @@ public class Registry {
 	}
 
 	@ExpectPlatform
-	public static void sendToPlayer(ServerPlayer player, ResourceLocation id, FriendlyByteBuf packet) {
+	public static void sendToPlayer(ServerPlayer player, Identifier id, FriendlyByteBuf packet) {
 		throw new AssertionError();
 	}
 

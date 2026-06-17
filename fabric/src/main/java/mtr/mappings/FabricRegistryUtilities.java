@@ -5,8 +5,8 @@ import mtr.MTR;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -15,7 +15,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 public interface FabricRegistryUtilities {
 
 	static void registerItemModelPredicate(String id, Item item, String tag) {
-		FabricModelPredicateProviderRegistry.register(item, ResourceLocation.parse(id), (itemStack, clientWorld, livingEntity, i) -> itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).contains(tag) ? 1 : 0);
+		FabricModelPredicateProviderRegistry.register(item, Identifier.parse(id), (itemStack, clientWorld, livingEntity, i) -> itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).contains(tag) ? 1 : 0);
 	}
 
 	static <T extends BlockEntityMapper> void registerTileEntityRenderer(BlockEntityType<T> type, Function<BlockEntityRenderDispatcher, BlockEntityRendererMapper<T>> factory) {
@@ -47,15 +47,15 @@ public interface FabricRegistryUtilities {
 	}
 
 	static void registerCreativeModeTab(CreativeModeTab creativeModeTab, Item item) {
-		ItemGroupEvents.MODIFY_ENTRIES_ALL.register((tab, entries) -> {
+		CreativeModeTabEvents.MODIFY_OUTPUT_ALL.register((tab, entries) -> {
 			if (tab == creativeModeTab) entries.accept(item);
 		});
 	}
 
-	static CreativeModeTab createCreativeModeTab(ResourceLocation id, Supplier<ItemStack> supplier) {
+	static CreativeModeTab createCreativeModeTab(Identifier id, Supplier<ItemStack> supplier) {
 		String normalizedPath = id.getPath().startsWith(id.getNamespace() + "_")
 				? id.getPath().substring(id.getNamespace().length() + 1) : id.getPath();
-		CreativeModeTab tab = FabricItemGroup.builder()
+		CreativeModeTab tab = FabricCreativeModeTab.builder()
 				.icon(supplier)
 				.title(Text.translatable(String.format("itemGroup.%s.%s", id.getNamespace(), normalizedPath)))
 				.build();

@@ -11,11 +11,9 @@ import mtr.client.IDrawing;
 import mtr.mappings.Text;
 import mtr.mappings.UtilitiesClient;
 import mtr.screen.WidgetBetterCheckbox;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
-#if MC_VERSION >= "12000"
-import net.minecraft.client.gui.GuiGraphics;
-#endif
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -53,11 +51,7 @@ public class EyeCandyScreen extends SelectListScreen {
     }
 
     @Override
-#if MC_VERSION >= "12000"
-    public void render(@NotNull GuiGraphics guiGraphics, int i, int j, float f) {
-#else
-    public void render(@NotNull PoseStack guiGraphics, int i, int j, float f) {
-#endif
+    public void render(@NotNull GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
         super.render(guiGraphics, i, j, f);
 
         if (isSelectingModel) {

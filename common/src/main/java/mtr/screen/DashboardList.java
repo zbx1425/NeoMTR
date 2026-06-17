@@ -8,10 +8,10 @@ import mtr.data.NameColorDataBase;
 import mtr.mappings.Text;
 import mtr.mappings.UtilitiesClient;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 import java.util.*;
@@ -65,21 +65,21 @@ public class DashboardList implements IGui {
 		this.getSearch = getSearch;
 		this.setSearch = setSearch;
 		textFieldSearch = new WidgetBetterTextField(Text.translatable("gui.mtr.search").getString());
-		buttonPrevPage = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, ResourceLocation.parse("mtr:textures/gui/icon_left.png"), 20, 40, button -> setPage(page - 1));
-		buttonNextPage = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, ResourceLocation.parse("mtr:textures/gui/icon_right.png"), 20, 40, button -> setPage(page + 1));
-		buttonFind = new WidgetSilentImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, ResourceLocation.parse("mtr:textures/gui/icon_find.png"), 20, 40, button -> onClick(onFind), playSound);
-		buttonDrawArea = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, ResourceLocation.parse("mtr:textures/gui/icon_draw_area.png"), 20, 40, button -> onClick(onDrawArea));
-		buttonEdit = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, ResourceLocation.parse("mtr:textures/gui/icon_edit.png"), 20, 40, button -> onClick(onEdit));
-		buttonUp = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, ResourceLocation.parse("mtr:textures/gui/icon_up.png"), 20, 40, button -> {
+		buttonPrevPage = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_left.png"), 20, 40, button -> setPage(page - 1));
+		buttonNextPage = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_right.png"), 20, 40, button -> setPage(page + 1));
+		buttonFind = new WidgetSilentImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_find.png"), 20, 40, button -> onClick(onFind), playSound);
+		buttonDrawArea = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_draw_area.png"), 20, 40, button -> onClick(onDrawArea));
+		buttonEdit = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_edit.png"), 20, 40, button -> onClick(onEdit));
+		buttonUp = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_up.png"), 20, 40, button -> {
 			onUp(getList);
 			onSort.run();
 		});
-		buttonDown = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, ResourceLocation.parse("mtr:textures/gui/icon_down.png"), 20, 40, button -> {
+		buttonDown = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_down.png"), 20, 40, button -> {
 			onDown(getList);
 			onSort.run();
 		});
-		buttonAdd = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, ResourceLocation.parse("mtr:textures/gui/icon_add.png"), 20, 40, button -> onClick(onAdd));
-		buttonDelete = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, ResourceLocation.parse("mtr:textures/gui/icon_delete.png"), 20, 40, button -> onClick(onDelete));
+		buttonAdd = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_add.png"), 20, 40, button -> onClick(onAdd));
+		buttonDelete = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_delete.png"), 20, 40, button -> onClick(onDelete));
 	}
 
 	public void init(Consumer<AbstractWidget> addDrawableChild) {
@@ -147,8 +147,8 @@ public class DashboardList implements IGui {
 		this.hasDelete = hasPermission && hasDelete;
 	}
 
-	public void render(GuiGraphics guiGraphics, Font textRenderer) {
-		guiGraphics.drawCenteredString(textRenderer, String.format("%s/%s", page + 1, totalPages), x + SQUARE_SIZE * 2, y + TEXT_PADDING + TEXT_FIELD_PADDING / 2, ARGB_WHITE);
+	public void render(GuiGraphicsExtractor guiGraphics, Font textRenderer) {
+		guiGraphics.centeredText(textRenderer, String.format("%s/%s", page + 1, totalPages), x + SQUARE_SIZE * 2, y + TEXT_PADDING + TEXT_FIELD_PADDING / 2, ARGB_WHITE);
 		final int itemsToShow = itemsToShow();
 		for (int i = 0; i < itemsToShow; i++) {
 			if (i + itemsToShow * page < dataFiltered.size()) {
@@ -168,13 +168,13 @@ public class DashboardList implements IGui {
 				final int textStart = TEXT_PADDING * 2 + TEXT_HEIGHT;
 				final int textWidth = textRenderer.width(drawString);
 				final int availableSpace = width - textStart;
-				guiGraphics.pose().pushPose();
+				guiGraphics.pose().pushMatrix();
 				guiGraphics.pose().translate(x + textStart, 0, 0);
 				if (textWidth > availableSpace) {
 					guiGraphics.pose().scale((float) availableSpace / textWidth, 1, 1);
 				}
-				guiGraphics.drawString(textRenderer, drawString, 0, y + drawY, ARGB_WHITE);
-				guiGraphics.pose().popPose();
+				guiGraphics.text(textRenderer, drawString, 0, y + drawY, ARGB_WHITE);
+				guiGraphics.pose().popMatrix();
 			}
 		}
 	}

@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 
@@ -79,32 +79,26 @@ public class TrainScriptContext extends AbstractScriptContext {
         scriptResultWriting.addConnModel(carIndex, model, poseStack == null ? Matrix4f.IDENTITY : poseStack.last().copy());
     }
 
-    public void drawConnStretchTexture(ResourceLocation location, int carIndex) {
+    public void drawConnStretchTexture(Identifier location, int carIndex) {
         scriptResultWriting.drawConnStretchTexture(carIndex, location);
     }
 
-    public void playCarSound(ResourceLocation sound, int carIndex, float x, float y, float z, float volume, float pitch) {
+    public void playCarSound(Identifier sound, int carIndex, float x, float y, float z, float volume, float pitch) {
         scriptResultWriting.addCarSound(
                 carIndex,
-#if MC_VERSION >= "11903"
                 SoundEvent.createVariableRangeEvent(sound),
-#else
-                new SoundEvent(sound),
-#endif
                 new Vector3f(x, y, z), volume, pitch
         );
     }
 
-    public void playAnnSound(ResourceLocation sound, float volume, float pitch) {
+    public void playAnnSound(Identifier sound, float volume, float pitch) {
         Minecraft.getInstance().execute(() -> {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null && train.isPlayerRiding(player)) {
                 Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(
                         sound, SoundSource.BLOCKS,
                         volume, pitch,
-#if MC_VERSION >= "11900"
                         SoundInstance.createUnseededRandom(),
-#endif
                         false, 0, SoundInstance.Attenuation.NONE, 0.0, 0.0, 0.0, true
                 ));
             }

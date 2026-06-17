@@ -20,10 +20,9 @@ import mtr.model.ModelBogie;
 import mtr.render.RenderTrains;
 import mtr.render.TrainRendererBase;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 
@@ -153,7 +152,7 @@ public class RenderTrainDK3 extends TrainRendererBase {
         matrices.pushPose();
         applyTransform(train, x, y - 1, z, yaw, pitch, roll, false);
 
-        final int light = LightTexture.pack(world.getBrightness(LightLayer.BLOCK, posAverage), world.getBrightness(LightLayer.SKY, posAverage));
+        final int light = LightCoordsUtil.pack(world.getBrightness(LightLayer.BLOCK, posAverage), world.getBrightness(LightLayer.SKY, posAverage));
 
         updateProp.update(train, carIndex, !train.isReversed());
         updateProp.miKeyframeTime = scheduleHelper.currentFrameTime;

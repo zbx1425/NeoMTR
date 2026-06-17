@@ -2,6 +2,7 @@ package mtr.data;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.mojang.serialization.MapCodec;
 import io.netty.buffer.Unpooled;
 import mtr.MTR;
 import mtr.Registry;
@@ -15,7 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,6 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -98,7 +100,7 @@ public class RailwayData extends PersistentStateMapper implements IPacket {
 		trainPositions.add(new HashMap<>());
 		trainPositions.add(new HashMap<>());
 
-		final ResourceLocation dimensionLocation = world.dimension().location();
+		final Identifier dimensionLocation = world.dimension().identifier();
 		final Path savePath = ((ServerLevel) world).getServer().getWorldPath(LevelResource.ROOT).resolve("mtr").resolve(dimensionLocation.getNamespace()).resolve(dimensionLocation.getPath());
 
 		railwayDataFileSaveModule = new RailwayDataFileSaveModule(this, world, rails, savePath, signalBlocks);
@@ -542,7 +544,7 @@ public class RailwayData extends PersistentStateMapper implements IPacket {
 			if (server != null) {
 				final CommandSourceStack commandSourceStack = server.createCommandSourceStack();
 				runCommand(server, commandSourceStack, "/gamerule doDaylightCycle true");
-				runCommand(server, commandSourceStack, "/taw set-cycle-length " + world.dimension().location() + " 864000 864000");
+				runCommand(server, commandSourceStack, "/taw set-cycle-length " + world.dimension().identifier() + " 864000 864000");
 				runCommand(server, commandSourceStack, "/taw reload");
 				final Calendar calendar = Calendar.getInstance();
 				final long ticks = Math.round((calendar.get(Calendar.HOUR_OF_DAY) + Depot.HOURS_IN_DAY - 6) * 1000 + calendar.get(Calendar.MINUTE) / 0.06 + calendar.get(Calendar.SECOND) / 3.6) % 24000;
@@ -798,7 +800,7 @@ public class RailwayData extends PersistentStateMapper implements IPacket {
 		lifts.removeIf(lift -> lift.isInvalidLift(world));
 	}
 
-	private static void removeSavedRailS2C(Level world, Set<? extends SavedRailBase> savedRailBases, Map<BlockPos, Map<BlockPos, Rail>> rails, ResourceLocation packetId) {
+	private static void removeSavedRailS2C(Level world, Set<? extends SavedRailBase> savedRailBases, Map<BlockPos, Map<BlockPos, Rail>> rails, Identifier packetId) {
 		savedRailBases.removeIf(savedRailBase -> {
 			final boolean delete = savedRailBase.isInvalidSavedRail(rails);
 			if (delete) {

@@ -5,9 +5,9 @@ import mtr.data.TransportMode;
 import mtr.mappings.Text;
 import mtr.mappings.UtilitiesClient;
 import mtr.packet.PacketTrainDataGuiClient;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class PlatformScreen extends SavedRailScreenBase<Platform> {
 
@@ -25,10 +25,10 @@ public class PlatformScreen extends SavedRailScreenBase<Platform> {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
 		if (showScheduleControls) {
-			guiGraphics.drawString(font, DWELL_TIME_TEXT, SQUARE_SIZE, SQUARE_SIZE * 2 + TEXT_FIELD_PADDING + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.text(font, DWELL_TIME_TEXT, SQUARE_SIZE, SQUARE_SIZE * 2 + TEXT_FIELD_PADDING + TEXT_PADDING, ARGB_WHITE);
 		}
 		guiGraphics.pose().translate(0, 0, 100);
 	}
@@ -47,7 +47,7 @@ public class PlatformScreen extends SavedRailScreenBase<Platform> {
 	}
 
 	@Override
-	protected ResourceLocation getPacketIdentifier() {
+	protected Identifier getPacketIdentifier() {
 		return PACKET_UPDATE_PLATFORM;
 	}
 }

@@ -14,7 +14,7 @@ import mtr.mappings.Utilities;
 import mtr.mixin.PlayerTeleportationStateAccessor;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -41,22 +41,22 @@ public class RegistryImpl {
 		return BlockEntityType.Builder.of(supplier::supplier, block).build(null);
 	}
 
-	public static Supplier<CreativeModeTab> getCreativeModeTab(ResourceLocation id, Supplier<ItemStack> supplier) {
+	public static Supplier<CreativeModeTab> getCreativeModeTab(Identifier id, Supplier<ItemStack> supplier) {
 		String normalizedPath = id.getPath().startsWith(id.getNamespace() + "_")
 				? id.getPath().substring(id.getNamespace().length() + 1) : id.getPath();
 		return ForgeUtilities.createCreativeModeTab(id, supplier,
 				String.format("itemGroup.%s.%s", id.getNamespace(), normalizedPath));
 	}
 
-	public static void registerCreativeModeTab(ResourceLocation resourceLocation, Item item) {
+	public static void registerCreativeModeTab(Identifier resourceLocation, Item item) {
 		ForgeUtilities.registerCreativeModeTab(resourceLocation, item);
 	}
 
-	public static void registerNetworkPacket(ResourceLocation resourceLocation) {
+	public static void registerNetworkPacket(Identifier resourceLocation) {
 		MTRForge.PACKET_REGISTRY.registerPacket(resourceLocation);
 	}
 
-	public static void registerNetworkReceiver(ResourceLocation resourceLocation, NetworkUtilities.PacketCallback packetCallback) {
+	public static void registerNetworkReceiver(Identifier resourceLocation, NetworkUtilities.PacketCallback packetCallback) {
 		MTRForge.PACKET_REGISTRY.registerNetworkReceiverC2S(resourceLocation, packetCallback);
 	}
 
@@ -81,7 +81,7 @@ public class RegistryImpl {
 		RegistryUtilities.registerTickEvent(consumer);
 	}
 
-	public static void sendToPlayer(ServerPlayer player, ResourceLocation id, FriendlyByteBuf packet) {
+	public static void sendToPlayer(ServerPlayer player, Identifier id, FriendlyByteBuf packet) {
 		packet.resetReaderIndex();
 		MTRForge.PACKET_REGISTRY.sendS2C(player, id, packet);
 	}

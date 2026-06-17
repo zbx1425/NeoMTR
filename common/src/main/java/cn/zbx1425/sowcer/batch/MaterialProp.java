@@ -8,8 +8,8 @@ import com.google.gson.JsonParser;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.opengl.GL33;
 
 import java.io.DataInputStream;
@@ -24,7 +24,7 @@ public class MaterialProp {
     /** Name of the shader program. Must be loaded in ShaderManager. */
     public String shaderName;
     /** The texture to use. Null disables texture. */
-    public ResourceLocation texture;
+    public Identifier texture;
 
     /** The vertex attribute values to use for those specified with VertAttrSrc MATERIAL. */
     public VertAttrState attrState = new VertAttrState();
@@ -56,7 +56,7 @@ public class MaterialProp {
         String content = new String(dis.readNBytes(len), StandardCharsets.UTF_8);
         JsonObject mtlObj = (JsonObject)new JsonParser().parse(content);
         this.shaderName = mtlObj.get("shaderName").getAsString();
-        this.texture = mtlObj.get("texture").isJsonNull() ? null : ResourceLocation.parse(mtlObj.get("texture").getAsString());
+        this.texture = mtlObj.get("texture").isJsonNull() ? null : Identifier.parse(mtlObj.get("texture").getAsString());
         this.attrState.color = mtlObj.get("color").isJsonNull() ? null : mtlObj.get("color").getAsInt();
         this.attrState.lightmapUV = mtlObj.get("lightmapUV").isJsonNull() ? null : mtlObj.get("lightmapUV").getAsInt();
         this.translucent = mtlObj.has("translucent") && mtlObj.get("translucent").getAsBoolean();
@@ -65,12 +65,9 @@ public class MaterialProp {
         this.cutoutHack = mtlObj.has("cutoutHack") && mtlObj.get("cutoutHack").getAsBoolean();
     }
 
-    public static final ResourceLocation WHITE_TEXTURE_LOCATION = ResourceLocation.parse("minecraft:textures/misc/white.png");
+    public static final Identifier WHITE_TEXTURE_LOCATION = Identifier.parse("minecraft:textures/misc/white.png");
 
     public void setupCompositeState() {
-#if MC_VERSION <= "11903"
-        RenderSystem.enableTexture();
-#endif
         if (texture != null) {
             // TextureManager textureManager = Minecraft.getInstance().getTextureManager();
             // textureManager.getTexture(texture).setFilter(false, false);
@@ -97,7 +94,7 @@ public class MaterialProp {
 
     public RenderType getBlazeRenderType() {
         RenderType result;
-        ResourceLocation textureToUse = texture == null ? WHITE_TEXTURE_LOCATION : texture;
+        Identifier textureToUse = texture == null ? WHITE_TEXTURE_LOCATION : texture;
         switch (shaderName) {
             case "rendertype_entity_cutout":
                 result = BlazeRenderType.entityCutout(textureToUse);

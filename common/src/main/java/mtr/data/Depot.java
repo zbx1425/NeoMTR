@@ -98,13 +98,13 @@ public class Depot extends AreaBase implements IReducedSaveData {
 		}
 
 		for (int i = 0; i < HOURS_IN_DAY; i++) {
-			frequencies[i] = compoundTag.getInt(KEY_FREQUENCIES + i);
+			frequencies[i] = compoundTag.getIntOr(KEY_FREQUENCIES + i, 0);
 		}
 
-		lastDeployedMillis = System.currentTimeMillis() - compoundTag.getLong(KEY_LAST_DEPLOYED);
-		deployIndex = compoundTag.getInt(KEY_DEPLOY_INDEX);
-		repeatInfinitely = compoundTag.getBoolean(KEY_REPEAT_INFINITELY);
-		cruisingAltitude = compoundTag.getInt(KEY_CRUISING_ALTITUDE);
+		lastDeployedMillis = System.currentTimeMillis() - compoundTag.getLongOr(KEY_LAST_DEPLOYED, 0);
+		deployIndex = compoundTag.getIntOr(KEY_DEPLOY_INDEX, 0);
+		repeatInfinitely = compoundTag.getBooleanOr(KEY_REPEAT_INFINITELY, false);
+		cruisingAltitude = compoundTag.getIntOr(KEY_CRUISING_ALTITUDE, 0);
 	}
 
 	public Depot(FriendlyByteBuf packet) {
@@ -280,7 +280,7 @@ public class Depot extends AreaBase implements IReducedSaveData {
 			}
 		});
 
-		final boolean useFastSpeed = cruisingAltitude >= world.getMaxBuildHeight() + THRESHOLD_ABOVE_MAX_BUILD_HEIGHT;
+		final boolean useFastSpeed = cruisingAltitude >= world.getMaxY() + THRESHOLD_ABOVE_MAX_BUILD_HEIGHT;
 
 		final Thread thread = new Thread(() -> {
 			try {

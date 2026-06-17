@@ -12,14 +12,10 @@ import mtr.mappings.Utilities;
 import mtr.mappings.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleType;
-#if MC_VERSION >= "11903"
 import net.minecraft.core.registries.BuiltInRegistries;
-#else
-import net.minecraft.core.Registry;
-#endif
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.slf4j.Logger;
@@ -45,14 +41,14 @@ public class ScriptResourceUtil {
 
     protected static Context activeContext;
     protected static Scriptable activeScope;
-    private static final Stack<ResourceLocation> scriptLocationStack = new Stack<>();
+    private static final Stack<Identifier> scriptLocationStack = new Stack<>();
     private static final Logger LOGGER = LoggerFactory.getLogger("MTR-NTE JS");
 
     public static void init(ResourceManager resourceManager) {
         hasNotoSansCjk = UtilitiesClient.hasResource(NOTO_SANS_CJK_LOCATION);
     }
 
-    public static void executeScript(Context rhinoCtx, Scriptable scope, ResourceLocation scriptLocation, String script) {
+    public static void executeScript(Context rhinoCtx, Scriptable scope, Identifier scriptLocation, String script) {
         scriptLocationStack.push(scriptLocation);
         rhinoCtx.evaluateString(scope, script, scriptLocation.toString(), 1, null);
         scriptLocationStack.pop();
@@ -62,9 +58,9 @@ public class ScriptResourceUtil {
         if (activeContext == null) throw new RuntimeException(
                 "Cannot use include in functions, as by that time NTE no longer processes scripts."
         );
-        ResourceLocation identifier;
-        if (pathOrIdentifier instanceof ResourceLocation) {
-            identifier = (ResourceLocation) pathOrIdentifier;
+        Identifier identifier;
+        if (pathOrIdentifier instanceof Identifier) {
+            identifier = (Identifier) pathOrIdentifier;
         } else {
             identifier = idRelative(pathOrIdentifier.toString());
         }
@@ -88,33 +84,33 @@ public class ScriptResourceUtil {
         return MtrModelRegistryUtil.resourceManager;
     }
 
-    public static ResourceLocation identifier(String textForm) {
-        return ResourceLocation.parse(textForm);
+    public static Identifier identifier(String textForm) {
+        return Identifier.parse(textForm);
     }
-    public static ResourceLocation id(String textForm) {
-        return ResourceLocation.parse(textForm);
+    public static Identifier id(String textForm) {
+        return Identifier.parse(textForm);
     }
 
-    public static ResourceLocation idRelative(String textForm) {
+    public static Identifier idRelative(String textForm) {
         if (scriptLocationStack.empty()) throw new RuntimeException(
                 "Cannot use idRelative in functions."
         );
         return ResourceUtil.resolveRelativePath(scriptLocationStack.peek(), textForm, null);
     }
-    public static ResourceLocation idr(String textForm) {
+    public static Identifier idr(String textForm) {
         if (scriptLocationStack.empty()) throw new RuntimeException(
                 "Cannot use idr in functions."
         );
         return ResourceUtil.resolveRelativePath(scriptLocationStack.peek(), textForm, null);
     }
 
-    public static InputStream readStream(ResourceLocation identifier) throws IOException {
+    public static InputStream readStream(Identifier identifier) throws IOException {
         final List<Resource> resources = UtilitiesClient.getResources(manager(), identifier);
         if (resources.isEmpty()) throw new FileNotFoundException(identifier.toString());
         return Utilities.getInputStream(resources.get(0));
     }
 
-    public static String readString(ResourceLocation identifier) {
+    public static String readString(Identifier identifier) {
         try {
             return ResourceUtil.readResource(manager(), identifier);
         } catch (IOException e) {
@@ -122,9 +118,9 @@ public class ScriptResourceUtil {
         }
     }
 
-    private static final ResourceLocation NOTO_SANS_CJK_LOCATION = mtr.MTR.id("font/noto-sans-cjk-tc-medium.otf");
-    private static final ResourceLocation NOTO_SANS_LOCATION = mtr.MTR.id("font/noto-sans-semibold.ttf");
-    private static final ResourceLocation NOTO_SERIF_LOCATION = mtr.MTR.id("font/noto-serif-cjk-tc-semibold.ttf");
+    private static final Identifier NOTO_SANS_CJK_LOCATION = mtr.MTR.id("font/noto-sans-cjk-tc-medium.otf");
+    private static final Identifier NOTO_SANS_LOCATION = mtr.MTR.id("font/noto-sans-semibold.ttf");
+    private static final Identifier NOTO_SERIF_LOCATION = mtr.MTR.id("font/noto-serif-cjk-tc-semibold.ttf");
     private static boolean hasNotoSansCjk = false;
     private static Font NOTO_SANS_MAYBE_CJK;
 
@@ -200,30 +196,25 @@ public class ScriptResourceUtil {
         return result;
     }
 
-    public static BufferedImage readBufferedImage(ResourceLocation identifier) throws IOException {
+    public static BufferedImage readBufferedImage(Identifier identifier) throws IOException {
         try (InputStream is = readStream(identifier)) {
             return GraphicsTexture.createArgbBufferedImage(ImageIO.read(is));
         }
     }
 
-    public static Font readFont(ResourceLocation identifier) throws IOException, FontFormatException {
+    public static Font readFont(Identifier identifier) throws IOException, FontFormatException {
         try (InputStream is = readStream(identifier)) {
             return Font.createFont(Font.TRUETYPE_FONT, is);
         }
     }
 
-    public static int getParticleTypeId(ResourceLocation identifier) {
-#if MC_VERSION >= "11903"
+    public static int getParticleTypeId(Identifier identifier) {
         Optional<ParticleType<?>> particleType = BuiltInRegistries.PARTICLE_TYPE.getOptional(identifier);
         return particleType.map(BuiltInRegistries.PARTICLE_TYPE::getId).orElse(-1);
-#else
-        Optional<ParticleType<?>> particleType = Registry.PARTICLE_TYPE.getOptional(identifier);
-        return particleType.map(Registry.PARTICLE_TYPE::getId).orElse(-1);
-#endif
     }
 
     public static CompoundTag parseNbtString(String text) throws CommandSyntaxException {
-        return TagParser.parseTag(text);
+        return TagParser.parseCompoundFully(text);
     }
 
     public static String getMTRVersion() {

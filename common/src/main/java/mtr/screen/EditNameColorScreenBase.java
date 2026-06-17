@@ -7,7 +7,7 @@ import mtr.mappings.ScreenMapper;
 import mtr.mappings.Text;
 import mtr.mappings.UtilitiesClient;
 import mtr.packet.IPacket;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public abstract class EditNameColorScreenBase<T extends NameColorDataBase> extends ScreenMapper implements IGui, IPacket {
@@ -72,9 +72,9 @@ public abstract class EditNameColorScreenBase<T extends NameColorDataBase> exten
 		addDrawableChild(colorSelector);
 	}
 
-	protected void renderTextFields(GuiGraphics guiGraphics) {
-		guiGraphics.drawCenteredString(font, nameText, (nameStart + colorStart) / 2, TEXT_PADDING, ARGB_WHITE);
-		guiGraphics.drawCenteredString(font, colorText, (colorStart + colorEnd) / 2, TEXT_PADDING, ARGB_WHITE);
+	protected void renderTextFields(GuiGraphicsExtractor guiGraphics) {
+		guiGraphics.centeredText(font, nameText, (nameStart + colorStart) / 2, TEXT_PADDING, ARGB_WHITE);
+		guiGraphics.centeredText(font, colorText, (colorStart + colorEnd) / 2, TEXT_PADDING, ARGB_WHITE);
 	}
 
 	protected void saveData() {

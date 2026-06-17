@@ -14,9 +14,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public abstract class ModelTrainBase extends EntityModel<Entity> implements IGui
 	public final void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int packedLight, int packedOverlay, int color) {
 	}
 
-	public final void render(PoseStack matrices, MultiBufferSource vertexConsumers, NameColorDataBase data, ResourceLocation texture, int light, float doorLeftValue, float doorRightValue, boolean opening, int currentCar, int trainCars, boolean head1IsFront, boolean lightsOn, boolean isTranslucent, boolean renderDetails, boolean atPlatform) {
+	public final void render(PoseStack matrices, MultiBufferSource vertexConsumers, NameColorDataBase data, Identifier texture, int light, float doorLeftValue, float doorRightValue, boolean opening, int currentCar, int trainCars, boolean head1IsFront, boolean lightsOn, boolean isTranslucent, boolean renderDetails, boolean atPlatform) {
 		final float doorLeftX = DoorAnimationType.getDoorAnimationX(doorAnimationType, doorLeftValue);
 		final float doorRightX = DoorAnimationType.getDoorAnimationX(doorAnimationType, doorRightValue);
 		final float doorLeftZ = DoorAnimationType.getDoorAnimationZ(doorAnimationType, getDoorMax(), getDoorDuration(), doorLeftValue, opening);

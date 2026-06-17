@@ -10,20 +10,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.model.BoatModel;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.MinecartModel;
+import net.minecraft.client.model.object.boat.BoatModel;
+import net.minecraft.client.model.object.cart.MinecartModel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.state.BoatRenderState;
+import net.minecraft.client.renderer.entity.state.MinecartRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.entity.vehicle.Minecart;
+import net.minecraft.world.entity.vehicle.boat.Boat;
+import net.minecraft.world.entity.vehicle.minecart.Minecart;
 import org.joml.Matrix4f;
 
 import java.io.File;
@@ -39,7 +41,7 @@ public interface UtilitiesClient {
 	static void finishDrawingRectangle() {
 	}
 
-	static void beginDrawingTexture(ResourceLocation textureId) {
+	static void beginDrawingTexture(Identifier textureId) {
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, textureId);
 	}
@@ -52,12 +54,12 @@ public interface UtilitiesClient {
 		client.setScreen(screen);
 	}
 
-	static EntityModel<Minecart> getMinecartModel() {
-		return new MinecartModel<>(MinecartModel.createBodyLayer().bakeRoot());
+	static EntityModel<MinecartRenderState> getMinecartModel() {
+		return new MinecartModel(MinecartModel.createBodyLayer().bakeRoot());
 	}
 
-	static EntityModel<Boat> getBoatModel() {
-		return new BoatModel(BoatModel.createBodyModel().bakeRoot());
+	static EntityModel<BoatRenderState> getBoatModel() {
+		return new BoatModel(BoatModel.createBoatModel().bakeRoot());
 	}
 
 	static void setPacketCoordinates(Entity entity, double x, double y, double z) {
@@ -72,12 +74,12 @@ public interface UtilitiesClient {
 		return Minecraft.getInstance().options.renderDistance().get();
 	}
 
-	static List<Resource> getResources(ResourceManager resourceManager, ResourceLocation resourceLocation) throws IOException {
-		return resourceManager.getResourceStack(resourceLocation);
+	static List<Resource> getResources(ResourceManager resourceManager, Identifier Identifier) throws IOException {
+		return resourceManager.getResourceStack(Identifier);
 	}
 
-	static boolean hasResource(ResourceLocation resourceLocation) {
-		return Minecraft.getInstance().getResourceManager().getResource(resourceLocation).isPresent();
+	static boolean hasResource(Identifier Identifier) {
+		return Minecraft.getInstance().getResourceManager().getResource(Identifier).isPresent();
 	}
 
 	static boolean isHovered(AbstractWidget widget) {

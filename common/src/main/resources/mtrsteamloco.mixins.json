@@ -18,7 +18,6 @@
     "ModelMapperAccessor",
     "ModelPartAccessor",
     "ModelSimpleTrainBaseAccessor",
-    "NativeImageAccessor",
     "RailAccessor",
     "RenderTrainsMixin",
     "ResourcePackCreatorPropertiesMixin",

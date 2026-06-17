@@ -14,7 +14,6 @@ import cn.zbx1425.sowcerext.reuse.DrawScheduler;
 import cn.zbx1425.sowcerext.reuse.ModelManager;
 import mtr.RegistryClient;
 import mtr.item.ItemBlockClickingBase;
-import net.minecraft.client.renderer.RenderType;
 
 public class MainClient {
 
@@ -34,7 +33,6 @@ public class MainClient {
 
 		if (Main.enableRegistry) {
 			RegistryClient.registerTileEntityRenderer(Main.BLOCK_ENTITY_TYPE_EYE_CANDY.get(), BlockEntityEyeCandyRenderer::new);
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Main.BLOCK_ONE_WAY_GATE.get());
 
 			RegistryClient.registerNetworkReceiver(PacketVersionCheck.PACKET_VERSION_CHECK, PacketVersionCheck::receiveVersionCheckS2C);
 			RegistryClient.registerNetworkReceiver(PacketScreen.PACKET_SHOW_SCREEN, PacketScreen::receiveScreenS2C);

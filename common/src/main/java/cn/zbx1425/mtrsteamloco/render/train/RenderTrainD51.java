@@ -13,10 +13,9 @@ import cn.zbx1425.sowcer.math.Vector3f;
 import mtr.MTRClient;
 import mtr.data.TrainClient;
 import mtr.render.TrainRendererBase;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 
@@ -119,7 +118,7 @@ public class RenderTrainD51 extends TrainRendererBase {
             PoseStackUtil.rotY(matrices, (float) Math.PI);
         }
 
-        final int light = LightTexture.pack(world.getBrightness(LightLayer.BLOCK, posAverage), world.getBrightness(LightLayer.SKY, posAverage));
+        final int light = LightCoordsUtil.pack(world.getBrightness(LightLayer.BLOCK, posAverage), world.getBrightness(LightLayer.SKY, posAverage));
 
         updateProp.update(train, carIndex, !train.isReversed());
         if (demoSpeed >= 0) {

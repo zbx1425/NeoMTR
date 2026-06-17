@@ -12,11 +12,11 @@ import mtr.client.IDrawing;
 import mtr.render.MoreRenderLayers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class TrainDrawCalls extends AbstractDrawCalls {
 
     private final List<ClusterDrawCall>[] carDrawLists;
     private final List<ClusterDrawCall>[] connDrawLists;
-    private final ResourceLocation[] connStretchTextures;
+    private final Identifier[] connStretchTextures;
     private final List<PlaySoundCall>[] carSoundLists;
 
     @SuppressWarnings("unchecked")
@@ -36,7 +36,7 @@ public class TrainDrawCalls extends AbstractDrawCalls {
         Arrays.setAll(carDrawLists, ignored -> new ArrayList<>());
         connDrawLists = new List[carCount - 1];
         Arrays.setAll(connDrawLists, ignored -> new ArrayList<>());
-        connStretchTextures = new ResourceLocation[carCount - 1];
+        connStretchTextures = new Identifier[carCount - 1];
         carSoundLists = new List[carCount];
         Arrays.setAll(carSoundLists, ignored -> new ArrayList<>());
     }
@@ -72,7 +72,7 @@ public class TrainDrawCalls extends AbstractDrawCalls {
         connDrawLists[car].add(new ClusterDrawCall(model, pose));
     }
 
-    public void drawConnStretchTexture(int car, ResourceLocation texture) {
+    public void drawConnStretchTexture(int car, Identifier texture) {
         connStretchTextures[car] = texture;
     }
 
@@ -90,7 +90,7 @@ public class TrainDrawCalls extends AbstractDrawCalls {
             drawTexture(matrices, vertexConsumerExterior, prevPos2, thisPos3, thisPos4, prevPos1, 0, 0, 0.5f, 0.5f, light);
             drawTexture(matrices, vertexConsumerExterior, prevPos3, thisPos2, thisPos3, prevPos2, 0, 0, 0.5f, 0.5f, light);
             drawTexture(matrices, vertexConsumerExterior, prevPos1, thisPos4, thisPos1, prevPos4, 0, 0, 0.5f, 0.5f, light);
-            int lightOnLevel = LightTexture.FULL_BRIGHT;
+            int lightOnLevel = LightCoordsUtil.FULL_BRIGHT;
             VertexConsumer vertexConsumerSide = vertexConsumers.getBuffer(MoreRenderLayers.getInterior(connStretchTextures[car]));
             drawTexture(matrices, vertexConsumerSide, thisPos3, prevPos2, prevPos1, thisPos4, 0.5f, 0, 1f, 0.5f, lightOnLevel);
             drawTexture(matrices, vertexConsumerSide, prevPos3, thisPos2, thisPos1, prevPos4, 0.5f, 0, 1f, 0.5f, lightOnLevel);

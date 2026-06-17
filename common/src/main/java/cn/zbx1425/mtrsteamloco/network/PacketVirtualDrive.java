@@ -8,13 +8,13 @@ import mtr.data.RailwayData;
 import mtr.data.RailwayDataCoolDownModule;
 import mtr.data.Siding;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
 public class PacketVirtualDrive {
 
-    public static final ResourceLocation PACKET_VIRTUAL_DRIVE = Main.id("virtual_drive");
+    public static final Identifier PACKET_VIRTUAL_DRIVE = Main.id("virtual_drive");
 
     public static void sendVirtualDriveC2S(boolean isDriving) {
         final FriendlyByteBuf packet = new FriendlyByteBuf(Unpooled.buffer());
@@ -38,7 +38,7 @@ public class PacketVirtualDrive {
                 RailwayData.getInstance(player.level()).railwayDataCoolDownModule
                         .updatePlayerInVirtualDrive(player, false);
             }
-            for (ServerPlayer target : player.serverLevel().players()) {
+            for (ServerPlayer target : player.level().players()) {
                 PacketVirtualDrivingPlayers.sendVirtualDrivingPlayersS2C(target);
             }
         });

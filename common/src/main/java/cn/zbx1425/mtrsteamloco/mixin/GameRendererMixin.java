@@ -17,7 +17,6 @@ public class GameRendererMixin {
     @Shadow @Final Minecraft minecraft;
     @Unique private Boolean hideGuiOptionCache = null;
 
-#if MC_VERSION >= "11903"
     @Inject(method = "getProjectionMatrix", at = @At("TAIL"), cancellable = true)
     void getProjectionMatrixTail(double fov, CallbackInfoReturnable<org.joml.Matrix4f> cir) {
         if (RailRenderDispatcher.isPreviewingModel) {
@@ -25,14 +24,6 @@ public class GameRendererMixin {
             result.translation(0.5f, 0f, 0f);
             result.scale(0.8f, 0.8f, 1f);
             result.mul(cir.getReturnValue());
-#else
-    @Inject(method = "getProjectionMatrix", at = @At("TAIL"), cancellable = true)
-    void getProjectionMatrixTail(double fov, CallbackInfoReturnable<com.mojang.math.Matrix4f> cir) {
-        if (RailRenderDispatcher.isPreviewingModel) {
-            com.mojang.math.Matrix4f result = com.mojang.math.Matrix4f.createTranslateMatrix(0.5f, 0f, 0f);
-            result.multiply(com.mojang.math.Matrix4f.createScaleMatrix(0.8f, 0.8f, 1f));
-            result.multiply(cir.getReturnValue());
-#endif
 
             cir.setReturnValue(result);
         }

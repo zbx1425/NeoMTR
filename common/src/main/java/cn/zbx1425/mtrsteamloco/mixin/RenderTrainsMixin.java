@@ -13,8 +13,10 @@ import cn.zbx1425.sowcer.math.Matrix4f;
 import mtr.data.Rail;
 import mtr.render.RenderTrains;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.debug.DebugScreenEntries;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,7 +28,7 @@ public class RenderTrainsMixin {
 
     @Inject(at = @At("HEAD"), method = "render")
     private static void renderHead(float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, CallbackInfo ci) {
-        Minecraft.getInstance().level.getProfiler().popPush("MTRRailwayData");
+        Profiler.get().popPush("MTRRailwayData");
         RenderUtil.commonVertexConsumers = vertexConsumers;
         RenderUtil.commonPoseStack = matrices;
         RenderUtil.updateElapsedTicks();
@@ -37,7 +39,7 @@ public class RenderTrainsMixin {
     private static void renderTail(float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, CallbackInfo ci) {
         // Already once per frame, since TAIL
 
-        Minecraft.getInstance().level.getProfiler().popPush("NTERailwayData");
+        Profiler.get().popPush("NTERailwayData");
         Matrix4f viewMatrix = new Matrix4f(matrices.last().pose());
         MainClient.railRenderDispatcher.prepareDraw();
         if (ClientConfig.getRailRenderLevel() >= 2) {
@@ -46,8 +48,8 @@ public class RenderTrainsMixin {
             MainClient.drawScheduler.commitRaw(MainClient.drawContext);
 
             GlStateTracker.restore();
-            if (Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes() && !Minecraft.getInstance().showOnlyReducedInfo()) {
-                MainClient.railRenderDispatcher.drawBoundingBoxes(matrices, vertexConsumers.getBuffer(RenderType.lines()));
+            if (Minecraft.getInstance().debugEntries.isCurrentlyEnabled(DebugScreenEntries.ENTITY_HITBOXES) && !Minecraft.getInstance().showOnlyReducedInfo()) {
+                MainClient.railRenderDispatcher.drawBoundingBoxes(matrices, vertexConsumers.getBuffer(RenderTypes.lines()));
             }
 
             MainClient.railRenderDispatcher.drawRailNodes(Minecraft.getInstance().level, MainClient.drawScheduler, viewMatrix);

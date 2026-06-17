@@ -7,13 +7,13 @@ import mtr.mappings.ModelMapper;
 import mtr.render.MoreRenderLayers;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 
 public class ModelBogie extends EntityModel<Entity> {
 
 	private final ModelMapper bogie;
-	private final ResourceLocation texture = ResourceLocation.parse("mtr:textures/entity/bogie_1.png");
+	private final Identifier texture = Identifier.parse("mtr:textures/entity/bogie_1.png");
 
 	public ModelBogie() {
 		final int textureWidth = 186;

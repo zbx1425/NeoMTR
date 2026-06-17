@@ -11,15 +11,15 @@ import mtr.screen.WidgetBetterTextField;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
@@ -41,7 +41,7 @@ public interface IDrawing {
 	}
 
 	static void drawStringWithFont(PoseStack matrices, Font textRenderer, MultiBufferSource.BufferSource immediate, String text, IGui.HorizontalAlignment horizontalAlignment, IGui.VerticalAlignment verticalAlignment, IGui.HorizontalAlignment xAlignment, float x, float y, float maxWidth, float maxHeight, float scale, int textColorCjk, int textColor, float fontSizeRatio, boolean shadow, int light, DrawingCallback drawingCallback) {
-		final Style style = false && Config.useMTRFont() ? Style.EMPTY.withFont(MTR.id("mtr")) : Style.EMPTY;
+		final Style style = false && Config.useMTRFont() ? Style.EMPTY.withFont(new FontDescription.Resource(MTR.id("mtr"))) : Style.EMPTY;
 
 		while (text.contains("||")) {
 			text = text.replace("||", "|");
@@ -93,7 +93,7 @@ public interface IDrawing {
 
 			final float xOffset = horizontalAlignment.getOffset(xAlignment.getOffset(x * scaleX, totalWidth), textRenderer.width(orderedTexts.get(i)) * extraScale - totalWidth);
 
-			final float shade = light == IGui.MAX_LIGHT_GLOWING ? 1 : Math.min(LightTexture.block(light) / 16F * 0.1F + 0.7F, 1);
+			final float shade = light == IGui.MAX_LIGHT_GLOWING ? 1 : Math.min(LightCoordsUtil.block(light) / 16F * 0.1F + 0.7F, 1);
 			final int a = ((isCJK ? textColorCjk : textColor) >> 24) & 0xFF;
 			final int r = (int) ((((isCJK ? textColorCjk : textColor) >> 16) & 0xFF) * shade);
 			final int g = (int) ((((isCJK ? textColorCjk : textColor) >> 8) & 0xFF) * shade);
@@ -120,7 +120,7 @@ public interface IDrawing {
 	}
 
 	static void drawLine(PoseStack matrices, MultiBufferSource vertexConsumers, float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b) {
-		final VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderType.lines());
+		final VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderTypes.lines());
 		final PoseStack.Pose pose = matrices.last();
 		vertexConsumer.addVertex(pose.pose(), x1, y1, z1).setColor(r, g, b, 0xFF).setNormal(pose, 0, 1, 0);
 		vertexConsumer.addVertex(pose.pose(), x2, y2, z2).setColor(r, g, b, 0xFF).setNormal(pose, 0, 1, 0);
@@ -157,7 +157,7 @@ public interface IDrawing {
 	}
 
 	static void drawTexture(PoseStack matrices, VertexConsumer vertexConsumer, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float u1, float v1, float u2, float v2, Direction facing, int color, int light) {
-		final Vec3i vec3i = facing.getNormal();
+		final Vec3i vec3i = facing.getUnitVec3i();
 		final PoseStack.Pose pose = matrices.last();
 		final int a = (color >> 24) & 0xFF;
 		final int r = (color >> 16) & 0xFF;
@@ -182,12 +182,12 @@ public interface IDrawing {
 		String newMessage = IGui.formatStationName(message).replace("  ", " ");
 		if (!newMessage.isEmpty()) {
 			if (Config.useTTSAnnouncements()) {
-				Narrator.getNarrator().say(newMessage, true);
+				Narrator.getNarrator().say(newMessage, true, 1.0f);
 			}
 			if (Config.showAnnouncementMessages()) {
 				final Player player = Minecraft.getInstance().player;
 				if (player != null) {
-					player.displayClientMessage(Text.literal(newMessage), false);
+					player.sendSystemMessage(Text.literal(newMessage));
 				}
 			}
 		}

@@ -29,8 +29,6 @@ public abstract class BlockEntityClientSerializableMapper extends BlockEntityMap
 
 	@Override
 	public final CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-		final CompoundTag compoundTag = super.getUpdateTag(registries);
-		writeCompoundTag(compoundTag);
-		return compoundTag;
+		return super.saveCustomOnly(registries);
 	}
 }

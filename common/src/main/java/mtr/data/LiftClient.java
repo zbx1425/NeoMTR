@@ -55,7 +55,7 @@ public class LiftClient extends Lift {
 				UtilitiesClient.setScreen(minecraftClient, new LiftSelectionScreen(this));
 			}
 			if (RenderTrains.showShiftProgressBar()) {
-				player.displayClientMessage(Text.translatable("gui.mtr.press_to_select_floor", KeyMappings.LIFT_MENU.getTranslatedKeyMessage()), true);
+				player.sendOverlayMessage(Text.translatable("gui.mtr.press_to_select_floor", KeyMappings.LIFT_MENU.getTranslatedKeyMessage()));
 			}
 		}
 	}

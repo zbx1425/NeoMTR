@@ -7,7 +7,6 @@ import mtr.data.TrainClient;
 import mtr.mappings.RegistryUtilities;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 

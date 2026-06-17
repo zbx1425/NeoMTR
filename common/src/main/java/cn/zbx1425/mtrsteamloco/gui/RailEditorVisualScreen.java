@@ -17,9 +17,7 @@ import mtr.mappings.UtilitiesClient;
 import mtr.packet.IPacket;
 import mtr.screen.WidgetBetterTextField;
 import net.minecraft.client.Minecraft;
-#if MC_VERSION >= "12000"
-import net.minecraft.client.gui.GuiGraphics;
-#endif
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -183,7 +181,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
                         selectedLayerIndex = layerIdx;
                         selectedBaseAttIndex = 0;
                         selectedOvAttIndex = 0;
-                        Minecraft.getInstance().tell(this::loadPage);
+                        Minecraft.getInstance().execute(this::loadPage);
                     }
             );
             layerBtn.active = (i != selectedLayerIndex);
@@ -198,7 +196,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
                             selectedLayerIndex = Math.max(0, getRepeaters().size() - 1);
                         }
                         sendUpdate();
-                        Minecraft.getInstance().tell(this::loadPage);
+                        Minecraft.getInstance().execute(this::loadPage);
                     }
             );
             IDrawing.setPositionAndWidth(deleteBtn, btnWidth, i * SQUARE_SIZE, SQUARE_SIZE);
@@ -215,7 +213,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
                     selectedBaseAttIndex = 0;
                     selectedOvAttIndex = 0;
                     sendUpdate();
-                    Minecraft.getInstance().tell(this::loadPage);
+                    Minecraft.getInstance().execute(this::loadPage);
                 }
         )), 0, height - SQUARE_SIZE * 2, leftPanelWidth);
 
@@ -259,7 +257,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
         int modeButtonWidth = w / 3;
         Button btnStretch = UtilitiesClient.newButton(
                 Text.translatable("gui.mtr.rail_editor_visual.stretch_interval"),
-                sender -> { selected.repeaterMode = RepeaterMode.STRETCH_INTERVAL; sendUpdate(); Minecraft.getInstance().tell(this::loadPage); }
+                sender -> { selected.repeaterMode = RepeaterMode.STRETCH_INTERVAL; sendUpdate(); Minecraft.getInstance().execute(this::loadPage); }
         );
         btnStretch.active = selected.repeaterMode != RepeaterMode.STRETCH_INTERVAL;
         IDrawing.setPositionAndWidth(btnStretch, 0, y, modeButtonWidth);
@@ -273,7 +271,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
                     }
                     selected.repeaterMode = RepeaterMode.FIXED_INTERVAL;
                     sendUpdate();
-                    Minecraft.getInstance().tell(this::loadPage);
+                    Minecraft.getInstance().execute(this::loadPage);
                 }
         );
         btnFixed.active = selected.repeaterMode != RepeaterMode.FIXED_INTERVAL;
@@ -288,7 +286,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
                     }
                     selected.repeaterMode = RepeaterMode.MANUAL;
                     sendUpdate();
-                    Minecraft.getInstance().tell(this::loadPage);
+                    Minecraft.getInstance().execute(this::loadPage);
                 }
         );
         btnManual.active = selected.repeaterMode != RepeaterMode.MANUAL;
@@ -325,7 +323,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
 
         Button btnFromThis = UtilitiesClient.newButton(
                 Text.translatable("gui.mtr.rail_editor_visual.from_this_node"),
-                sender -> { repeater.offsetFromStart = userIsAtCanonStart(); sendUpdate(); Minecraft.getInstance().tell(this::loadPage); }
+                sender -> { repeater.offsetFromStart = userIsAtCanonStart(); sendUpdate(); Minecraft.getInstance().execute(this::loadPage); }
         );
         btnFromThis.active = !fromThisNode;
         IDrawing.setPositionAndWidth(btnFromThis, halfW + 4, y, (w - halfW - 4) / 2 - 1);
@@ -333,7 +331,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
 
         Button btnFromOther = UtilitiesClient.newButton(
                 Text.translatable("gui.mtr.rail_editor_visual.from_other_node"),
-                sender -> { repeater.offsetFromStart = !userIsAtCanonStart(); sendUpdate(); Minecraft.getInstance().tell(this::loadPage); }
+                sender -> { repeater.offsetFromStart = !userIsAtCanonStart(); sendUpdate(); Minecraft.getInstance().execute(this::loadPage); }
         );
         btnFromOther.active = fromThisNode;
         IDrawing.setPositionAndWidth(btnFromOther, halfW + 4 + (w - halfW - 4) / 2 + 1, y, (w - halfW - 4) / 2 - 1);
@@ -384,7 +382,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
                     repeater.intervalOverride = lastPropagateInterval;
                     applyExitFMI(repeater, lastExitFMI);
                     sendUpdate();
-                    Minecraft.getInstance().tell(() -> sendPropagate(repeater, false));
+                    Minecraft.getInstance().execute(() -> sendPropagate(repeater, false));
                 }
         );
         btnContinue.active = canContinue;
@@ -428,7 +426,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
                     Text.literal(attLabel),
                     sender -> {
                         setSelectedAttIndex(selectTarget, attIdx);
-                        Minecraft.getInstance().tell(this::loadPage);
+                        Minecraft.getInstance().execute(this::loadPage);
                     }
             );
             attBtn.active = (i != selIdx);
@@ -445,7 +443,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
                                 setSelectedAttIndex(selectTarget, attList.size() - 1);
                             }
                             sendUpdate();
-                            Minecraft.getInstance().tell(this::loadPage);
+                            Minecraft.getInstance().execute(this::loadPage);
                         }
                     }
             );
@@ -463,7 +461,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
                     attList.add(new RepeaterAttachment());
                     setSelectedAttIndex(selectTarget, attList.size() - 1);
                     sendUpdate();
-                    Minecraft.getInstance().tell(this::loadPage);
+                    Minecraft.getInstance().execute(this::loadPage);
                 }
         );
         IDrawing.setPositionAndWidth(addAttBtn, leftMargin + innerW - SQUARE_SIZE, y, SQUARE_SIZE);
@@ -497,7 +495,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
                 Text.literal(modelLabel),
                 sender -> {
                     modelSelectTarget = selectTarget;
-                    Minecraft.getInstance().tell(this::loadPage);
+                    Minecraft.getInstance().execute(this::loadPage);
                 }
         );
         IDrawing.setPositionAndWidth(modelBtn, leftMargin, y, innerW);
@@ -510,7 +508,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
 
         Button btnNormal = UtilitiesClient.newButton(
                 Text.translatable("gui.mtr.rail_editor_visual.facing_away"),
-                sender -> { att.reversed = false; sendUpdate(); Minecraft.getInstance().tell(this::loadPage); }
+                sender -> { att.reversed = false; sendUpdate(); Minecraft.getInstance().execute(this::loadPage); }
         );
         btnNormal.active = att.reversed;
         IDrawing.setPositionAndWidth(btnNormal, leftMargin + halfW + 4, y, (innerW - halfW - 4) / 2 - 1);
@@ -518,7 +516,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
 
         Button btnReversed = UtilitiesClient.newButton(
                 Text.translatable("gui.mtr.rail_editor_visual.facing_here"),
-                sender -> { att.reversed = true; sendUpdate(); Minecraft.getInstance().tell(this::loadPage); }
+                sender -> { att.reversed = true; sendUpdate(); Minecraft.getInstance().execute(this::loadPage); }
         );
         btnReversed.active = !att.reversed;
         IDrawing.setPositionAndWidth(btnReversed, leftMargin + halfW + 4 + (innerW - halfW - 4) / 2 + 1, y, (innerW - halfW - 4) / 2 - 1);
@@ -572,7 +570,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
 
             Button btnDecFMI = UtilitiesClient.newButton(Text.literal("<"), sender -> {
                 att.firstModelIndex = (att.firstModelIndex - 1 + modelCount) % modelCount;
-                sendUpdate(); Minecraft.getInstance().tell(this::loadPage);
+                sendUpdate(); Minecraft.getInstance().execute(this::loadPage);
             });
             IDrawing.setPositionAndWidth(btnDecFMI, leftMargin + halfW + 4, y, SQUARE_SIZE);
             rightScrollPanel.children.add(btnDecFMI);
@@ -583,7 +581,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
 
             Button btnIncFMI = UtilitiesClient.newButton(Text.literal(">"), sender -> {
                 att.firstModelIndex = (att.firstModelIndex + 1) % modelCount;
-                sendUpdate(); Minecraft.getInstance().tell(this::loadPage);
+                sendUpdate(); Minecraft.getInstance().execute(this::loadPage);
             });
             IDrawing.setPositionAndWidth(btnIncFMI, leftMargin + innerW - SQUARE_SIZE, y, SQUARE_SIZE);
             rightScrollPanel.children.add(btnIncFMI);
@@ -680,7 +678,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
             currentBar.setPlayerProgress(displayProgress);
         }
 
-        currentBar.setOnSelectionChange(() -> Minecraft.getInstance().tell(this::loadPage));
+        currentBar.setOnSelectionChange(() -> Minecraft.getInstance().execute(this::loadPage));
         rightScrollPanel.children.add(currentBar);
         y += currentBar.getHeight() + 4;
 
@@ -744,7 +742,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
                         repeater.instanceOverrides.put(cIdx, newOv);
                         selectedOvAttIndex = 0;
                         sendUpdate();
-                        Minecraft.getInstance().tell(this::loadPage);
+                        Minecraft.getInstance().execute(this::loadPage);
                     }
             );
             IDrawing.setPositionAndWidth(btnAddOverride, 0, y, w);
@@ -755,7 +753,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
                     sender -> {
                         repeater.instanceOverrides.remove(cIdx);
                         sendUpdate();
-                        Minecraft.getInstance().tell(this::loadPage);
+                        Minecraft.getInstance().execute(this::loadPage);
                     }
             );
             IDrawing.setPositionAndWidth(btnRemoveOverride, 0, y, w);
@@ -967,7 +965,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
     }
 
     public static void openLastPickedScreen() {
-        Minecraft.getInstance().tell(() -> Minecraft.getInstance().setScreen(new RailEditorVisualScreen()));
+        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new RailEditorVisualScreen()));
     }
 
     public static void batchApplyBrushTemplate(CompoundTag toolTag) {
@@ -1082,11 +1080,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
     }
 
     @Override
-#if MC_VERSION >= "12000"
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-#else
-    public void render(PoseStack guiGraphics, int mouseX, int mouseY, float partialTick) {
-#endif
+    public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         if (modelSelectTarget != ModelSelectTarget.NONE) {
             renderSelectPage(guiGraphics);
@@ -1097,7 +1091,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
     public void onClose() {
         if (modelSelectTarget != ModelSelectTarget.NONE) {
             modelSelectTarget = ModelSelectTarget.NONE;
-            Minecraft.getInstance().tell(this::loadPage);
+            Minecraft.getInstance().execute(this::loadPage);
         } else {
             RailModelRepeater sel = getSelectedRepeater();
             if (sel != null) {

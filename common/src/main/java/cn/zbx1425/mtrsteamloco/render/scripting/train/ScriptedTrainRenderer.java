@@ -11,8 +11,8 @@ import mtr.client.ClientData;
 import mtr.data.TrainClient;
 import mtr.render.RenderTrains;
 import mtr.render.TrainRendererBase;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 
@@ -86,7 +86,7 @@ public class ScriptedTrainRenderer extends TrainRendererBase {
         }
 
         applyTransform(train, x, y, z, yaw, pitch, roll, false);
-        final int light = LightTexture.pack(world.getBrightness(LightLayer.BLOCK, posAverage), world.getBrightness(LightLayer.SKY, posAverage));
+        final int light = LightCoordsUtil.pack(world.getBrightness(LightLayer.BLOCK, posAverage), world.getBrightness(LightLayer.SKY, posAverage));
         Matrix4f drawPose = new Matrix4f(matrices.last().pose());
         if (shouldRender) {
             synchronized (trainScripting) {
@@ -116,7 +116,7 @@ public class ScriptedTrainRenderer extends TrainRendererBase {
         if (posAverage == null) return;
         matrices.pushPose();
         applyTransform(train, x, y, z, yaw, pitch, roll, false);
-        final int light = LightTexture.pack(world.getBrightness(LightLayer.BLOCK, posAverage), world.getBrightness(LightLayer.SKY, posAverage));
+        final int light = LightCoordsUtil.pack(world.getBrightness(LightLayer.BLOCK, posAverage), world.getBrightness(LightLayer.SKY, posAverage));
         Matrix4f pose = new Matrix4f(matrices.last().pose());
         synchronized (trainScripting) {
             trainScripting.scriptResult.commitConn(0, MainClient.drawScheduler, pose, light);

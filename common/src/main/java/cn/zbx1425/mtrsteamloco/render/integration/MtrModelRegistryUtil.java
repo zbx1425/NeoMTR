@@ -3,7 +3,7 @@ package cn.zbx1425.mtrsteamloco.render.integration;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
@@ -11,7 +11,6 @@ import net.minecraft.server.packs.resources.SimpleReloadInstance;
 import net.minecraft.util.thread.BlockableEventLoop;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +23,7 @@ public class MtrModelRegistryUtil {
 
     public static final List<String> loadingErrorList = new ArrayList<>();
 
-    public static final ResourceLocation PLACEHOLDER_TILE_TEXTURE_LOCATION = ResourceLocation.parse("mtrsteamloco:textures/misc/nte_tile_faded.png");
+    public static final Identifier PLACEHOLDER_TILE_TEXTURE_LOCATION = Identifier.parse("mtrsteamloco:textures/misc/nte_tile_faded.png");
 
     public static void recordLoadingError(String context, Exception ex) {
         final String[] uselessPrefixes = {
@@ -48,21 +47,10 @@ public class MtrModelRegistryUtil {
         loadingErrorList.add(context + "\n" + cleanedStackTrace);
     }
 
-    public static List<Pair<ResourceLocation, Resource>> listResources(ResourceManager resourceManager, String namespace, String path, String extension) {
-#if MC_VERSION >= "11900"
+    public static List<Pair<Identifier, Resource>> listResources(ResourceManager resourceManager, String namespace, String path, String extension) {
         return resourceManager.listResourceStacks(path,
                         rl -> rl.getNamespace().equals(namespace) && rl.getPath().endsWith(extension))
                 .entrySet().stream().flatMap(e -> e.getValue().stream().map(r -> new Pair<>(e.getKey(), r))).toList();
-#else
-        return resourceManager.listResources(path, rl -> rl.endsWith(extension))
-                .stream().filter(rl -> rl.getNamespace().equals(namespace)).flatMap(rl -> {
-                    try {
-                        return resourceManager.getResources(rl).stream().map(r -> new Pair<>(rl, r));
-                    } catch (IOException e) {
-                        return java.util.stream.Stream.of();
-                    }
-                }).toList();
-#endif
     }
 
     public static JsonObject createDummyBbDataPack(String actualPath, String textureId, boolean flipV, boolean preloadBbModel) {

@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -56,9 +56,9 @@ public class ClientCache extends DataCache implements IGui {
 	private final List<Runnable> resourceRegistryQueue = new ArrayList<>();
 
 	public static final float LINE_HEIGHT_MULTIPLIER = 1.25F;
-	private static final ResourceLocation DEFAULT_BLACK_RESOURCE = MTR.id("textures/block/black.png");
-	private static final ResourceLocation DEFAULT_WHITE_RESOURCE = MTR.id("textures/block/white.png");
-	private static final ResourceLocation DEFAULT_TRANSPARENT_RESOURCE = MTR.id("textures/block/transparent.png");
+	private static final Identifier DEFAULT_BLACK_RESOURCE = MTR.id("textures/block/black.png");
+	private static final Identifier DEFAULT_WHITE_RESOURCE = MTR.id("textures/block/white.png");
+	private static final Identifier DEFAULT_TRANSPARENT_RESOURCE = MTR.id("textures/block/transparent.png");
 
 	public ClientCache(Set<Station> stations, Set<Platform> platforms, Set<Siding> sidings, Set<Route> routes, Set<Depot> depots, Set<LiftClient> lifts) {
 		super(stations, platforms, sidings, routes, depots, new HashSet<>());
@@ -446,14 +446,14 @@ public class ClientCache extends DataCache implements IGui {
 			if (nativeImage == null) {
 				dynamicResourceNew = defaultRenderingColor.dynamicResource;
 			} else {
-				final DynamicTexture dynamicTexture = new DynamicTexture(nativeImage);
 				String newKey = key;
 				try {
 					newKey = URLEncoder.encode(key, StandardCharsets.UTF_8);
 				} catch (Exception e) {
 					MTR.LOGGER.error("", e);
 				}
-				final ResourceLocation resourceLocation = MTR.id("dynamic_texture_" + newKey.toLowerCase(Locale.ENGLISH).replaceAll("[^0-9a-z_]", "_"));
+				final Identifier resourceLocation = MTR.id("dynamic_texture_" + newKey.toLowerCase(Locale.ENGLISH).replaceAll("[^0-9a-z_]", "_"));
+				final DynamicTexture dynamicTexture = new DynamicTexture(resourceLocation::toString, nativeImage);
 				minecraftClient.getTextureManager().register(resourceLocation, dynamicTexture);
 				dynamicResourceNew = new DynamicResource(resourceLocation, dynamicTexture);
 			}
@@ -540,9 +540,9 @@ public class ClientCache extends DataCache implements IGui {
 
 		public final int width;
 		public final int height;
-		public final ResourceLocation resourceLocation;
+		public final Identifier resourceLocation;
 
-		private DynamicResource(ResourceLocation resourceLocation, DynamicTexture dynamicTexture) {
+		private DynamicResource(Identifier resourceLocation, DynamicTexture dynamicTexture) {
 			this.resourceLocation = resourceLocation;
 			if (dynamicTexture != null) {
 				final NativeImage nativeImage = dynamicTexture.getPixels();
@@ -574,7 +574,7 @@ public class ClientCache extends DataCache implements IGui {
 
 		private final DynamicResource dynamicResource;
 
-		DefaultRenderingColor(ResourceLocation resourceLocation) {
+		DefaultRenderingColor(Identifier resourceLocation) {
 			dynamicResource = new DynamicResource(resourceLocation, null);
 		}
 	}

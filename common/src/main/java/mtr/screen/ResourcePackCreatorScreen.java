@@ -16,13 +16,13 @@ import mtr.mappings.UtilitiesClient;
 import mtr.model.ModelTrainBase;
 import mtr.render.RenderTrains;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
@@ -369,7 +369,7 @@ public class ResourcePackCreatorScreen extends ScreenMapper implements IResource
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			if (guiCounter == 0 && minecraft != null) {
@@ -382,16 +382,16 @@ public class ResourcePackCreatorScreen extends ScreenMapper implements IResource
 			availableModelPartsList.render(guiGraphics, font);
 			usedModelPartsList.render(guiGraphics, font);
 			if (isEditing()) {
-				guiGraphics.drawCenteredString(font, Text.translatable("gui.mtr.editing_part", RenderTrains.creatorProperties.getPropertiesPartsArray().get(editingPartIndex).getAsJsonObject().get(KEY_PROPERTIES_NAME).getAsString()), PANEL_WIDTH / 2, TEXT_PADDING, ARGB_WHITE);
+				guiGraphics.centeredText(font, Text.translatable("gui.mtr.editing_part", RenderTrains.creatorProperties.getPropertiesPartsArray().get(editingPartIndex).getAsJsonObject().get(KEY_PROPERTIES_NAME).getAsString()), PANEL_WIDTH / 2, TEXT_PADDING, ARGB_WHITE);
 				if (colorSelectorDisplay.visible) {
-					guiGraphics.drawString(font, Text.translatable(colorSelectorDisplayCjk.visible ? "gui.mtr.part_display_text_color_cjk" : "gui.mtr.part_display_text_color"), TEXT_PADDING, SQUARE_SIZE * 13 / 2 + TEXT_PADDING, ARGB_WHITE);
+					guiGraphics.text(font, Text.translatable(colorSelectorDisplayCjk.visible ? "gui.mtr.part_display_text_color_cjk" : "gui.mtr.part_display_text_color"), TEXT_PADDING, SQUARE_SIZE * 13 / 2 + TEXT_PADDING, ARGB_WHITE);
 				}
-				guiGraphics.drawCenteredString(font, Text.translatable("gui.mtr.part_positions"), width - PANEL_WIDTH / 2, SQUARE_SIZE * 3 + TEXT_PADDING, ARGB_WHITE);
-				guiGraphics.drawCenteredString(font, Text.translatable("gui.mtr.part_whitelisted_cars"), width - PANEL_WIDTH / 2, SQUARE_SIZE * 4 + TEXT_PADDING * 2 + TEXT_HEIGHT + TEXT_FIELD_PADDING, ARGB_WHITE);
-				guiGraphics.drawCenteredString(font, Text.translatable("gui.mtr.part_blacklisted_cars"), width - PANEL_WIDTH / 2, SQUARE_SIZE * 5 + TEXT_PADDING * 3 + TEXT_HEIGHT * 2 + TEXT_FIELD_PADDING * 2, ARGB_WHITE);
+				guiGraphics.centeredText(font, Text.translatable("gui.mtr.part_positions"), width - PANEL_WIDTH / 2, SQUARE_SIZE * 3 + TEXT_PADDING, ARGB_WHITE);
+				guiGraphics.centeredText(font, Text.translatable("gui.mtr.part_whitelisted_cars"), width - PANEL_WIDTH / 2, SQUARE_SIZE * 4 + TEXT_PADDING * 2 + TEXT_HEIGHT + TEXT_FIELD_PADDING, ARGB_WHITE);
+				guiGraphics.centeredText(font, Text.translatable("gui.mtr.part_blacklisted_cars"), width - PANEL_WIDTH / 2, SQUARE_SIZE * 5 + TEXT_PADDING * 3 + TEXT_HEIGHT * 2 + TEXT_FIELD_PADDING * 2, ARGB_WHITE);
 			} else {
-				guiGraphics.drawCenteredString(font, Text.translatable("gui.mtr.available_model_parts"), PANEL_WIDTH / 2, TEXT_PADDING, ARGB_WHITE);
-				guiGraphics.drawCenteredString(font, Text.translatable("gui.mtr.used_model_parts"), width - PANEL_WIDTH / 2, SQUARE_SIZE * 7 / 2 + TEXT_PADDING, ARGB_WHITE);
+				guiGraphics.centeredText(font, Text.translatable("gui.mtr.available_model_parts"), PANEL_WIDTH / 2, TEXT_PADDING, ARGB_WHITE);
+				guiGraphics.centeredText(font, Text.translatable("gui.mtr.used_model_parts"), width - PANEL_WIDTH / 2, SQUARE_SIZE * 7 / 2 + TEXT_PADDING, ARGB_WHITE);
 			}
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);
@@ -667,7 +667,7 @@ public class ResourcePackCreatorScreen extends ScreenMapper implements IResource
 			final Minecraft minecraft = Minecraft.getInstance();
 			minecraft.options.hideGui = guiCounter != 0 || hideGui;
 
-			matrices.pushPose();
+			matrices.pushMatrix();
 			final MultiBufferSource.BufferSource immediate = minecraft.renderBuffers().bufferSource();
 			IDrawing.drawTexture(matrices, immediate.getBuffer(RenderType.solid()), Integer.MIN_VALUE, Integer.MAX_VALUE, -256, Integer.MAX_VALUE, Integer.MIN_VALUE, -256, Direction.UP, ARGB_BLACK, 0);
 			immediate.endBatch();
@@ -676,7 +676,7 @@ public class ResourcePackCreatorScreen extends ScreenMapper implements IResource
 			UtilitiesClient.rotateXDegrees(matrices, 180);
 			UtilitiesClient.rotateY(matrices, yaw);
 			UtilitiesClient.rotateZ(matrices, roll);
-			final int light = LightTexture.pack(0, (int) Math.round(brightness / 100D * 0x0F));
+			final int light = LightCoordsUtil.pack(0, (int) Math.round(brightness / 100D * 0x0F));
 			for (int i = 0; i < cars; i++) {
 				matrices.pushPose();
 				matrices.translate(0, 0, (i - (cars - 1) / 2F) * (RenderTrains.creatorProperties.getLength() + 1) + translation);

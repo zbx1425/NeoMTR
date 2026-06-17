@@ -4,7 +4,7 @@ import cn.zbx1425.sowcer.math.Vector3f;
 import cn.zbx1425.sowcerext.model.Vertex;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 
 import java.util.ArrayList;

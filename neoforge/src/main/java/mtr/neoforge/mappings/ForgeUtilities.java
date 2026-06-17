@@ -15,7 +15,7 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -42,8 +42,8 @@ public class ForgeUtilities {
 	};
 	private static Consumer<Object> textureStitchEvent = atlas -> {
 	};
-	private static final List<ResourceLocation> CREATIVE_TAB_ORDER = new ArrayList<>();
-	private static final Map<ResourceLocation, CreativeModeTabWrapper> CREATIVE_TABS = new HashMap<>();
+	private static final List<Identifier> CREATIVE_TAB_ORDER = new ArrayList<>();
+	private static final Map<Identifier, CreativeModeTabWrapper> CREATIVE_TABS = new HashMap<>();
 	private static final Set<EntityRendererPair<?>> ENTITY_RENDERER_PAIRS = new HashSet<>();
 //
 //	public static void registerModEventBus(String modId, IEventBus eventBus) {
@@ -54,7 +54,7 @@ public class ForgeUtilities {
 		KeyMappingRegistry.register(keyMapping);
 	}
 
-	public static Supplier<CreativeModeTab> createCreativeModeTab(ResourceLocation resourceLocation, Supplier<ItemStack> iconSupplier, String translationKey) {
+	public static Supplier<CreativeModeTab> createCreativeModeTab(Identifier resourceLocation, Supplier<ItemStack> iconSupplier, String translationKey) {
 		if (!CREATIVE_TAB_ORDER.contains(resourceLocation)) {
 			CREATIVE_TAB_ORDER.add(resourceLocation);
 			CREATIVE_TABS.put(resourceLocation, new CreativeModeTabWrapper(iconSupplier, translationKey));
@@ -62,7 +62,7 @@ public class ForgeUtilities {
 		return CREATIVE_TABS.get(resourceLocation).creativeModeTabSupplier;
 	}
 
-	public static void registerCreativeModeTab(ResourceLocation resourceLocation, Item item) {
+	public static void registerCreativeModeTab(Identifier resourceLocation, Item item) {
 		if (CREATIVE_TABS.containsKey(resourceLocation)) {
 			CREATIVE_TABS.get(resourceLocation).items.add(item);
 		}
@@ -120,18 +120,18 @@ public class ForgeUtilities {
 		@SubscribeEvent
 		public static void onRenderGameOverlayEvent(RenderGuiLayerEvent.Post event) {
 //			if (event.getLayer() != VanillaGuiLayers.SCOREBOARD_SIDEBAR) return;
-			renderGameOverlayAction.accept(event.getGuiGraphics());
+			renderGameOverlayAction.accept(event.getGuiGraphicsExtractor());
 		}
 
 		@SubscribeEvent
 		public static void onRenderLevelStageEvent(RenderLevelStageEvent event) {
 			if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_ENTITIES) {
 				PoseStack matrices = event.getPoseStack();
-				matrices.pushPose();
+				matrices.pushMatrix();
 				final Vec3 cameraPos = event.getCamera().getPosition();
 				matrices.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 				RenderTrains.render(0, matrices, Minecraft.getInstance().renderBuffers().bufferSource());
-				matrices.popPose();
+				matrices.popMatrix();
 			} else if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
 				Minecraft.getInstance().level.getProfiler().popPush("NTEBlockEntities");
 				BufferSourceProxy vertexConsumersProxy = new BufferSourceProxy(Minecraft.getInstance().renderBuffers().bufferSource());
@@ -178,7 +178,7 @@ public class ForgeUtilities {
 
 	public static void registerCreativeModeTabsToDeferredRegistry(DeferredRegisterHolder<CreativeModeTab> registry) {
 		for (int i = 0; i < CREATIVE_TAB_ORDER.size(); i++) {
-			ResourceLocation resourceLocation = CREATIVE_TAB_ORDER.get(i);
+			Identifier resourceLocation = CREATIVE_TAB_ORDER.get(i);
 			final CreativeModeTabWrapper creativeModeTabWrapper = CREATIVE_TABS.get(resourceLocation);
 			CreativeModeTab.Builder builder = CreativeModeTab.builder()
 					.icon(creativeModeTabWrapper.iconSupplier)

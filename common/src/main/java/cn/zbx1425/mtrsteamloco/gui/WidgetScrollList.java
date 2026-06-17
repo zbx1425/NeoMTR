@@ -2,9 +2,7 @@ package cn.zbx1425.mtrsteamloco.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import mtr.mappings.Text;
-#if MC_VERSION >= "12000"
-import net.minecraft.client.gui.GuiGraphics;
-#endif
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 
@@ -21,13 +19,8 @@ public class WidgetScrollList extends AbstractScrollWidget {
     }
 
     @Override
-#if MC_VERSION >= "12000"
-    protected void renderContents(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         PoseStack poseStack = guiGraphics.pose();
-#else
-    protected void renderContents(PoseStack guiGraphics, int mouseX, int mouseY, float partialTick) {
-        PoseStack poseStack = guiGraphics;
-#endif
         poseStack.translate(this.getX(), this.getY(), 0.0);
         for (AbstractWidget widget : children) {
             widget.render(guiGraphics, mouseX - this.getX(), (int) (mouseY + getOffset()) - this.getY(), partialTick);
@@ -107,11 +100,7 @@ public class WidgetScrollList extends AbstractScrollWidget {
     protected int getContentHeight() {
         AbstractWidget lastChild = children.isEmpty() ? null : children.get(children.size() - 1);
         if (lastChild == null) return 0;
-#if MC_VERSION >= "11903"
         return lastChild.getY() + lastChild.getHeight();
-#else
-        return lastChild.y + lastChild.getHeight();
-#endif
     }
 
     @Override
@@ -130,13 +119,6 @@ public class WidgetScrollList extends AbstractScrollWidget {
         this.height = height;
     }
 
-
-#if MC_VERSION >= "11903"
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) { }
-#elif MC_VERSION >= "11700"
-    @Override
-    public void updateNarration(NarrationElementOutput arg) { }
-
-#endif
 }

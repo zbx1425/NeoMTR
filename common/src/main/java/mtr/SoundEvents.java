@@ -1,7 +1,6 @@
 package mtr;
 
 import mtr.mappings.RegistryUtilities;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
 public interface SoundEvents {

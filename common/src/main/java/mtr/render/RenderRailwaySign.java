@@ -21,7 +21,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -84,7 +84,7 @@ public class RenderRailwaySign<T extends BlockRailwaySign.TileEntityRailwaySign>
 
 		if (renderBackground) {
 			final int newBackgroundColor = backgroundColor | ARGB_BLACK;
-			RenderTrains.scheduleRender(ResourceLocation.parse("mtr:textures/block/white.png"), false, RenderTrains.QueuedRenderLayer.LIGHT, (matricesNew, vertexConsumer) -> {
+			RenderTrains.scheduleRender(Identifier.parse("mtr:textures/block/white.png"), false, RenderTrains.QueuedRenderLayer.LIGHT, (matricesNew, vertexConsumer) -> {
 				storedMatrixTransformations.transform(matricesNew);
 				IDrawing.drawTexture(matricesNew, vertexConsumer, 0, 0, SMALL_OFFSET, 0.5F * (signIds.length), 0.5F, SMALL_OFFSET, facing, newBackgroundColor, MAX_LIGHT_GLOWING);
 				matricesNew.popPose();
@@ -93,7 +93,7 @@ public class RenderRailwaySign<T extends BlockRailwaySign.TileEntityRailwaySign>
 		for (int i = 0; i < signIds.length; i++) {
 			if (signIds[i] != null) {
 				drawSign(matrices, vertexConsumers, storedMatrixTransformations, Minecraft.getInstance().font, pos, signIds[i], 0.5F * i, 0, 0.5F, getMaxWidth(signIds, i, false), getMaxWidth(signIds, i, true), entity.getSelectedIds(), facing, backgroundColor | ARGB_BLACK, (textureId, x, y, size, flipTexture) -> {
-					RenderTrains.scheduleRender(ResourceLocation.parse(textureId.toString()), true, RenderTrains.QueuedRenderLayer.LIGHT_TRANSLUCENT, (matricesNew, vertexConsumer) -> {
+					RenderTrains.scheduleRender(Identifier.parse(textureId.toString()), true, RenderTrains.QueuedRenderLayer.LIGHT_TRANSLUCENT, (matricesNew, vertexConsumer) -> {
 						storedMatrixTransformations.transform(matricesNew);
 						IDrawing.drawTexture(matricesNew, vertexConsumer, x, y, size, size, flipTexture ? 1 : 0, 0, flipTexture ? 0 : 1, 1, facing, -1, MAX_LIGHT_GLOWING);
 						matricesNew.popPose();
@@ -296,6 +296,6 @@ public class RenderRailwaySign<T extends BlockRailwaySign.TileEntityRailwaySign>
 
 	@FunctionalInterface
 	public interface DrawTexture {
-		void drawTexture(ResourceLocation textureId, float x, float y, float size, boolean flipTexture);
+		void drawTexture(Identifier textureId, float x, float y, float size, boolean flipTexture);
 	}
 }

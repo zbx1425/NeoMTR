@@ -20,12 +20,12 @@ public class MinecraftClientUtil {
 
     public static int worldDayTime() {
         return Minecraft.getInstance().level != null
-                ? (int) Minecraft.getInstance().level.getDayTime() : 0;
+                ? (int) Minecraft.getInstance().level.getOverworldClockTime() : 0;
     }
 
     public static void narrate(String message) {
         Minecraft.getInstance().execute(() -> {
-            Narrator.getNarrator().say(message, true);
+            Narrator.getNarrator().say(message, true, 1.0f);
         });
     }
 
@@ -33,7 +33,11 @@ public class MinecraftClientUtil {
         final Player player = Minecraft.getInstance().player;
         if (player != null) {
             Minecraft.getInstance().execute(() -> {
-                player.displayClientMessage(Text.literal(message), actionBar);
+                if(actionBar) {
+                    player.sendOverlayMessage(Text.literal(message));
+                } else {
+                    player.sendSystemMessage(Text.literal(message));
+                }
             });
         }
     }

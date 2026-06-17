@@ -12,10 +12,10 @@ import mtr.mappings.Text;
 import mtr.mappings.UtilitiesClient;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiClient;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 
@@ -146,16 +146,16 @@ public class SidingScreen extends SavedRailScreenBase<Siding> implements Icons {
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		super.render(guiGraphics, mouseX, mouseY, delta);
 		if (!isSelectingTrain) {
-			guiGraphics.drawString(font, SELECTED_TRAIN_TEXT, SQUARE_SIZE, SQUARE_SIZE * 2 + TEXT_FIELD_PADDING + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.text(font, SELECTED_TRAIN_TEXT, SQUARE_SIZE, SQUARE_SIZE * 2 + TEXT_FIELD_PADDING + TEXT_PADDING, ARGB_WHITE);
 			if (showScheduleControls) {
-				guiGraphics.drawString(font, MAX_TRAINS_TEXT, SQUARE_SIZE, SQUARE_SIZE * 3 + TEXT_FIELD_PADDING * 3 / 2 + TEXT_PADDING, ARGB_WHITE);
-				guiGraphics.drawString(font, ACCELERATION_CONSTANT_TEXT, SQUARE_SIZE, SQUARE_SIZE * 4 + TEXT_FIELD_PADDING * 2 + TEXT_PADDING, ARGB_WHITE);
+				guiGraphics.text(font, MAX_TRAINS_TEXT, SQUARE_SIZE, SQUARE_SIZE * 3 + TEXT_FIELD_PADDING * 3 / 2 + TEXT_PADDING, ARGB_WHITE);
+				guiGraphics.text(font, ACCELERATION_CONSTANT_TEXT, SQUARE_SIZE, SQUARE_SIZE * 4 + TEXT_FIELD_PADDING * 2 + TEXT_PADDING, ARGB_WHITE);
 				if (buttonIsManual.selected()) {
-					guiGraphics.drawString(font, MAX_MANUAL_SPEED, SQUARE_SIZE, SQUARE_SIZE * 7 + TEXT_FIELD_PADDING * 2 + TEXT_PADDING, ARGB_WHITE);
-					guiGraphics.drawString(font, MANUAL_TO_AUTOMATIC_TIME, SQUARE_SIZE, SQUARE_SIZE * 8 + TEXT_FIELD_PADDING * 2 + TEXT_PADDING, ARGB_WHITE);
+					guiGraphics.text(font, MAX_MANUAL_SPEED, SQUARE_SIZE, SQUARE_SIZE * 7 + TEXT_FIELD_PADDING * 2 + TEXT_PADDING, ARGB_WHITE);
+					guiGraphics.text(font, MANUAL_TO_AUTOMATIC_TIME, SQUARE_SIZE, SQUARE_SIZE * 8 + TEXT_FIELD_PADDING * 2 + TEXT_PADDING, ARGB_WHITE);
 				}
 			}
 		} else {
@@ -223,7 +223,7 @@ public class SidingScreen extends SavedRailScreenBase<Siding> implements Icons {
 	}
 
 	@Override
-	protected void renderExtra(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	protected void renderExtra(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		availableTrainsList.render(guiGraphics, font);
 	}
 
@@ -233,7 +233,7 @@ public class SidingScreen extends SavedRailScreenBase<Siding> implements Icons {
 	}
 
 	@Override
-	protected ResourceLocation getPacketIdentifier() {
+	protected Identifier getPacketIdentifier() {
 		return PACKET_UPDATE_SIDING;
 	}
 
@@ -285,16 +285,16 @@ public class SidingScreen extends SavedRailScreenBase<Siding> implements Icons {
 		return railType == null ? Text.translatable("gui.mtr.unlimited").getString() : String.format("%s km/h", railType.speedLimit);
 	}
 
-	private int drawWrappedText(GuiGraphics guiGraphics, Component component, int y, int color) {
+	private int drawWrappedText(GuiGraphicsExtractor guiGraphics, Component component, int y, int color) {
 		final List<FormattedCharSequence> splitText = font.split(component, DESCRIPTION_WIDTH);
 		int newY = y;
 		for (final FormattedCharSequence formattedCharSequence : splitText) {
 			final int nextY = newY + TEXT_HEIGHT + 2;
 			if (nextY > height - SQUARE_SIZE - TEXT_HEIGHT) {
-				guiGraphics.drawString(font, "...", width - DESCRIPTION_WIDTH - SQUARE_SIZE, newY, color);
+				guiGraphics.text(font, "...", width - DESCRIPTION_WIDTH - SQUARE_SIZE, newY, color);
 				return height;
 			} else {
-				guiGraphics.drawString(font, formattedCharSequence, width - DESCRIPTION_WIDTH - SQUARE_SIZE, newY, color);
+				guiGraphics.text(font, formattedCharSequence, width - DESCRIPTION_WIDTH - SQUARE_SIZE, newY, color);
 			}
 			newY = nextY;
 		}

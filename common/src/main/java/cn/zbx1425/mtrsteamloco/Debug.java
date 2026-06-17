@@ -13,7 +13,7 @@ import mtr.mappings.UtilitiesClient;
 import mtr.model.ModelSimpleTrainBase;
 import mtr.render.JonModelTrainRenderer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import org.apache.commons.io.FilenameUtils;
 
@@ -29,7 +29,7 @@ import java.util.Map;
 public class Debug {
 
     public static void saveAllLoadedModels(Path outputDir) {
-        for (Map.Entry<ResourceLocation, RawModel> pair : MainClient.modelManager.loadedRawModels.entrySet()) {
+        for (Map.Entry<Identifier, RawModel> pair : MainClient.modelManager.loadedRawModels.entrySet()) {
             Path path = Paths.get(outputDir.toString(), pair.getKey().getNamespace(), pair.getKey().getPath());
             try {
                 Files.createDirectories(path.getParent());
@@ -43,7 +43,7 @@ public class Debug {
     }
 
     public static void registerAllModelsAsEyeCandy() {
-        for (Map.Entry<ResourceLocation, ModelCluster> entry : MainClient.modelManager.uploadedVertArrays.entrySet()) {
+        for (Map.Entry<Identifier, ModelCluster> entry : MainClient.modelManager.uploadedVertArrays.entrySet()) {
             String key = FilenameUtils.getBaseName(entry.getKey().getPath());
             EyeCandyRegistry.register(key, new EyeCandyProperties(Text.literal(key), entry.getValue(), null));
         }

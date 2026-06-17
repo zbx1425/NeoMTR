@@ -20,12 +20,11 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -55,7 +54,7 @@ public class RegistryClientImpl {
 		RegistryUtilitiesClient.registerBlockColors( new StationColor(), block);
 	}
 
-	public static void registerNetworkReceiver(ResourceLocation resourceLocation, Consumer<FriendlyByteBuf> consumer) {
+	public static void registerNetworkReceiver(Identifier resourceLocation, Consumer<FriendlyByteBuf> consumer) {
 		MTRForge.PACKET_REGISTRY.registerNetworkReceiverS2C(resourceLocation, consumer);
 	}
 
@@ -67,7 +66,7 @@ public class RegistryClientImpl {
 		RegistryUtilitiesClient.registerClientTickEvent(consumer);
 	}
 
-	public static void sendToServer(ResourceLocation id, FriendlyByteBuf packet) {
+	public static void sendToServer(Identifier id, FriendlyByteBuf packet) {
 		packet.resetReaderIndex();
 		MTRForge.PACKET_REGISTRY.sendC2S(id, packet);
 	}
@@ -89,7 +88,7 @@ public class RegistryClientImpl {
 	public interface RegistryUtilitiesClient {
 
 		static void registerItemModelPredicate(String id, Item item, String tag) {
-			ItemPropertiesRegistry.register(item, ResourceLocation.parse(id), (itemStack, clientWorld, livingEntity, i) ->
+			ItemPropertiesRegistry.register(item, Identifier.parse(id), (itemStack, clientWorld, livingEntity, i) ->
 					itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).contains(tag) ? 1 : 0);
 		}
 

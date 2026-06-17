@@ -57,7 +57,7 @@ public abstract class ItemNodeModifierSelectableBlockBase extends ItemNodeModifi
 					} else {
 						newState = state;
 					}
-					player.displayClientMessage(Text.translatable("tooltip.mtr.selected_material", Text.translatable(newState.getBlock().getDescriptionId())), true);
+					player.sendOverlayMessage(Text.translatable("tooltip.mtr.selected_material", Text.translatable(newState.getBlock().getDescriptionId())));
 					final CustomData customData = context.getItemInHand().getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
 					final CompoundTag compoundTag = customData.copyTag();
 					compoundTag.putInt(TAG_BLOCK_ID, Block.getId(newState));
@@ -92,7 +92,7 @@ public abstract class ItemNodeModifierSelectableBlockBase extends ItemNodeModifi
 	@Override
 	protected final void onConnect(Level world, ItemStack stack, TransportMode transportMode, BlockState stateStart, BlockState stateEnd, BlockPos posStart, BlockPos posEnd, RailAngle facingStart, RailAngle facingEnd, Player player, RailwayData railwayData) {
 		if (player != null && !onConnect(player, stack, railwayData, posStart, posEnd, radius, height)) {
-			player.displayClientMessage(Text.translatable("gui.mtr.rail_not_found_action"), true);
+			player.sendOverlayMessage(Text.translatable("gui.mtr.rail_not_found_action"));
 		}
 	}
 

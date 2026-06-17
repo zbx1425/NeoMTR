@@ -3,13 +3,9 @@ package cn.zbx1425.mtrsteamloco.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-#if MC_VERSION >= "12000"
-import net.minecraft.client.gui.GuiGraphics;
-#endif
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
-#if MC_VERSION >= "11700"
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-#endif
 import net.minecraft.network.chat.Component;
 
 import java.util.*;
@@ -197,13 +193,7 @@ public class WidgetManualPositionBar extends AbstractWidget {
 
     // --- Rendering ---
     @Override
-#if MC_VERSION >= "12000"
-    public void renderWidget(GuiGraphics g, int mouseX, int mouseY, float delta) {
-#elif MC_VERSION >= "11904"
-    public void renderWidget(PoseStack g, int mouseX, int mouseY, float delta) {
-#else
-    public void render(PoseStack g, int mouseX, int mouseY, float delta) {
-#endif
+    public void renderWidget(GuiGraphicsExtractor g, int mouseX, int mouseY, float delta) {
         if (!visible) return;
         Font font = Minecraft.getInstance().font;
 
@@ -211,11 +201,7 @@ public class WidgetManualPositionBar extends AbstractWidget {
         renderDetail(g, font);
     }
 
-#if MC_VERSION >= "12000"
-    private void renderOverview(GuiGraphics g, Font font) {
-#else
-    private void renderOverview(PoseStack g, Font font) {
-#endif
+    private void renderOverview(GuiGraphicsExtractor g, Font font) {
         int ot = ovTop();
         int ocy = ot + OVERVIEW_H / 2;
         int ol = ovLeft(), or_ = ovRight();
@@ -248,11 +234,7 @@ public class WidgetManualPositionBar extends AbstractWidget {
         drawTicks(g, font, ol, or_, 0, railLength, tickY);
     }
 
-#if MC_VERSION >= "12000"
-    private void renderDetail(GuiGraphics g, Font font) {
-#else
-    private void renderDetail(PoseStack g, Font font) {
-#endif
+    private void renderDetail(GuiGraphicsExtractor g, Font font) {
         int dt = dtTop();
         int dcy = dt + DETAIL_H / 2;
         int dl = dtLeft(), dr = dtRight();
@@ -286,11 +268,7 @@ public class WidgetManualPositionBar extends AbstractWidget {
         drawTicks(g, font, dl, dr, vs, ve, dt + DETAIL_H);
     }
 
-#if MC_VERSION >= "12000"
-    private void drawTicks(GuiGraphics g, Font font, int pxL, int pxR, float posStart, float posEnd, int y) {
-#else
-    private void drawTicks(PoseStack g, Font font, int pxL, int pxR, float posStart, float posEnd, int y) {
-#endif
+    private void drawTicks(GuiGraphicsExtractor g, Font font, int pxL, int pxR, float posStart, float posEnd, int y) {
         float range = posEnd - posStart;
         if (range <= 0) return;
         int maxTicks = Math.max(2, (pxR - pxL) / 50);
@@ -301,23 +279,13 @@ public class WidgetManualPositionBar extends AbstractWidget {
             if (px < pxL - 1 || px > pxR + 1) continue;
             dfill(g, px, y, px + 1, y + TICK_LEN, 0xFF606060);
             String label = formatTickLabel(t, step);
-#if MC_VERSION >= "12000"
             g.drawString(font, label, px - font.width(label) / 2, y + TICK_LEN + 1, 0xFF888888);
-#else
-            drawString(g, font, label, px - font.width(label) / 2, y + TICK_LEN + 1, 0xFF888888);
-#endif
         }
     }
 
-#if MC_VERSION >= "12000"
-    private static void dfill(GuiGraphics g, int x1, int y1, int x2, int y2, int color) {
+    private static void dfill(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int color) {
         g.fill(x1, y1, x2, y2, color);
     }
-#else
-    private static void dfill(PoseStack g, int x1, int y1, int x2, int y2, int color) {
-        AbstractWidget.fill(g, x1, y1, x2, y2, color);
-    }
-#endif
 
     // --- Mouse interaction ---
     private boolean isInOverview(double mx, double my) {
@@ -460,21 +428,6 @@ public class WidgetManualPositionBar extends AbstractWidget {
         if (onSelectionChange != null) onSelectionChange.run();
     }
 
-#if MC_VERSION >= "11903"
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) { }
-#elif MC_VERSION >= "11700"
-    @Override
-    public void updateNarration(NarrationElementOutput arg) { }
-#endif
-
-#if MC_VERSION < "11903"
-    protected int getX() {
-        return x;
-    }
-
-    protected int getY() {
-        return y;
-    }
-#endif
 }

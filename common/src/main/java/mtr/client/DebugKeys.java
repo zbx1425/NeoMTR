@@ -59,16 +59,16 @@ public class DebugKeys {
 			final LocalPlayer player = Minecraft.getInstance().player;
 			if (player != null) {
 				if (tempPressingCategoryNegative || tempPressingCategoryPositive) {
-					player.displayClientMessage(Text.literal(String.format("Category: %s", index)), true);
+					player.sendOverlayMessage(Text.literal(String.format("Category: %s", index)));
 				}
 				if (tempPressing1Negative || tempPressing1Positive) {
-					player.displayClientMessage(Text.literal(String.format("Category: %s - Value: %s", index, getField1(index))), true);
+					player.sendOverlayMessage(Text.literal(String.format("Category: %s - Value: %s", index, getField1(index))));
 				}
 				if (tempPressing2Negative || tempPressing2Positive) {
-					player.displayClientMessage(Text.literal(String.format("Category: %s - Value: %s", index, getField2(index))), true);
+					player.sendOverlayMessage(Text.literal(String.format("Category: %s - Value: %s", index, getField2(index))));
 				}
 				if (tempPressing3Negative || tempPressing3Positive) {
-					player.displayClientMessage(Text.literal(String.format("Category: %s - Value: %s", index, getField3(index))), true);
+					player.sendOverlayMessage(Text.literal(String.format("Category: %s - Value: %s", index, getField3(index))));
 				}
 			}
 		}

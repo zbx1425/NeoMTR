@@ -11,7 +11,7 @@ import mtr.mappings.UtilitiesClient;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiClient;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
@@ -106,7 +106,6 @@ public class LiftCustomizationScreen extends ScreenMapper implements IGui, IPack
 		buttonRotateAnticlockwise = UtilitiesClient.newButton(rotateAnticlockwiseText, button -> lift.facing = lift.facing.getCounterClockWise());
 		buttonRotateClockwise = UtilitiesClient.newButton(rotateClockwiseText, button -> lift.facing = lift.facing.getClockWise());
 
-		font = Minecraft.getInstance().font;
 		width1 = Math.max(Math.max(SQUARE_SIZE * 3, font.width(doubleSidedText)), Math.max(font.width(rotateAnticlockwiseText), font.width(rotateClockwiseText))) + TEXT_PADDING * 2;
 		width2 = width1 + SQUARE_SIZE;
 	}
@@ -152,16 +151,16 @@ public class LiftCustomizationScreen extends ScreenMapper implements IGui, IPack
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			guiGraphics.fill(0, 0, width2, height, ARGB_BACKGROUND);
-			guiGraphics.drawCenteredString(font, Text.translatable("tooltip.mtr.rail_action_height", lift.liftHeight / 2F), width2 / 2, TEXT_PADDING, ARGB_WHITE);
-			guiGraphics.drawCenteredString(font, Text.translatable("tooltip.mtr.rail_action_width", lift.liftWidth), width2 / 2, SQUARE_SIZE + TEXT_PADDING, ARGB_WHITE);
-			guiGraphics.drawCenteredString(font, Text.translatable("tooltip.mtr.rail_action_depth", lift.liftDepth), width2 / 2, SQUARE_SIZE * 2 + TEXT_PADDING, ARGB_WHITE);
-			guiGraphics.drawCenteredString(font, Text.translatable("gui.mtr.offset_x", lift.liftOffsetX / 2F), width2 / 2, SQUARE_SIZE * 3 + TEXT_PADDING, ARGB_WHITE);
-			guiGraphics.drawCenteredString(font, Text.translatable("gui.mtr.offset_y", lift.liftOffsetY), width2 / 2, SQUARE_SIZE * 4 + TEXT_PADDING, ARGB_WHITE);
-			guiGraphics.drawCenteredString(font, Text.translatable("gui.mtr.offset_z", lift.liftOffsetZ / 2F), width2 / 2, SQUARE_SIZE * 5 + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.centeredText(font, Text.translatable("tooltip.mtr.rail_action_height", lift.liftHeight / 2F), width2 / 2, TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.centeredText(font, Text.translatable("tooltip.mtr.rail_action_width", lift.liftWidth), width2 / 2, SQUARE_SIZE + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.centeredText(font, Text.translatable("tooltip.mtr.rail_action_depth", lift.liftDepth), width2 / 2, SQUARE_SIZE * 2 + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.centeredText(font, Text.translatable("gui.mtr.offset_x", lift.liftOffsetX / 2F), width2 / 2, SQUARE_SIZE * 3 + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.centeredText(font, Text.translatable("gui.mtr.offset_y", lift.liftOffsetY), width2 / 2, SQUARE_SIZE * 4 + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.centeredText(font, Text.translatable("gui.mtr.offset_z", lift.liftOffsetZ / 2F), width2 / 2, SQUARE_SIZE * 5 + TEXT_PADDING, ARGB_WHITE);
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);
 		}

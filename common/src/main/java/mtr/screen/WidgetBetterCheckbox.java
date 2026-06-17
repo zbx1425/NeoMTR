@@ -3,7 +3,7 @@ package mtr.screen;
 import mtr.data.IGui;
 import mtr.mappings.UtilitiesClient;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public class WidgetBetterCheckbox extends Checkbox implements IGui {
@@ -22,10 +22,10 @@ public class WidgetBetterCheckbox extends Checkbox implements IGui {
 	}
 
 	@Override
-	public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void renderWidget(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		super.renderWidget(guiGraphics, mouseX, mouseY, delta);
 		if (visible) {
-			guiGraphics.drawString(Minecraft.getInstance().font, getMessage(), UtilitiesClient.getWidgetX(this) + 24, UtilitiesClient.getWidgetY(this) + (height - 8) / 2, ARGB_WHITE);
+			guiGraphics.text(Minecraft.getInstance().font, getMessage(), UtilitiesClient.getWidgetX(this) + 24, UtilitiesClient.getWidgetY(this) + (height - 8) / 2, ARGB_WHITE);
 		}
 	}
 

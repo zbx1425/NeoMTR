@@ -11,15 +11,12 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -41,21 +38,21 @@ public class RegistryImpl {
 	}
 
 	public static <T extends BlockEntityMapper> BlockEntityType<T> getBlockEntityType(Utilities.TileEntitySupplier<T> supplier, Block block) {
-		return BlockEntityType.Builder.of(supplier::supplier, block).build(null);
+		return FabricBlockEntityTypeBuilder.create(supplier::supplier, block).build();
 	}
 
-	public static Supplier<CreativeModeTab> getCreativeModeTab(ResourceLocation id, Supplier<ItemStack> supplier) {
+	public static Supplier<CreativeModeTab> getCreativeModeTab(Identifier id, Supplier<ItemStack> supplier) {
 		return () -> FabricRegistryUtilities.createCreativeModeTab(id, supplier);
 	}
 
-	public static void registerCreativeModeTab(ResourceLocation resourceLocation, Item item) {
+	public static void registerCreativeModeTab(Identifier resourceLocation, Item item) {
 	}
 
-	public static void registerNetworkPacket(ResourceLocation resourceLocation) {
+	public static void registerNetworkPacket(Identifier resourceLocation) {
 		MTRFabric.PACKET_REGISTRY.registerPacket(resourceLocation);
 	}
 
-	public static void registerNetworkReceiver(ResourceLocation resourceLocation, NetworkUtilities.PacketCallback packetCallback) {
+	public static void registerNetworkReceiver(Identifier resourceLocation, NetworkUtilities.PacketCallback packetCallback) {
 		MTRFabric.PACKET_REGISTRY.registerNetworkReceiverC2S(resourceLocation, packetCallback);
 	}
 
@@ -83,7 +80,7 @@ public class RegistryImpl {
 		ServerTickEvents.START_SERVER_TICK.register(consumer::accept);
 	}
 
-	public static void sendToPlayer(ServerPlayer player, ResourceLocation id, FriendlyByteBuf packet) {
+	public static void sendToPlayer(ServerPlayer player, Identifier id, FriendlyByteBuf packet) {
 		MTRFabric.PACKET_REGISTRY.sendS2C(player, id, packet);
 	}
 

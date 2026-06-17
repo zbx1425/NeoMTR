@@ -10,9 +10,9 @@ import mtr.data.Rail;
 import mtr.mappings.Text;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -85,11 +85,7 @@ public class RailPicker {
         for (var text : contents) {
             if (text != null && !StringUtils.isEmpty(text)) {
                 float xOffset = (float) (-font.width(text) / 2);
-#if MC_VERSION >= "11904"
-                font.drawInBatch(text, xOffset, yOffset, 0xFFFFFFFF, false, matrices.last().pose(), vertexConsumers, Font.DisplayMode.SEE_THROUGH, bgColor, LightTexture.FULL_BRIGHT, false);
-#else
-                font.drawInBatch(text, xOffset, yOffset, 0xFFFFFFFF, false, matrices.last().pose(), vertexConsumers, false, bgColor, LightTexture.FULL_BRIGHT);
-#endif
+                font.drawInBatch(text, xOffset, yOffset, 0xFFFFFFFF, false, matrices.last().pose(), vertexConsumers, Font.DisplayMode.SEE_THROUGH, bgColor, LightCoordsUtil.FULL_BRIGHT, false);
             }
             yOffset += font.lineHeight + 2;
         }

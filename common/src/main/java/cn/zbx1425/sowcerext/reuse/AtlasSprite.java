@@ -3,11 +3,11 @@ package cn.zbx1425.sowcerext.reuse;
 import cn.zbx1425.sowcerext.model.RawMesh;
 import cn.zbx1425.sowcerext.model.Vertex;
 import cn.zbx1425.sowcerext.util.Logging;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class AtlasSprite {
 
-    public ResourceLocation sheet;
+    public Identifier sheet;
     public int sheetWidth, sheetHeight;
     public int frameX, frameY, frameWidth, frameHeight;
     public int spriteX, spriteY, spriteWidth, spriteHeight;
@@ -33,7 +33,7 @@ public class AtlasSprite {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
 
-    public AtlasSprite(ResourceLocation sheet,
+    public AtlasSprite(Identifier sheet,
                        int sheetWidth, int sheetHeight,
                        int frameX, int frameY, int frameWidth, int frameHeight,
                        int spriteX, int spriteY, int spriteWidth, int spriteHeight,

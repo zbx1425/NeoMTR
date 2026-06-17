@@ -7,7 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class PacketUpdateHoldingItem {
 
-    public static ResourceLocation PACKET_UPDATE_HOLDING_ITEM = Main.id("update_holding_item");
+    public static Identifier PACKET_UPDATE_HOLDING_ITEM = Main.id("update_holding_item");
 
     public static void sendUpdateC2S() {
         final FriendlyByteBuf packet = new FriendlyByteBuf(Unpooled.buffer());

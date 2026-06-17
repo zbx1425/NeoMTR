@@ -7,7 +7,7 @@ import mtr.mappings.ModelMapper;
 import mtr.render.MoreRenderLayers;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 
 public class ModelDoorOverlayTop extends EntityModel<Entity> {
@@ -16,7 +16,7 @@ public class ModelDoorOverlayTop extends EntityModel<Entity> {
 	private final ModelMapper outer_roof_2_r1;
 	private final ModelMapper outer_roof_1_r1;
 
-	private static final ResourceLocation TEXTURE_ID = ResourceLocation.parse("mtr:textures/block/sign/door_overlay_sp1900_top.png");
+	private static final Identifier TEXTURE_ID = Identifier.parse("mtr:textures/block/sign/door_overlay_sp1900_top.png");
 
 	public ModelDoorOverlayTop() {
 		final int textureWidth = 24;

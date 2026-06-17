@@ -70,9 +70,9 @@ public class RenderUtil {
 
     public static void displayStatusMessage(String msg) {
 #if DEBUG
-        Minecraft.getInstance().player.displayClientMessage(Text.literal(
+        Minecraft.getInstance().player.sendSystemMessage(Text.literal(
             String.format("[%s] %s", LocalTime.now().withNano(0).format(DateTimeFormatter.ISO_LOCAL_TIME), msg)
-        ), false);
+        ));
 #endif
     }
 }

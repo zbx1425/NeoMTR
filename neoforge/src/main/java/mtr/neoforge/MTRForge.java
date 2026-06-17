@@ -13,7 +13,8 @@ import mtr.render.RenderDrivingOverlay;
 import mtr.render.RenderTrains;
 import mtr.screen.ConfigScreen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.registries.Registries;
@@ -69,9 +70,9 @@ public class MTRForge {
 
 		eventBus.register(MTRModEventBus.class);
 		eventBus.register(ForgeUtilities.RegisterCreativeTabs.class);
-		if (FMLEnvironment.dist.isClient()) {
+		if (FMLEnvironment.getDist().isClient()) {
 			ForgeUtilities.renderGameOverlayAction((guiGraphics) -> {
-				RenderDrivingOverlay.render((GuiGraphics) guiGraphics);
+				RenderDrivingOverlay.render((GuiGraphicsExtractor) guiGraphics);
 			});
 			NeoForge.EVENT_BUS.register(ForgeUtilities.Events.class);
 			eventBus.register(ForgeUtilities.ClientsideEvents.class);

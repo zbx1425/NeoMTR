@@ -7,7 +7,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import mtr.Registry;
 import mtr.data.RailwayData;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class PacketVirtualDrivingPlayers {
 
-    public static final ResourceLocation PACKET_VIRTUAL_DRIVING_PLAYERS = Main.id("virtual_driving_players");
+    public static final Identifier PACKET_VIRTUAL_DRIVING_PLAYERS = Main.id("virtual_driving_players");
 
     public static void sendVirtualDrivingPlayersS2C(ServerPlayer player, Set<Player> playerInVirtualDrive) {
         final FriendlyByteBuf packet = new FriendlyByteBuf(Unpooled.buffer());

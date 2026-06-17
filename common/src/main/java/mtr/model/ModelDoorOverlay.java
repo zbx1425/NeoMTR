@@ -7,8 +7,8 @@ import mtr.mappings.ModelMapper;
 import mtr.render.MoreRenderLayers;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 
 public class ModelDoorOverlay extends EntityModel<Entity> {
@@ -27,8 +27,8 @@ public class ModelDoorOverlay extends EntityModel<Entity> {
 	private final ModelMapper wall_2;
 	private final ModelMapper upper_wall_2_r1;
 
-	private final ResourceLocation doorOverlayTextureLeft;
-	private final ResourceLocation doorOverlayTextureRight;
+	private final Identifier doorOverlayTextureLeft;
+	private final Identifier doorOverlayTextureRight;
 	private final boolean renderLeft;
 	private final boolean renderRight;
 
@@ -42,8 +42,8 @@ public class ModelDoorOverlay extends EntityModel<Entity> {
 
 	public ModelDoorOverlay(int doorMax, float angle, int pivotY, String overlayLeftTextureName, String overlayRightTextureName, boolean renderLeft, boolean renderRight) {
 		float angleRadians = (float) Math.toRadians(angle);
-		doorOverlayTextureLeft = ResourceLocation.parse("mtr:textures/entity/door_overlay/" + overlayLeftTextureName);
-		doorOverlayTextureRight = ResourceLocation.parse("mtr:textures/entity/door_overlay/" + overlayRightTextureName);
+		doorOverlayTextureLeft = Identifier.parse("mtr:textures/entity/door_overlay/" + overlayLeftTextureName);
+		doorOverlayTextureRight = Identifier.parse("mtr:textures/entity/door_overlay/" + overlayRightTextureName);
 		this.renderLeft = renderLeft;
 		this.renderRight = renderRight;
 

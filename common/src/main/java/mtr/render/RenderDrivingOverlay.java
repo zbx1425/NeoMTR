@@ -40,7 +40,7 @@ public class RenderDrivingOverlay implements IGui {
 			return;
 		}
 
-		guiGraphics.pose().pushMatrix();
+		guiGraphics.pose().pushPose();
 //		RenderSystem.enableBlend();
 		final Identifier resourceLocation = Identifier.parse("textures/gui/widgets.png");
 		final int startX = (window.getGuiScaledWidth() - HOT_BAR_WIDTH) / 2;
@@ -80,7 +80,7 @@ public class RenderDrivingOverlay implements IGui {
 		}
 
 //		RenderSystem.disableBlend();
-		guiGraphics.pose().popMatrix();
+		guiGraphics.pose().popPose();
 	}
 
 	public static void setData(int accelerationSign, TrainClient trainClient) {

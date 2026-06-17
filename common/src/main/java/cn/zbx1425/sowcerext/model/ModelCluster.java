@@ -11,7 +11,7 @@ import cn.zbx1425.sowcer.vertex.VertAttrState;
 import cn.zbx1425.sowcer.math.Matrix4f;
 import cn.zbx1425.sowcerext.model.integration.BufferSourceProxy;
 import cn.zbx1425.sowcerext.reuse.ModelManager;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.Closeable;
 
@@ -97,14 +97,14 @@ public class ModelCluster implements Closeable {
     }
 
 
-    public void replaceTexture(String oldTexture, ResourceLocation newTexture) {
+    public void replaceTexture(String oldTexture, Identifier newTexture) {
         uploadedOpaqueParts.replaceTexture(oldTexture, newTexture);
         opaqueParts.replaceTexture(oldTexture, newTexture);
         uploadedTranslucentParts.replaceTexture(oldTexture, newTexture);
         translucentParts.replaceTexture(oldTexture, newTexture);
     }
 
-    public void replaceAllTexture(ResourceLocation newTexture) {
+    public void replaceAllTexture(Identifier newTexture) {
         uploadedOpaqueParts.replaceAllTexture(newTexture);
         opaqueParts.replaceAllTexture(newTexture);
         uploadedTranslucentParts.replaceAllTexture(newTexture);

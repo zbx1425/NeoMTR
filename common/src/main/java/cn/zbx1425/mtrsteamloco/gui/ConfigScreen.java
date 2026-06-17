@@ -8,8 +8,6 @@ import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import mtr.mappings.Text;
 import net.minecraft.client.Minecraft;
-#if MC_VERSION >= "12000"
-#endif
 import net.minecraft.client.gui.screens.Screen;
 
 public final class ConfigScreen {

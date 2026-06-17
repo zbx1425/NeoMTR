@@ -17,7 +17,7 @@ import mtr.mappings.UtilitiesClient;
 import mtr.packet.PacketTrainDataGuiClient;
 import mtr.screen.WidgetBetterTextField;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.core.BlockPos;
@@ -89,14 +89,14 @@ public class RailEditorGeometryScreen extends ScreenMapper {
         // Left panel: tab buttons
         Button tabNodePose = UtilitiesClient.newButton(
                 Text.translatable("gui.mtrsteamloco.rail_editor_geometry.tab_node_pose"),
-                sender -> { currentTab = 0; Minecraft.getInstance().tell(this::loadPage); }
+                sender -> { currentTab = 0; Minecraft.getInstance().execute(this::loadPage); }
         );
         tabNodePose.active = (currentTab != 0);
         IDrawing.setPositionAndWidth(addRenderableWidget(tabNodePose), 0, SQUARE_SIZE, LEFT_PANEL_WIDTH);
 
         Button tabVerticalCurve = UtilitiesClient.newButton(
                 Text.translatable("gui.mtrsteamloco.rail_editor_geometry.tab_vertical_curve"),
-                sender -> { currentTab = 1; Minecraft.getInstance().tell(this::loadPage); }
+                sender -> { currentTab = 1; Minecraft.getInstance().execute(this::loadPage); }
         );
         tabVerticalCurve.active = (currentTab != 1);
         IDrawing.setPositionAndWidth(addRenderableWidget(tabVerticalCurve), 0, SQUARE_SIZE * 2, LEFT_PANEL_WIDTH);
@@ -156,7 +156,7 @@ public class RailEditorGeometryScreen extends ScreenMapper {
                         saveNodeAngleIfChanged();
                         editingStartNode = true;
                         loadNodeState();
-                        Minecraft.getInstance().tell(this::loadPage);
+                        Minecraft.getInstance().execute(this::loadPage);
                     }
                 }
         );
@@ -171,7 +171,7 @@ public class RailEditorGeometryScreen extends ScreenMapper {
                         saveNodeAngleIfChanged();
                         editingStartNode = false;
                         loadNodeState();
-                        Minecraft.getInstance().tell(this::loadPage);
+                        Minecraft.getInstance().execute(this::loadPage);
                     }
                 }
         );
@@ -392,7 +392,7 @@ public class RailEditorGeometryScreen extends ScreenMapper {
                 sender -> {
                     extra.setVerticalCurveRadius(0);
                     sendRailUpdate();
-                    Minecraft.getInstance().tell(this::loadPage);
+                    Minecraft.getInstance().execute(this::loadPage);
                 }
         );
         btnMax.active = currentRadius != 0;
@@ -405,7 +405,7 @@ public class RailEditorGeometryScreen extends ScreenMapper {
                 sender -> {
                     extra.setVerticalCurveRadius(-1);
                     sendRailUpdate();
-                    Minecraft.getInstance().tell(this::loadPage);
+                    Minecraft.getInstance().execute(this::loadPage);
                 }
         );
         btnNone.active = currentRadius >= 0;
@@ -437,7 +437,7 @@ public class RailEditorGeometryScreen extends ScreenMapper {
                         tag.putBoolean("BatchApplyVerticalCurve", true);
                         tag.putFloat("VerticalCurveRadius", extra.getVerticalCurveRadius());
                     });
-                    Minecraft.getInstance().tell(this::loadPage);
+                    Minecraft.getInstance().execute(this::loadPage);
                 }
         );
         btnBatchOn.active = !batchEnabled;
@@ -447,7 +447,7 @@ public class RailEditorGeometryScreen extends ScreenMapper {
                 Text.translatable("gui.mtrsteamloco.rail_editor_geometry.batch_apply_off"),
                 sender -> {
                     updateToolTag(tag -> tag.putBoolean("BatchApplyVerticalCurve", false));
-                    Minecraft.getInstance().tell(this::loadPage);
+                    Minecraft.getInstance().execute(this::loadPage);
                 }
         );
         btnBatchOff.active = batchEnabled;
@@ -463,7 +463,7 @@ public class RailEditorGeometryScreen extends ScreenMapper {
                 Text.translatable("gui.mtrsteamloco.rail_editor_geometry.save_to_tool"),
                 sender -> {
                     updateToolTag(tag -> tag.putFloat("VerticalCurveRadius", extra.getVerticalCurveRadius()));
-                    Minecraft.getInstance().tell(this::loadPage);
+                    Minecraft.getInstance().execute(this::loadPage);
                 }
         );
         btnSaveToTool.active = batchEnabled && toolRadius != currentRadius;
@@ -570,12 +570,12 @@ public class RailEditorGeometryScreen extends ScreenMapper {
     // ==================== Rendering ====================
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
         if (currentTab == 0 && !isUndetermined && isNodeFree(editingStartNode ? pickedPosStart : pickedPosEnd)) {
@@ -606,7 +606,7 @@ public class RailEditorGeometryScreen extends ScreenMapper {
 
     // ==================== Drawing Helpers ====================
 
-    private static void drawCompassRing(GuiGraphics guiGraphics, int cx, int cy, int radius, int color) {
+    private static void drawCompassRing(GuiGraphicsExtractor guiGraphics, int cx, int cy, int radius, int color) {
         int segments = 64;
         for (int i = 0; i < segments; i++) {
             float a1 = 360F * i / segments;
@@ -621,7 +621,7 @@ public class RailEditorGeometryScreen extends ScreenMapper {
         }
     }
 
-    private static void drawTick(GuiGraphics guiGraphics, int cx, int cy, float angleDeg, int rInner, int rOuter, int thickness, int color) {
+    private static void drawTick(GuiGraphicsExtractor guiGraphics, int cx, int cy, float angleDeg, int rInner, int rOuter, int thickness, int color) {
         double rad = Math.toRadians(angleDeg);
         float x1 = cx + (float) (rInner * Math.cos(rad));
         float y1 = cy + (float) (rInner * Math.sin(rad));
@@ -630,25 +630,25 @@ public class RailEditorGeometryScreen extends ScreenMapper {
         drawSegment(guiGraphics, x1, y1, x2, y2, thickness, color);
     }
 
-    private static void drawLine(GuiGraphics guiGraphics, int cx, int cy, float angleDeg, int rStart, int rEnd, int thickness, int color) {
-        guiGraphics.pose().pushPose();
+    private static void drawLine(GuiGraphicsExtractor guiGraphics, int cx, int cy, float angleDeg, int rStart, int rEnd, int thickness, int color) {
+        guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(cx, cy, 0);
         guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(angleDeg));
         guiGraphics.fill(rStart, -thickness / 2, rEnd, -thickness / 2 + thickness, color);
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
     }
 
-    private static void drawSegment(GuiGraphics guiGraphics, float x1, float y1, float x2, float y2, int thickness, int color) {
+    private static void drawSegment(GuiGraphicsExtractor guiGraphics, float x1, float y1, float x2, float y2, int thickness, int color) {
         float dx = x2 - x1;
         float dy = y2 - y1;
         float len = (float) Math.sqrt(dx * dx + dy * dy);
         if (len < 0.001F) return;
         float angleDeg = (float) Math.toDegrees(Math.atan2(dy, dx));
-        guiGraphics.pose().pushPose();
+        guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(x1, y1, 0);
         guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(angleDeg));
         guiGraphics.fill(0, -thickness / 2, (int) Math.ceil(len), -thickness / 2 + thickness, color);
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
     }
 
     private static String formatAngle(float angle) {

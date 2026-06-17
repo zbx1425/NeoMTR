@@ -17,8 +17,7 @@ public abstract class PersistentStateMapper extends SavedData {
 
 	protected static <T extends PersistentStateMapper> T getInstance(Level world, Supplier<T> supplier, String name) {
 		if (world instanceof ServerLevel) {
-			return ((ServerLevel) world).getDataStorage().computeIfAbsent(new Factory<>(
-					supplier, (nbtCompound, provider) -> {
+			return ((ServerLevel) world).getDataStorage().computeIfAbsent(new Factory<>(supplier, (nbtCompound, provider) -> {
 				final T railwayData = supplier.get();
 				railwayData.load(nbtCompound);
 				return railwayData;

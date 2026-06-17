@@ -472,7 +472,7 @@ public class Rail extends SerializedDataBase {
 		private void showProgressMessage(float percentage) {
 			final Player player = world.getPlayerByUUID(uuid);
 			if (player != null) {
-				player.displayClientMessage(Text.translatable("gui.mtr." + railActionType.progressTranslation, percentage), true);
+				player.sendOverlayMessage(Text.translatable("gui.mtr." + railActionType.progressTranslation, percentage));
 			}
 		}
 

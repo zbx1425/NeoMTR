@@ -9,7 +9,7 @@ import mtr.mappings.Utilities;
 import mtr.mappings.UtilitiesClient;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiClient;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Items;
@@ -61,15 +61,15 @@ public class TicketMachineScreen extends ScreenMapper implements IGui, IPacket {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			final Component emeraldsText = Text.translatable("gui.mtr.emeralds", getEmeraldCount());
-			guiGraphics.drawString(font, balanceText, TEXT_PADDING, TEXT_PADDING, ARGB_WHITE);
-			guiGraphics.drawString(font, emeraldsText, width - TEXT_PADDING - font.width(emeraldsText), TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.text(font, balanceText, TEXT_PADDING, TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.text(font, emeraldsText, width - TEXT_PADDING - font.width(emeraldsText), TEXT_PADDING, ARGB_WHITE);
 
 			for (int i = 0; i < BUTTON_COUNT; i++) {
-				guiGraphics.drawString(font, Text.translatable("gui.mtr.add_balance_for_emeralds", getAddAmount(i), (int) Math.pow(2, i)), TEXT_PADDING, (i + 1) * SQUARE_SIZE + TEXT_PADDING, ARGB_WHITE);
+				guiGraphics.text(font, Text.translatable("gui.mtr.add_balance_for_emeralds", getAddAmount(i), (int) Math.pow(2, i)), TEXT_PADDING, (i + 1) * SQUARE_SIZE + TEXT_PADDING, ARGB_WHITE);
 			}
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);

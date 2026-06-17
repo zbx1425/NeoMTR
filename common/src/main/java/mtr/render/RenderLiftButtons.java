@@ -18,7 +18,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -33,7 +33,7 @@ import java.util.*;
 public class RenderLiftButtons extends BlockEntityRendererMapper<BlockLiftButtons.TileEntityLiftButtons> implements IGui, IBlock {
 
 	private static final int HOVER_COLOR = 0xFFFFAAAA;
-	private static final ResourceLocation BUTTON_TEXTURE = ResourceLocation.parse("mtr:textures/block/lift_button.png");
+	private static final Identifier BUTTON_TEXTURE = Identifier.parse("mtr:textures/block/lift_button.png");
 
 	public RenderLiftButtons(BlockEntityRenderDispatcher dispatcher) {
 		super(dispatcher);
@@ -118,7 +118,7 @@ public class RenderLiftButtons extends BlockEntityRendererMapper<BlockLiftButton
 		final float maxWidth = Math.min(0.25F, 0.375F / liftPositions.size());
 		UtilitiesClient.rotateZDegrees(matrices, 180);
 		matrices.translate(maxWidth * (0.5 - liftPositions.size() / 2F), 0, 0);
-		IDrawing.drawTexture(matrices, vertexConsumers.getBuffer(MoreRenderLayers.getExterior(ResourceLocation.parse("mtr:textures/block/black.png"))), -maxWidth / 2, -0.9375F, maxWidth * liftPositions.size(), 0.40625F, Direction.UP, light);
+		IDrawing.drawTexture(matrices, vertexConsumers.getBuffer(MoreRenderLayers.getExterior(Identifier.parse("mtr:textures/block/black.png"))), -maxWidth / 2, -0.9375F, maxWidth * liftPositions.size(), 0.40625F, Direction.UP, light);
 		matrices.translate(0, -0.875, -SMALL_OFFSET);
 
 		liftPositions.forEach(liftPosition -> {

@@ -11,7 +11,8 @@ import cn.zbx1425.sowcerext.util.ResourceUtil;
 import cn.zbx1425.sowcer.math.Vector3f;
 import de.javagl.obj.*;
 import mtr.mappings.Utilities;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +27,7 @@ import java.util.*;
 
 public class ObjModelLoader {
 
-    public static RawModel loadModel(ResourceManager resourceManager, ResourceLocation objLocation, AtlasManager atlasManager) throws IOException {
+    public static RawModel loadModel(ResourceManager resourceManager, Identifier objLocation, AtlasManager atlasManager) throws IOException {
         Obj srcObj = ObjReader.read(Utilities.getInputStream(resourceManager.getResource(objLocation)));
         Map<String, Mtl> materials = loadMaterials(resourceManager, srcObj, objLocation);
 
@@ -35,7 +36,7 @@ public class ObjModelLoader {
         return model;
     }
 
-    public static Map<String, RawModel> loadModels(ResourceManager resourceManager, ResourceLocation objLocation, AtlasManager atlasManager) throws IOException {
+    public static Map<String, RawModel> loadModels(ResourceManager resourceManager, Identifier objLocation, AtlasManager atlasManager) throws IOException {
         Obj srcObj = ObjReader.read(Utilities.getInputStream(resourceManager.getResource(objLocation)));
         Map<String, Mtl> materials = loadMaterials(resourceManager, srcObj, objLocation);
 
@@ -44,7 +45,7 @@ public class ObjModelLoader {
         for (Map.Entry<String, Obj> groupEntry : groupObjs.entrySet()) {
             RawModel model = loadModel(groupEntry.getValue(), objLocation, materials, atlasManager);
             String compliantKey = groupEntry.getKey().toLowerCase(Locale.ROOT).replace('\\', '/').replaceAll("[^a-z0-9/._-]", "_");
-            model.sourceLocation = ResourceLocation.fromNamespaceAndPath(objLocation.getNamespace(), objLocation.getPath() + "/" + compliantKey);
+            model.sourceLocation = Identifier.fromNamespaceAndPath(objLocation.getNamespace(), objLocation.getPath() + "/" + compliantKey);
             result.put(groupEntry.getKey(), model);
         }
         return result;
@@ -60,14 +61,14 @@ public class ObjModelLoader {
                 RawModel model = loadModel(groupEntry.getValue(), null, null, atlasManager);
                 String compliantPath = path.toLowerCase(Locale.ROOT).replace('\\', '/').replaceAll("[^a-z0-9/._-]", "_");
                 String compliantKey = groupEntry.getKey().toLowerCase(Locale.ROOT).replace('\\', '/').replaceAll("[^a-z0-9/._-]", "_");
-                model.sourceLocation = ResourceLocation.fromNamespaceAndPath("mtrsteamloco-external", compliantPath + "/" + compliantKey);
+                model.sourceLocation = Identifier.fromNamespaceAndPath("mtrsteamloco-external", compliantPath + "/" + compliantKey);
                 result.put(groupEntry.getKey(), model);
             }
             return result;
         }
     }
 
-    private static RawModel loadModel(Obj srcObj, ResourceLocation objLocation, Map<String, Mtl> materials, AtlasManager atlasManager) {
+    private static RawModel loadModel(Obj srcObj, Identifier objLocation, Map<String, Mtl> materials, AtlasManager atlasManager) {
         Map<String, Obj> mtlObjs = ObjSplitting.splitByMaterialGroups(srcObj);
         RawModel model = new RawModel();
         for (Map.Entry<String, Obj> entry : mtlObjs.entrySet()) {
@@ -134,7 +135,7 @@ public class ObjModelLoader {
         return model;
     }
 
-    private static Map<String, Mtl> loadMaterials(ResourceManager resourceManager, Obj srcObj, ResourceLocation objLocation) throws IOException {
+    private static Map<String, Mtl> loadMaterials(ResourceManager resourceManager, Obj srcObj, Identifier objLocation) throws IOException {
         Map<String, Mtl> materials = new HashMap<>();
         for (String mtlFileName : srcObj.getMtlFileNames()) {
             List<Mtl> srcMtls = MtlReader.read(Utilities.getInputStream(resourceManager.getResource(ResourceUtil.resolveRelativePath(objLocation, mtlFileName, ".mtl"))));

@@ -23,9 +23,9 @@ import mtr.render.RenderTrains;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
@@ -181,7 +181,7 @@ public class RailRenderDispatcher {
         for (Rail rail : railsToRemove) removeRail(rail);
         currentFrameRails.clear();
 
-        Vec3 cameraBlockPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        Vec3 cameraBlockPos = Minecraft.getInstance().gameRenderer.getMainCamera().position();
         railChunkList.sort(Comparator.comparingDouble(chunk -> chunk.getCameraDistManhattanXZ(cameraBlockPos)));
 
         int buffersRebuilt = 0;
@@ -229,7 +229,7 @@ public class RailRenderDispatcher {
                         nodePose.translate(entryStart.getKey().getX() + 0.5f,
                                 entryStart.getKey().getY(), entryStart.getKey().getZ() + 0.5f);
                         nodePose.rotateY(-(float) entryEnd.getValue().facingStart.angleRadians + (float) Math.PI / 2);
-                        final int light = LightTexture.pack(level.getBrightness(LightLayer.BLOCK, entryStart.getKey()),
+                        final int light = LightCoordsUtil.pack(level.getBrightness(LightLayer.BLOCK, entryStart.getKey()),
                                 level.getBrightness(LightLayer.SKY, entryStart.getKey()));
                         drawScheduler.enqueue(RailModelRegistry.railNodeModel, nodePose, light);
                     }
@@ -238,7 +238,7 @@ public class RailRenderDispatcher {
                         nodePose.translate(entryEnd.getKey().getX() + 0.5f,
                                 entryEnd.getKey().getY(), entryEnd.getKey().getZ() + 0.5f);
                         nodePose.rotateY(-(float) entryEnd.getValue().facingEnd.angleRadians + (float) Math.PI / 2);
-                        final int light = LightTexture.pack(level.getBrightness(LightLayer.BLOCK, entryEnd.getKey()),
+                        final int light = LightCoordsUtil.pack(level.getBrightness(LightLayer.BLOCK, entryEnd.getKey()),
                                 level.getBrightness(LightLayer.SKY, entryEnd.getKey()));
                         drawScheduler.enqueue(RailModelRegistry.railNodeModel, nodePose, light);
                     }

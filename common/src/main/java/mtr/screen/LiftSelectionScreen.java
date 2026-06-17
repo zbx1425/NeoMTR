@@ -10,7 +10,7 @@ import mtr.mappings.ScreenMapper;
 import mtr.mappings.Text;
 import mtr.packet.PacketTrainDataGuiClient;
 import mtr.render.RenderTrains;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public class LiftSelectionScreen extends ScreenMapper implements IGui {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			selectionList.render(guiGraphics, font);

@@ -8,7 +8,7 @@ import cn.zbx1425.sowcerext.reuse.ModelManager;
 import cn.zbx1425.sowcerext.util.Logging;
 import cn.zbx1425.sowcerext.util.ResourceUtil;
 import cn.zbx1425.sowcer.math.Vector3f;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,7 +18,7 @@ import java.util.Locale;
 
 public class AnimatedLoader {
 
-    public static MultipartContainer loadModel(ResourceManager resourceManager, ModelManager modelManager, AtlasManager atlasManager, ResourceLocation objLocation) throws IOException {
+    public static MultipartContainer loadModel(ResourceManager resourceManager, ModelManager modelManager, AtlasManager atlasManager, Identifier objLocation) throws IOException {
         AnimatedLoader loader = new AnimatedLoader();
         loader.load(resourceManager, modelManager, atlasManager, objLocation, new Vector3f(0, 0, 0));
         StaticPart staticPart = new StaticPart(loader.staticModel, modelManager);
@@ -29,7 +29,7 @@ public class AnimatedLoader {
     private final MultipartContainer buildingContainer = new MultipartContainer();
     private final RawModel staticModel = new RawModel();
 
-    private void load(ResourceManager resourceManager, ModelManager modelManager, AtlasManager atlasManager, ResourceLocation objLocation, Vector3f translation) throws IOException {
+    private void load(ResourceManager resourceManager, ModelManager modelManager, AtlasManager atlasManager, Identifier objLocation, Vector3f translation) throws IOException {
         String rawModelData = ResourceUtil.readResource(resourceManager, objLocation);
         String[] rawModelLines = rawModelData.split("[\\r\\n]+");
         String section = "";
@@ -75,7 +75,7 @@ public class AnimatedLoader {
                                 for (int i = 0; i < states.length; ++i) {
                                     String crntState = states[i].trim().toLowerCase(Locale.ROOT);
                                     if (StringUtils.isEmpty(crntState)) continue;
-                                    ResourceLocation crntStateLocation = ResourceUtil.resolveRelativePath(objLocation, crntState, null);
+                                    Identifier crntStateLocation = ResourceUtil.resolveRelativePath(objLocation, crntState, null);
                                     String crntStatExt = FilenameUtils.getExtension(crntState);
                                     if (crntStatExt.equals("obj") || crntStatExt.equals("csv") || crntStatExt.equals("nmb")) {
                                         buildingPart.rawStates[i] = modelManager.loadRawModel(resourceManager, crntStateLocation, atlasManager);
@@ -164,7 +164,7 @@ public class AnimatedLoader {
                                     break;
                             }
                         } else {
-                            ResourceLocation crntStateLocation = ResourceUtil.resolveRelativePath(objLocation, trimLine, null);
+                            Identifier crntStateLocation = ResourceUtil.resolveRelativePath(objLocation, trimLine, null);
                             String crntStatExt = FilenameUtils.getExtension(trimLine);
                             if (crntStatExt.equals("obj") || crntStatExt.equals("csv") || crntStatExt.equals("nmb")) {
                                 RawModel model = modelManager.loadRawModel(resourceManager, crntStateLocation, atlasManager).copy();

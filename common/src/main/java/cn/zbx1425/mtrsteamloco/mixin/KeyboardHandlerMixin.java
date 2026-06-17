@@ -13,6 +13,7 @@ import mtr.client.TrainClientRegistry;
 import mtr.data.TransportMode;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,9 +30,9 @@ public class KeyboardHandlerMixin {
     @Shadow @Final private Minecraft minecraft;
 
     @Inject(method = "handleDebugKeys", at = @At("HEAD"), cancellable = true)
-    private void handleDebugKeysHead(int key, CallbackInfoReturnable<Boolean> cir) {
-        if (key == GLFW.GLFW_KEY_5 && ClientConfig.enableScriptDebugOverlay) {
-            minecraft.tell(() -> {
+    private void handleDebugKeysHead(KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
+        if (event.key() == GLFW.GLFW_KEY_5 && ClientConfig.enableScriptDebugOverlay) {
+            minecraft.execute(() -> {
                 GlStateTracker.capture();
                 MtrModelRegistryUtil.loadingErrorList.clear();
                 MtrModelRegistryUtil.resourceManager = minecraft.getResourceManager();

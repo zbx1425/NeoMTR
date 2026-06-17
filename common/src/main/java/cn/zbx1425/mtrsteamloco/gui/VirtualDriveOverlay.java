@@ -13,13 +13,13 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
@@ -38,7 +38,7 @@ public class VirtualDriveOverlay {
     private static float speedUpdateCooldown = 0;
     private static final Random random = new Random();
 
-    public static void render(GuiGraphics guiGraphics, DeltaTracker deltaT) {
+    public static void render(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaT) {
         if (TrainVirtualDrive.activeTrain == null) return;
         TrainVirtualDrive train = TrainVirtualDrive.activeTrain;
 
@@ -47,7 +47,7 @@ public class VirtualDriveOverlay {
         final int REAL_GAUGE_SIZE = (guiGraphics.guiWidth() - PADDING * 2) / 5;
         Font font = Minecraft.getInstance().font;
 
-        guiGraphics.pose().pushPose();
+        guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(0, guiGraphics.guiHeight(), 0);
         guiGraphics.pose().scale(REAL_GAUGE_SIZE * 1f / GAUGE_SIZE, REAL_GAUGE_SIZE * 1f / GAUGE_SIZE, 1);
 
@@ -56,7 +56,7 @@ public class VirtualDriveOverlay {
                 (int) Math.floor(train.vehicleRidingClient.getPercentageZ(player.getUUID())),
                 0, train.trainCars - 1);
         if (currentRidingCar != (train.isReversed() ? train.trainCars - 1 : 0)) {
-            guiGraphics.drawString(font, Text.translatable("gui.mtrsteamloco.drive.not_in_cab"), PADDING, -PADDING - 10, 0xFFFFA500);
+            guiGraphics.text(font, Text.translatable("gui.mtrsteamloco.drive.not_in_cab"), PADDING, -PADDING - 10, 0xFFFFA500);
             return;
         }
 
@@ -89,7 +89,7 @@ public class VirtualDriveOverlay {
         }
 
         // HMI painting
-        ResourceLocation hmiTex = Main.id("textures/gui/drive_hmi.png");
+        Identifier hmiTex = Main.id("textures/gui/drive_hmi.png");
         RenderSystem.setShaderTexture(0, hmiTex);
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.enableBlend();
@@ -115,7 +115,7 @@ public class VirtualDriveOverlay {
 
         final int GAUGE_MAX_SPEED = 100;
         // Speed needle
-        guiGraphics.pose().pushPose();
+        guiGraphics.pose().pushMatrix();
         guiGraphics.pose().rotateAround(
                 Axis.ZP.rotationDegrees(-140 + Mth.clamp(Math.round(delayedTrainSpeed * 3.6f * 20 * 4) / 4f, 0, GAUGE_MAX_SPEED) / GAUGE_MAX_SPEED * 280),
                 PADDING + GAUGE_SIZE / 4f + GAUGE_SIZE / 2f, -GAUGE_SIZE / 2f - PADDING, 0
@@ -125,10 +125,10 @@ public class VirtualDriveOverlay {
                 needleXOff, -GAUGE_SIZE - PADDING,
                 GAUGE_SIZE / 4, GAUGE_SIZE,
                 0f, 0.5f, 0.125f, 0.5f, 0xffffffff);
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
         if (!train.atpCutout) {
             // Yellow ATP Speed needle
-            guiGraphics.pose().pushPose();
+            guiGraphics.pose().pushMatrix();
             guiGraphics.pose().rotateAround(
                     Axis.ZP.rotationDegrees(-140 + Mth.clamp(Math.round(train.atpYellowSpeed * 3.6f * 20 * 3) / 3f, 0, GAUGE_MAX_SPEED) / GAUGE_MAX_SPEED * 280),
                     PADDING + GAUGE_SIZE / 4f + GAUGE_SIZE / 2f, -GAUGE_SIZE / 2f - PADDING, 0
@@ -137,9 +137,9 @@ public class VirtualDriveOverlay {
                     needleXOff, -GAUGE_SIZE - PADDING,
                     GAUGE_SIZE / 4, GAUGE_SIZE,
                     0.375f, 0.5f, 0.125f, 0.5f, 0xffffffff);
-            guiGraphics.pose().popPose();
+            guiGraphics.pose().popMatrix();
             // Red ATP Speed needle
-            guiGraphics.pose().pushPose();
+            guiGraphics.pose().pushMatrix();
             guiGraphics.pose().rotateAround(
                     Axis.ZP.rotationDegrees(-140 + Mth.clamp(Math.round(train.atpRedSpeed * 3.6f * 20 * 3) / 3f, 0, GAUGE_MAX_SPEED) / GAUGE_MAX_SPEED * 280),
                     PADDING + GAUGE_SIZE / 4f + GAUGE_SIZE / 2f, -GAUGE_SIZE / 2f - PADDING, 0
@@ -148,11 +148,11 @@ public class VirtualDriveOverlay {
                     needleXOff, -GAUGE_SIZE - PADDING,
                     GAUGE_SIZE / 4, GAUGE_SIZE,
                     0.25f, 0.5f, 0.125f, 0.5f, 0xffffffff);
-            guiGraphics.pose().popPose();
+            guiGraphics.pose().popMatrix();
         }
 
         // Info icons
-        guiGraphics.pose().pushPose();
+        guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(PADDING + GAUGE_SIZE / 4f + GAUGE_SIZE + 3, -GAUGE_SIZE - PADDING, 0);
         float infoIconScale = (GAUGE_SIZE / 4f) / 64;
         guiGraphics.pose().scale(infoIconScale, infoIconScale, 1);
@@ -173,38 +173,38 @@ public class VirtualDriveOverlay {
             blit(guiGraphics, bufferBuilder, 2, 64 + 2, 64, 64, 0.5f, 0.625f, 0.125f, 0.125f, 0x88222222);
             blit(guiGraphics, bufferBuilder, 0, 64, 64, 64, 0.5f, 0.625f, 0.125f, 0.125f, 0xffffffff);
         }
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
 
         BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
         RenderSystem.disableBlend();
 
         // Speed Text
-        guiGraphics.pose().pushPose();
+        guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(PADDING + GAUGE_SIZE / 4f + GAUGE_SIZE / 2f, -GAUGE_SIZE / 2f - PADDING, 0);
         float speedTextScale = (50 / 730f * GAUGE_SIZE) / font.lineHeight;
         guiGraphics.pose().scale(speedTextScale, speedTextScale, 1);
         guiGraphics.pose().translate(0, 0.5f, 0);
         int speedKph = (int)Math.ceil(train.getSpeed() * 20 * 3.6F);
         if (speedKph >= 100) {
-            guiGraphics.drawCenteredString(font, Integer.toString(speedKph), 0, -font.lineHeight / 2, 0xFFFFFFFF);
+            guiGraphics.centeredText(font, Integer.toString(speedKph), 0, -font.lineHeight / 2, 0xFFFFFFFF);
         } else if (speedKph >= 10) {
-            guiGraphics.drawString(font, Integer.toString(speedKph % 10), 0, -font.lineHeight / 2, 0xFFFFFFFF);
-            guiGraphics.drawString(font, Integer.toString(speedKph / 10), -font.width(Integer.toString(speedKph / 10)), -font.lineHeight / 2, 0xFFFFFFFF);
+            guiGraphics.text(font, Integer.toString(speedKph % 10), 0, -font.lineHeight / 2, 0xFFFFFFFF);
+            guiGraphics.text(font, Integer.toString(speedKph / 10), -font.width(Integer.toString(speedKph / 10)), -font.lineHeight / 2, 0xFFFFFFFF);
         } else {
-            guiGraphics.drawString(font, Integer.toString(speedKph), 0, -font.lineHeight / 2, 0xFFFFFFFF);
+            guiGraphics.text(font, Integer.toString(speedKph), 0, -font.lineHeight / 2, 0xFFFFFFFF);
         }
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
 
         if (train.atpTargetSpeed >= 0 && !train.atpCutout) {
             // Target speed text
-            guiGraphics.pose().pushPose();
+            guiGraphics.pose().pushMatrix();
             guiGraphics.pose().translate(PADDING + (32 / 256f) * GAUGE_SIZE,
                     -GAUGE_SIZE - PADDING + (44 / 256f) * GAUGE_SIZE, 0);
             float targetSpeedTextScale = (13 / 256f * GAUGE_SIZE) / font.lineHeight;
             guiGraphics.pose().scale(targetSpeedTextScale, targetSpeedTextScale, 1);
             int targetSpeedKph = Math.round(train.atpTargetSpeed * 20 * 3.6F);
-            guiGraphics.drawString(font, Integer.toString(targetSpeedKph), -font.width(Integer.toString(targetSpeedKph)), 0, 0xFFFFFFFF);
-            guiGraphics.pose().popPose();
+            guiGraphics.text(font, Integer.toString(targetSpeedKph), -font.width(Integer.toString(targetSpeedKph)), 0, 0xFFFFFFFF);
+            guiGraphics.pose().popMatrix();
 
             // Target speed bar
             double targetDistance = Mth.clamp(train.atpTargetDistance - train.getRailProgress(), 1, 750);
@@ -265,8 +265,8 @@ public class VirtualDriveOverlay {
                     : "P" + Math.round(train.getPercentNotch() * 100));
         int notchColor = train.vdNotch == 0 ? 0xFF888888
                 : (train.vdNotch < 0 ? 0xFFFFA500 : 0xFF4287F5);
-        guiGraphics.drawString(font, Component.literal(reverserText), PADDING, -PADDING - 10, reverserColor);
-        guiGraphics.drawString(font, Component.literal(notchText), PADDING + 12, -PADDING - 10, notchColor);
+        guiGraphics.text(font, Component.literal(reverserText), PADDING, -PADDING - 10, reverserColor);
+        guiGraphics.text(font, Component.literal(notchText), PADDING + 12, -PADDING - 10, notchColor);
 
         // Various other info
         int lineHeight = 10;
@@ -277,20 +277,20 @@ public class VirtualDriveOverlay {
             String distanceText = (platformDistance > -5 && platformDistance < 5)
                     ? Math.round(platformDistance * 100) + " cm"
                     : Math.round(platformDistance) + " m";
-            guiGraphics.drawString(font, Text.translatable("gui.mtrsteamloco.drive.stop_position", distanceText),
+            guiGraphics.text(font, Text.translatable("gui.mtrsteamloco.drive.stop_position", distanceText),
                     x, y, Math.abs(platformDistance) < 1 ? 0xFF1CED85 : 0xFFFFA500);
             y -= lineHeight;
         }
         // ATP status
         if (train.atpEmergencyBrake) {
-            guiGraphics.drawString(font, Component.translatable("gui.mtrsteamloco.drive.atp_eb"), x, y, 0xFFFF0000);
+            guiGraphics.text(font, Component.translatable("gui.mtrsteamloco.drive.atp_eb"), x, y, 0xFFFF0000);
             y -= lineHeight;
         }
 
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
     }
 
-    private static void blit(GuiGraphics guiGraphics, BufferBuilder bufferBuilder, int x1, int y1, int width, int height, float minU, float minV, float deltaU, float deltaV, int color) {
+    private static void blit(GuiGraphicsExtractor guiGraphics, BufferBuilder bufferBuilder, int x1, int y1, int width, int height, float minU, float minV, float deltaU, float deltaV, int color) {
             Matrix4f matrix4f = guiGraphics.pose().last().pose();
             bufferBuilder.addVertex(matrix4f, (float)x1, (float)y1, (float) 0).setUv(minU, minV).setColor(color);
             bufferBuilder.addVertex(matrix4f, (float)x1, (float)(y1 + height), (float) 0).setUv(minU, minV + deltaV).setColor(color);
@@ -298,7 +298,7 @@ public class VirtualDriveOverlay {
             bufferBuilder.addVertex(matrix4f, (float)(x1 + width), (float)y1, (float) 0).setUv(minU + deltaU, minV).setColor(color);
     }
 
-    private static void fill(GuiGraphics guiGraphics, float minX, float minY, float maxX, float maxY, int color) {
+    private static void fill(GuiGraphicsExtractor guiGraphics, float minX, float minY, float maxX, float maxY, int color) {
         Matrix4f matrix4f = guiGraphics.pose().last().pose();
         VertexConsumer vertexConsumer = guiGraphics.bufferSource().getBuffer(RenderType.gui());
         vertexConsumer.addVertex(matrix4f, minX, minY, 0).setColor(color);

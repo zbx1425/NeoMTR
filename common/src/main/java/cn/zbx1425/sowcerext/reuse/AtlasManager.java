@@ -6,7 +6,7 @@ import cn.zbx1425.sowcerext.util.ResourceUtil;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.io.IOException;
@@ -16,21 +16,21 @@ import java.util.Map;
 
 public class AtlasManager {
 
-    public HashMap<ResourceLocation, AtlasSprite> sprites = new HashMap<>();
+    public HashMap<Identifier, AtlasSprite> sprites = new HashMap<>();
 
-    public HashSet<ResourceLocation> noAtlasList = new HashSet<>();
+    public HashSet<Identifier> noAtlasList = new HashSet<>();
 
-    public void load(ResourceManager resourceManager, ResourceLocation atlasConf) throws IOException {
+    public void load(ResourceManager resourceManager, Identifier atlasConf) throws IOException {
         JsonObject atlasConfObj = Main.JSON_PARSER.parse(ResourceUtil.readResource(resourceManager, atlasConf)).getAsJsonObject();
         String basePath = atlasConfObj.get("basePath").getAsString();
         for (JsonElement sheetObj : atlasConfObj.get("sheets").getAsJsonArray()) {
-            ResourceLocation sheetConf = ResourceUtil.resolveRelativePath(atlasConf, sheetObj.getAsString(), ".json");
-            ResourceLocation sheetTexture = ResourceUtil.resolveRelativePath(atlasConf, sheetObj.getAsString(), ".png");
+            Identifier sheetConf = ResourceUtil.resolveRelativePath(atlasConf, sheetObj.getAsString(), ".json");
+            Identifier sheetTexture = ResourceUtil.resolveRelativePath(atlasConf, sheetObj.getAsString(), ".png");
             JsonObject sheetConfObj = Main.JSON_PARSER.parse(ResourceUtil.readResource(resourceManager, sheetConf)).getAsJsonObject();
             int sheetWidth = sheetConfObj.get("meta").getAsJsonObject().get("size").getAsJsonObject().get("w").getAsInt();
             int sheetHeight = sheetConfObj.get("meta").getAsJsonObject().get("size").getAsJsonObject().get("h").getAsInt();
             for (Map.Entry<String, JsonElement> entry : sheetConfObj.get("frames").getAsJsonObject().entrySet()) {
-                ResourceLocation texture = ResourceUtil.resolveRelativePath(sheetConf, basePath + entry.getKey(), ".png");
+                Identifier texture = ResourceUtil.resolveRelativePath(sheetConf, basePath + entry.getKey(), ".png");
                 JsonObject spriteObj = entry.getValue().getAsJsonObject();
                 sprites.put(texture, new AtlasSprite(
                         sheetTexture, sheetWidth, sheetHeight,
@@ -44,7 +44,7 @@ public class AtlasManager {
             }
         }
         for (JsonElement noAtlasObj : atlasConfObj.get("noAtlas").getAsJsonArray()) {
-            ResourceLocation noAtlasTexture = ResourceUtil.resolveRelativePath(atlasConf, basePath + noAtlasObj.getAsString(), ".png");
+            Identifier noAtlasTexture = ResourceUtil.resolveRelativePath(atlasConf, basePath + noAtlasObj.getAsString(), ".png");
             noAtlasList.add(noAtlasTexture);
         }
     }

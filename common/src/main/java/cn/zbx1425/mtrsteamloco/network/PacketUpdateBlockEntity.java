@@ -9,7 +9,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,14 +18,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public class PacketUpdateBlockEntity {
 
-    public static ResourceLocation PACKET_UPDATE_BLOCK_ENTITY = Main.id("update_block_entity");
+    public static Identifier PACKET_UPDATE_BLOCK_ENTITY = Main.id("update_block_entity");
 
     public static void sendUpdateC2S(BlockEntityMapper blockEntity) {
         Level level = blockEntity.getLevel();
         if (level == null) return;
 
         final FriendlyByteBuf packet = new FriendlyByteBuf(Unpooled.buffer());
-        packet.writeResourceLocation(level.dimension().location());
+        packet.writeIdentifier(level.dimension().identifier());
         packet.writeBlockPos(blockEntity.getBlockPos());
         packet.writeVarInt(BuiltInRegistries.BLOCK_ENTITY_TYPE.getId(blockEntity.getType()));
         CompoundTag tag = new CompoundTag();

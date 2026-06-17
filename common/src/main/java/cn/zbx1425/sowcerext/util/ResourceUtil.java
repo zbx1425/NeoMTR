@@ -3,7 +3,7 @@ package cn.zbx1425.sowcerext.util;
 import cn.zbx1425.sowcer.batch.MaterialProp;
 import mtr.mappings.Utilities;
 import mtr.mappings.UtilitiesClient;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.apache.commons.io.IOUtils;
@@ -19,18 +19,18 @@ import java.util.Locale;
 
 public class ResourceUtil {
 
-    public static String readResource(ResourceManager manager, ResourceLocation location) throws IOException {
+    public static String readResource(ResourceManager manager, Identifier location) throws IOException {
         final List<Resource> resources = UtilitiesClient.getResources(manager, location);
         if (resources.isEmpty()) return "";
         return IOUtils.toString(new BOMInputStream(Utilities.getInputStream(resources.get(0))), StandardCharsets.UTF_8);
     }
 
-    public static ResourceLocation resolveRelativePath(ResourceLocation baseFile, String relative, String expectExtension) {
+    public static Identifier resolveRelativePath(Identifier baseFile, String relative, String expectExtension) {
         relative = relative.toLowerCase(Locale.ROOT).replace('\\', '/');
 
         if (relative.contains(":")) {
             relative = relative.replaceAll("[^a-z0-9/.:_-]", "_");
-            return ResourceLocation.parse(relative);
+            return Identifier.parse(relative);
         }
 
         relative = relative.replaceAll("[^a-z0-9/._-]", "_");
@@ -44,6 +44,6 @@ public class ResourceUtil {
         }
         String resolvedPath = FileSystems.getDefault().getPath(baseFile.getPath()).getParent().resolve(relative)
                 .normalize().toString().replace('\\', '/');
-        return ResourceLocation.fromNamespaceAndPath(baseFile.getNamespace(), resolvedPath);
+        return Identifier.fromNamespaceAndPath(baseFile.getNamespace(), resolvedPath);
     }
 }

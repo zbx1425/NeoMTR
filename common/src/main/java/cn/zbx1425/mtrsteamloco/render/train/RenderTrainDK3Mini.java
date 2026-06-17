@@ -7,7 +7,6 @@ import cn.zbx1425.sowcerext.multipart.animated.AnimatedLoader;
 import cn.zbx1425.sowcerext.multipart.mi.MiLoader;
 import mtr.data.TrainClient;
 import mtr.render.TrainRendererBase;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.io.IOException;

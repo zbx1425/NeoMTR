@@ -4,18 +4,17 @@ import mtr.data.IGui;
 import mtr.mappings.Text;
 import mtr.mappings.UtilitiesClient;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class WidgetShorterSlider extends AbstractSliderButton implements IGui {
 
-	private static final ResourceLocation WIDGETS_LOCATION
-			= ResourceLocation.fromNamespaceAndPath("mtr", "textures/gui/widgets.png");
+	private static final Identifier WIDGETS_LOCATION = Identifier.fromNamespaceAndPath("mtr", "textures/gui/widgets.png");
 
 	private final int maxValue;
 	private final int markerFrequency;
@@ -65,11 +64,11 @@ public class WidgetShorterSlider extends AbstractSliderButton implements IGui {
 	protected void applyValue() {
 	}
 
-	public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void renderWidget(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		render(guiGraphics);
 	}
 
-	public void renderButton(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void renderButton(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		render(guiGraphics);
 	}
 
@@ -86,7 +85,7 @@ public class WidgetShorterSlider extends AbstractSliderButton implements IGui {
 		return (int) Math.round(value * maxValue);
 	}
 
-	private void render(GuiGraphics guiGraphics) {
+	private void render(GuiGraphicsExtractor guiGraphics) {
 		final Minecraft client = Minecraft.getInstance();
 
 		guiGraphics.blit(WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this), UtilitiesClient.getWidgetY(this), 0, 46, width / 2, height / 2);
@@ -101,13 +100,13 @@ public class WidgetShorterSlider extends AbstractSliderButton implements IGui {
 		guiGraphics.blit(WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset + SLIDER_WIDTH / 2, UtilitiesClient.getWidgetY(this), 200 - SLIDER_WIDTH / 2, v, SLIDER_WIDTH / 2, height / 2);
 		guiGraphics.blit(WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset + SLIDER_WIDTH / 2, UtilitiesClient.getWidgetY(this) + height / 2, 200 - SLIDER_WIDTH / 2, v + 20 - height / 2, SLIDER_WIDTH / 2, height / 2);
 
-		guiGraphics.drawString(client.font, getMessage().getString(), UtilitiesClient.getWidgetX(this) + width + TEXT_PADDING, UtilitiesClient.getWidgetY(this) + (height - TEXT_HEIGHT) / 2, ARGB_WHITE);
+		guiGraphics.text(client.font, getMessage().getString(), UtilitiesClient.getWidgetX(this) + width + TEXT_PADDING, UtilitiesClient.getWidgetY(this) + (height - TEXT_HEIGHT) / 2, ARGB_WHITE);
 
 		if (markerFrequency > 0) {
 			for (int i = 1; i <= maxValue / markerFrequency; i++) {
 				final int xOffset1 = (width - SLIDER_WIDTH) * i * markerFrequency / maxValue;
 				guiGraphics.blit(WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset1 + SLIDER_WIDTH / 3, UtilitiesClient.getWidgetY(this) + height, 10, 68, 2, TICK_HEIGHT);
-				guiGraphics.drawCenteredString(client.font, String.valueOf(i * markerFrequency / markerDisplayedRatio), UtilitiesClient.getWidgetX(this) + xOffset1 + SLIDER_WIDTH / 2, UtilitiesClient.getWidgetY(this) + height + TICK_HEIGHT + 2, ARGB_WHITE);
+				guiGraphics.centeredText(client.font, String.valueOf(i * markerFrequency / markerDisplayedRatio), UtilitiesClient.getWidgetX(this) + xOffset1 + SLIDER_WIDTH / 2, UtilitiesClient.getWidgetY(this) + height + TICK_HEIGHT + 2, ARGB_WHITE);
 			}
 		}
 	}

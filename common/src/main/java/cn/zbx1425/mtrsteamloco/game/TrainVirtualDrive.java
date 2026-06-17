@@ -8,7 +8,7 @@ import mtr.data.RailwayDataCoolDownModule;
 import mtr.data.TrainClient;
 import mtr.mappings.Text;
 import mtr.path.PathData;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
@@ -85,7 +85,7 @@ public class TrainVirtualDrive extends TrainClient {
                         railProgress = distances.get(repeatIndex1 - 1) + trainCars * spacing;
                         nextPlatformIndex = 0;
                         reversed = !reversed;
-                        Minecraft.getInstance().player.displayClientMessage(Text.translatable("gui.mtrsteamloco.drive.change_end"), false);
+                        Minecraft.getInstance().player.sendSystemMessage(Text.translatable("gui.mtrsteamloco.drive.change_end"));
                     }
                 } else {
                     railProgress = distances.get(repeatIndex1) + (railProgress - distances.get(repeatIndex2));
@@ -100,7 +100,7 @@ public class TrainVirtualDrive extends TrainClient {
                 && path.get(tailIndex).isOppositeRail(path.get(tailIndex + 1))) {
                 railProgress = distances.get(tailIndex) + trainCars * spacing + 0.1; // 0.1 to avoid red speed at 0
                 reversed = !reversed;
-                Minecraft.getInstance().player.displayClientMessage(Text.translatable("gui.mtrsteamloco.drive.change_end"), false);
+                Minecraft.getInstance().player.sendSystemMessage(Text.translatable("gui.mtrsteamloco.drive.change_end"));
             }
         }
 
@@ -267,7 +267,7 @@ public class TrainVirtualDrive extends TrainClient {
         if (activeTrain != null) {
             PacketVirtualDrive.sendVirtualDriveC2S(false);
             activeTrain.isRemoved = true;
-            Minecraft.getInstance().tell(() -> {
+            Minecraft.getInstance().execute(() -> {
                 ClientData.TRAINS.remove(activeTrain);
                 activeTrain = null;
             });

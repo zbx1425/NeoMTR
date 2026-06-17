@@ -19,7 +19,7 @@ public class NTEClientCommand {
         dispatcher.register(literal.apply("mtrnte")
                 .then(literal.apply("config")
                         .executes(context -> {
-                            Minecraft.getInstance().tell(() -> {
+                            Minecraft.getInstance().execute(() -> {
                                 Minecraft.getInstance().setScreen(ConfigScreen.createScreen(Minecraft.getInstance().screen));
                             });
                             return 1;
@@ -42,7 +42,7 @@ public class NTEClientCommand {
                         })))
                 .then(literal.apply("stat")
                         .executes(context -> {
-                            Minecraft.getInstance().tell(() -> {
+                            Minecraft.getInstance().execute(() -> {
                                 String info = RenderUtil.getRenderStatusMessage();
                                 Minecraft.getInstance().player.sendSystemMessage(Text.literal(info));
                             });

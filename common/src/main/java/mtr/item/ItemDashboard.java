@@ -6,9 +6,8 @@ import mtr.data.TransportMode;
 import mtr.packet.PacketTrainDataGuiServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class ItemDashboard extends ItemWithCreativeTabBase {
@@ -21,7 +20,7 @@ public class ItemDashboard extends ItemWithCreativeTabBase {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand interactionHand) {
+	public InteractionResult use(Level world, Player player, InteractionHand interactionHand) {
 		if (!world.isClientSide()) {
 			final RailwayData railwayData = RailwayData.getInstance(world);
 			if (railwayData != null) {

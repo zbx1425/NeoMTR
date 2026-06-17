@@ -47,7 +47,7 @@ public class ItemRailModifier extends ItemNodeModifierBase {
 	protected void onConnect(Level world, ItemStack stack, TransportMode transportMode, BlockState stateStart, BlockState stateEnd, BlockPos posStart, BlockPos posEnd, RailAngle facingStart, RailAngle facingEnd, Player player, RailwayData railwayData) {
 		if (railType.hasSavedRail && (railwayData.hasSavedRail(posStart) || railwayData.hasSavedRail(posEnd))) {
 			if (player != null) {
-				player.displayClientMessage(Text.translatable("gui.mtr.platform_or_siding_exists"), true);
+				player.sendOverlayMessage(Text.translatable("gui.mtr.platform_or_siding_exists"));
 			}
 		} else {
 			final boolean isValidContinuousMovement;
@@ -95,7 +95,7 @@ public class ItemRailModifier extends ItemNodeModifierBase {
 				world.setBlockAndUpdate(posEnd, stateEnd.setValue(BlockNode.IS_CONNECTED, true));
 				PacketTrainDataGuiServer.createRailS2C(world, transportMode, posStart, posEnd, rail1, rail2, newId);
 			} else if (player != null) {
-				player.displayClientMessage(Text.translatable(isValidContinuousMovement ? goodRadius ? "gui.mtr.invalid_orientation" : "gui.mtr.radius_too_small" : "gui.mtr.cable_car_invalid_orientation"), true);
+				player.sendOverlayMessage(Text.translatable(isValidContinuousMovement ? goodRadius ? "gui.mtr.invalid_orientation" : "gui.mtr.radius_too_small" : "gui.mtr.cable_car_invalid_orientation"));
 			}
 		}
 	}

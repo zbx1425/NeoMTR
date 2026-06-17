@@ -7,10 +7,10 @@ import mtr.mappings.RegistryUtilities;
 import mtr.mappings.Text;
 import mtr.mappings.UtilitiesClient;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -50,7 +50,7 @@ public class TrainAnnouncerScreen extends TrainSensorScreenBase {
 		availableSoundsList = new DashboardList((data, color) -> {
 			final String soundIdString = data.name;
 			if (!soundIdString.isEmpty() && world != null && minecraft.player != null) {
-				world.playLocalSound(pos, RegistryUtilities.createSoundEvent(ResourceLocation.parse(soundIdString)), SoundSource.BLOCKS, 1000000, 1, false);
+				world.playLocalSound(pos, RegistryUtilities.createSoundEvent(Identifier.parse(soundIdString)), SoundSource.BLOCKS, 1000000, 1, false);
 			}
 		}, null, null, null, (data, color) -> {
 			textFields[1].setValue(data.name);
@@ -103,7 +103,7 @@ public class TrainAnnouncerScreen extends TrainSensorScreenBase {
 	}
 
 	@Override
-	protected void renderAdditional(GuiGraphics guiGraphics) {
+	protected void renderAdditional(GuiGraphicsExtractor guiGraphics) {
 		guiGraphics.fill(availableSoundsList.x, availableSoundsList.y, availableSoundsList.x + availableSoundsList.width, availableSoundsList.y + availableSoundsList.height, ARGB_BACKGROUND);
 		availableSoundsList.render(guiGraphics, font);
 	}

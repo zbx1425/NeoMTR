@@ -5,6 +5,7 @@ import cn.zbx1425.sowcerext.model.ModelCluster;
 import cn.zbx1425.sowcerext.model.RawModel;
 import cn.zbx1425.sowcerext.reuse.ModelManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 
 public class DynamicModelHolder {
 
@@ -13,7 +14,7 @@ public class DynamicModelHolder {
     public void uploadLater(RawModel rawModel) {
         RawModel finalRawModel = rawModel.copyForMaterialChanges();
         finalRawModel.sourceLocation = null;
-        RenderSystem.recordRenderCall(() -> {
+        Minecraft.getInstance().execute(() -> {
             boolean needProtection = !GlStateTracker.isStateProtected;
             if (needProtection) GlStateTracker.capture();
             ModelCluster lastUploadedModel = uploadedModel;
@@ -28,7 +29,7 @@ public class DynamicModelHolder {
     }
 
     public void close() {
-        RenderSystem.recordRenderCall(() -> {
+        Minecraft.getInstance().execute(() -> {
             if (uploadedModel != null) {
                 uploadedModel.close();
                 uploadedModel = null;

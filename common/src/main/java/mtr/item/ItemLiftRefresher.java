@@ -90,7 +90,7 @@ public class ItemLiftRefresher extends ItemWithCreativeTabBase {
 			final InteractionResult result;
 			if (floors.isEmpty() || firstFloor == null || facing == null) {
 				if (player != null) {
-					player.displayClientMessage(Text.translatable("gui.mtr.no_lift_tracks_floor_found"), true);
+					player.sendOverlayMessage(Text.translatable("gui.mtr.no_lift_tracks_floor_found"));
 				}
 				result = InteractionResult.FAIL;
 			} else {
@@ -121,7 +121,7 @@ public class ItemLiftRefresher extends ItemWithCreativeTabBase {
 			return result;
 		} else {
 			if (player != null) {
-				player.displayClientMessage(Text.translatable("gui.mtr.lift_track_required"), true);
+				player.sendOverlayMessage(Text.translatable("gui.mtr.lift_track_required"));
 			}
 			return InteractionResult.FAIL;
 		}

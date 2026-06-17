@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import cn.zbx1425.sowcer.math.Vector3f;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class MiLoader {
 
-    public static MultipartContainer loadModel(ResourceManager resourceManager, ModelManager modelManager, AtlasManager atlasManager, ResourceLocation objLocation) throws IOException {
+    public static MultipartContainer loadModel(ResourceManager resourceManager, ModelManager modelManager, AtlasManager atlasManager, Identifier objLocation) throws IOException {
         JsonObject configData = Main.JSON_PARSER.parse(ResourceUtil.readResource(resourceManager, objLocation)).getAsJsonObject();
         JsonObject miData = Main.JSON_PARSER.parse(ResourceUtil.readResource(resourceManager,
                 ResourceUtil.resolveRelativePath(objLocation, configData.get("miProject").getAsString(), ""))).getAsJsonObject();

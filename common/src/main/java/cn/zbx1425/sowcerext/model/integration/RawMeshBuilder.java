@@ -5,7 +5,7 @@ import cn.zbx1425.sowcerext.model.Face;
 import cn.zbx1425.sowcerext.model.RawMesh;
 import cn.zbx1425.sowcerext.model.Vertex;
 import cn.zbx1425.sowcer.math.Vector3f;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.stream.IntStream;
 
@@ -16,7 +16,7 @@ public class RawMeshBuilder {
     private final int faceSize;
     private Vertex buildingVertex = new Vertex();
 
-    public RawMeshBuilder(int faceSize, String renderType, ResourceLocation texture) {
+    public RawMeshBuilder(int faceSize, String renderType, Identifier texture) {
         this.faceSize = faceSize;
         this.mesh = new RawMesh(new MaterialProp());
         mesh.setRenderType(renderType);

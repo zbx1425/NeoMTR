@@ -20,16 +20,12 @@ import mtr.client.ClientData;
 import mtr.data.TrainClient;
 import mtr.mappings.BlockEntityRendererMapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-#if MC_VERSION >= "11904"
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.item.ItemDisplayContext;
-#else
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-#endif
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -55,7 +51,7 @@ public class BlockEntityEyeCandyRenderer extends BlockEntityRendererMapper<Block
         final Level world = blockEntity.getLevel();
         if (world == null) return;
 
-        int lightToUse = blockEntity.fullLight ? LightTexture.pack(15, 15) : light;
+        int lightToUse = blockEntity.fullLight ? LightCoordsUtil.pack(15, 15) : light;
         Matrix4f candyPose = new Matrix4f(matrices.last().pose()).copy();
 
         EyeCandyProperties prop = EyeCandyRegistry.getProperty(blockEntity.prefabId);
@@ -63,19 +59,11 @@ public class BlockEntityEyeCandyRenderer extends BlockEntityRendererMapper<Block
             matrices.pushPose();
             matrices.translate(0.5f, 0.5f, 0.5f);
             PoseStackUtil.rotY(matrices, (float) ((System.currentTimeMillis() % 1000) * (Math.PI * 2 / 1000)));
-#if MC_VERSION >= "11904"
             if (blockEntity.prefabId != null && prop == null) {
                 Minecraft.getInstance().getItemRenderer().renderStatic(BARRIER_ITEM_STACK.get(), ItemDisplayContext.GROUND, lightToUse, 0, matrices, vertexConsumers, world, 0);
             } else {
                 Minecraft.getInstance().getItemRenderer().renderStatic(BRUSH_ITEM_STACK.get(), ItemDisplayContext.GROUND, lightToUse, 0, matrices, vertexConsumers, world, 0);
             }
-#else
-            if (blockEntity.prefabId != null && prop == null) {
-                Minecraft.getInstance().getItemRenderer().renderStatic(BARRIER_ITEM_STACK.get(), ItemTransforms.TransformType.GROUND, lightToUse, 0, matrices, vertexConsumers, 0);
-            } else {
-                Minecraft.getInstance().getItemRenderer().renderStatic(BRUSH_ITEM_STACK.get(), ItemTransforms.TransformType.GROUND, lightToUse, 0, matrices, vertexConsumers, 0);
-            }
-#endif
             matrices.popPose();
         }
         if (prop == null) return;

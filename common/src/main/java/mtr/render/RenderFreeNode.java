@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -41,7 +41,7 @@ public class RenderFreeNode extends BlockEntityRendererMapper<BlockFreeNode.Tile
 		}
 
 		matrices.pushPose();
-		final VertexConsumer vertexConsumer = vertexConsumers.getBuffer(MoreRenderLayers.getExterior(ResourceLocation.parse("textures/block/oak_log.png")));
+		final VertexConsumer vertexConsumer = vertexConsumers.getBuffer(MoreRenderLayers.getExterior(Identifier.parse("textures/block/oak_log.png")));
 
 		final float angle = entity.getAngleDegrees();
 		if (Float.isNaN(angle)) {

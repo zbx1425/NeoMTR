@@ -51,7 +51,7 @@ public class UpdateSquaremap implements IGui, IUpdateWebMap {
 	}
 
 	private static <T extends AreaBase> void updateSquaremap(Level world, Set<T> areas, String areasId, String areasTitle, String areaAreasId, String areaAreasTitle, String iconKey) {
-		final MapWorld mapWorld = SquaremapProvider.get().getWorldIfEnabled(WorldIdentifier.parse(world.dimension().location().toString())).orElse(null);
+		final MapWorld mapWorld = SquaremapProvider.get().getWorldIfEnabled(WorldIdentifier.parse(world.dimension().identifier().toString())).orElse(null);
 		if (mapWorld == null) {
 			return;
 		}

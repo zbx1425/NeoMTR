@@ -1,11 +1,9 @@
 package mtr.entity;
 
-import mtr.Registry;
 import mtr.mappings.EntityMapper;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public abstract class EntityBase extends EntityMapper {
 
@@ -22,28 +20,11 @@ public abstract class EntityBase extends EntityMapper {
 	}
 
 	@Override
-	public void lerpTo(double x, double y, double z, float yaw, float pitch, int interpolationSteps) {
-		clientX = x;
-		clientY = y;
-		clientZ = z;
-		clientInterpolationSteps = interpolationSteps;
+	public void lerpMotion(Vec3 movement) {
+		this.speedX = movement.x();
+		this.speedY = movement.y();
+		this.speedZ = movement.z();
 		setDeltaMovement(speedX, speedY, speedZ);
-	}
-
-	@Override
-	public void lerpMotion(double speedX, double speedY, double speedZ) {
-		this.speedX = speedX;
-		this.speedY = speedY;
-		this.speedZ = speedZ;
-		setDeltaMovement(speedX, speedY, speedZ);
-	}
-
-	@Override
-	protected final void readAdditionalSaveData(CompoundTag compoundTag) {
-	}
-
-	@Override
-	protected final void addAdditionalSaveData(CompoundTag compoundTag) {
 	}
 
 	protected final void setClientPosition() {

@@ -9,7 +9,7 @@ import mtr.data.Station;
 import mtr.mappings.Text;
 import mtr.mappings.UtilitiesClient;
 import mtr.packet.PacketTrainDataGuiClient;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
@@ -125,7 +125,7 @@ public class EditStationScreen extends EditNameColorScreenBase<Station> {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			renderTextFields(guiGraphics);
@@ -135,10 +135,10 @@ public class EditStationScreen extends EditNameColorScreenBase<Station> {
 			exitParentList.render(guiGraphics, font);
 			exitDestinationList.render(guiGraphics, font);
 
-			guiGraphics.drawCenteredString(font, stationZoneText, width / 8 * 7, TEXT_PADDING, ARGB_WHITE);
-			guiGraphics.drawCenteredString(font, exitParentsText, width / 4, EXIT_PANELS_START - SQUARE_SIZE + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.centeredText(font, stationZoneText, width / 8 * 7, TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.centeredText(font, exitParentsText, width / 4, EXIT_PANELS_START - SQUARE_SIZE + TEXT_PADDING, ARGB_WHITE);
 			if (parentExists()) {
-				guiGraphics.drawCenteredString(font, exitDestinationsText, 3 * width / 4, EXIT_PANELS_START - SQUARE_SIZE + TEXT_PADDING, ARGB_WHITE);
+				guiGraphics.centeredText(font, exitDestinationsText, 3 * width / 4, EXIT_PANELS_START - SQUARE_SIZE + TEXT_PADDING, ARGB_WHITE);
 			}
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);

@@ -3,7 +3,7 @@ package mtr.data;
 import io.netty.buffer.Unpooled;
 import mtr.Registry;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -21,7 +21,7 @@ public class VehicleRidingServer {
 	private static final float INNER_PADDING = 0.5F;
 	private static final int BOX_PADDING = 3;
 
-	public static void mountRider(Level world, Set<UUID> ridingEntities, long id, long routeId, double carX, double carY, double carZ, double length, double width, float carYaw, float carPitch, boolean doorOpen, boolean canMount, int percentageOffset, ResourceLocation packetId, Function<Player, Boolean> canRide, Consumer<Player> ridingCallback) {
+	public static void mountRider(Level world, Set<UUID> ridingEntities, long id, long routeId, double carX, double carY, double carZ, double length, double width, float carYaw, float carPitch, boolean doorOpen, boolean canMount, int percentageOffset, Identifier packetId, Function<Player, Boolean> canRide, Consumer<Player> ridingCallback) {
 		final RailwayData railwayData = RailwayData.getInstance(world);
 		if (railwayData == null) {
 			return;

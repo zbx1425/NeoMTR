@@ -2,7 +2,7 @@ package mtr.data;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Maps;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.Locale;

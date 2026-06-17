@@ -10,11 +10,11 @@ import mtr.mappings.UtilitiesClient;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiClient;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -72,8 +72,8 @@ public class PIDSConfigScreen extends ScreenMapper implements IGui, IPacket {
 			});
 		}
 
-		buttonPrevPage = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, ResourceLocation.parse("mtr:textures/gui/icon_left.png"), 20, 40, button -> setPage(page - 1));
-		buttonNextPage = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, ResourceLocation.parse("mtr:textures/gui/icon_right.png"), 20, 40, button -> setPage(page + 1));
+		buttonPrevPage = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_left.png"), 20, 40, button -> setPage(page - 1));
+		buttonNextPage = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_right.png"), 20, 40, button -> setPage(page + 1));
 
 		final Level world = Minecraft.getInstance().level;
 		if (world == null) {
@@ -183,15 +183,15 @@ public class PIDSConfigScreen extends ScreenMapper implements IGui, IPacket {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
-			guiGraphics.drawString(font, Text.translatable("gui.mtr.display_page"), SQUARE_SIZE, SQUARE_SIZE * 4 + TEXT_PADDING, ARGB_WHITE);
-			guiGraphics.drawString(font, Text.translatable("gui.mtr.filtered_platforms", selectAllCheckbox.selected() ? 0 : filterPlatformIds.size()), SQUARE_SIZE, SQUARE_SIZE * 2 + TEXT_PADDING, ARGB_WHITE);
-			guiGraphics.drawString(font, messageText, SQUARE_SIZE, SQUARE_SIZE * 7 + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.text(font, Text.translatable("gui.mtr.display_page"), SQUARE_SIZE, SQUARE_SIZE * 4 + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.text(font, Text.translatable("gui.mtr.filtered_platforms", selectAllCheckbox.selected() ? 0 : filterPlatformIds.size()), SQUARE_SIZE, SQUARE_SIZE * 2 + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.text(font, messageText, SQUARE_SIZE, SQUARE_SIZE * 7 + TEXT_PADDING, ARGB_WHITE);
 			final int maxPages = getMaxPages();
 			if (maxPages > 1) {
-				guiGraphics.drawCenteredString(font, String.format("%s/%s", page + 1, maxPages), SQUARE_SIZE * 3 + font.width(messageText) + TEXT_PADDING, SQUARE_SIZE * 7 + TEXT_PADDING, ARGB_WHITE);
+				guiGraphics.centeredText(font, String.format("%s/%s", page + 1, maxPages), SQUARE_SIZE * 3 + font.width(messageText) + TEXT_PADDING, SQUARE_SIZE * 7 + TEXT_PADDING, ARGB_WHITE);
 			}
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);

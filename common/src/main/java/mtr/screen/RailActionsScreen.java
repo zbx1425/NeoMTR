@@ -9,7 +9,7 @@ import mtr.data.NameColorDataBase;
 import mtr.mappings.ScreenMapper;
 import mtr.mappings.Text;
 import mtr.packet.IPacket;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.FriendlyByteBuf;
 
 public class RailActionsScreen extends ScreenMapper implements IGui, IPacket {
@@ -34,11 +34,11 @@ public class RailActionsScreen extends ScreenMapper implements IGui, IPacket {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			railActionsList.render(guiGraphics, font);
-			guiGraphics.drawCenteredString(font, Text.translatable("gui.mtr.rail_actions"), width / 2, SQUARE_SIZE + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.centeredText(font, Text.translatable("gui.mtr.rail_actions"), width / 2, SQUARE_SIZE + TEXT_PADDING, ARGB_WHITE);
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);
 		}

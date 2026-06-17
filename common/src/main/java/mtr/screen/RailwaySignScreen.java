@@ -13,12 +13,12 @@ import mtr.mappings.UtilitiesClient;
 import mtr.packet.PacketTrainDataGuiClient;
 import mtr.render.RenderRailwaySign;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -128,8 +128,8 @@ public class RailwaySignScreen extends ScreenMapper implements IGui {
 		}
 
 		buttonClear = UtilitiesClient.newButton(Text.translatable("gui.mtr.reset_sign"), button -> setNewSignId(null));
-		buttonPrevPage = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, ResourceLocation.parse("mtr:textures/gui/icon_left.png"), 20, 40, button -> setPage(page - 1));
-		buttonNextPage = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, ResourceLocation.parse("mtr:textures/gui/icon_right.png"), 20, 40, button -> setPage(page + 1));
+		buttonPrevPage = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_left.png"), 20, 40, button -> setPage(page - 1));
+		buttonNextPage = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_right.png"), 20, 40, button -> setPage(page + 1));
 	}
 
 	@Override
@@ -173,7 +173,7 @@ public class RailwaySignScreen extends ScreenMapper implements IGui {
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		super.render(guiGraphics, mouseX, mouseY, delta);
 		try {
 			if (minecraft == null) {
@@ -202,7 +202,7 @@ public class RailwaySignScreen extends ScreenMapper implements IGui {
 					}
 				}, false);
 
-				guiGraphics.drawCenteredString(font, String.format("%s/%s", page + 1, totalPages), (width - PANEL_WIDTH - SQUARE_SIZE * 4) / 2 + PANEL_WIDTH + SQUARE_SIZE * 2, height - SQUARE_SIZE * 2 + TEXT_PADDING, ARGB_WHITE);
+				guiGraphics.centeredText(font, String.format("%s/%s", page + 1, totalPages), (width - PANEL_WIDTH - SQUARE_SIZE * 4) / 2 + PANEL_WIDTH + SQUARE_SIZE * 2, height - SQUARE_SIZE * 2 + TEXT_PADDING, ARGB_WHITE);
 			}
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);

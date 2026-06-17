@@ -10,8 +10,8 @@ import cn.zbx1425.sowcer.math.Vector3f;
 import cn.zbx1425.sowcer.vertex.VertAttrState;
 import cn.zbx1425.sowcer.vertex.VertAttrType;
 import cn.zbx1425.sowcerext.model.integration.BufferSourceProxy;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class RawModel {
 
-    public ResourceLocation sourceLocation;
+    public Identifier sourceLocation;
 
     public HashMap<MaterialProp, RawMesh> meshList = new HashMap<>();
 
@@ -160,7 +160,7 @@ public class RawModel {
         }
     }
 
-    public void replaceTexture(String oldTexture, ResourceLocation newTexture) {
+    public void replaceTexture(String oldTexture, Identifier newTexture) {
         for (Map.Entry<MaterialProp, RawMesh> entry : meshList.entrySet()) {
             if (entry.getKey().texture == null) continue;
             String oldPath = entry.getKey().texture.getPath();
@@ -171,7 +171,7 @@ public class RawModel {
         }
     }
 
-    public void replaceAllTexture(ResourceLocation newTexture) {
+    public void replaceAllTexture(Identifier newTexture) {
         for (Map.Entry<MaterialProp, RawMesh> entry : meshList.entrySet()) {
             entry.getValue().materialProp.texture = newTexture;
             entry.getKey().texture = newTexture;

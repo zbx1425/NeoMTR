@@ -405,7 +405,7 @@ public class TrainClient extends Train implements IGui {
 			return;
 		}
 
-		final Entity camera = Minecraft.getInstance().cameraEntity;
+		final Entity camera = Minecraft.getInstance().getCameraEntity();
 		final Vec3 cameraPos = camera == null ? Vec3.ZERO : camera.position();
 		Vec3 nearestPoint = keyPointsPositions[0];
 		double nearestDistance = Double.POSITIVE_INFINITY;

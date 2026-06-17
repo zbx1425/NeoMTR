@@ -51,7 +51,7 @@ public class UpdateDynmap implements IGui, IUpdateWebMap {
 	private static <T extends AreaBase> void updateDynmap(Level world, Set<T> areas, String areasId, String areasTitle, String areaAreasId, String areaAreasTitle, String iconKey) {
 		if (dynmapCommonAPI != null) {
 			final String worldId;
-			switch (world.dimension().location().toString()) {
+			switch (world.dimension().identifier().toString()) {
 				case "minecraft:overworld":
 					final MinecraftServer minecraftServer = world.getServer();
 					worldId = minecraftServer == null ? "world" : minecraftServer.getWorldData().getLevelName();
@@ -63,7 +63,7 @@ public class UpdateDynmap implements IGui, IUpdateWebMap {
 					worldId = "DIM1";
 					break;
 				default:
-					worldId = world.dimension().location().getPath();
+					worldId = world.dimension().identifier().getPath();
 					break;
 			}
 

@@ -11,7 +11,7 @@ import mtr.mappings.ScreenMapper;
 import mtr.mappings.Text;
 import mtr.mappings.UtilitiesClient;
 import mtr.render.RenderTrains;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
@@ -138,17 +138,17 @@ public class ResourcePackCreatorOptionsScreen extends ScreenMapper implements IR
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			final int yStart = (height - SQUARE_SIZE * 10 - TEXT_FIELD_PADDING * 4) / 2;
-			guiGraphics.drawString(font, FILE_MODEL_TEXT, SQUARE_SIZE, yStart + TEXT_PADDING, ARGB_WHITE);
-			guiGraphics.drawString(font, FILE_PROPERTIES_TEXT, SQUARE_SIZE, yStart + SQUARE_SIZE + TEXT_PADDING, ARGB_WHITE);
-			guiGraphics.drawString(font, FILE_TEXTURE_TEXT, SQUARE_SIZE, yStart + SQUARE_SIZE * 2 + TEXT_PADDING, ARGB_WHITE);
-			guiGraphics.drawString(font, ID_TEXT, SQUARE_SIZE, yStart + SQUARE_SIZE * 7 / 2 + TEXT_FIELD_PADDING / 2 + TEXT_PADDING, ARGB_WHITE);
-			guiGraphics.drawString(font, NAME_TEXT, SQUARE_SIZE, yStart + SQUARE_SIZE * 9 / 2 + TEXT_FIELD_PADDING * 3 / 2 + TEXT_PADDING, ARGB_WHITE);
-			guiGraphics.drawString(font, GANGWAY_CONNECTION_ID_TEXT, SQUARE_SIZE, yStart + SQUARE_SIZE * 11 / 2 + TEXT_FIELD_PADDING * 5 / 2 + TEXT_PADDING, ARGB_WHITE);
-			guiGraphics.drawString(font, TRAIN_BARRIER_ID_TEXT, SQUARE_SIZE, yStart + SQUARE_SIZE * 13 / 2 + TEXT_FIELD_PADDING * 7 / 2 + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.text(font, FILE_MODEL_TEXT, SQUARE_SIZE, yStart + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.text(font, FILE_PROPERTIES_TEXT, SQUARE_SIZE, yStart + SQUARE_SIZE + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.text(font, FILE_TEXTURE_TEXT, SQUARE_SIZE, yStart + SQUARE_SIZE * 2 + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.text(font, ID_TEXT, SQUARE_SIZE, yStart + SQUARE_SIZE * 7 / 2 + TEXT_FIELD_PADDING / 2 + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.text(font, NAME_TEXT, SQUARE_SIZE, yStart + SQUARE_SIZE * 9 / 2 + TEXT_FIELD_PADDING * 3 / 2 + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.text(font, GANGWAY_CONNECTION_ID_TEXT, SQUARE_SIZE, yStart + SQUARE_SIZE * 11 / 2 + TEXT_FIELD_PADDING * 5 / 2 + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.text(font, TRAIN_BARRIER_ID_TEXT, SQUARE_SIZE, yStart + SQUARE_SIZE * 13 / 2 + TEXT_FIELD_PADDING * 7 / 2 + TEXT_PADDING, ARGB_WHITE);
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);
 		}

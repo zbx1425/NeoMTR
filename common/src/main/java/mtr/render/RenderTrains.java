@@ -11,20 +11,19 @@ import mtr.block.BlockSignalSemaphoreBase;
 import mtr.client.*;
 import mtr.data.*;
 import mtr.item.ItemNodeModifierBase;
-import mtr.mappings.EntityRendererMapper;
 import mtr.mappings.Text;
 import mtr.mappings.Utilities;
 import mtr.mappings.UtilitiesClient;
 import mtr.path.PathData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -64,16 +63,16 @@ public class RenderTrains implements IGui {
 	private static final int TICKS_PER_SECOND = 20;
 	private static final int DISMOUNT_PROGRESS_BAR_LENGTH = 30;
 	private static final int TOTAL_RENDER_STAGES = 2;
-	private static final List<List<Map<ResourceLocation, Set<BiConsumer<PoseStack, VertexConsumer>>>>> RENDERS = new ArrayList<>(TOTAL_RENDER_STAGES);
-	private static final List<List<Map<ResourceLocation, Set<BiConsumer<PoseStack, VertexConsumer>>>>> CURRENT_RENDERS = new ArrayList<>(TOTAL_RENDER_STAGES);
-	private static final ResourceLocation LIFT_TEXTURE = ResourceLocation.parse("mtr:textures/entity/lift_1.png");
-	private static final ResourceLocation ARROW_TEXTURE = ResourceLocation.parse("mtr:textures/block/sign/lift_arrow.png");
+	private static final List<List<Map<Identifier, Set<BiConsumer<PoseStack, VertexConsumer>>>>> RENDERS = new ArrayList<>(TOTAL_RENDER_STAGES);
+	private static final List<List<Map<Identifier, Set<BiConsumer<PoseStack, VertexConsumer>>>>> CURRENT_RENDERS = new ArrayList<>(TOTAL_RENDER_STAGES);
+	private static final Identifier LIFT_TEXTURE = Identifier.parse("mtr:textures/entity/lift_1.png");
+	private static final Identifier ARROW_TEXTURE = Identifier.parse("mtr:textures/block/sign/lift_arrow.png");
 
 	static {
 		for (int i = 0; i < TOTAL_RENDER_STAGES; i++) {
 			final int renderStageCount = QueuedRenderLayer.values().length;
-			final List<Map<ResourceLocation, Set<BiConsumer<PoseStack, VertexConsumer>>>> rendersList = new ArrayList<>(renderStageCount);
-			final List<Map<ResourceLocation, Set<BiConsumer<PoseStack, VertexConsumer>>>> currentRendersList = new ArrayList<>(renderStageCount);
+			final List<Map<Identifier, Set<BiConsumer<PoseStack, VertexConsumer>>>> rendersList = new ArrayList<>(renderStageCount);
+			final List<Map<Identifier, Set<BiConsumer<PoseStack, VertexConsumer>>>> currentRendersList = new ArrayList<>(renderStageCount);
 
 			for (int j = 0; j < renderStageCount; j++) {
 				rendersList.add(j, new HashMap<>());
@@ -103,7 +102,7 @@ public class RenderTrains implements IGui {
 			if (showShiftProgressBar() && (!train.isCurrentlyManual() || !Train.isHoldingKey(player))) {
 				if (train.getDoorValue() == 0 || thisRoute == null || thisStation == null || lastStation == null) {
 					if (!(train instanceof TrainVirtualDrive)) { // TODO something more elegant
-						player.displayClientMessage(Text.translatable("gui.mtr.vehicle_speed", RailwayData.round(speed, 1), RailwayData.round(speed * 3.6F, 1)), true);
+						player.sendOverlayMessage(Text.translatable("gui.mtr.vehicle_speed", RailwayData.round(speed, 1), RailwayData.round(speed * 3.6F, 1)));
 					}
 				} else {
 					final Component text;
@@ -122,7 +121,7 @@ public class RenderTrains implements IGui {
 							text = getStationText(lastStation, "last_" + thisRoute.transportMode.toString().toLowerCase(Locale.ENGLISH));
 							break;
 					}
-					player.displayClientMessage(text, true);
+					player.sendOverlayMessage(text);
 				}
 			}
 		}, (stopIndex, routeIds) -> {
@@ -229,7 +228,7 @@ public class RenderTrains implements IGui {
 			matrices.translate(x, y, z);
 			UtilitiesClient.rotateXDegrees(matrices, 180);
 			UtilitiesClient.rotateYDegrees(matrices, 180 + lift.facing.toYRot());
-			final int light = LightTexture.pack(world.getBrightness(LightLayer.BLOCK, posAverage), world.getBrightness(LightLayer.SKY, posAverage));
+			final int light = LightCoordsUtil.pack(world.getBrightness(LightLayer.BLOCK, posAverage), world.getBrightness(LightLayer.SKY, posAverage));
 			lift.getModel().render(matrices, vertexConsumers, lift, LIFT_TEXTURE, light, frontDoorValue, backDoorValue, false, 0, 1, false, true, false, false, false);
 
 			for (int i = 0; i < (lift.isDoubleSided ? 2 : 1); i++) {
@@ -349,7 +348,7 @@ public class RenderTrains implements IGui {
 	}
 
 	public static boolean shouldNotRender(BlockPos pos, int maxDistance, Direction facing) {
-		final Entity camera = Minecraft.getInstance().cameraEntity;
+		final Entity camera = Minecraft.getInstance().getCameraEntity();
 		return shouldNotRender(camera == null ? null : camera.position(), pos, maxDistance, facing);
 	}
 
@@ -390,7 +389,7 @@ public class RenderTrains implements IGui {
 		if (shiftHoldingTicks > 0 && player != null) {
 			final int progressFilled = Mth.clamp((int) (shiftHoldingTicks * DISMOUNT_PROGRESS_BAR_LENGTH / RailwayDataCoolDownModule.SHIFT_ACTIVATE_TICKS), 0, DISMOUNT_PROGRESS_BAR_LENGTH);
 			final String progressBar = String.format("§6%s§7%s", StringUtils.repeat('|', progressFilled), StringUtils.repeat('|', DISMOUNT_PROGRESS_BAR_LENGTH - progressFilled));
-			player.displayClientMessage(Text.translatable("gui.mtr.dismount_hold", client.options.keyShift.getTranslatedKeyMessage(), progressBar), true);
+			player.sendOverlayMessage(Text.translatable("gui.mtr.dismount_hold", client.options.keyShift.getTranslatedKeyMessage(), progressBar));
 			return false;
 		} else {
 			return true;
@@ -398,12 +397,12 @@ public class RenderTrains implements IGui {
 	}
 
 	@Deprecated // TODO remove later
-	public static void scheduleRender(ResourceLocation resourceLocation, boolean priority, Function<ResourceLocation, RenderType> getVertexConsumer, BiConsumer<PoseStack, VertexConsumer> callback) {
+	public static void scheduleRender(Identifier resourceLocation, boolean priority, Function<Identifier, RenderType> getVertexConsumer, BiConsumer<PoseStack, VertexConsumer> callback) {
 		scheduleRender(resourceLocation, priority, QueuedRenderLayer.EXTERIOR, callback);
 	}
 
-	public static void scheduleRender(ResourceLocation resourceLocation, boolean priority, QueuedRenderLayer queuedRenderLayer, BiConsumer<PoseStack, VertexConsumer> callback) {
-		final Map<ResourceLocation, Set<BiConsumer<PoseStack, VertexConsumer>>> map = RENDERS.get(priority ? 1 : 0).get(queuedRenderLayer.ordinal());
+	public static void scheduleRender(Identifier resourceLocation, boolean priority, QueuedRenderLayer queuedRenderLayer, BiConsumer<PoseStack, VertexConsumer> callback) {
+		final Map<Identifier, Set<BiConsumer<PoseStack, VertexConsumer>>> map = RENDERS.get(priority ? 1 : 0).get(queuedRenderLayer.ordinal());
 		if (!map.containsKey(resourceLocation)) {
 			map.put(resourceLocation, new HashSet<>());
 		}
@@ -457,11 +456,11 @@ public class RenderTrains implements IGui {
 			if (shouldNotRender(pos2, maxRailDistance, null)) {
 				return;
 			}
-			final int light2 = LightTexture.pack(world.getBrightness(LightLayer.BLOCK, pos2), world.getBrightness(LightLayer.SKY, pos2));
+			final int light2 = LightCoordsUtil.pack(world.getBrightness(LightLayer.BLOCK, pos2), world.getBrightness(LightLayer.SKY, pos2));
 
 			if (rail.railType == RailType.NONE) {
 				if (rail.transportMode != TransportMode.CABLE_CAR && renderColors) {
-					scheduleRender(ResourceLocation.parse("mtr:textures/block/one_way_rail_arrow.png"), false, QueuedRenderLayer.EXTERIOR, (matrices, vertexConsumer) -> {
+					scheduleRender(Identifier.parse("mtr:textures/block/one_way_rail_arrow.png"), false, QueuedRenderLayer.EXTERIOR, (matrices, vertexConsumer) -> {
 						IDrawing.drawTexture(matrices, vertexConsumer, (float) x1, (float) y1 + yOffset, (float) z1, (float) x2, (float) y1 + yOffset + SMALL_OFFSET, (float) z2, (float) x3, (float) y2 + yOffset, (float) z3, (float) x4, (float) y2 + yOffset + SMALL_OFFSET, (float) z4, 0, 0.25F, 1, 0.75F, Direction.UP, -1, light2);
 						IDrawing.drawTexture(matrices, vertexConsumer, (float) x2, (float) y1 + yOffset + SMALL_OFFSET, (float) z2, (float) x1, (float) y1 + yOffset, (float) z1, (float) x4, (float) y2 + yOffset + SMALL_OFFSET, (float) z4, (float) x3, (float) y2 + yOffset, (float) z3, 0, 0.25F, 1, 0.75F, Direction.UP, -1, light2);
 					});
@@ -469,7 +468,7 @@ public class RenderTrains implements IGui {
 			} else {
 				final float textureOffset = (((int) (x1 + z1)) % 4) * 0.25F + (float) Config.trackTextureOffset() / Config.TRACK_OFFSET_COUNT;
 				final int color = renderColors || !Config.hideSpecialRailColors() && rail.railType.hasSavedRail ? rail.railType.color : -1;
-				scheduleRender(ResourceLocation.parse(texture), false, QueuedRenderLayer.EXTERIOR, (matrices, vertexConsumer) -> {
+				scheduleRender(Identifier.parse(texture), false, QueuedRenderLayer.EXTERIOR, (matrices, vertexConsumer) -> {
 					IDrawing.drawTexture(matrices, vertexConsumer, (float) x1, (float) y1 + yOffset, (float) z1, (float) x2, (float) y1 + yOffset + SMALL_OFFSET, (float) z2, (float) x3, (float) y2 + yOffset, (float) z3, (float) x4, (float) y2 + yOffset + SMALL_OFFSET, (float) z4, u1 < 0 ? 0 : u1, v1 < 0 ? 0.1875F + textureOffset : v1, u2 < 0 ? 1 : u2, v2 < 0 ? 0.3125F + textureOffset : v2, Direction.UP, color, light2);
 					IDrawing.drawTexture(matrices, vertexConsumer, (float) x2, (float) y1 + yOffset + SMALL_OFFSET, (float) z2, (float) x1, (float) y1 + yOffset, (float) z1, (float) x4, (float) y2 + yOffset + SMALL_OFFSET, (float) z4, (float) x3, (float) y2 + yOffset, (float) z3, u1 < 0 ? 0 : u1, v1 < 0 ? 0.1875F + textureOffset : v1, u2 < 0 ? 1 : u2, v2 < 0 ? 0.3125F + textureOffset : v2, Direction.UP, color, light2);
 				});
@@ -485,7 +484,7 @@ public class RenderTrains implements IGui {
 		for (int i = 0; i < signalBlocks.size(); i++) {
 			final SignalBlocks.SignalBlock signalBlock = signalBlocks.get(i);
 			final boolean shouldGlow = signalBlock.isOccupied() && (((int) Math.floor(MTRClient.getGameTick())) % TICKS_PER_SECOND) < TICKS_PER_SECOND / 2;
-			final VertexConsumer vertexConsumer = shouldGlow ? vertexConsumers.getBuffer(MoreRenderLayers.getLight(ResourceLocation.parse("mtr:textures/block/white.png"), false)) : vertexConsumers.getBuffer(MoreRenderLayers.getExterior(ResourceLocation.parse("textures/block/white_wool.png")));
+			final VertexConsumer vertexConsumer = shouldGlow ? vertexConsumers.getBuffer(MoreRenderLayers.getLight(Identifier.parse("mtr:textures/block/white.png"), false)) : vertexConsumers.getBuffer(MoreRenderLayers.getExterior(Identifier.parse("textures/block/white_wool.png")));
 			final float u1 = width * i + 1 - width * signalBlocks.size() / 2;
 			final float u2 = u1 + width;
 
@@ -495,7 +494,7 @@ public class RenderTrains implements IGui {
 				if (shouldNotRender(pos2, maxRailDistance, null)) {
 					return;
 				}
-				final int light2 = shouldGlow ? MAX_LIGHT_GLOWING : LightTexture.pack(world.getBrightness(LightLayer.BLOCK, pos2), world.getBrightness(LightLayer.SKY, pos2));
+				final int light2 = shouldGlow ? MAX_LIGHT_GLOWING : LightCoordsUtil.pack(world.getBrightness(LightLayer.BLOCK, pos2), world.getBrightness(LightLayer.SKY, pos2));
 
 				IDrawing.drawTexture(matrices, vertexConsumer, (float) x1, (float) y1, (float) z1, (float) x2, (float) y1 + SMALL_OFFSET, (float) z2, (float) x3, (float) y2, (float) z3, (float) x4, (float) y2 + SMALL_OFFSET, (float) z4, u1, 0, u2, 1, Direction.UP, color, light2);
 				IDrawing.drawTexture(matrices, vertexConsumer, (float) x4, (float) y2 + SMALL_OFFSET, (float) z4, (float) x3, (float) y2, (float) z3, (float) x2, (float) y1 + SMALL_OFFSET, (float) z2, (float) x1, (float) y1, (float) z1, u1, 0, u2, 1, Direction.UP, color, light2);

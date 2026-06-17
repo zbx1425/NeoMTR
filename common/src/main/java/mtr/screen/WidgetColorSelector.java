@@ -9,7 +9,7 @@ import mtr.mappings.ScreenMapper;
 import mtr.mappings.Text;
 import mtr.mappings.UtilitiesClient;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +42,7 @@ public class WidgetColorSelector extends ButtonMapper implements IGui {
 	}
 
 	@Override
-	public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void renderWidget(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		super.renderWidget(guiGraphics, mouseX, mouseY, delta);
 		if (visible) {
 			final int margin = hasMargin ? 1 : 0;
@@ -131,18 +131,18 @@ public class WidgetColorSelector extends ButtonMapper implements IGui {
 		}
 
 		@Override
-		public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+		public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 			try {
 				super.render(guiGraphics, mouseX, mouseY, delta);
-				guiGraphics.pose().pushPose();
+				guiGraphics.pose().pushMatrix();
 				guiGraphics.pose().translate(0, 0, -100);
-				guiGraphics.pose().popPose();
+				guiGraphics.pose().popMatrix();
 
 				final int mainWidth = getMainWidth();
 				final int mainHeight = getMainHeight();
 
-				guiGraphics.drawCenteredString(font, Text.translatable("gui.mtr.color"), SQUARE_SIZE * 4 + mainWidth + RIGHT_WIDTH / 2, SQUARE_SIZE, ARGB_WHITE);
-				guiGraphics.drawCenteredString(font, "RGB", SQUARE_SIZE * 4 + mainWidth + RIGHT_WIDTH / 2, SQUARE_SIZE * 3 + TEXT_FIELD_PADDING, ARGB_WHITE);
+				guiGraphics.centeredText(font, Text.translatable("gui.mtr.color"), SQUARE_SIZE * 4 + mainWidth + RIGHT_WIDTH / 2, SQUARE_SIZE, ARGB_WHITE);
+				guiGraphics.centeredText(font, "RGB", SQUARE_SIZE * 4 + mainWidth + RIGHT_WIDTH / 2, SQUARE_SIZE * 3 + TEXT_FIELD_PADDING, ARGB_WHITE);
 
 				final Tesselator tesselator = Tesselator.getInstance();
 				final BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);

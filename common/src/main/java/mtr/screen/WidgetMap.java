@@ -13,7 +13,7 @@ import mtr.mappings.UtilitiesClient;
 import mtr.mappings.WidgetMapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -81,7 +81,7 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+	public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		final Tesselator tesselator = Tesselator.getInstance();
 		final BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		UtilitiesClient.beginDrawingRectangle(buffer);
@@ -140,9 +140,9 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 		UtilitiesClient.finishDrawingRectangle();
 
 		if (mapState == MapState.EDITING_AREA) {
-			guiGraphics.drawString(textRenderer, Text.translatable("gui.mtr.edit_area").getString(), x + TEXT_PADDING, y + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.text(textRenderer, Text.translatable("gui.mtr.edit_area").getString(), x + TEXT_PADDING, y + TEXT_PADDING, ARGB_WHITE);
 		} else if (mapState == MapState.EDITING_ROUTE) {
-			guiGraphics.drawString(textRenderer, Text.translatable("gui.mtr.edit_route").getString(), x + TEXT_PADDING, y + TEXT_PADDING, ARGB_WHITE);
+			guiGraphics.text(textRenderer, Text.translatable("gui.mtr.edit_route").getString(), x + TEXT_PADDING, y + TEXT_PADDING, ARGB_WHITE);
 		}
 
 		if (scale >= 8) {
@@ -177,7 +177,7 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 		immediate.endBatch();
 
 		final String mousePosText = String.format("(%s, %s)", RailwayData.round(mouseWorldPos.getA(), 1), RailwayData.round(mouseWorldPos.getB(), 1));
-		guiGraphics.drawString(textRenderer, mousePosText, x + width - TEXT_PADDING - textRenderer.width(mousePosText), y + TEXT_PADDING, ARGB_WHITE);
+		guiGraphics.text(textRenderer, mousePosText, x + width - TEXT_PADDING - textRenderer.width(mousePosText), y + TEXT_PADDING, ARGB_WHITE);
 	}
 
 	@Override
@@ -361,11 +361,11 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 		return areaBase.getCenter() != null && scale >= 80F / Math.max(Math.abs(areaBase.corner1.getA() - areaBase.corner2.getA()), Math.abs(areaBase.corner1.getB() - areaBase.corner2.getB()));
 	}
 
-	private void drawSavedRail(GuiGraphics guiGraphics, BlockPos savedRailPos, List<? extends SavedRailBase> savedRails) {
+	private void drawSavedRail(GuiGraphicsExtractor guiGraphics, BlockPos savedRailPos, List<? extends SavedRailBase> savedRails) {
 		final int savedRailCount = savedRails.size();
 		for (int i = 0; i < savedRailCount; i++) {
 			final int index = i;
-			drawFromWorldCoords(savedRailPos.getX() + 0.5, savedRailPos.getZ() + (i + 0.5) / savedRailCount, (x1, y1) -> guiGraphics.drawCenteredString(textRenderer, savedRails.get(index).name, x + x1.intValue(), y + y1.intValue() - TEXT_HEIGHT / 2, ARGB_WHITE));
+			drawFromWorldCoords(savedRailPos.getX() + 0.5, savedRailPos.getZ() + (i + 0.5) / savedRailCount, (x1, y1) -> guiGraphics.centeredText(textRenderer, savedRails.get(index).name, x + x1.intValue(), y + y1.intValue() - TEXT_HEIGHT / 2, ARGB_WHITE));
 		}
 	}
 

@@ -7,7 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,12 +18,12 @@ public abstract class UnknownPacketMixin implements IPacket {
 
 	@Shadow
 	private Minecraft minecraft;
-	private ResourceLocation channel;
+	private Identifier channel;
 	private boolean process;
 
 	@Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ClientboundCustomPayloadPacket;getIdentifier()Lnet/minecraft/resources/ResourceLocation;"), method = "handleCustomPayload")
-	private ResourceLocation getChannel(ClientboundCustomPayloadPacket customPayloadS2CPacket) {
-		final ResourceLocation channel = customPayloadS2CPacket.getIdentifier();
+	private Identifier getChannel(ClientboundCustomPayloadPacket customPayloadS2CPacket) {
+		final Identifier channel = customPayloadS2CPacket.getIdentifier();
 		this.channel = channel;
 		process = false;
 		return channel;

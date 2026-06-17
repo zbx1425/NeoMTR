@@ -12,7 +12,7 @@ import cn.zbx1425.sowcerext.model.integration.RawMeshBuilder;
 import cn.zbx1425.sowcerext.util.ResourceUtil;
 import mtr.client.ClientData;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import vendor.cn.zbx1425.mtrsteamloco.org.mozilla.javascript.*;
 
@@ -37,9 +37,9 @@ public class ScriptHolder {
 
     public String name;
     public String contextTypeName;
-    private Map<ResourceLocation, String> scripts;
+    private Map<Identifier, String> scripts;
 
-    public void load(String name, String contextTypeName, ResourceManager resourceManager, Map<ResourceLocation, String> scripts) throws Exception {
+    public void load(String name, String contextTypeName, ResourceManager resourceManager, Map<Identifier, String> scripts) throws Exception {
         this.name = name;
         this.contextTypeName = contextTypeName;
         this.scripts = scripts;
@@ -108,7 +108,7 @@ public class ScriptHolder {
             // Run scripts
             ScriptResourceUtil.activeContext = rhinoCtx;
             ScriptResourceUtil.activeScope = scope;
-            for (Map.Entry<ResourceLocation, String> entry : scripts.entrySet()) {
+            for (Map.Entry<Identifier, String> entry : scripts.entrySet()) {
                 String scriptStr = entry.getValue() == null
                         ? ResourceUtil.readResource(resourceManager, entry.getKey()) : entry.getValue();
                 ScriptResourceUtil.executeScript(rhinoCtx, scope, entry.getKey(), scriptStr);

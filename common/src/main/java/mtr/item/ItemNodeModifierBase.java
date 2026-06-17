@@ -128,7 +128,7 @@ public abstract class ItemNodeModifierBase extends ItemBlockClickingBase {
 								Math.toRadians(rawEnd));
 						if (deg == null) {
 							if (player != null) {
-								player.displayClientMessage(Text.translatable("gui.mtr.invalid_orientation"), true);
+								player.sendOverlayMessage(Text.translatable("gui.mtr.invalid_orientation"));
 							}
 							return;
 						}
@@ -140,7 +140,7 @@ public abstract class ItemNodeModifierBase extends ItemBlockClickingBase {
 								Math.toRadians(rawStart));
 						if (deg == null) {
 							if (player != null) {
-								player.displayClientMessage(Text.translatable("gui.mtr.invalid_orientation"), true);
+								player.sendOverlayMessage(Text.translatable("gui.mtr.invalid_orientation"));
 							}
 							return;
 						}

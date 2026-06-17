@@ -8,12 +8,12 @@ import mtr.mappings.Text;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
 public class PacketVersionCheck {
 
-    public static final ResourceLocation PACKET_VERSION_CHECK = Main.id("version_check");
+    public static final Identifier PACKET_VERSION_CHECK = Main.id("version_check");
 
     public static void sendVersionCheckS2C(ServerPlayer player) {
         final FriendlyByteBuf packet = new FriendlyByteBuf(Unpooled.buffer());

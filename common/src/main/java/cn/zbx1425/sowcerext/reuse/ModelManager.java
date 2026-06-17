@@ -11,7 +11,8 @@ import cn.zbx1425.sowcerext.model.RawModel;
 import cn.zbx1425.sowcerext.model.loader.CsvModelLoader;
 import cn.zbx1425.sowcerext.model.loader.NmbModelLoader;
 import cn.zbx1425.sowcerext.model.loader.ObjModelLoader;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.apache.commons.io.FilenameUtils;
 
@@ -22,9 +23,9 @@ import java.util.UUID;
 
 public class ModelManager {
 
-    public HashMap<ResourceLocation, Model> uploadedModels = new HashMap<>();
-    public HashMap<ResourceLocation, ModelCluster> uploadedVertArrays = new HashMap<>();
-    public HashMap<ResourceLocation, RawModel> loadedRawModels = new HashMap<>();
+    public HashMap<Identifier, Model> uploadedModels = new HashMap<>();
+    public HashMap<Identifier, ModelCluster> uploadedVertArrays = new HashMap<>();
+    public HashMap<Identifier, RawModel> loadedRawModels = new HashMap<>();
 
     public int vaoCount, vboCount;
 
@@ -70,7 +71,7 @@ public class ModelManager {
         loadedRawModels.keySet().removeIf(k -> k.getNamespace().equals(namespace));
     }
 
-    public RawModel loadRawModel(ResourceManager resourceManager, ResourceLocation objLocation, AtlasManager atlasManager) throws IOException {
+    public RawModel loadRawModel(ResourceManager resourceManager, Identifier objLocation, AtlasManager atlasManager) throws IOException {
         if (loadedRawModels.containsKey(objLocation)) return loadedRawModels.get(objLocation);
         String crntStatExt = FilenameUtils.getExtension(objLocation.getPath());
         RawModel result;
@@ -83,7 +84,7 @@ public class ModelManager {
                 break;
             case "nmb":
                 result = NmbModelLoader.loadModel(resourceManager, objLocation, atlasManager);
-                // result = CsvModelLoader.loadModel(resourceManager, ResourceLocation.parse(objLocation.toString().replace(".nmb", ".csv")), atlasManager);
+                // result = CsvModelLoader.loadModel(resourceManager, Identifier.parse(objLocation.toString().replace(".nmb", ".csv")), atlasManager);
                 break;
             case "animated":
                 throw new IllegalArgumentException("ANIMATED model cannot be loaded as RawModel.");
@@ -94,7 +95,7 @@ public class ModelManager {
         return result;
     }
 
-    public Map<String, RawModel> loadPartedRawModel(ResourceManager resourceManager, ResourceLocation objLocation, AtlasManager atlasManager) throws IOException {
+    public Map<String, RawModel> loadPartedRawModel(ResourceManager resourceManager, Identifier objLocation, AtlasManager atlasManager) throws IOException {
         String crntStatExt = FilenameUtils.getExtension(objLocation.getPath());
         Map<String, RawModel> result;
         switch (crntStatExt) {
@@ -116,7 +117,7 @@ public class ModelManager {
         if (rawModel.sourceLocation == null) {
             Model result = rawModel.upload(DEFAULT_MAPPING);
             vboCount += result.meshList.size();
-            uploadedModels.put(ResourceLocation.parse("sowcerext-anonymous:model/" + UUID.randomUUID()), result);
+            uploadedModels.put(Identifier.parse("sowcerext-anonymous:model/" + UUID.randomUUID()), result);
             return result;
         } else {
             if (uploadedModels.containsKey(rawModel.sourceLocation)) return uploadedModels.get(rawModel.sourceLocation);
@@ -131,7 +132,7 @@ public class ModelManager {
         if (rawModel.sourceLocation == null) {
             ModelCluster result = new ModelCluster(rawModel, DEFAULT_MAPPING, this);
             vaoCount += result.uploadedOpaqueParts == null ? 0 : result.uploadedOpaqueParts.meshList.size();
-            uploadedVertArrays.put(ResourceLocation.parse("sowcerext-anonymous:vertarrays/" + UUID.randomUUID()), result);
+            uploadedVertArrays.put(Identifier.parse("sowcerext-anonymous:vertarrays/" + UUID.randomUUID()), result);
             return result;
         } else {
             if (uploadedVertArrays.containsKey(rawModel.sourceLocation)) return uploadedVertArrays.get(rawModel.sourceLocation);

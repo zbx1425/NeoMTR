@@ -24,6 +24,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.Profiler;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.phys.Vec3;
 
 public class MTRFabricClient implements ClientModInitializer, ICustomResources {
@@ -43,7 +45,7 @@ public class MTRFabricClient implements ClientModInitializer, ICustomResources {
 			matrices.popPose();
 		});
 		LevelRenderEvents.BEFORE_BLOCK_OUTLINE.register((worldRenderContext, hitResult) -> {
-			Minecraft.getInstance().level.getProfiler().popPush("NTEBlockEntities");
+			Profiler.get().popPush("NTEBlockEntities");
 			BufferSourceProxy vertexConsumersProxy = new BufferSourceProxy(Minecraft.getInstance().renderBuffers().bufferSource());
 			MainClient.drawScheduler.commit(vertexConsumersProxy, MainClient.drawContext);
 			vertexConsumersProxy.commit();
@@ -53,7 +55,7 @@ public class MTRFabricClient implements ClientModInitializer, ICustomResources {
 			ResourcePackCreatorScreen.render(event.poseStack());
 			MainClient.drawContext.resetFrameProfiler();
 		});
-		HudElementRegistry.addFirst(MTR.id("driving_hud"), (guiGraphics, tickDelta) -> RenderDrivingOverlay.render(guiGraphics);
+		HudElementRegistry.addFirst(MTR.id("driving_hud"), (guiGraphics, tickDelta) -> RenderDrivingOverlay.render(guiGraphics));
 		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new CustomResourcesWrapper());
 		MTRFabric.PACKET_REGISTRY.commitClient();
 

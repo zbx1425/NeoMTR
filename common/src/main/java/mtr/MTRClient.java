@@ -13,7 +13,6 @@ import mtr.render.*;
 import mtr.servlet.Webserver;
 import mtr.sound.LoopingSoundInstance;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
 
@@ -34,56 +33,6 @@ public class MTRClient implements IPacket {
 
 	public static void init() {
 		if (!Keys.LIFTS_ONLY) {
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.APG_DOOR.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.APG_GLASS.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.APG_GLASS_END.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.CABLE_CAR_NODE_LOWER.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.CABLE_CAR_NODE_UPPER.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.CLOCK.get());
-			RegistryClient.registerBlockRenderType(RenderType.translucent(), Blocks.GLASS_FENCE_CIO.get());
-			RegistryClient.registerBlockRenderType(RenderType.translucent(), Blocks.GLASS_FENCE_CKT.get());
-			RegistryClient.registerBlockRenderType(RenderType.translucent(), Blocks.GLASS_FENCE_HEO.get());
-			RegistryClient.registerBlockRenderType(RenderType.translucent(), Blocks.GLASS_FENCE_MOS.get());
-			RegistryClient.registerBlockRenderType(RenderType.translucent(), Blocks.GLASS_FENCE_PLAIN.get());
-			RegistryClient.registerBlockRenderType(RenderType.translucent(), Blocks.GLASS_FENCE_SHM.get());
-			RegistryClient.registerBlockRenderType(RenderType.translucent(), Blocks.GLASS_FENCE_STAINED.get());
-			RegistryClient.registerBlockRenderType(RenderType.translucent(), Blocks.GLASS_FENCE_STW.get());
-			RegistryClient.registerBlockRenderType(RenderType.translucent(), Blocks.GLASS_FENCE_TSH.get());
-			RegistryClient.registerBlockRenderType(RenderType.translucent(), Blocks.GLASS_FENCE_WKS.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.LOGO.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.PLATFORM.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.PLATFORM_INDENTED.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.PLATFORM_NA_1.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.PLATFORM_NA_1_INDENTED.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.PLATFORM_NA_2.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.PLATFORM_NA_2_INDENTED.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.PLATFORM_UK_1.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.PLATFORM_UK_1_INDENTED.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.PSD_DOOR_1.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.PSD_GLASS_1.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.PSD_GLASS_END_1.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.PSD_DOOR_2.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.PSD_GLASS_2.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.PSD_GLASS_END_2.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.RUBBISH_BIN_1.get());
-			RegistryClient.registerBlockRenderType(RenderType.translucent(), Blocks.STATION_COLOR_STAINED_GLASS.get());
-			RegistryClient.registerBlockRenderType(RenderType.translucent(), Blocks.STATION_COLOR_STAINED_GLASS_SLAB.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.STATION_NAME_TALL_BLOCK.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.STATION_NAME_TALL_BLOCK_DOUBLE_SIDED.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.STATION_NAME_TALL_WALL.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.TICKET_BARRIER_ENTRANCE_1.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.TICKET_BARRIER_EXIT_1.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.TICKET_MACHINE.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.TICKET_PROCESSOR.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.TICKET_PROCESSOR_ENTRANCE.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.TICKET_PROCESSOR_EXIT.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.TICKET_PROCESSOR_ENQUIRY.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.TRAIN_ANNOUNCER.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.TRAIN_CARGO_LOADER.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.TRAIN_CARGO_UNLOADER.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.TRAIN_REDSTONE_SENSOR.get());
-			RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.TRAIN_SCHEDULE_SENSOR.get());
-
 			RegistryClient.registerTileEntityRenderer(BlockEntityTypes.ARRIVAL_PROJECTOR_1_SMALL_TILE_ENTITY.get(), dispatcher -> new RenderPIDS<>(dispatcher, 12, 1, 1, 15, 16, 14, 14, false, false, PIDSType.ARRIVAL_PROJECTOR, 0xFF9900, 0xFF9900));
 			RegistryClient.registerTileEntityRenderer(BlockEntityTypes.ARRIVAL_PROJECTOR_1_MEDIUM_TILE_ENTITY.get(), dispatcher -> new RenderPIDS<>(dispatcher, 12, 1, -15, 15, 16, 30, 46, false, false, PIDSType.ARRIVAL_PROJECTOR, 0xFF9900, 0xFF9900));
 			RegistryClient.registerTileEntityRenderer(BlockEntityTypes.ARRIVAL_PROJECTOR_1_LARGE_TILE_ENTITY.get(), dispatcher -> new RenderPIDS<>(dispatcher, 16, 1, -15, 15, 16, 46, 46, false, false, PIDSType.ARRIVAL_PROJECTOR, 0xFF9900, 0xFF9900));
@@ -207,15 +156,6 @@ public class MTRClient implements IPacket {
 			RegistryClient.registerBlockColors(Blocks.STATION_NAME_TALL_WALL.get());
 			RegistryClient.registerBlockColors(Blocks.STATION_COLOR_POLE.get());
 		}
-
-		RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.LIFT_DOOR_EVEN_1.get());
-		RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.LIFT_DOOR_ODD_1.get());
-		RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.LIFT_PANEL_EVEN_1.get());
-		RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.LIFT_PANEL_ODD_1.get());
-		RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.LIFT_PANEL_EVEN_2.get());
-		RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.LIFT_PANEL_ODD_2.get());
-		RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.ESCALATOR_STEP.get());
-		RegistryClient.registerBlockRenderType(RenderType.cutout(), Blocks.ESCALATOR_SIDE.get());
 
 		RegistryClient.registerTileEntityRenderer(BlockEntityTypes.LIFT_BUTTONS_1_TILE_ENTITY.get(), RenderLiftButtons::new);
 		RegistryClient.registerTileEntityRenderer(BlockEntityTypes.LIFT_PANEL_EVEN_1_TILE_ENTITY.get(), dispatcher -> new RenderLiftPanel<>(dispatcher, false, false));
@@ -464,7 +404,7 @@ public class MTRClient implements IPacket {
 
 	public static float getLastFrameDuration() {
 		if (Minecraft.getInstance().isPaused()) return 0;
-		return isReplayMod ? 20F / 60 : Minecraft.getInstance().getTimer().getGameTimeDeltaTicks();
+		return isReplayMod ? 20F / 60 : Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaTicks();
 	}
 
 	public static boolean canPlaySound() {

@@ -13,9 +13,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.ContainerHelper;
@@ -304,21 +304,21 @@ public class PacketTrainDataGuiServer extends PacketTrainDataBase {
 			final BlockFreeNode.TileEntityFreeNode tileEntityFreeNode = (BlockFreeNode.TileEntityFreeNode) entity;
 
 			if (!undetermined && (!Float.isFinite(angleDegrees) || Float.isNaN(angleDegrees))) {
-				player.displayClientMessage(mtr.mappings.Text.translatable("gui.mtr.free_node_invalid_angle"), true);
+				player.sendOverlayMessage(mtr.mappings.Text.translatable("gui.mtr.free_node_invalid_angle"));
 				return;
 			}
 			final float newRaw = undetermined ? Float.NaN : angleDegrees;
 
 			final Set<BlockPos> connectionSet = railwayData.getRailConnectionsFrom(pos);
 			if (Float.isNaN(newRaw) && !connectionSet.isEmpty()) {
-				player.displayClientMessage(mtr.mappings.Text.translatable("gui.mtr.free_node_undetermined_while_connected"), true);
+				player.sendOverlayMessage(mtr.mappings.Text.translatable("gui.mtr.free_node_undetermined_while_connected"));
 				return;
 			}
 
 			for (final BlockPos other : connectionSet) {
 				final Rail rail = railwayData.getRail(pos, other);
 				if (rail != null && rail.railType.hasSavedRail) {
-					player.displayClientMessage(mtr.mappings.Text.translatable("gui.mtr.platform_or_siding_exists"), true);
+					player.sendOverlayMessage(mtr.mappings.Text.translatable("gui.mtr.platform_or_siding_exists"));
 					return;
 				}
 			}
@@ -336,7 +336,7 @@ public class PacketTrainDataGuiServer extends PacketTrainDataBase {
 				final BlockState stateOther = level.getBlockState(other);
 				final float rawOther = readRawNodeAngleDegrees(level, other, stateOther);
 				if (Float.isNaN(rawOther)) {
-					player.displayClientMessage(mtr.mappings.Text.translatable("gui.mtr.free_node_neighbor_undetermined"), true);
+					player.sendOverlayMessage(mtr.mappings.Text.translatable("gui.mtr.free_node_neighbor_undetermined"));
 					return;
 				}
 				final RailAngle facingPos = RailNodeGeometry.railFacingAtStartTowardEnd(newRaw, pos, other);
@@ -344,13 +344,13 @@ public class PacketTrainDataGuiServer extends PacketTrainDataBase {
 				final Rail nf = new Rail(pos, facingPos, other, facingOther, oldFwd.railType, oldFwd.transportMode);
 				final Rail nb = new Rail(other, facingOther, pos, facingPos, oldBack.railType, oldBack.transportMode);
 				if (!freeNodeContinuousMovementAllowed(level, pos, other, nf)) {
-					player.displayClientMessage(mtr.mappings.Text.translatable("gui.mtr.cable_car_invalid_orientation"), true);
+					player.sendOverlayMessage(mtr.mappings.Text.translatable("gui.mtr.cable_car_invalid_orientation"));
 					return;
 				}
 				final boolean okRails = nf.goodRadius() && nb.goodRadius() && nf.isValid() && nb.isValid();
 				if (!okRails) {
 					final boolean badRadius = !nf.goodRadius() || !nb.goodRadius();
-					player.displayClientMessage(mtr.mappings.Text.translatable(badRadius ? "gui.mtr.radius_too_small" : "gui.mtr.invalid_orientation"), true);
+					player.sendOverlayMessage(mtr.mappings.Text.translatable(badRadius ? "gui.mtr.radius_too_small" : "gui.mtr.invalid_orientation"));
 					return;
 				}
 				newForwards.add(nf);
@@ -550,7 +550,7 @@ public class PacketTrainDataGuiServer extends PacketTrainDataBase {
 	}
 
 	public static void receiveUseTimeAndWindSyncC2S(MinecraftServer minecraftServer, ServerPlayer player, FriendlyByteBuf packet) {
-		if (RailwayData.hasNoPermission(player) || !player.hasPermissions(1)) {
+		if (RailwayData.hasNoPermission(player) || !player.permissions().hasPermission(Permissions.COMMANDS_MODERATOR)) {
 			return;
 		}
 

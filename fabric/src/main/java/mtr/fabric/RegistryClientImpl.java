@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -47,7 +48,7 @@ public class RegistryClientImpl {
 		BlockColorRegistry.register((state, world, pos, tintIndex) -> MTRClient.getStationColor(pos), block);
 	}
 
-	public static void registerNetworkReceiver(ResourceLocation resourceLocation, Consumer<FriendlyByteBuf> consumer) {
+	public static void registerNetworkReceiver(Identifier resourceLocation, Consumer<FriendlyByteBuf> consumer) {
 		MTRFabric.PACKET_REGISTRY.registerNetworkReceiverS2C(resourceLocation, consumer);
 	}
 
@@ -63,7 +64,7 @@ public class RegistryClientImpl {
 		ClientTickEvents.START_CLIENT_TICK.register(consumer::accept);
 	}
 
-	public static void sendToServer(ResourceLocation id, FriendlyByteBuf packet) {
+	public static void sendToServer(Identifier id, FriendlyByteBuf packet) {
 		MTRFabric.PACKET_REGISTRY.sendC2S(id, packet);
 	}
 }

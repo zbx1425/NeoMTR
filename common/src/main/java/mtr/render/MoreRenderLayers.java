@@ -1,8 +1,8 @@
 package mtr.render;
 
 import mtr.mappings.RenderLayerMapper;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,28 +11,28 @@ import java.util.function.Supplier;
 public class MoreRenderLayers extends RenderLayerMapper {
 
 	private static final Map<String, RenderType> LIGHT_CACHE = new HashMap<>();
-	private static final Map<ResourceLocation, RenderType> INTERIOR_CACHE = new HashMap<>();
-	private static final Map<ResourceLocation, RenderType> INTERIOR_TRANSLUCENT_CACHE = new HashMap<>();
-	private static final Map<ResourceLocation, RenderType> EXTERIOR_CACHE = new HashMap<>();
-	private static final Map<ResourceLocation, RenderType> EXTERIOR_TRANSLUCENT_CACHE = new HashMap<>();
+	private static final Map<Identifier, RenderType> INTERIOR_CACHE = new HashMap<>();
+	private static final Map<Identifier, RenderType> INTERIOR_TRANSLUCENT_CACHE = new HashMap<>();
+	private static final Map<Identifier, RenderType> EXTERIOR_CACHE = new HashMap<>();
+	private static final Map<Identifier, RenderType> EXTERIOR_TRANSLUCENT_CACHE = new HashMap<>();
 
-	public static RenderType getLight(ResourceLocation texture, boolean isTranslucent) {
+	public static RenderType getLight(Identifier texture, boolean isTranslucent) {
 		return checkCache(texture.toString() + isTranslucent, () -> beaconBeam(texture, isTranslucent), LIGHT_CACHE);
 	}
 
-	public static RenderType getInterior(ResourceLocation texture) {
+	public static RenderType getInterior(Identifier texture) {
 		return checkCache(texture, () -> entityCutout(texture), INTERIOR_CACHE);
 	}
 
-	public static RenderType getInteriorTranslucent(ResourceLocation texture) {
+	public static RenderType getInteriorTranslucent(Identifier texture) {
 		return checkCache(texture, () -> entityTranslucentCull(texture), INTERIOR_TRANSLUCENT_CACHE);
 	}
 
-	public static RenderType getExterior(ResourceLocation texture) {
+	public static RenderType getExterior(Identifier texture) {
 		return checkCache(texture, () -> entityCutout(texture), EXTERIOR_CACHE);
 	}
 
-	public static RenderType getExteriorTranslucent(ResourceLocation texture) {
+	public static RenderType getExteriorTranslucent(Identifier texture) {
 		return checkCache(texture, () -> entityTranslucentCull(texture), EXTERIOR_TRANSLUCENT_CACHE);
 	}
 

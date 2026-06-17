@@ -369,7 +369,7 @@ public class RailModelRepeater {
 
         Rail firstRail = railwayData.getRail(entryNode, exitNode);
         if (firstRail == null) {
-            player.displayClientMessage(Component.literal("No rail found."), false);
+            player.sendSystemMessage(Component.literal("No rail found."));
             return;
         }
 
@@ -456,7 +456,7 @@ public class RailModelRepeater {
     public static void undoPropagate(RailwayData railwayData, ServerPlayer player) {
         List<UndoEntry> snapshot = undoSnapshots.remove(player.getUUID());
         if (snapshot == null || snapshot.isEmpty()) {
-            player.displayClientMessage(Component.literal("Nothing to undo."), false);
+            player.sendSystemMessage(Component.literal("Nothing to undo."));
             return;
         }
         ServerLevel level = (ServerLevel) player.level();
@@ -473,9 +473,7 @@ public class RailModelRepeater {
             modifiedRails.add(new BlockPos[]{entry.posA, entry.posB});
         }
         broadcastRailUpdates(level, railwayData, modifiedRails);
-        player.displayClientMessage(
-                Component.literal(String.format("Undone propagation on %d rail(s).", snapshot.size())),
-                false);
+        player.sendSystemMessage(Component.literal(String.format("Undone propagation on %d rail(s).", snapshot.size())));
     }
 
     private static void snapshotRail(RailwayData railwayData, List<UndoEntry> snapshot,
@@ -581,7 +579,7 @@ public class RailModelRepeater {
                                           int[] exitFMI) {
         undoSnapshots.put(player.getUUID(), snapshot);
         broadcastRailUpdates(level, railwayData, modifiedRails);
-        player.displayClientMessage(Component.literal(message), false);
+        player.sendSystemMessage(Component.literal(message));
 
         final FriendlyByteBuf resultPacket = new FriendlyByteBuf(Unpooled.buffer());
         resultPacket.writeBlockPos(terminalNode);

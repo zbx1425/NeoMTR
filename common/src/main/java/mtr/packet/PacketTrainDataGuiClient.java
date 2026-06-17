@@ -21,7 +21,7 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -170,7 +170,7 @@ public class PacketTrainDataGuiClient extends PacketTrainDataBase {
 			final ClientLevel world = minecraftClient.level;
 			final LocalPlayer player = minecraftClient.player;
 			if (!soundIdString.isEmpty() && world != null && player != null) {
-				world.playLocalSound(player.blockPosition(), RegistryUtilities.createSoundEvent(ResourceLocation.parse(soundIdString)), SoundSource.BLOCKS, 1000000, 1, false);
+				world.playLocalSound(player.blockPosition(), RegistryUtilities.createSoundEvent(Identifier.parse(soundIdString)), SoundSource.BLOCKS, 1000000, 1, false);
 			}
 		});
 	}
@@ -272,13 +272,13 @@ public class PacketTrainDataGuiClient extends PacketTrainDataBase {
 		}
 	}
 
-	public static void sendUpdate(ResourceLocation packetId, FriendlyByteBuf packet) {
+	public static void sendUpdate(Identifier packetId, FriendlyByteBuf packet) {
 		RegistryClient.sendToServer(packetId, packet);
 		ClientData.DATA_CACHE.sync();
 		ClientData.DATA_CACHE.refreshDynamicResources();
 	}
 
-	public static void sendDeleteData(ResourceLocation packetId, long id) {
+	public static void sendDeleteData(Identifier packetId, long id) {
 		final FriendlyByteBuf packet = new FriendlyByteBuf(Unpooled.buffer());
 		packet.writeLong(id);
 		sendUpdate(packetId, packet);

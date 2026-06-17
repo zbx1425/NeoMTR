@@ -9,7 +9,7 @@ import cn.zbx1425.sowcerext.reuse.AtlasManager;
 import cn.zbx1425.sowcerext.util.Logging;
 import cn.zbx1425.sowcerext.util.ResourceUtil;
 import cn.zbx1425.sowcer.math.Vector3f;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,7 +20,7 @@ import java.util.function.Function;
 
 public class CsvModelLoader {
 
-    public static RawModel loadModel(ResourceManager resourceManager, ResourceLocation objLocation, AtlasManager atlasManager) throws IOException {
+    public static RawModel loadModel(ResourceManager resourceManager, Identifier objLocation, AtlasManager atlasManager) throws IOException {
         String rawModelData = ResourceUtil.readResource(resourceManager, objLocation);
         String[] rawModelLines = rawModelData.split("[\\r\\n]+");
 

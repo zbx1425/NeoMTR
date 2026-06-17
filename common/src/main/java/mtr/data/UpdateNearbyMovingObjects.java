@@ -4,7 +4,7 @@ import io.netty.buffer.Unpooled;
 import mtr.Registry;
 import mtr.packet.IPacket;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
@@ -15,10 +15,10 @@ public class UpdateNearbyMovingObjects<T extends NameColorDataBase> implements I
 	public final Map<Player, Set<T>> newDataSetInPlayerRange = new HashMap<>();
 	public final Set<T> dataSetToSync = new HashSet<>();
 	private final Map<Player, Set<T>> dataSetInPlayerRange = new HashMap<>();
-	private final ResourceLocation deletePacketId;
-	private final ResourceLocation updatePacketId;
+	private final Identifier deletePacketId;
+	private final Identifier updatePacketId;
 
-	public UpdateNearbyMovingObjects(ResourceLocation deletePacketId, ResourceLocation updatePacketId) {
+	public UpdateNearbyMovingObjects(Identifier deletePacketId, Identifier updatePacketId) {
 		this.deletePacketId = deletePacketId;
 		this.updatePacketId = updatePacketId;
 	}

@@ -13,7 +13,7 @@ import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Pair;
 import mtr.mappings.Text;
 import mtr.mappings.Utilities;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.apache.commons.io.FilenameUtils;
@@ -46,16 +46,16 @@ public class RailModelRegistry {
 
         try {
             RawModel railNodeRawModel = MainClient.modelManager.loadRawModel(resourceManager,
-                    ResourceLocation.parse("mtrsteamloco:models/rail_node.csv"), MainClient.atlasManager);
+                    Identifier.parse("mtrsteamloco:models/rail_node.csv"), MainClient.atlasManager);
             railNodeModel = MainClient.modelManager.uploadVertArrays(railNodeRawModel);
         } catch (Exception ex) {
             Main.LOGGER.error("Failed loading rail node model", ex);
             MtrModelRegistryUtil.recordLoadingError("Failed loading Rail Node", ex);
         }
 
-        List<Pair<ResourceLocation, Resource>> resources =
+        List<Pair<Identifier, Resource>> resources =
                 MtrModelRegistryUtil.listResources(resourceManager, "mtrsteamloco", "rails", ".json");
-        for (Pair<ResourceLocation, Resource> pair : resources) {
+        for (Pair<Identifier, Resource> pair : resources) {
             try {
                 try (InputStream is = Utilities.getInputStream(pair.getSecond())) {
                     JsonObject rootObj = (new JsonParser()).parse(IOUtils.toString(is, StandardCharsets.UTF_8)).getAsJsonObject();
@@ -90,7 +90,7 @@ public class RailModelRegistry {
     private static RailModelProperties loadFromJson(ResourceManager resourceManager, String key, JsonObject obj) throws IOException {
         if (obj.has("atlasIndex")) {
             MainClient.atlasManager.load(
-                    MtrModelRegistryUtil.resourceManager, ResourceLocation.parse(obj.get("atlasIndex").getAsString())
+                    MtrModelRegistryUtil.resourceManager, Identifier.parse(obj.get("atlasIndex").getAsString())
             );
         }
 
@@ -116,10 +116,10 @@ public class RailModelRegistry {
 
     private static RawModel loadSingleModel(ResourceManager resourceManager, String sourceKey, JsonObject obj) throws IOException {
         RawModel rawModel = MainClient.modelManager.loadRawModel(resourceManager,
-                ResourceLocation.parse(obj.get("model").getAsString()), MainClient.atlasManager).copy();
+                Identifier.parse(obj.get("model").getAsString()), MainClient.atlasManager).copy();
 
         if (obj.has("textureId")) {
-            rawModel.replaceTexture("default.png", ResourceLocation.parse(obj.get("textureId").getAsString()));
+            rawModel.replaceTexture("default.png", Identifier.parse(obj.get("textureId").getAsString()));
         }
         if (!obj.has("flipV") || obj.get("flipV").getAsBoolean()) {
             rawModel.applyUVMirror(false, true);
@@ -147,7 +147,7 @@ public class RailModelRegistry {
             );
         }
 
-        rawModel.sourceLocation = ResourceLocation.parse(rawModel.sourceLocation.toString() + "/" + sourceKey);
+        rawModel.sourceLocation = Identifier.parse(rawModel.sourceLocation.toString() + "/" + sourceKey);
         return rawModel;
     }
 }

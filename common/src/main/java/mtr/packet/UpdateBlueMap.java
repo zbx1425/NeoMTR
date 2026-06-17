@@ -32,7 +32,7 @@ public class UpdateBlueMap implements IGui, IUpdateWebMap {
 			return;
 		}
 
-		final String worldId = world.dimension().location().getPath();
+		final String worldId = world.dimension().identifier().getPath();
 		final BlueMapMap map = api.getMaps().stream().filter(map1 -> worldId.contains(map1.getId())).findFirst().orElse(null);
 		if (map == null) {
 			return;

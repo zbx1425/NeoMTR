@@ -8,7 +8,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -46,7 +46,7 @@ public class RegistryClient {
 	}
 
 	@ExpectPlatform
-	public static void registerNetworkReceiver(ResourceLocation resourceLocation, Consumer<FriendlyByteBuf> consumer) {
+	public static void registerNetworkReceiver(Identifier resourceLocation, Consumer<FriendlyByteBuf> consumer) {
 		throw new AssertionError();
 	}
 
@@ -56,7 +56,7 @@ public class RegistryClient {
 	}
 
 	@ExpectPlatform
-	public static void sendToServer(ResourceLocation id, FriendlyByteBuf packet) {
+	public static void sendToServer(Identifier id, FriendlyByteBuf packet) {
 		throw new AssertionError();
 	}
 }

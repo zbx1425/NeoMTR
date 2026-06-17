@@ -5,7 +5,7 @@ import cn.zbx1425.sowcer.object.InstanceBuf;
 import cn.zbx1425.sowcer.object.VertArray;
 import cn.zbx1425.sowcer.vertex.VertAttrMapping;
 import cn.zbx1425.sowcerext.model.RawMesh;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.Closeable;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class VertArrays implements Closeable {
         return result;
     }
 
-    public void replaceTexture(String oldTexture, ResourceLocation newTexture) {
+    public void replaceTexture(String oldTexture, Identifier newTexture) {
         for (VertArray vertArray : meshList) {
             if (vertArray.materialProp.texture == null) continue;
             String oldPath = vertArray.materialProp.texture.getPath();
@@ -37,7 +37,7 @@ public class VertArrays implements Closeable {
         }
     }
 
-    public void replaceAllTexture(ResourceLocation newTexture) {
+    public void replaceAllTexture(Identifier newTexture) {
         for (VertArray vertArray : meshList) {
             vertArray.materialProp.texture = newTexture;
         }

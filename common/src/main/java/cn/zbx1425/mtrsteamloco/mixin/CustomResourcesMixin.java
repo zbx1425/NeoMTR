@@ -13,7 +13,7 @@ import mtr.client.ICustomResources;
 import mtr.mappings.Utilities;
 import mtr.mappings.UtilitiesClient;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -68,7 +68,7 @@ public class CustomResourcesMixin {
             return;
         }
 
-        ResourceLocation location = ResourceLocation.parse(path);
+        Identifier location = Identifier.parse(path);
         try {
             UtilitiesClient.getResources(manager, location).forEach(resource -> {
                 try (final InputStream stream = Utilities.getInputStream(resource)) {

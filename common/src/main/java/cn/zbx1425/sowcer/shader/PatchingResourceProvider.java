@@ -5,12 +5,9 @@ import cn.zbx1425.sowcer.ContextCapability;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceProvider;
-#if MC_VERSION < "11900"
-import net.minecraft.server.packs.resources.SimpleResource;
-#endif
 import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
@@ -29,28 +26,19 @@ public class PatchingResourceProvider implements ResourceProvider {
     }
 
     @Override
-#if MC_VERSION >= "11900"
-    public Optional<Resource> getResource(ResourceLocation resourceLocation) {
-#else
-    public Resource getResource(ResourceLocation resourceLocation) throws IOException {
-#endif
+    public Optional<Resource> getResource(Identifier resourceLocation) {
         try {
             if (resourceLocation.getPath().contains("_modelmat"))
-                resourceLocation = ResourceLocation.fromNamespaceAndPath(resourceLocation.getNamespace(),
+                resourceLocation = Identifier.fromNamespaceAndPath(resourceLocation.getNamespace(),
                         resourceLocation.getPath().replace("_modelmat", ""));
 
             InputStream srcInputStream;
-#if MC_VERSION >= "11900"
             Optional<Resource> srcResource = source.getResource(resourceLocation);
             if (srcResource.isEmpty()) {
                 return Optional.empty();
             } else {
                 srcInputStream = srcResource.get().open();
             }
-#else
-            Resource srcResource = source.getResource(resourceLocation);
-            srcInputStream = srcResource.getInputStream();
-#endif
             String returningContent = "";
 
             if (resourceLocation.getPath().endsWith(".json")) {
@@ -77,19 +65,9 @@ public class PatchingResourceProvider implements ResourceProvider {
             }
 
             final InputStream newContentStream = new ByteArrayInputStream(returningContent.getBytes(StandardCharsets.UTF_8));
-#if MC_VERSION >= "11903"
             return Optional.of(new Resource(srcResource.get().source(), () -> newContentStream));
-#elif MC_VERSION >= "11900"
-            return Optional.of(new Resource(srcResource.get().sourcePackId(), () -> newContentStream));
-#else
-            return new SimpleResource(srcResource.getSourceName(), resourceLocation, newContentStream, null);
-#endif
         } catch (IOException ignored) {
-#if MC_VERSION >= "11900"
             return Optional.empty();
-#else
-            throw ignored;
-#endif
         }
     }
 
