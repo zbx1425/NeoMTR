@@ -6,12 +6,16 @@ import mtr.client.ClientData;
 import mtr.client.IDrawing;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
-public class RenderStationNameTall<T extends BlockStationNameTallBase.TileEntityStationNameTallBase> extends RenderStationNameBase<T> {
+public class RenderStationNameTall<T extends BlockStationNameTallBase.TileEntityStationNameTallBase> extends RenderStationNameBase<T, RenderStationNameTall.StationNameTallRenderState> {
 
 	private static final float WIDTH = 0.6875F;
 	private static final float HEIGHT = 1.5F;
@@ -21,13 +25,28 @@ public class RenderStationNameTall<T extends BlockStationNameTallBase.TileEntity
 	}
 
 	@Override
-	protected void drawStationName(BlockGetter world, BlockPos pos, BlockState state, Direction facing, StoredMatrixTransformations storedMatrixTransformations, MultiBufferSource vertexConsumers, String stationName, int stationColor, int color, int light) {
-		if (IBlock.getStatePropertySafe(state, BlockStationNameTallBase.THIRD) == IBlock.EnumThird.MIDDLE) {
+	protected void drawStationName(StationNameTallRenderState state, BlockPos pos, Direction facing, StoredMatrixTransformations storedMatrixTransformations, String stationName, int stationColor, int color, int light) {
+		if (state.shouldRender) {
 			RenderTrains.scheduleRender(ClientData.DATA_CACHE.getTallStationName(color, stationName, stationColor, WIDTH / HEIGHT).resourceLocation, false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matrices, vertexConsumer) -> {
 				storedMatrixTransformations.transform(matrices);
-				IDrawing.drawTexture(matrices, vertexConsumer, -WIDTH / 2, -HEIGHT / 2, WIDTH, HEIGHT, 0, 0, 1, 1, facing, ARGB_WHITE, light);
+				IDrawing.drawTexture(matrices.last(), vertexConsumer, -WIDTH / 2, -HEIGHT / 2, WIDTH, HEIGHT, 0, 0, 1, 1, facing, ARGB_WHITE, light);
 				matrices.popPose();
 			});
 		}
+	}
+
+	@Override
+	public StationNameTallRenderState createRenderState() {
+		return new StationNameTallRenderState();
+	}
+
+	@Override
+	public void extractRenderState(T blockEntity, StationNameTallRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+		super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
+		state.shouldRender = IBlock.getStatePropertySafe(blockEntity.getBlockState(), BlockStationNameTallBase.THIRD) == IBlock.EnumThird.MIDDLE;
+	}
+
+	public static class StationNameTallRenderState extends StationNameRenderState {
+		boolean shouldRender;
 	}
 }

@@ -7,10 +7,11 @@ import mtr.mappings.ModelMapper;
 import mtr.render.MoreRenderLayers;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 
-public class ModelCableCarGrip extends EntityModel<Entity> {
+public class ModelCableCarGrip extends EntityModel<EntityRenderState> {
 
 	private final ModelMapper grip;
 	private final Identifier texture = Identifier.parse("mtr:textures/entity/cable_car_grip.png");

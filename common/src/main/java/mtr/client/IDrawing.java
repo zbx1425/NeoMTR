@@ -7,11 +7,13 @@ import mtr.MTR;
 import mtr.data.IGui;
 import mtr.mappings.Text;
 import mtr.mappings.UtilitiesClient;
+import mtr.render.RenderTrains;
 import mtr.screen.WidgetBetterTextField;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
@@ -119,14 +121,14 @@ public interface IDrawing {
 		}
 	}
 
-	static void drawLine(PoseStack matrices, MultiBufferSource vertexConsumers, float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b) {
-		final VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderTypes.lines());
-		final PoseStack.Pose pose = matrices.last();
-		vertexConsumer.addVertex(pose.pose(), x1, y1, z1).setColor(r, g, b, 0xFF).setNormal(pose, 0, 1, 0);
-		vertexConsumer.addVertex(pose.pose(), x2, y2, z2).setColor(r, g, b, 0xFF).setNormal(pose, 0, 1, 0);
+	static void drawLine(RenderTrains.RenderCallback renderCallback, float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b) {
+		renderCallback.invoke(RenderTypes.lines(), (pose, vertexConsumer) -> {
+			vertexConsumer.addVertex(pose, x1, y1, z1).setColor(r, g, b, 0xFF).setNormal(pose, 0, 1, 0);
+			vertexConsumer.addVertex(pose, x2, y2, z2).setColor(r, g, b, 0xFF).setNormal(pose, 0, 1, 0);
+		});
 	}
 
-	static void drawRectangle(PoseStack matrices, VertexConsumer vertexConsumer, double x1, double y1, double x2, double y2, int color) {
+	static void drawRectangle(PoseStack.Pose pose, VertexConsumer vertexConsumer, double x1, double y1, double x2, double y2, int color) {
 		final int a = (color >> 24) & 0xFF;
 		final int r = (color >> 16) & 0xFF;
 		final int g = (color >> 8) & 0xFF;
@@ -134,31 +136,30 @@ public interface IDrawing {
 		if (a == 0) {
 			return;
 		}
-		vertexConsumer.addVertex(matrices.last(), (float)x1, (float)y1, 0).setColor(r, g, b, a);
-		vertexConsumer.addVertex(matrices.last(), (float)x1, (float)y2, 0).setColor(r, g, b, a);
-		vertexConsumer.addVertex(matrices.last(), (float)x2, (float)y2, 0).setColor(r, g, b, a);
-		vertexConsumer.addVertex(matrices.last(), (float)x2, (float)y1, 0).setColor(r, g, b, a);
+		vertexConsumer.addVertex(pose, (float)x1, (float)y1, 0).setColor(r, g, b, a);
+		vertexConsumer.addVertex(pose, (float)x1, (float)y2, 0).setColor(r, g, b, a);
+		vertexConsumer.addVertex(pose, (float)x2, (float)y2, 0).setColor(r, g, b, a);
+		vertexConsumer.addVertex(pose, (float)x2, (float)y1, 0).setColor(r, g, b, a);
 	}
 
-	static void drawTexture(PoseStack matrices, VertexConsumer vertexConsumer, float x1, float y1, float z1, float x2, float y2, float z2, Direction facing, int color, int light) {
+	static void drawTexture(PoseStack.Pose matrices, VertexConsumer vertexConsumer, float x1, float y1, float z1, float x2, float y2, float z2, Direction facing, int color, int light) {
 		drawTexture(matrices, vertexConsumer, x1, y1, z1, x2, y2, z2, 0, 0, 1, 1, facing, color, light);
 	}
 
-	static void drawTexture(PoseStack matrices, VertexConsumer vertexConsumer, float x, float y, float width, float height, Direction facing, int light) {
+	static void drawTexture(PoseStack.Pose matrices, VertexConsumer vertexConsumer, float x, float y, float width, float height, Direction facing, int light) {
 		drawTexture(matrices, vertexConsumer, x, y, 0, x + width, y + height, 0, 0, 0, 1, 1, facing, -1, light);
 	}
 
-	static void drawTexture(PoseStack matrices, VertexConsumer vertexConsumer, float x, float y, float width, float height, float u1, float v1, float u2, float v2, Direction facing, int color, int light) {
+	static void drawTexture(PoseStack.Pose matrices, VertexConsumer vertexConsumer, float x, float y, float width, float height, float u1, float v1, float u2, float v2, Direction facing, int color, int light) {
 		drawTexture(matrices, vertexConsumer, x, y, 0, x + width, y + height, 0, u1, v1, u2, v2, facing, color, light);
 	}
 
-	static void drawTexture(PoseStack matrices, VertexConsumer vertexConsumer, float x1, float y1, float z1, float x2, float y2, float z2, float u1, float v1, float u2, float v2, Direction facing, int color, int light) {
+	static void drawTexture(PoseStack.Pose matrices, VertexConsumer vertexConsumer, float x1, float y1, float z1, float x2, float y2, float z2, float u1, float v1, float u2, float v2, Direction facing, int color, int light) {
 		drawTexture(matrices, vertexConsumer, x1, y2, z1, x2, y2, z2, x2, y1, z2, x1, y1, z1, u1, v1, u2, v2, facing, color, light);
 	}
 
-	static void drawTexture(PoseStack matrices, VertexConsumer vertexConsumer, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float u1, float v1, float u2, float v2, Direction facing, int color, int light) {
+	static void drawTexture(PoseStack.Pose pose, VertexConsumer vertexConsumer, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float u1, float v1, float u2, float v2, Direction facing, int color, int light) {
 		final Vec3i vec3i = facing.getUnitVec3i();
-		final PoseStack.Pose pose = matrices.last();
 		final int a = (color >> 24) & 0xFF;
 		final int r = (color >> 16) & 0xFF;
 		final int g = (color >> 8) & 0xFF;

@@ -235,7 +235,7 @@ public class RenderTrains implements IGui {
 				UtilitiesClient.rotateYDegrees(matrices, 180);
 				matrices.pushPose();
 				matrices.translate(0.875F, -1.5, lift.liftDepth / 2F - 0.25 - SMALL_OFFSET);
-				renderLiftDisplay(matrices, vertexConsumers, posAverage, ClientData.DATA_CACHE.requestLiftFloorText(lift.getCurrentFloorBlockPos())[0], lift.getLiftDirection(), 0.1875F, 0.3125F);
+				renderLiftDisplay(matrices, (renderType, callback) -> callback.accept(matrices.last(), vertexConsumers.getBuffer(renderType)), posAverage, ClientData.DATA_CACHE.requestLiftFloorText(lift.getCurrentFloorBlockPos())[0], lift.getLiftDirection(), 0.1875F, 0.3125F);
 				matrices.popPose();
 			}
 
@@ -285,7 +285,7 @@ public class RenderTrains implements IGui {
 							final int r = renderColors ? (rail.railType.color >> 16) & 0xFF : 0;
 							final int g = renderColors ? (rail.railType.color >> 8) & 0xFF : 0;
 							final int b = renderColors ? rail.railType.color & 0xFF : 0;
-							IDrawing.drawLine(matrices, vertexConsumers, (float) x1, (float) y1 + 0.5F, (float) z1, (float) x3, (float) y2 + 0.5F, (float) z3, r, g, b);
+							IDrawing.drawLine((renderType, callback) -> callback.accept(matrices.last(), vertexConsumers.getBuffer(renderType)), (float) x1, (float) y1 + 0.5F, (float) z1, (float) x3, (float) y2 + 0.5F, (float) z3, r, g, b);
 						}, 0, 0);
 					}
 
@@ -357,7 +357,7 @@ public class RenderTrains implements IGui {
 		UNAVAILABLE_TEXTURES.clear();
 	}
 
-	public static void renderLiftDisplay(PoseStack matrices, MultiBufferSource vertexConsumers, BlockPos pos, String floorNumber, Lift.LiftDirection liftDirection, float maxWidth, float height) {
+	public static void renderLiftDisplay(PoseStack matrices, RenderCallback renderCallback, BlockPos pos, String floorNumber, Lift.LiftDirection liftDirection, float maxWidth, float height) {
 		if (RenderTrains.shouldNotRender(pos, Math.min(RenderPIDS.MAX_VIEW_DISTANCE, RenderTrains.maxTrainRenderDistance), null)) {
 			return;
 		}
@@ -367,7 +367,9 @@ public class RenderTrains implements IGui {
 		immediate.endBatch();
 
 		if (liftDirection != Lift.LiftDirection.NONE) {
-			IDrawing.drawTexture(matrices, vertexConsumers.getBuffer(MoreRenderLayers.getLight(ARROW_TEXTURE, true)), -maxWidth / 6, 0, maxWidth / 3, maxWidth / 3, 0, liftDirection == Lift.LiftDirection.UP ? 0 : 1, 1, liftDirection == Lift.LiftDirection.UP ? 1 : 0, Direction.UP, LIFT_LIGHT_COLOR, MAX_LIGHT_GLOWING);
+			renderCallback.invoke(MoreRenderLayers.getLight(ARROW_TEXTURE, true), (pose, vertexConsumer) -> {
+				IDrawing.drawTexture(pose, vertexConsumer, -maxWidth / 6, 0, maxWidth / 3, maxWidth / 3, 0, liftDirection == Lift.LiftDirection.UP ? 0 : 1, 1, liftDirection == Lift.LiftDirection.UP ? 1 : 0, Direction.UP, LIFT_LIGHT_COLOR, MAX_LIGHT_GLOWING);
+			});
 		}
 	}
 
@@ -461,16 +463,16 @@ public class RenderTrains implements IGui {
 			if (rail.railType == RailType.NONE) {
 				if (rail.transportMode != TransportMode.CABLE_CAR && renderColors) {
 					scheduleRender(Identifier.parse("mtr:textures/block/one_way_rail_arrow.png"), false, QueuedRenderLayer.EXTERIOR, (matrices, vertexConsumer) -> {
-						IDrawing.drawTexture(matrices, vertexConsumer, (float) x1, (float) y1 + yOffset, (float) z1, (float) x2, (float) y1 + yOffset + SMALL_OFFSET, (float) z2, (float) x3, (float) y2 + yOffset, (float) z3, (float) x4, (float) y2 + yOffset + SMALL_OFFSET, (float) z4, 0, 0.25F, 1, 0.75F, Direction.UP, -1, light2);
-						IDrawing.drawTexture(matrices, vertexConsumer, (float) x2, (float) y1 + yOffset + SMALL_OFFSET, (float) z2, (float) x1, (float) y1 + yOffset, (float) z1, (float) x4, (float) y2 + yOffset + SMALL_OFFSET, (float) z4, (float) x3, (float) y2 + yOffset, (float) z3, 0, 0.25F, 1, 0.75F, Direction.UP, -1, light2);
+						IDrawing.drawTexture(matrices.last(), vertexConsumer, (float) x1, (float) y1 + yOffset, (float) z1, (float) x2, (float) y1 + yOffset + SMALL_OFFSET, (float) z2, (float) x3, (float) y2 + yOffset, (float) z3, (float) x4, (float) y2 + yOffset + SMALL_OFFSET, (float) z4, 0, 0.25F, 1, 0.75F, Direction.UP, -1, light2);
+						IDrawing.drawTexture(matrices.last(), vertexConsumer, (float) x2, (float) y1 + yOffset + SMALL_OFFSET, (float) z2, (float) x1, (float) y1 + yOffset, (float) z1, (float) x4, (float) y2 + yOffset + SMALL_OFFSET, (float) z4, (float) x3, (float) y2 + yOffset, (float) z3, 0, 0.25F, 1, 0.75F, Direction.UP, -1, light2);
 					});
 				}
 			} else {
 				final float textureOffset = (((int) (x1 + z1)) % 4) * 0.25F + (float) Config.trackTextureOffset() / Config.TRACK_OFFSET_COUNT;
 				final int color = renderColors || !Config.hideSpecialRailColors() && rail.railType.hasSavedRail ? rail.railType.color : -1;
 				scheduleRender(Identifier.parse(texture), false, QueuedRenderLayer.EXTERIOR, (matrices, vertexConsumer) -> {
-					IDrawing.drawTexture(matrices, vertexConsumer, (float) x1, (float) y1 + yOffset, (float) z1, (float) x2, (float) y1 + yOffset + SMALL_OFFSET, (float) z2, (float) x3, (float) y2 + yOffset, (float) z3, (float) x4, (float) y2 + yOffset + SMALL_OFFSET, (float) z4, u1 < 0 ? 0 : u1, v1 < 0 ? 0.1875F + textureOffset : v1, u2 < 0 ? 1 : u2, v2 < 0 ? 0.3125F + textureOffset : v2, Direction.UP, color, light2);
-					IDrawing.drawTexture(matrices, vertexConsumer, (float) x2, (float) y1 + yOffset + SMALL_OFFSET, (float) z2, (float) x1, (float) y1 + yOffset, (float) z1, (float) x4, (float) y2 + yOffset + SMALL_OFFSET, (float) z4, (float) x3, (float) y2 + yOffset, (float) z3, u1 < 0 ? 0 : u1, v1 < 0 ? 0.1875F + textureOffset : v1, u2 < 0 ? 1 : u2, v2 < 0 ? 0.3125F + textureOffset : v2, Direction.UP, color, light2);
+					IDrawing.drawTexture(matrices.last(), vertexConsumer, (float) x1, (float) y1 + yOffset, (float) z1, (float) x2, (float) y1 + yOffset + SMALL_OFFSET, (float) z2, (float) x3, (float) y2 + yOffset, (float) z3, (float) x4, (float) y2 + yOffset + SMALL_OFFSET, (float) z4, u1 < 0 ? 0 : u1, v1 < 0 ? 0.1875F + textureOffset : v1, u2 < 0 ? 1 : u2, v2 < 0 ? 0.3125F + textureOffset : v2, Direction.UP, color, light2);
+					IDrawing.drawTexture(matrices.last(), vertexConsumer, (float) x2, (float) y1 + yOffset + SMALL_OFFSET, (float) z2, (float) x1, (float) y1 + yOffset, (float) z1, (float) x4, (float) y2 + yOffset + SMALL_OFFSET, (float) z4, (float) x3, (float) y2 + yOffset, (float) z3, u1 < 0 ? 0 : u1, v1 < 0 ? 0.1875F + textureOffset : v1, u2 < 0 ? 1 : u2, v2 < 0 ? 0.3125F + textureOffset : v2, Direction.UP, color, light2);
 				});
 			}
 		}, -railWidth, railWidth);
@@ -496,8 +498,8 @@ public class RenderTrains implements IGui {
 				}
 				final int light2 = shouldGlow ? MAX_LIGHT_GLOWING : LightCoordsUtil.pack(world.getBrightness(LightLayer.BLOCK, pos2), world.getBrightness(LightLayer.SKY, pos2));
 
-				IDrawing.drawTexture(matrices, vertexConsumer, (float) x1, (float) y1, (float) z1, (float) x2, (float) y1 + SMALL_OFFSET, (float) z2, (float) x3, (float) y2, (float) z3, (float) x4, (float) y2 + SMALL_OFFSET, (float) z4, u1, 0, u2, 1, Direction.UP, color, light2);
-				IDrawing.drawTexture(matrices, vertexConsumer, (float) x4, (float) y2 + SMALL_OFFSET, (float) z4, (float) x3, (float) y2, (float) z3, (float) x2, (float) y1 + SMALL_OFFSET, (float) z2, (float) x1, (float) y1, (float) z1, u1, 0, u2, 1, Direction.UP, color, light2);
+				IDrawing.drawTexture(matrices.last(), vertexConsumer, (float) x1, (float) y1, (float) z1, (float) x2, (float) y1 + SMALL_OFFSET, (float) z2, (float) x3, (float) y2, (float) z3, (float) x4, (float) y2 + SMALL_OFFSET, (float) z4, u1, 0, u2, 1, Direction.UP, color, light2);
+				IDrawing.drawTexture(matrices.last(), vertexConsumer, (float) x4, (float) y2 + SMALL_OFFSET, (float) z4, (float) x3, (float) y2, (float) z3, (float) x2, (float) y1 + SMALL_OFFSET, (float) z2, (float) x1, (float) y1, (float) z1, u1, 0, u2, 1, Direction.UP, color, light2);
 			}, u1 - 1, u2 - 1);
 		}
 	}
@@ -511,4 +513,10 @@ public class RenderTrains implements IGui {
 	}
 
 	public enum QueuedRenderLayer {LIGHT, LIGHT_TRANSLUCENT, INTERIOR, EXTERIOR}
+
+	// 26.1 Generic callback for VertexConsumers & SubmitNodeCollector
+	@FunctionalInterface
+	public interface RenderCallback {
+		void invoke(RenderType renderType, BiConsumer<PoseStack.Pose, VertexConsumer> callback);
+	}
 }

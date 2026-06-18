@@ -2,11 +2,11 @@ package mtr.render;
 
 import cn.zbx1425.mtrsteamloco.gui.VirtualDriveOverlay;
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.systems.RenderSystem;
 import mtr.data.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
 public class RenderDrivingOverlay implements IGui {
@@ -24,8 +24,7 @@ public class RenderDrivingOverlay implements IGui {
 	private static final int HOT_BAR_HEIGHT = 22;
 
 	public static void render(GuiGraphicsExtractor guiGraphics) {
-
-		VirtualDriveOverlay.render(guiGraphics, Minecraft.getInstance().getTimer());
+		VirtualDriveOverlay.render(guiGraphics, Minecraft.getInstance().getDeltaTracker());
 
 		if (coolDown > 0) {
 			coolDown--;
@@ -40,19 +39,19 @@ public class RenderDrivingOverlay implements IGui {
 			return;
 		}
 
-		guiGraphics.pose().pushPose();
+		guiGraphics.pose().pushMatrix();
 //		RenderSystem.enableBlend();
 		final Identifier resourceLocation = Identifier.parse("textures/gui/widgets.png");
 		final int startX = (window.getGuiScaledWidth() - HOT_BAR_WIDTH) / 2;
 		final int startY = window.getGuiScaledHeight() - (player.isCreative() ? 47 : 63);
 
-		guiGraphics.blit(resourceLocation, startX, startY, 0, 0, 0, 61, HOT_BAR_HEIGHT, 256, 256);
-		guiGraphics.blit(resourceLocation, startX + 61, startY, 0, 141, 0, 41, HOT_BAR_HEIGHT, 256, 256);
-		guiGraphics.blit(resourceLocation, startX + 120, startY, 0, 0, 0, 21, HOT_BAR_HEIGHT, 256, 256);
-		guiGraphics.blit(resourceLocation, startX + 141, startY, 0, 141, 0, 41, HOT_BAR_HEIGHT, 256, 256);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, resourceLocation, startX, startY, 0, 0, 0, 61, HOT_BAR_HEIGHT, 256, 256);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, resourceLocation, startX + 61, startY, 0, 141, 0, 41, HOT_BAR_HEIGHT, 256, 256);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, resourceLocation, startX + 120, startY, 0, 0, 0, 21, HOT_BAR_HEIGHT, 256, 256);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, resourceLocation, startX + 141, startY, 0, 141, 0, 41, HOT_BAR_HEIGHT, 256, 256);
 
-		guiGraphics.blit(resourceLocation, startX + 39 + Math.max(accelerationSign, -2) * 20, startY - 1, 0, 0, 22, 24, 24, 256, 256);
-		guiGraphics.blit(resourceLocation, startX + (doorValue > 0 ? doorValue < 1 ? 139 : 159 : 119), startY - 1, 0, 0, 22, 24, 24, 256, 256);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, resourceLocation, startX + 39 + Math.max(accelerationSign, -2) * 20, startY - 1, 0, 0, 22, 24, 24, 256, 256);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, resourceLocation, startX + (doorValue > 0 ? doorValue < 1 ? 139 : 159 : 119), startY - 1, 0, 0, 22, 24, 24, 256, 256);
 
 		guiGraphics.text(client.font, "B2", (int) (startX + 5.5F), (int) (startY + 7.5F), doorValue == 0 && accelerationSign == -2 ? ARGB_WHITE : ARGB_GRAY, true);
 		guiGraphics.text(client.font, "B1", (int) (startX + 25.5F), (int) (startY + 7.5F), doorValue == 0 && accelerationSign == -1 ? ARGB_WHITE : ARGB_GRAY, true);
@@ -80,7 +79,7 @@ public class RenderDrivingOverlay implements IGui {
 		}
 
 //		RenderSystem.disableBlend();
-		guiGraphics.pose().popPose();
+		guiGraphics.pose().popMatrix();
 	}
 
 	public static void setData(int accelerationSign, TrainClient trainClient) {

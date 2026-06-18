@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public abstract class ModelTrainBase extends EntityModel<Entity> implements IGui {
+public abstract class ModelTrainBase extends EntityModel<EntityRenderState> implements IGui {
 
 	public final DoorAnimationType doorAnimationType;
 	public final boolean renderDoorOverlay;
@@ -31,16 +32,8 @@ public abstract class ModelTrainBase extends EntityModel<Entity> implements IGui
 	private final List<ScrollingText> tempScrollingTexts = new ArrayList<>();
 
 	public ModelTrainBase(DoorAnimationType doorAnimationType, boolean renderDoorOverlay) {
-		this.doorAnimationType = doorAnimationType;
+        this.doorAnimationType = doorAnimationType;
 		this.renderDoorOverlay = renderDoorOverlay;
-	}
-
-	@Override
-	public void setupAnim(Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-	}
-
-	@Override
-	public final void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int packedLight, int packedOverlay, int color) {
 	}
 
 	public final void render(PoseStack matrices, MultiBufferSource vertexConsumers, NameColorDataBase data, Identifier texture, int light, float doorLeftValue, float doorRightValue, boolean opening, int currentCar, int trainCars, boolean head1IsFront, boolean lightsOn, boolean isTranslucent, boolean renderDetails, boolean atPlatform) {

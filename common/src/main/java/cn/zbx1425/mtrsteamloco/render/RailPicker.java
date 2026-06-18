@@ -91,7 +91,7 @@ public class RailPicker {
         }
         matrices.popPose();
 
-        IDrawing.drawLine(matrices, vertexConsumers,
+        IDrawing.drawLine((renderType, callback) -> callback.accept(matrices.last(), vertexConsumers.getBuffer(renderType)),
                 pickedPosStart.getX() + 0.5f, pickedPosStart.getY() + 0.2f, pickedPosStart.getZ() + 0.5f,
                 pickedPosEnd.getX() + 0.5f, pickedPosEnd.getY() + 0.2f, pickedPosEnd.getZ() + 0.5f, 255, 255, 180);
     }

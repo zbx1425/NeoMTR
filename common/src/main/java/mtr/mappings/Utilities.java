@@ -39,7 +39,7 @@ public interface Utilities {
 	}
 
 	static boolean isHolding(Player player, Function<Item, Boolean> predicate) {
-		return player.isHolding(itemStack -> predicate.apply(itemStack.getItem()));
+		return player != null && player.isHolding(itemStack -> predicate.apply(itemStack.getItem()));
 	}
 
 	static Inventory getInventory(Player player) {

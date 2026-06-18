@@ -1,21 +1,21 @@
 package mtr.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import mtr.client.IDrawing;
 import mtr.mappings.BlockEntityMapper;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.Direction;
 
-public class RenderSignalLight3Aspect<T extends BlockEntityMapper> extends RenderSignalBase<T> {
+public class RenderSignalLight3Aspect<T extends BlockEntityMapper> extends RenderSignalBase<T, RenderSignalBase.SignalBaseRenderState> {
 
 	public RenderSignalLight3Aspect(BlockEntityRenderDispatcher dispatcher, boolean isSingleSided) {
 		super(dispatcher, isSingleSided, 3);
 	}
 
 	@Override
-	protected void render(PoseStack matrices, MultiBufferSource vertexConsumers, VertexConsumer vertexConsumer, T entity, float tickDelta, Direction facing, int occupiedAspect, boolean isBackSide) {
+	protected void drawSignal(SignalBaseRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, RenderType renderType, Direction facing, int occupiedAspect, boolean isBackSide) {
 		final float y;
 		final int color;
 		switch (occupiedAspect) {
@@ -32,6 +32,13 @@ public class RenderSignalLight3Aspect<T extends BlockEntityMapper> extends Rende
 				color = 0xFF00FF00;
 				break;
 		}
-		IDrawing.drawTexture(matrices, vertexConsumer, -0.09375F, y, -0.19375F, 0.09375F, y + 0.1875F, -0.19375F, facing.getOpposite(), color, MAX_LIGHT_GLOWING);
+		submitNodeCollector.submitCustomGeometry(poseStack, renderType, (pose, vertexConsumer) -> {
+			IDrawing.drawTexture(pose, vertexConsumer, -0.09375F, y, -0.19375F, 0.09375F, y + 0.1875F, -0.19375F, facing.getOpposite(), color, MAX_LIGHT_GLOWING);
+		});
+	}
+
+	@Override
+	public SignalBaseRenderState createRenderState() {
+		return new SignalBaseRenderState();
 	}
 }

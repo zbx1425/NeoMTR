@@ -14,12 +14,10 @@ import net.minecraft.client.color.block.BlockTintSource;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,12 +27,8 @@ import java.util.function.Function;
 
 public class RegistryClientImpl {
 
-	public static <T extends BlockEntityMapper> void registerTileEntityRenderer(BlockEntityType<T> type, Function<BlockEntityRenderDispatcher, BlockEntityRendererMapper<T>> function) {
-		RegistryUtilitiesClient.registerTileEntityRenderer(type, function);
-	}
-
-	public static <T extends Entity> void registerEntityRenderer(EntityType<T> type, Function<Object, EntityRendererMapper<T>> function) {
-		RegistryUtilitiesClient.registerEntityRenderer(type, function::apply);
+	public static <T extends BlockEntityMapper, S extends BlockEntityRenderState> void registerTileEntityRenderer(BlockEntityType<T> type, Function<BlockEntityRenderDispatcher, BlockEntityRendererMapper<T, S>> function) {
+		BlockEntityRendererRegistry.register(type, context -> function.apply(null));
 	}
 
 	public static void registerKeyBinding(KeyMapping keyMapping) {
@@ -77,13 +71,6 @@ public class RegistryClientImpl {
 
 
 	public interface RegistryUtilitiesClient {
-
-		static <T extends BlockEntityMapper> void registerTileEntityRenderer(BlockEntityType<T> type, Function<BlockEntityRenderDispatcher, BlockEntityRendererMapper<T>> factory) {
-			BlockEntityRendererRegistry.register(type, context -> factory.apply(null));
-		}
-
-		static <T extends Entity> void registerEntityRenderer(EntityType<T> type, Function<EntityRendererProvider.Context, EntityRendererMapper<T>> factory) {
-		}
 
 		static void registerBlockColors(BlockTintSource blockColor, Block block) {
 			ColorHandlerRegistry.registerBlockColors(blockColor, block);

@@ -1,16 +1,15 @@
 package mtr.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import mtr.mappings.ModelDataWrapper;
 import mtr.mappings.ModelMapper;
 import mtr.render.MoreRenderLayers;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.Entity;
 
-public class ModelBogie extends EntityModel<Entity> {
+public class ModelBogie extends EntityModel<EntityRenderState> {
 
 	private final ModelMapper bogie;
 	private final Identifier texture = Identifier.parse("mtr:textures/entity/bogie_1.png");
@@ -34,13 +33,5 @@ public class ModelBogie extends EntityModel<Entity> {
 
 	public void render(PoseStack matrices, MultiBufferSource vertexConsumers, int light, int position) {
 		ModelTrainBase.renderMirror(bogie, matrices, vertexConsumers.getBuffer(MoreRenderLayers.getExterior(texture)), light, position);
-	}
-
-	@Override
-	public void setupAnim(Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-	}
-
-	@Override
-	public final void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
 	}
 }

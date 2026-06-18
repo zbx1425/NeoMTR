@@ -7,10 +7,11 @@ import mtr.mappings.ModelMapper;
 import mtr.render.MoreRenderLayers;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 
-public class ModelDoorOverlayTop extends EntityModel<Entity> {
+public class ModelDoorOverlayTop extends EntityModel<EntityRenderState> {
 
 	private final ModelMapper bb_main;
 	private final ModelMapper outer_roof_2_r1;

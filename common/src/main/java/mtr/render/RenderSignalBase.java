@@ -1,7 +1,6 @@
 package mtr.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import mtr.block.BlockNode;
 import mtr.block.BlockSignalLightBase;
 import mtr.block.BlockSignalSemaphoreBase;
@@ -13,19 +12,26 @@ import mtr.mappings.BlockEntityMapper;
 import mtr.mappings.BlockEntityRendererMapper;
 import mtr.mappings.UtilitiesClient;
 import mtr.path.PathData;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class RenderSignalBase<T extends BlockEntityMapper> extends BlockEntityRendererMapper<T> implements IBlock, IGui {
+public abstract class RenderSignalBase<T extends BlockEntityMapper, S extends RenderSignalBase.SignalBaseRenderState> extends BlockEntityRendererMapper<T, S> implements IBlock, IGui {
 
 	protected final boolean isSingleSided;
 	protected final int aspects;
@@ -36,68 +42,69 @@ public abstract class RenderSignalBase<T extends BlockEntityMapper> extends Bloc
 		this.aspects = aspects;
 	}
 
-	// TODO backwards compatibility
-	@Deprecated
-	public RenderSignalBase(BlockEntityRenderDispatcher dispatcher, boolean isSingleSided) {
-		this(dispatcher, isSingleSided, 2);
+	@Override
+	public void submit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
+		if(state.shouldRender) {
+			poseStack.pushPose();
+			poseStack.translate(0.5, 0, 0.5);
+
+			for (int i = 0; i < (isSingleSided ? 1 : 2); i++) {
+				final Direction newFacing = (i == 1 ? state.facing.getOpposite() : state.facing);
+				int aspect = i == 0 ? state.occupiedAspect : state.occupiedAspectOpposite;
+
+				if (aspect >= 0) {
+					poseStack.pushPose();
+					UtilitiesClient.rotateYDegrees(poseStack, -newFacing.toYRot());
+					drawSignal(state, poseStack, submitNodeCollector, MoreRenderLayers.getLight(Identifier.parse("mtr:textures/block/white.png"), false), newFacing, state.occupiedAspect, i == 1);
+					poseStack.popPose();
+				}
+			}
+
+			poseStack.popPose();
+		}
 	}
 
 	@Override
-	public final void render(T entity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
-		final BlockGetter world = entity.getLevel();
-		if (world == null) {
+	public void extractRenderState(T blockEntity, S state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+		super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
+		final BlockState blockState = blockEntity.getBlockState();
+		final BlockPos pos = blockEntity.getBlockPos();
+		final Level level = blockEntity.getLevel();
+		if (level == null) {
+			state.shouldRender = false;
 			return;
 		}
 
-		final BlockPos pos = entity.getBlockPos();
-		final BlockState state = world.getBlockState(pos);
-		if (!(state.getBlock() instanceof BlockSignalLightBase || state.getBlock() instanceof BlockSignalSemaphoreBase)) {
+		if (!(blockState.getBlock() instanceof BlockSignalLightBase || blockState.getBlock() instanceof BlockSignalSemaphoreBase)) {
+			state.shouldRender = false;
 			return;
 		}
-		final Direction facing = IBlock.getStatePropertySafe(state, HorizontalDirectionalBlock.FACING);
+		final Direction facing = IBlock.getStatePropertySafe(blockState, HorizontalDirectionalBlock.FACING);
 		if (RenderTrains.shouldNotRender(pos, RenderTrains.maxTrainRenderDistance, null)) {
+			state.shouldRender = false;
 			return;
 		}
-
-		final BlockPos startPos = getNodePos(world, pos, facing);
+		final BlockPos startPos = getNodePos(level, pos, facing);
 		if (startPos == null) {
+			state.shouldRender = false;
 			return;
 		}
+		state.shouldRender = true;
+		state.facing = facing;
 
-		matrices.pushPose();
-		matrices.translate(0.5, 0, 0.5);
-
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < (isSingleSided ? 1 : 2); i++) {
 			final Direction newFacing = (i == 1 ? facing.getOpposite() : facing);
 			final int occupiedAspect = getOccupiedAspect(startPos, newFacing.toYRot() + 90);
 
-			if (occupiedAspect >= 0) {
-				matrices.pushPose();
-				UtilitiesClient.rotateYDegrees(matrices, -newFacing.toYRot());
-				final VertexConsumer vertexConsumer = vertexConsumers.getBuffer(MoreRenderLayers.getLight(Identifier.parse("mtr:textures/block/white.png"), false));
-				render(matrices, vertexConsumers, vertexConsumer, entity, tickDelta, newFacing, occupiedAspect, i == 1);
-				// TODO temporary code
-				render(matrices, vertexConsumers, vertexConsumer, entity, tickDelta, newFacing, occupiedAspect == 1, i == 1);
-				// TODO temporary code end
-				matrices.popPose();
-			}
-
-			if (isSingleSided) {
-				break;
+			if(i == 0) {
+				state.occupiedAspect = occupiedAspect;
+			} else {
+				state.occupiedAspectOpposite = occupiedAspect;
 			}
 		}
-
-		matrices.popPose();
 	}
 
-	// TODO make abstract later
-	protected void render(PoseStack matrices, MultiBufferSource vertexConsumers, VertexConsumer vertexConsumer, T entity, float tickDelta, Direction facing, int occupiedAspect, boolean isBackSide) {
-	}
-
-	// TODO temporary code
-	protected void render(PoseStack matrices, MultiBufferSource vertexConsumers, VertexConsumer vertexConsumer, T entity, float tickDelta, Direction facing, boolean isOccupied, boolean isBackSide) {
-	}
-	// TODO temporary code end
+	protected abstract void drawSignal(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, RenderType renderType, Direction facing, int occupiedAspect, boolean isBackSide);
 
 	private int getOccupiedAspect(BlockPos startPos, float facing) {
 		Map<BlockPos, Float> nodesToScan = new HashMap<>();
@@ -150,5 +157,12 @@ public abstract class RenderSignalBase<T extends BlockEntityMapper> extends Bloc
 			}
 		}
 		return null;
+	}
+
+	public static class SignalBaseRenderState extends BlockEntityRenderState {
+		boolean shouldRender;
+		Direction facing;
+		int occupiedAspect;
+		int occupiedAspectOpposite;
 	}
 }

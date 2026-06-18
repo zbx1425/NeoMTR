@@ -667,9 +667,9 @@ public class ResourcePackCreatorScreen extends ScreenMapper implements IResource
 			final Minecraft minecraft = Minecraft.getInstance();
 			minecraft.options.hideGui = guiCounter != 0 || hideGui;
 
-			matrices.pushMatrix();
+			matrices.pushPose();
 			final MultiBufferSource.BufferSource immediate = minecraft.renderBuffers().bufferSource();
-			IDrawing.drawTexture(matrices, immediate.getBuffer(RenderType.solid()), Integer.MIN_VALUE, Integer.MAX_VALUE, -256, Integer.MAX_VALUE, Integer.MIN_VALUE, -256, Direction.UP, ARGB_BLACK, 0);
+			IDrawing.drawTexture(matrices.last(), immediate.getBuffer(RenderType.solid()), Integer.MIN_VALUE, Integer.MAX_VALUE, -256, Integer.MAX_VALUE, Integer.MIN_VALUE, -256, Direction.UP, ARGB_BLACK, 0);
 			immediate.endBatch();
 			matrices.translate(0, 0, -scale);
 			UtilitiesClient.rotateYDegrees(matrices, 90);

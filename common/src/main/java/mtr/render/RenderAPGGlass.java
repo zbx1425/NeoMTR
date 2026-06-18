@@ -5,13 +5,16 @@ import mtr.block.IBlock;
 import mtr.client.ClientData;
 import mtr.client.IDrawing;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
-public class RenderAPGGlass extends RenderRouteBase<BlockAPGGlass.TileEntityAPGGlass> {
+public class RenderAPGGlass extends RenderRouteBase<BlockAPGGlass.TileEntityAPGGlass, RenderAPGGlass.APGGlassRenderState> {
 
 	private static final float COLOR_STRIP_START = 0.75F;
 	private static final float COLOR_STRIP_END = 0.78125F;
@@ -32,14 +35,14 @@ public class RenderAPGGlass extends RenderRouteBase<BlockAPGGlass.TileEntityAPGG
 	}
 
 	@Override
-	protected void renderAdditional(StoredMatrixTransformations storedMatrixTransformations, long platformId, BlockState state, int leftBlocks, int rightBlocks, Direction facing, int color, int light) {
-		if (IBlock.getStatePropertySafe(state, HALF) == DoubleBlockHalf.UPPER && IBlock.getStatePropertySafe(state, SIDE_EXTENDED) != EnumSide.SINGLE) {
-			final boolean isLeft = isLeft(state);
-			final boolean isRight = isRight(state);
+	protected void renderAdditional(APGGlassRenderState state, StoredMatrixTransformations storedMatrixTransformations, long platformId, int leftBlocks, int rightBlocks, Direction facing, int color, int light) {
+		if (state.half == DoubleBlockHalf.UPPER && state.sideExtended != EnumSide.SINGLE) {
+			final boolean isLeft = state.isLeft;
+			final boolean isRight = state.isRight;
 			RenderTrains.scheduleRender(ClientData.DATA_CACHE.getColorStrip(platformId).resourceLocation, false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matrices, vertexConsumer) -> {
 				storedMatrixTransformations.transform(matrices);
-				IDrawing.drawTexture(matrices, vertexConsumer, isLeft ? sidePadding : 0, COLOR_STRIP_START, 0, isRight ? 1 - sidePadding : 1, COLOR_STRIP_END, 0, facing, color, light);
-				IDrawing.drawTexture(matrices, vertexConsumer, isRight ? 1 - sidePadding : 1, COLOR_STRIP_START, 0.125F, isLeft ? sidePadding : 0, COLOR_STRIP_END, 0.125F, facing, color, light);
+				IDrawing.drawTexture(matrices.last(), vertexConsumer, isLeft ? sidePadding : 0, COLOR_STRIP_START, 0, isRight ? 1 - sidePadding : 1, COLOR_STRIP_END, 0, facing, color, light);
+				IDrawing.drawTexture(matrices.last(), vertexConsumer, isRight ? 1 - sidePadding : 1, COLOR_STRIP_START, 0.125F, isLeft ? sidePadding : 0, COLOR_STRIP_END, 0.125F, facing, color, light);
 				matrices.popPose();
 			});
 
@@ -47,9 +50,32 @@ public class RenderAPGGlass extends RenderRouteBase<BlockAPGGlass.TileEntityAPGG
 			final float height = 1 - topPadding - bottomPadding;
 			RenderTrains.scheduleRender(ClientData.DATA_CACHE.getSingleRowStationName(platformId, width / height).resourceLocation, false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matrices, vertexConsumer) -> {
 				storedMatrixTransformations.transform(matrices);
-				IDrawing.drawTexture(matrices, vertexConsumer, 1 - (rightBlocks == 0 ? sidePadding : 0), topPadding, 0.125F, leftBlocks == 0 ? sidePadding : 0, 1 - bottomPadding, 0.125F, (rightBlocks - (rightBlocks == 0 ? 0 : sidePadding)) / width, 0, (width - leftBlocks + (leftBlocks == 0 ? 0 : sidePadding)) / width, 1, facing, color, light);
+				IDrawing.drawTexture(matrices.last(), vertexConsumer, 1 - (rightBlocks == 0 ? sidePadding : 0), topPadding, 0.125F, leftBlocks == 0 ? sidePadding : 0, 1 - bottomPadding, 0.125F, (rightBlocks - (rightBlocks == 0 ? 0 : sidePadding)) / width, 0, (width - leftBlocks + (leftBlocks == 0 ? 0 : sidePadding)) / width, 1, facing, color, light);
 				matrices.popPose();
 			});
 		}
+	}
+
+	@Override
+	public APGGlassRenderState createRenderState() {
+		return new APGGlassRenderState();
+	}
+
+	@Override
+	public void extractRenderState(BlockAPGGlass.TileEntityAPGGlass blockEntity, APGGlassRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+		super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
+		final BlockState blockState = blockEntity.getBlockState();
+
+		state.half = IBlock.getStatePropertySafe(blockState, HALF);
+		state.isLeft = isLeft(blockState);
+		state.isRight = isRight(blockState);
+	}
+
+
+
+	public static class APGGlassRenderState extends RouteBaseRenderState {
+		DoubleBlockHalf half;
+		boolean isLeft;
+		boolean isRight;
 	}
 }

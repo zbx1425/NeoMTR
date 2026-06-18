@@ -1,47 +1,57 @@
 package mtr.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import mtr.block.BlockNode;
 import mtr.block.IBlock;
 import mtr.client.IDrawing;
 import mtr.mappings.BlockEntityRendererMapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
-public class RenderBoatNode extends BlockEntityRendererMapper<BlockNode.TileEntityBoatNode> {
+public class RenderBoatNode extends BlockEntityRendererMapper<BlockNode.TileEntityBoatNode, RenderBoatNode.BoatNodeRenderState> {
 
 	public RenderBoatNode(BlockEntityRenderDispatcher dispatcher) {
 		super(dispatcher);
 	}
 
 	@Override
-	public void render(BlockNode.TileEntityBoatNode entity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
-		final Level world = entity.getLevel();
-		if (world == null) {
+	public void submit(BoatNodeRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
+		if(state.shouldRender) {
+			poseStack.pushPose();
+			submitNodeCollector.submitCustomGeometry(poseStack, MoreRenderLayers.getExterior(Identifier.parse("textures/block/oak_log.png")), (pose, vertexConsumer) -> {
+				IDrawing.drawTexture(pose, vertexConsumer, 0.25F, 0, 0.25F, 0.25F, 0, 0.75F, 0.75F, 0, 0.75F, 0.75F, 0, 0.25F, 0.25F, 0.25F, 0.75F, 0.75F, Direction.EAST, -1, state.lightCoords);
+				IDrawing.drawTexture(pose, vertexConsumer, 0.75F, 0, 0.25F, 0.75F, 0, 0.75F, 0.25F, 0, 0.75F, 0.25F, 0, 0.25F, 0.25F, 0.25F, 0.75F, 0.75F, Direction.DOWN, -1, state.lightCoords);
+			});
+			poseStack.popPose();
+		}
+	}
+
+	@Override
+	public void extractRenderState(BlockNode.TileEntityBoatNode blockEntity, BoatNodeRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+		super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
+		final BlockState blockState = blockEntity.getBlockState();
+		if (blockState.getBlock() instanceof BlockNode.BlockBoatNode && !IBlock.getStatePropertySafe(blockState, BlockNode.IS_CONNECTED)) {
+			state.shouldRender = false;
 			return;
 		}
+		state.shouldRender = RenderTrains.isHoldingRailRelated(Minecraft.getInstance().player);
+	}
 
-		final BlockState state = world.getBlockState(entity.getBlockPos());
-		if (state.getBlock() instanceof BlockNode.BlockBoatNode && !IBlock.getStatePropertySafe(state, BlockNode.IS_CONNECTED)) {
-			return;
-		}
+	@Override
+	public BoatNodeRenderState createRenderState() {
+		return new BoatNodeRenderState();
+	}
 
-		final Player player = Minecraft.getInstance().player;
-		if (player == null || !RenderTrains.isHoldingRailRelated(player)) {
-			return;
-		}
-
-		matrices.pushPose();
-		final VertexConsumer vertexConsumer = vertexConsumers.getBuffer(MoreRenderLayers.getExterior(Identifier.parse("textures/block/oak_log.png")));
-		IDrawing.drawTexture(matrices, vertexConsumer, 0.25F, 0, 0.25F, 0.25F, 0, 0.75F, 0.75F, 0, 0.75F, 0.75F, 0, 0.25F, 0.25F, 0.25F, 0.75F, 0.75F, Direction.EAST, -1, light);
-		IDrawing.drawTexture(matrices, vertexConsumer, 0.75F, 0, 0.25F, 0.75F, 0, 0.75F, 0.25F, 0, 0.75F, 0.25F, 0, 0.25F, 0.25F, 0.25F, 0.75F, 0.75F, Direction.DOWN, -1, light);
-		matrices.popPose();
+	public static class BoatNodeRenderState extends BlockEntityRenderState {
+		boolean shouldRender;
 	}
 }

@@ -17,7 +17,11 @@ import mtr.mappings.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
@@ -26,10 +30,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 import static mtr.data.IGui.*;
 
-public class RenderLiftPanel<T extends BlockLiftPanelBase.TileEntityLiftPanel1Base> extends BlockEntityRendererMapper<T> {
+public class RenderLiftPanel<T extends BlockLiftPanelBase.TileEntityLiftPanel1Base> extends BlockEntityRendererMapper<T, RenderLiftPanel.LiftPanelRenderState> {
 
 	private final boolean isOdd;
 	private final boolean isFlat;
@@ -47,79 +53,76 @@ public class RenderLiftPanel<T extends BlockLiftPanelBase.TileEntityLiftPanel1Ba
 	}
 
 	@Override
-	public void render(T entity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int combinedOverlay) {
-		final Level world = entity.getLevel();
-		if (world == null) {
+	public void submit(LiftPanelRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
+		if(state.shouldRender) {
+			final Font textRenderer = Minecraft.getInstance().font;
+
+            poseStack.pushPose();
+			poseStack.translate(0.5, 0, 0.5);
+			RenderLiftButtons.renderLiftObjectLink(poseStack, submitNodeCollector, state.level, state.blockPos, state.linkedPosition, state.facing, state.holdingLinker);
+
+			if (state.lift != null) {
+				final String[] text = ClientData.DATA_CACHE.requestLiftFloorText(state.lift.getCurrentFloorBlockPos());
+				UtilitiesClient.rotateYDegrees(poseStack, -state.facing.toYRot());
+				UtilitiesClient.rotateZDegrees(poseStack, 180);
+				poseStack.translate(isOdd ? 0 : 0.5, 0, 0);
+
+				// Floor Number
+				poseStack.pushPose();
+				poseStack.translate(0, 0, (isFlat ? 0.4375F : 0.25F) - SMALL_OFFSET * 2);
+				final MultiBufferSource.BufferSource immediate = Minecraft.getInstance().renderBuffers().bufferSource();
+				IDrawing.drawStringWithFont(poseStack, textRenderer, immediate, ClientData.DATA_CACHE.requestLiftFloorText(state.linkedPosition)[0], HorizontalAlignment.CENTER, VerticalAlignment.CENTER, 0, -0.47F, 0.1875F, 0.1875F, 1, ARGB_BLACK, false, MAX_LIGHT_GLOWING, null);
+				immediate.endBatch();
+				poseStack.popPose();
+
+				renderLiftDisplay(poseStack, submitNodeCollector, isFlat ? 0.4375F : 0.25F, text[0], text[1], state.lift.getLiftDirection());
+			}
+			poseStack.popPose();
+		}
+	}
+
+	@Override
+	public LiftPanelRenderState createRenderState() {
+		return new LiftPanelRenderState();
+	}
+
+	@Override
+	public void extractRenderState(T blockEntity, LiftPanelRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+		super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
+		final BlockState blockState = blockEntity.getBlockState();
+		final BlockPos pos = blockEntity.getBlockPos();
+		final Level level = blockEntity.getLevel();
+		if (level == null) {
+			state.shouldRender = false;
 			return;
 		}
-
-		final Player player = Minecraft.getInstance().player;
-		if (player == null) {
-			return;
-		}
-
-		final BlockPos pos = entity.getBlockPos();
 		if (RenderTrains.shouldNotRender(pos, RenderTrains.maxTrainRenderDistance, null)) {
+			state.shouldRender = false;
 			return;
 		}
-
-		final BlockState state = world.getBlockState(pos);
-		if (!isOdd && IBlock.getStatePropertySafe(state, IBlock.SIDE) == IBlock.EnumSide.RIGHT || isOdd && !IBlock.getStatePropertySafe(state, ITripleBlock.ODD)) {
+		if (!isOdd && IBlock.getStatePropertySafe(blockState, IBlock.SIDE) == IBlock.EnumSide.RIGHT || isOdd && !IBlock.getStatePropertySafe(blockEntity.getBlockState(), ITripleBlock.ODD)) {
+			state.shouldRender = false;
 			return;
 		}
-
-		final Font textRenderer = Minecraft.getInstance().font;
-		if (textRenderer == null) {
-			return;
-		}
-
-		final BlockPos trackPosition = entity.getTrackPosition(world);
-		if (trackPosition == null) {
-			return;
-		}
-
-		final BlockLiftTrackFloor.TileEntityLiftTrackFloor trackFloorTileEntity = (BlockLiftTrackFloor.TileEntityLiftTrackFloor) world.getBlockEntity(trackPosition);
-		if (trackFloorTileEntity == null) {
-			return;
-		}
-
-		final Direction facing = IBlock.getStatePropertySafe(state, HorizontalDirectionalBlock.FACING);
-		final boolean holdingLinker = Utilities.isHolding(player, item -> item instanceof ItemLiftButtonsLinkModifier || Block.byItem(item) instanceof BlockLiftPanelBase);
-
-		matrices.pushPose();
-		matrices.translate(0.5, 0, 0.5);
-		RenderLiftButtons.renderLiftObjectLink(matrices, vertexConsumers, world, pos, trackPosition, facing, holdingLinker);
+		state.holdingLinker = Utilities.isHolding(Minecraft.getInstance().player, item -> item instanceof ItemLiftButtonsLinkModifier || Block.byItem(item) instanceof BlockLiftPanelBase);
+		state.level = level; // TODO: Temp Expose
+		state.facing = IBlock.getStatePropertySafe(blockState, HorizontalDirectionalBlock.FACING);
+		state.linkedPosition = blockEntity.getTrackPosition(level);
 
 		Lift lift = null;
 		for (final Lift checkLift : ClientData.LIFTS) {
-			if (checkLift.hasFloor(trackPosition)) {
+			if (checkLift.hasFloor(state.linkedPosition)) {
 				lift = checkLift;
 				break;
 			}
 		}
-
-		if (lift != null) {
-			final String[] text = ClientData.DATA_CACHE.requestLiftFloorText(lift.getCurrentFloorBlockPos());
-			UtilitiesClient.rotateYDegrees(matrices, -facing.toYRot());
-			UtilitiesClient.rotateZDegrees(matrices, 180);
-			matrices.translate(isOdd ? 0 : 0.5, 0, 0);
-
-			// Floor Number
-			matrices.pushPose();
-			matrices.translate(0, 0, (isFlat ? 0.4375F : 0.25F) - SMALL_OFFSET * 2);
-			final MultiBufferSource.BufferSource immediate = Minecraft.getInstance().renderBuffers().bufferSource();
-			IDrawing.drawStringWithFont(matrices, textRenderer, immediate, ClientData.DATA_CACHE.requestLiftFloorText(trackPosition)[0], HorizontalAlignment.CENTER, VerticalAlignment.CENTER, 0, -0.47F, 0.1875F, 0.1875F, 1, ARGB_BLACK, false, MAX_LIGHT_GLOWING, null);
-			immediate.endBatch();
-			matrices.popPose();
-
-			renderLiftDisplay(matrices, vertexConsumers, isFlat ? 0.4375F : 0.25F, text[0], text[1], lift.getLiftDirection());
-		}
-		matrices.popPose();
+		state.lift = lift;
+		state.shouldRender = state.linkedPosition != null && state.level.getBlockEntity(state.linkedPosition) != null;
 	}
 
-	private void renderLiftDisplay(PoseStack matrices, MultiBufferSource vertexConsumers, float zOffset, String floorNumber, String floorDisplay, Lift.LiftDirection liftDirection) {
-		matrices.pushPose();
-		matrices.translate(0, 0, zOffset - SMALL_OFFSET * 2);
+	private void renderLiftDisplay(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, float zOffset, String floorNumber, String floorDisplay, Lift.LiftDirection liftDirection) {
+		poseStack.pushPose();
+		poseStack.translate(0, 0, zOffset - SMALL_OFFSET * 2);
 
 		final boolean noFloorNumber = floorNumber.isEmpty();
 		final boolean noFloorDisplay = floorDisplay.isEmpty();
@@ -134,8 +137,10 @@ public class RenderLiftPanel<T extends BlockLiftPanelBase.TileEntityLiftPanel1Ba
 		if (liftDirection != Lift.LiftDirection.NONE) {
 			final float uv = (float)((gameTick * ARROW_SPEED) % 1);
 			final int color = goingUp ? 0xFF00FF00 : 0xFFFF0000;
-			IDrawing.drawTexture(matrices, vertexConsumers.getBuffer(MoreRenderLayers.getLight(ARROW_TEXTURE, false)), -PANEL_WIDTH / 2 - arrowSize, y, arrowSize, arrowSize, 0, (goingUp ? 0 : 1) + uv, 1, (goingUp ? 1 : 0) + uv, Direction.UP, color, MAX_LIGHT_GLOWING);
-			IDrawing.drawTexture(matrices, vertexConsumers.getBuffer(MoreRenderLayers.getLight(ARROW_TEXTURE, false)), PANEL_WIDTH / 2, y, arrowSize, arrowSize, 0, (goingUp ? 0 : 1) + uv, 1, (goingUp ? 1 : 0) + uv, Direction.UP, color, MAX_LIGHT_GLOWING);
+			submitNodeCollector.submitCustomGeometry(poseStack, MoreRenderLayers.getLight(ARROW_TEXTURE, false), (pose, vertexConsumer) -> {
+				IDrawing.drawTexture(pose, vertexConsumer, -PANEL_WIDTH / 2 - arrowSize, y, arrowSize, arrowSize, 0, (goingUp ? 0 : 1) + uv, 1, (goingUp ? 1 : 0) + uv, Direction.UP, color, MAX_LIGHT_GLOWING);
+				IDrawing.drawTexture(pose, vertexConsumer, PANEL_WIDTH / 2, y, arrowSize, arrowSize, 0, (goingUp ? 0 : 1) + uv, 1, (goingUp ? 1 : 0) + uv, Direction.UP, color, MAX_LIGHT_GLOWING);
+			});
 		}
 
 		// Floor Display
@@ -149,9 +154,21 @@ public class RenderLiftPanel<T extends BlockLiftPanelBase.TileEntityLiftPanel1Ba
 			}
 			final float uv = (goingUp ? -1 : 1) * uvOffset;
 			final String text = String.format("%s%s%s", floorNumber, noFloorNumber || noFloorDisplay ? "" : "|", floorDisplay);
-			IDrawing.drawTexture(matrices, vertexConsumers.getBuffer(MoreRenderLayers.getLight(ClientData.DATA_CACHE.getLiftPanelDisplay(text, 0xFFAA00).resourceLocation, false)), -PANEL_WIDTH / 2, y, PANEL_WIDTH, arrowSize, 0, uv, 1, lineHeight + uv, Direction.UP, ARGB_WHITE, MAX_LIGHT_GLOWING);
+
+			submitNodeCollector.submitCustomGeometry(poseStack, MoreRenderLayers.getLight(ClientData.DATA_CACHE.getLiftPanelDisplay(text, 0xFFAA00).resourceLocation, false), (pose, vertexConsumer) -> {
+				IDrawing.drawTexture(pose, vertexConsumer, -PANEL_WIDTH / 2, y, PANEL_WIDTH, arrowSize, 0, uv, 1, lineHeight + uv, Direction.UP, ARGB_WHITE, MAX_LIGHT_GLOWING);
+			});
 		}
 
-		matrices.popPose();
+		poseStack.popPose();
+	}
+
+	public static class LiftPanelRenderState extends BlockEntityRenderState {
+		Level level;
+		Direction facing;
+		BlockPos linkedPosition;
+		Lift lift;
+		boolean holdingLinker;
+		boolean shouldRender;
 	}
 }
