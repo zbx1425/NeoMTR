@@ -1,23 +1,15 @@
 package cn.zbx1425.mtrsteamloco.neoforge;
 
-import cn.zbx1425.mtrsteamloco.ClientConfig;
 import cn.zbx1425.mtrsteamloco.Main;
 import cn.zbx1425.mtrsteamloco.MainClient;
 import cn.zbx1425.mtrsteamloco.NTEClientCommand;
 import cn.zbx1425.mtrsteamloco.gui.ScriptDebugOverlay;
-import cn.zbx1425.mtrsteamloco.render.RenderUtil;
 import cn.zbx1425.mtrsteamloco.render.train.SteamSmokeParticle;
-import mtr.mappings.Text;
 import mtr.screen.ConfigScreen;
-import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.commands.Commands;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
@@ -43,7 +35,7 @@ public class ClientProxy {
 
         @SubscribeEvent
         public static void onRegistryParticleFactory(RegisterParticleProvidersEvent event) {
-            Minecraft.getInstance().particleEngine.register(Main.PARTICLE_STEAM_SMOKE, SteamSmokeParticle.Provider::new);
+            event.registerSpriteSet(Main.PARTICLE_STEAM_SMOKE, SteamSmokeParticle.Provider::new);
         }
 
         @SubscribeEvent
@@ -55,8 +47,9 @@ public class ClientProxy {
 
     public static class ForgeEventBusListener {
 
-        @SubscribeEvent
-        public static void onDebugOverlay(CustomizeGuiOverlayEvent.DebugText event) {
+        // TODO: IIRC you may now register it manually in vanilla?
+//        @SubscribeEvent
+//        public static void onDebugOverlay(CustomizeGuiOverlayEvent.DebugText event) {
 //            if (Minecraft.getInstance().options.renderDebug) {
 //                event.getLeft().add(
 //                        "[NTE] Calls: " + MainClient.drawContext.drawCallCount
@@ -64,7 +57,7 @@ public class ClientProxy {
 //                                + ", Faces: " + (MainClient.drawContext.singleFaceCount + MainClient.drawContext.instancedFaceCount)
 //                );
 //            }
-        }
+//        }
 
         @SubscribeEvent
         public static void onRegisterClientCommands(RegisterClientCommandsEvent event) {

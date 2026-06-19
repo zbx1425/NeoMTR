@@ -7,18 +7,16 @@ import mtr.item.ItemWithCreativeTabBase;
 import mtr.mappings.FabricRegistryUtilities;
 import mtr.mappings.RegistryUtilities;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -28,28 +26,24 @@ public class RegistriesWrapperImpl implements RegistriesWrapper {
 
     @Override
     public void registerBlock(String id, BrandNewEpicRegistryObject<Block> block) {
-        final Identifier identifier = Main.id(id);
-        final ResourceKey<Block> resourceKey = ResourceKey.create(Registries.BLOCK, identifier);
-        Registry.register(RegistryUtilities.registryGetBlock(), Main.id(id), block.create(resourceKey));
+        block.setResourceKey(ResourceKey.create(Registries.BLOCK, Main.id(id)));
+        Registry.register(BuiltInRegistries.BLOCK, Main.id(id), block.get());
     }
 
     @Override
     public void registerBlockAndItem(String id, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper tab) {
-        final Identifier identifier = Main.id(id);
-        final ResourceKey<Block> blockKey = ResourceKey.create(Registries.BLOCK, identifier);
-        final ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, identifier);
+        block.setResourceKey(ResourceKey.create(Registries.BLOCK, Main.id(id)));
 
-        Registry.register(RegistryUtilities.registryGetBlock(), Main.id(id), block.create(blockKey));
-        final BlockItem blockItem = new BlockItem(block.get(), new Item.Properties().setId(itemKey));
+        Registry.register(BuiltInRegistries.BLOCK, Main.id(id), block.get());
+        final BlockItem blockItem = new BlockItem(block.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Main.id(id))));
         Registry.register(RegistryUtilities.registryGetItem(), Main.id(id), blockItem);
         FabricRegistryUtilities.registerCreativeModeTab(tab.get(), blockItem);
     }
 
     @Override
     public void registerItem(String id, BrandNewEpicRegistryObject<Item> item) {
-        final Identifier identifier = Main.id(id);
-        final ResourceKey<Item> resourceKey = ResourceKey.create(Registries.ITEM, identifier);
-        Registry.register(RegistryUtilities.registryGetItem(), identifier, item.create(resourceKey));
+        item.setResourceKey(ResourceKey.create(Registries.ITEM, Main.id(id)));
+        Registry.register(RegistryUtilities.registryGetItem(), Main.id(id), item.get());
 
         if(item.get() instanceof ItemWithCreativeTabBase itemWithCreativeTabBase) {
             FabricRegistryUtilities.registerCreativeModeTab(itemWithCreativeTabBase.creativeModeTab.get(), item.get());

@@ -8,17 +8,13 @@ import mtr.item.ItemBlockEnchanted;
 import mtr.item.ItemWithCreativeTabBase;
 import mtr.mappings.BlockEntityMapper;
 import mtr.neoforge.mappings.ForgeUtilities;
-import mtr.mappings.RegistryUtilities;
 import mtr.render.RenderDrivingOverlay;
-import mtr.render.RenderTrains;
-import mtr.screen.ConfigScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -29,12 +25,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -59,9 +52,8 @@ public class MTRForge {
 	}
 
 	public MTRForge(IEventBus eventBus) {
-
-		ITEMS.register(eventBus);
 		BLOCKS.register(eventBus);
+		ITEMS.register(eventBus);
 		BLOCK_ENTITY_TYPES.register(eventBus);
 		ENTITY_TYPES.register(eventBus);
 		DATA_COMPONENT_TYPES.register(eventBus);
@@ -89,6 +81,8 @@ public class MTRForge {
 	}
 
 	private static void registerItem(String path, BrandNewEpicRegistryObject<Item> item) {
+		item.setResourceKey(ResourceKey.create(Registries.ITEM, MTR.id(path)));
+
 		ITEMS.register(path, () -> {
 			final Item itemObject = item.get();
 			if (itemObject instanceof ItemWithCreativeTabBase) {
@@ -101,13 +95,14 @@ public class MTRForge {
 	}
 
 	private static void registerBlock(String path, BrandNewEpicRegistryObject<Block> block) {
+		block.setResourceKey(ResourceKey.create(Registries.BLOCK, MTR.id(path)));
 		BLOCKS.register(path, block::get);
 	}
 
 	private static void registerBlock(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTabWrapper) {
 		registerBlock(path, block);
 		ITEMS.register(path, () -> {
-			final BlockItem blockItem = new BlockItem(block.get(), RegistryUtilities.createItemProperties(creativeModeTabWrapper::get));
+			final BlockItem blockItem = new BlockItem(block.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, MTR.id(path))));
 			Registry.registerCreativeModeTab(creativeModeTabWrapper.resourceLocation, blockItem);
 			return blockItem;
 		});
@@ -116,7 +111,7 @@ public class MTRForge {
 	private static void registerEnchantedBlock(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTab) {
 		registerBlock(path, block);
 		ITEMS.register(path, () -> {
-			final ItemBlockEnchanted itemBlockEnchanted = new ItemBlockEnchanted(block.get(), RegistryUtilities.createItemProperties(creativeModeTab::get));
+			final ItemBlockEnchanted itemBlockEnchanted = new ItemBlockEnchanted(block.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, MTR.id(path))));
 			Registry.registerCreativeModeTab(creativeModeTab.resourceLocation, itemBlockEnchanted);
 			return itemBlockEnchanted;
 		});

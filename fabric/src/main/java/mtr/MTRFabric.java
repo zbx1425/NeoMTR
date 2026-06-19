@@ -35,11 +35,10 @@ public class MTRFabric implements ModInitializer {
 	}
 
 	private static void registerItem(String path, BrandNewEpicRegistryObject<Item> item) {
-		final Identifier id = MTR.id(path);
-		final ResourceKey<Item> resourceKey = ResourceKey.create(Registries.ITEM, id);
-		final Item itemObject = item.create(resourceKey);
+		item.setResourceKey(ResourceKey.create(Registries.ITEM, MTR.id(path)));
+		final Item itemObject = item.get();
 
-		Registry.register(RegistryUtilities.registryGetItem(), id, itemObject);
+		Registry.register(RegistryUtilities.registryGetItem(), MTR.id(path), itemObject);
 		if (itemObject instanceof ItemWithCreativeTabBase) {
 			FabricRegistryUtilities.registerCreativeModeTab(((ItemWithCreativeTabBase) itemObject).creativeModeTab.get(), itemObject);
 		} else if (itemObject instanceof ItemWithCreativeTabBase.ItemPlaceOnWater) {
@@ -48,27 +47,21 @@ public class MTRFabric implements ModInitializer {
 	}
 
 	private static void registerBlock(String path, BrandNewEpicRegistryObject<Block> block) {
-		final Identifier id = MTR.id(path);
-		final ResourceKey<Block> resourceKey = ResourceKey.create(Registries.BLOCK, id);
-		Registry.register(RegistryUtilities.registryGetBlock(), resourceKey, block.create(resourceKey));
+		block.setResourceKey(ResourceKey.create(Registries.BLOCK, MTR.id(path)));
+		Registry.register(RegistryUtilities.registryGetBlock(), MTR.id(path), block.get());
 	}
 
 	private static void registerBlock(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTab) {
 		registerBlock(path, block);
-		final Identifier id = MTR.id(path);
-		final ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, id);
-		final BlockItem blockItem = new BlockItem(block.get(), new Item.Properties().setId(itemKey));
-		Registry.register(RegistryUtilities.registryGetItem(), id, blockItem);
+		final BlockItem blockItem = new BlockItem(block.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, MTR.id(path))));
+		Registry.register(RegistryUtilities.registryGetItem(), MTR.id(path), blockItem);
 		FabricRegistryUtilities.registerCreativeModeTab(creativeModeTab.get(), blockItem);
 	}
 
 	private static void registerEnchantedBlock(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTab) {
-		final Identifier id = MTR.id(path);
-		final ResourceKey<Item> resourceKey = ResourceKey.create(Registries.ITEM, id);
-
 		registerBlock(path, block);
-		final ItemBlockEnchanted itemBlockEnchanted = new ItemBlockEnchanted(block.get(), new Item.Properties().setId(resourceKey));
-		Registry.register(RegistryUtilities.registryGetItem(), id, itemBlockEnchanted);
+		final ItemBlockEnchanted itemBlockEnchanted = new ItemBlockEnchanted(block.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, MTR.id(path))));
+		Registry.register(RegistryUtilities.registryGetItem(), MTR.id(path), itemBlockEnchanted);
 		FabricRegistryUtilities.registerCreativeModeTab(creativeModeTab.get(), itemBlockEnchanted);
 	}
 

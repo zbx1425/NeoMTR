@@ -7,7 +7,6 @@ import mtr.CreativeModeTabs;
 import mtr.Registry;
 import mtr.RegistryObject;
 import mtr.item.ItemWithCreativeTabBase;
-import mtr.mappings.RegistryUtilities;
 import mtr.neoforge.DeferredRegisterHolder;
 import mtr.neoforge.mappings.ForgeUtilities;
 import net.minecraft.core.particles.ParticleType;
@@ -22,7 +21,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.bus.EventBus;
 import net.neoforged.bus.api.IEventBus;
 
 public class RegistriesWrapperImpl implements RegistriesWrapper {
@@ -36,25 +34,29 @@ public class RegistriesWrapperImpl implements RegistriesWrapper {
 
 
     @Override
-    public void registerBlock(String id, BrandNewEpicRegistryObject<Block> block) {
-        BLOCKS.register(id, block::get);
+    public void registerBlock(String path, BrandNewEpicRegistryObject<Block> block) {
+        block.setResourceKey(ResourceKey.create(Registries.BLOCK, Main.id(path)));
+        BLOCKS.register(path,id -> block.get());
     }
 
     @Override
-    public void registerBlockAndItem(String id, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper tab) {
-        BLOCKS.register(id, block::get);
-        ITEMS.register(id, () -> {
-            final BlockItem blockItem = new BlockItem(block.get(), RegistryUtilities.createItemProperties(tab::get));
+    public void registerBlockAndItem(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper tab) {
+        block.setResourceKey(ResourceKey.create(Registries.BLOCK, Main.id(path)));
+
+        BLOCKS.register(path,id -> block.get());
+        ITEMS.register(path, (id) -> {
+            final BlockItem blockItem = new BlockItem(block.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id)));
             Registry.registerCreativeModeTab(tab.resourceLocation, blockItem);
             return blockItem;
         });
     }
 
     @Override
-    public void registerItem(String id, BrandNewEpicRegistryObject<Item> item) {
-        ITEMS.register(id, () -> {
-            final ResourceKey<Item> resourceKey = ResourceKey.create(Registries.ITEM, Main.id(id));
-            final ItemWithCreativeTabBase itemObject = (ItemWithCreativeTabBase) item.create(resourceKey);
+    public void registerItem(String path, BrandNewEpicRegistryObject<Item> item) {
+        item.setResourceKey(ResourceKey.create(Registries.ITEM, Main.id(path)));
+
+        ITEMS.register(path, (id) -> {
+            final ItemWithCreativeTabBase itemObject = (ItemWithCreativeTabBase) item.get();
             Registry.registerCreativeModeTab(itemObject.creativeModeTab.resourceLocation, itemObject);
             return itemObject;
         });
@@ -86,8 +88,8 @@ public class RegistriesWrapperImpl implements RegistriesWrapper {
     }
 
     public void registerAllDeferred(IEventBus eventBus) {
-        ITEMS.register(eventBus);
         BLOCKS.register(eventBus);
+        ITEMS.register(eventBus);
         BLOCK_ENTITY_TYPES.register(eventBus);
         ENTITY_TYPES.register(eventBus);
         SOUND_EVENTS.register(eventBus);

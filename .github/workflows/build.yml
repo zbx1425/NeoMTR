@@ -5,23 +5,20 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        minecraft: [ "1.21.1" ]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
       - name: Validate gradle wrapper
-        uses: gradle/actions/wrapper-validation@v3
-      - name: Setup JDK 21
-        uses: actions/setup-java@v3
+        uses: gradle/actions/wrapper-validation@v6
+      - name: Setup JDK
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: 21
+          java-version: 25
       - name: Make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: Apply Gradle cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.gradle/caches
@@ -30,14 +27,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.minecraft }}-gradle-
       - name: Build ${{ matrix.minecraft }} Fabric
-        run: ./gradlew fabric:build -PbuildVersion="${{ matrix.minecraft }}" -PpatreonApiKey="${{ secrets.PATREON_API_KEY }}"
+        run: ./gradlew fabric:build -PpatreonApiKey="${{ secrets.PATREON_API_KEY }}"
       - name: Build ${{ matrix.minecraft }} NeoForge
-        run: ./gradlew neoforge:build -PbuildVersion="${{ matrix.minecraft }}" -PpatreonApiKey="${{ secrets.PATREON_API_KEY }}"
+        run: ./gradlew neoforge:build -PpatreonApiKey="${{ secrets.PATREON_API_KEY }}"
       - name: Get commit SHA
         id: vars
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Capture build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: NeoMTR-${{ steps.vars.outputs.sha_short }}
           path: build/release/
