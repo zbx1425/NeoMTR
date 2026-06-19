@@ -2,18 +2,16 @@ package mtr.data;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.mojang.serialization.MapCodec;
 import io.netty.buffer.Unpooled;
 import mtr.MTR;
 import mtr.Registry;
 import mtr.block.BlockNode;
-import mtr.mappings.PersistentStateMapper;
+import mtr.storage.RailwayDataManager;
 import mtr.mappings.Utilities;
 import mtr.packet.*;
 import mtr.path.PathData;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
@@ -25,7 +23,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.saveddata.SavedDataType;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -34,13 +31,12 @@ import org.msgpack.core.MessagePacker;
 import org.msgpack.core.MessageUnpacker;
 import org.msgpack.value.Value;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RailwayData extends PersistentStateMapper implements IPacket {
+public class RailwayData /*extends PersistentStateMapper*/ implements IPacket {
 
 	public final Set<Station> stations = new HashSet<>();
 	public final Set<Platform> platforms = new HashSet<>();
@@ -80,7 +76,7 @@ public class RailwayData extends PersistentStateMapper implements IPacket {
 
 	private static final int DATA_VERSION = 1;
 
-	private static final String NAME = "mtr_train_data";
+	public static final String NAME = "mtr_train_data";
 	private static final String KEY_RAW_MESSAGE_PACK = "raw_message_pack";
 	private static final String KEY_DATA_VERSION = "mtr_data_version";
 	private static final String KEY_STATIONS = "stations";
@@ -94,7 +90,7 @@ public class RailwayData extends PersistentStateMapper implements IPacket {
 	private static final String KEY_USE_TIME_AND_WIND_SYNC = "use_time_and_wind_sync";
 
 	public RailwayData(Level world) {
-		super(NAME);
+//		super(NAME);
 		this.world = world;
 
 		trainPositions.add(new HashMap<>());
@@ -115,7 +111,6 @@ public class RailwayData extends PersistentStateMapper implements IPacket {
 		updateNearbyLifts = new UpdateNearbyMovingObjects<>(PACKET_DELETE_LIFTS, PACKET_UPDATE_LIFTS);
 	}
 
-	@Override
 	public void load(CompoundTag compoundTag) {
 		// TODO temporary code start
 		if (compoundTag.contains(KEY_RAW_MESSAGE_PACK)) {
@@ -247,21 +242,18 @@ public class RailwayData extends PersistentStateMapper implements IPacket {
 		}
     }
 
-	@Override
-	public void save(File file, HolderLookup.Provider registries) {
+	public void save(boolean fullSave) {
 		final MinecraftServer minecraftServer = ((ServerLevel) world).getServer();
-		if (minecraftServer.isStopped() || !minecraftServer.isRunning()) {
+		if (/*minecraftServer.isStopped() || !minecraftServer.isRunning()*/fullSave) {
 			railwayDataFileSaveModule.fullSave();
 		} else {
 			railwayDataFileSaveModule.autoSave();
 		}
 		railwayDataLoggingModule.save();
-		setDirty();
-		super.save(file, registries);
+//		setDirty();
 	}
 
-	@Override
-	public CompoundTag save(CompoundTag compoundTag, HolderLookup.Provider registries) {
+	public CompoundTag save(CompoundTag compoundTag) {
 		compoundTag.putBoolean(KEY_USE_TIME_AND_WIND_SYNC, useTimeAndWindSync);
 		return compoundTag;
 	}
@@ -766,8 +758,12 @@ public class RailwayData extends PersistentStateMapper implements IPacket {
 		return x == 0 && y == 0 && z == 0 ? pos : newBlockPos(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
 	}
 
-	public static RailwayData getInstance(Level world) {
-		return getInstance(world, () -> new RailwayData(world), NAME);
+	public static RailwayData getInstance(Level level) {
+		if(level instanceof ServerLevel serverLevel) {
+			return RailwayDataManager.getInstance(serverLevel);
+		} else {
+			return null;
+		}
 	}
 
 	public static void benchmark(Runnable runnable, float threshold) {
