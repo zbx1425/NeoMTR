@@ -67,16 +67,15 @@ shadowJar {
 	relocate "me.shedaniel", "cn.zbx1425.mtrsteamloco.vendor.me.shedaniel"
 }
 
-//jar {
-//	input.set jar.archiveFile
-//	dependsOn jar
-//	archiveClassifier = null
-//}
-
 components.java {
 	withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
 		skip()
 	}
+}
+
+jar {
+	dependsOn shadowJar
+	archiveClassifier = null
 }
 
 tasks.register("moveFabricBuilds") {

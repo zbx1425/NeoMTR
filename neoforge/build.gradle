@@ -82,13 +82,11 @@ static boolean matchInnerClass(String path, String... names) {
 	names.any { name -> path.startsWith(name) }
 }
 
-//remapJar {
+jar {
 //	input.set shadowJar.archiveFile
-//	dependsOn shadowJar
-//	archiveClassifier = null
-//
-//	atAccessWideners.add "mtrsteamloco.accesswidener"
-//}
+	dependsOn shadowJar
+	archiveClassifier = null
+}
 
 components.java {
 	withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {

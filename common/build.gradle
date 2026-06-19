@@ -18,6 +18,10 @@ tasks.withType(JavaCompile) {
 	options.compilerArgs += ['-Xplugin:Manifold', '-AMC_VERSION=' + rootProject.minecraft_version_int]
 }
 
+tasks.shadowJar {
+	zip64 = true
+}
+
 task moveCommonBuilds() {
 	doLast {
 		delete fileTree("../build/libs").matching {
