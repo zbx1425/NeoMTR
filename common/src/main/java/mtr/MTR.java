@@ -37,8 +37,8 @@ public class MTR implements IPacket {
 	}
 
 	public static void init(
-			BiConsumer<String, RegistryObject<Item>> registerItem,
-			BiConsumer<String, RegistryObject<Block>> registerBlock,
+			BiConsumer<String, BrandNewEpicRegistryObject<Item>> registerItem,
+			BiConsumer<String, BrandNewEpicRegistryObject<Block>> registerBlock,
 			RegisterBlockItem registerBlockItem,
 			RegisterBlockItem registerEnchantedBlockItem,
 			BiConsumer<String, RegistryObject<? extends BlockEntityType<? extends BlockEntityMapper>>> registerBlockEntityType,
@@ -78,105 +78,6 @@ public class MTR implements IPacket {
 		registerBlockEntityType.accept("lift_door_odd_1", BlockEntityTypes.LIFT_DOOR_ODD_1_TILE_ENTITY);
 
 		if (!Keys.LIFTS_ONLY) {
-			registerItem.accept("apg_door", Items.APG_DOOR);
-			registerItem.accept("apg_glass", Items.APG_GLASS);
-			registerItem.accept("apg_glass_end", Items.APG_GLASS_END);
-			registerItem.accept("dashboard", Items.RAILWAY_DASHBOARD);
-			registerItem.accept("dashboard_2", Items.BOAT_DASHBOARD);
-			registerItem.accept("dashboard_3", Items.CABLE_CAR_DASHBOARD);
-			registerItem.accept("dashboard_4", Items.AIRPLANE_DASHBOARD);
-			registerItem.accept("driver_key", Items.DRIVER_KEY);
-			registerItem.accept("psd_door", Items.PSD_DOOR_1);
-			registerItem.accept("psd_glass", Items.PSD_GLASS_1);
-			registerItem.accept("psd_glass_end", Items.PSD_GLASS_END_1);
-			registerItem.accept("psd_door_2", Items.PSD_DOOR_2);
-			registerItem.accept("psd_glass_2", Items.PSD_GLASS_2);
-			registerItem.accept("psd_glass_end_2", Items.PSD_GLASS_END_2);
-			registerItem.accept("rail_connector_20", Items.RAIL_CONNECTOR_20);
-			registerItem.accept("rail_connector_20_one_way", Items.RAIL_CONNECTOR_20_ONE_WAY);
-			registerItem.accept("rail_connector_40", Items.RAIL_CONNECTOR_40);
-			registerItem.accept("rail_connector_40_one_way", Items.RAIL_CONNECTOR_40_ONE_WAY);
-			registerItem.accept("rail_connector_60", Items.RAIL_CONNECTOR_60);
-			registerItem.accept("rail_connector_60_one_way", Items.RAIL_CONNECTOR_60_ONE_WAY);
-			registerItem.accept("rail_connector_80", Items.RAIL_CONNECTOR_80);
-			registerItem.accept("rail_connector_80_one_way", Items.RAIL_CONNECTOR_80_ONE_WAY);
-			registerItem.accept("rail_connector_120", Items.RAIL_CONNECTOR_120);
-			registerItem.accept("rail_connector_120_one_way", Items.RAIL_CONNECTOR_120_ONE_WAY);
-			registerItem.accept("rail_connector_160", Items.RAIL_CONNECTOR_160);
-			registerItem.accept("rail_connector_160_one_way", Items.RAIL_CONNECTOR_160_ONE_WAY);
-			registerItem.accept("rail_connector_200", Items.RAIL_CONNECTOR_200);
-			registerItem.accept("rail_connector_200_one_way", Items.RAIL_CONNECTOR_200_ONE_WAY);
-			registerItem.accept("rail_connector_300", Items.RAIL_CONNECTOR_300);
-			registerItem.accept("rail_connector_300_one_way", Items.RAIL_CONNECTOR_300_ONE_WAY);
-			registerItem.accept("rail_connector_platform", Items.RAIL_CONNECTOR_PLATFORM);
-			registerItem.accept("rail_connector_siding", Items.RAIL_CONNECTOR_SIDING);
-			registerItem.accept("rail_connector_turn_back", Items.RAIL_CONNECTOR_TURN_BACK);
-			registerItem.accept("rail_connector_cable_car", Items.RAIL_CONNECTOR_CABLE_CAR);
-			registerItem.accept("rail_connector_runway", Items.RAIL_CONNECTOR_RUNWAY);
-			registerItem.accept("rail_remover", Items.RAIL_REMOVER);
-			registerItem.accept("resource_pack_creator", Items.RESOURCE_PACK_CREATOR);
-			registerItem.accept("signal_connector_white", Items.SIGNAL_CONNECTOR_WHITE);
-			registerItem.accept("signal_connector_orange", Items.SIGNAL_CONNECTOR_ORANGE);
-			registerItem.accept("signal_connector_magenta", Items.SIGNAL_CONNECTOR_MAGENTA);
-			registerItem.accept("signal_connector_light_blue", Items.SIGNAL_CONNECTOR_LIGHT_BLUE);
-			registerItem.accept("signal_connector_yellow", Items.SIGNAL_CONNECTOR_YELLOW);
-			registerItem.accept("signal_connector_lime", Items.SIGNAL_CONNECTOR_LIME);
-			registerItem.accept("signal_connector_pink", Items.SIGNAL_CONNECTOR_PINK);
-			registerItem.accept("signal_connector_gray", Items.SIGNAL_CONNECTOR_GRAY);
-			registerItem.accept("signal_connector_light_gray", Items.SIGNAL_CONNECTOR_LIGHT_GRAY);
-			registerItem.accept("signal_connector_cyan", Items.SIGNAL_CONNECTOR_CYAN);
-			registerItem.accept("signal_connector_purple", Items.SIGNAL_CONNECTOR_PURPLE);
-			registerItem.accept("signal_connector_blue", Items.SIGNAL_CONNECTOR_BLUE);
-			registerItem.accept("signal_connector_brown", Items.SIGNAL_CONNECTOR_BROWN);
-			registerItem.accept("signal_connector_green", Items.SIGNAL_CONNECTOR_GREEN);
-			registerItem.accept("signal_connector_red", Items.SIGNAL_CONNECTOR_RED);
-			registerItem.accept("signal_connector_black", Items.SIGNAL_CONNECTOR_BLACK);
-			registerItem.accept("signal_remover_white", Items.SIGNAL_REMOVER_WHITE);
-			registerItem.accept("signal_remover_orange", Items.SIGNAL_REMOVER_ORANGE);
-			registerItem.accept("signal_remover_magenta", Items.SIGNAL_REMOVER_MAGENTA);
-			registerItem.accept("signal_remover_light_blue", Items.SIGNAL_REMOVER_LIGHT_BLUE);
-			registerItem.accept("signal_remover_yellow", Items.SIGNAL_REMOVER_YELLOW);
-			registerItem.accept("signal_remover_lime", Items.SIGNAL_REMOVER_LIME);
-			registerItem.accept("signal_remover_pink", Items.SIGNAL_REMOVER_PINK);
-			registerItem.accept("signal_remover_gray", Items.SIGNAL_REMOVER_GRAY);
-			registerItem.accept("signal_remover_light_gray", Items.SIGNAL_REMOVER_LIGHT_GRAY);
-			registerItem.accept("signal_remover_cyan", Items.SIGNAL_REMOVER_CYAN);
-			registerItem.accept("signal_remover_purple", Items.SIGNAL_REMOVER_PURPLE);
-			registerItem.accept("signal_remover_blue", Items.SIGNAL_REMOVER_BLUE);
-			registerItem.accept("signal_remover_brown", Items.SIGNAL_REMOVER_BROWN);
-			registerItem.accept("signal_remover_green", Items.SIGNAL_REMOVER_GREEN);
-			registerItem.accept("signal_remover_red", Items.SIGNAL_REMOVER_RED);
-			registerItem.accept("signal_remover_black", Items.SIGNAL_REMOVER_BLACK);
-			registerItem.accept("bridge_creator_3", Items.BRIDGE_CREATOR_3);
-			registerItem.accept("bridge_creator_5", Items.BRIDGE_CREATOR_5);
-			registerItem.accept("bridge_creator_7", Items.BRIDGE_CREATOR_7);
-			registerItem.accept("bridge_creator_9", Items.BRIDGE_CREATOR_9);
-			registerItem.accept("tunnel_creator_4_3", Items.TUNNEL_CREATOR_4_3);
-			registerItem.accept("tunnel_creator_4_5", Items.TUNNEL_CREATOR_4_5);
-			registerItem.accept("tunnel_creator_4_7", Items.TUNNEL_CREATOR_4_7);
-			registerItem.accept("tunnel_creator_4_9", Items.TUNNEL_CREATOR_4_9);
-			registerItem.accept("tunnel_creator_5_3", Items.TUNNEL_CREATOR_5_3);
-			registerItem.accept("tunnel_creator_5_5", Items.TUNNEL_CREATOR_5_5);
-			registerItem.accept("tunnel_creator_5_7", Items.TUNNEL_CREATOR_5_7);
-			registerItem.accept("tunnel_creator_5_9", Items.TUNNEL_CREATOR_5_9);
-			registerItem.accept("tunnel_creator_6_3", Items.TUNNEL_CREATOR_6_3);
-			registerItem.accept("tunnel_creator_6_5", Items.TUNNEL_CREATOR_6_5);
-			registerItem.accept("tunnel_creator_6_7", Items.TUNNEL_CREATOR_6_7);
-			registerItem.accept("tunnel_creator_6_9", Items.TUNNEL_CREATOR_6_9);
-			registerItem.accept("tunnel_wall_creator_4_3", Items.TUNNEL_WALL_CREATOR_4_3);
-			registerItem.accept("tunnel_wall_creator_4_5", Items.TUNNEL_WALL_CREATOR_4_5);
-			registerItem.accept("tunnel_wall_creator_4_7", Items.TUNNEL_WALL_CREATOR_4_7);
-			registerItem.accept("tunnel_wall_creator_4_9", Items.TUNNEL_WALL_CREATOR_4_9);
-			registerItem.accept("tunnel_wall_creator_5_3", Items.TUNNEL_WALL_CREATOR_5_3);
-			registerItem.accept("tunnel_wall_creator_5_5", Items.TUNNEL_WALL_CREATOR_5_5);
-			registerItem.accept("tunnel_wall_creator_5_7", Items.TUNNEL_WALL_CREATOR_5_7);
-			registerItem.accept("tunnel_wall_creator_5_9", Items.TUNNEL_WALL_CREATOR_5_9);
-			registerItem.accept("tunnel_wall_creator_6_3", Items.TUNNEL_WALL_CREATOR_6_3);
-			registerItem.accept("tunnel_wall_creator_6_5", Items.TUNNEL_WALL_CREATOR_6_5);
-			registerItem.accept("tunnel_wall_creator_6_7", Items.TUNNEL_WALL_CREATOR_6_7);
-			registerItem.accept("tunnel_wall_creator_6_9", Items.TUNNEL_WALL_CREATOR_6_9);
-			registerItem.accept("boat_node", Items.BOAT_NODE);
-
 			registerBlockItem.accept("rail", Blocks.RAIL_NODE, CreativeModeTabs.CORE);
 			registerBlockItem.accept("free_node", Blocks.FREE_NODE, CreativeModeTabs.CORE);
 			registerBlock.accept("boat_node", Blocks.BOAT_NODE);
@@ -235,6 +136,7 @@ public class MTR implements IPacket {
 			registerBlock.accept("psd_glass_2", Blocks.PSD_GLASS_2);
 			registerBlock.accept("psd_glass_end_2", Blocks.PSD_GLASS_END_2);
 			registerBlock.accept("psd_top", Blocks.PSD_TOP);
+			registerBlock.accept("railway_sign_middle", Blocks.RAILWAY_SIGN_MIDDLE);
 			registerBlockItem.accept("railway_sign_2_even", Blocks.RAILWAY_SIGN_2_EVEN, CreativeModeTabs.RAILWAY_FACILITIES);
 			registerBlockItem.accept("railway_sign_2_odd", Blocks.RAILWAY_SIGN_2_ODD, CreativeModeTabs.RAILWAY_FACILITIES);
 			registerBlockItem.accept("railway_sign_3_even", Blocks.RAILWAY_SIGN_3_EVEN, CreativeModeTabs.RAILWAY_FACILITIES);
@@ -247,7 +149,6 @@ public class MTR implements IPacket {
 			registerBlockItem.accept("railway_sign_6_odd", Blocks.RAILWAY_SIGN_6_ODD, CreativeModeTabs.RAILWAY_FACILITIES);
 			registerBlockItem.accept("railway_sign_7_even", Blocks.RAILWAY_SIGN_7_EVEN, CreativeModeTabs.RAILWAY_FACILITIES);
 			registerBlockItem.accept("railway_sign_7_odd", Blocks.RAILWAY_SIGN_7_ODD, CreativeModeTabs.RAILWAY_FACILITIES);
-			registerBlock.accept("railway_sign_middle", Blocks.RAILWAY_SIGN_MIDDLE);
 			registerBlockItem.accept("railway_sign_pole", Blocks.RAILWAY_SIGN_POLE, CreativeModeTabs.RAILWAY_FACILITIES);
 			registerBlockItem.accept("route_sign_standing_light", Blocks.ROUTE_SIGN_STANDING_LIGHT, CreativeModeTabs.RAILWAY_FACILITIES);
 			registerBlockItem.accept("route_sign_standing_metal", Blocks.ROUTE_SIGN_STANDING_METAL, CreativeModeTabs.RAILWAY_FACILITIES);
@@ -355,6 +256,105 @@ public class MTR implements IPacket {
 			registerBlockItem.accept("train_cargo_unloader", Blocks.TRAIN_CARGO_UNLOADER, CreativeModeTabs.RAILWAY_FACILITIES);
 			registerBlockItem.accept("train_sensor", Blocks.TRAIN_REDSTONE_SENSOR, CreativeModeTabs.RAILWAY_FACILITIES);
 			registerBlockItem.accept("train_schedule_sensor", Blocks.TRAIN_SCHEDULE_SENSOR, CreativeModeTabs.RAILWAY_FACILITIES);
+
+			registerItem.accept("apg_door", Items.APG_DOOR);
+			registerItem.accept("apg_glass", Items.APG_GLASS);
+			registerItem.accept("apg_glass_end", Items.APG_GLASS_END);
+			registerItem.accept("dashboard", Items.RAILWAY_DASHBOARD);
+			registerItem.accept("dashboard_2", Items.BOAT_DASHBOARD);
+			registerItem.accept("dashboard_3", Items.CABLE_CAR_DASHBOARD);
+			registerItem.accept("dashboard_4", Items.AIRPLANE_DASHBOARD);
+			registerItem.accept("driver_key", Items.DRIVER_KEY);
+			registerItem.accept("psd_door", Items.PSD_DOOR_1);
+			registerItem.accept("psd_glass", Items.PSD_GLASS_1);
+			registerItem.accept("psd_glass_end", Items.PSD_GLASS_END_1);
+			registerItem.accept("psd_door_2", Items.PSD_DOOR_2);
+			registerItem.accept("psd_glass_2", Items.PSD_GLASS_2);
+			registerItem.accept("psd_glass_end_2", Items.PSD_GLASS_END_2);
+			registerItem.accept("rail_connector_20", Items.RAIL_CONNECTOR_20);
+			registerItem.accept("rail_connector_20_one_way", Items.RAIL_CONNECTOR_20_ONE_WAY);
+			registerItem.accept("rail_connector_40", Items.RAIL_CONNECTOR_40);
+			registerItem.accept("rail_connector_40_one_way", Items.RAIL_CONNECTOR_40_ONE_WAY);
+			registerItem.accept("rail_connector_60", Items.RAIL_CONNECTOR_60);
+			registerItem.accept("rail_connector_60_one_way", Items.RAIL_CONNECTOR_60_ONE_WAY);
+			registerItem.accept("rail_connector_80", Items.RAIL_CONNECTOR_80);
+			registerItem.accept("rail_connector_80_one_way", Items.RAIL_CONNECTOR_80_ONE_WAY);
+			registerItem.accept("rail_connector_120", Items.RAIL_CONNECTOR_120);
+			registerItem.accept("rail_connector_120_one_way", Items.RAIL_CONNECTOR_120_ONE_WAY);
+			registerItem.accept("rail_connector_160", Items.RAIL_CONNECTOR_160);
+			registerItem.accept("rail_connector_160_one_way", Items.RAIL_CONNECTOR_160_ONE_WAY);
+			registerItem.accept("rail_connector_200", Items.RAIL_CONNECTOR_200);
+			registerItem.accept("rail_connector_200_one_way", Items.RAIL_CONNECTOR_200_ONE_WAY);
+			registerItem.accept("rail_connector_300", Items.RAIL_CONNECTOR_300);
+			registerItem.accept("rail_connector_300_one_way", Items.RAIL_CONNECTOR_300_ONE_WAY);
+			registerItem.accept("rail_connector_platform", Items.RAIL_CONNECTOR_PLATFORM);
+			registerItem.accept("rail_connector_siding", Items.RAIL_CONNECTOR_SIDING);
+			registerItem.accept("rail_connector_turn_back", Items.RAIL_CONNECTOR_TURN_BACK);
+			registerItem.accept("rail_connector_cable_car", Items.RAIL_CONNECTOR_CABLE_CAR);
+			registerItem.accept("rail_connector_runway", Items.RAIL_CONNECTOR_RUNWAY);
+			registerItem.accept("rail_remover", Items.RAIL_REMOVER);
+			registerItem.accept("resource_pack_creator", Items.RESOURCE_PACK_CREATOR);
+			registerItem.accept("signal_connector_white", Items.SIGNAL_CONNECTOR_WHITE);
+			registerItem.accept("signal_connector_orange", Items.SIGNAL_CONNECTOR_ORANGE);
+			registerItem.accept("signal_connector_magenta", Items.SIGNAL_CONNECTOR_MAGENTA);
+			registerItem.accept("signal_connector_light_blue", Items.SIGNAL_CONNECTOR_LIGHT_BLUE);
+			registerItem.accept("signal_connector_yellow", Items.SIGNAL_CONNECTOR_YELLOW);
+			registerItem.accept("signal_connector_lime", Items.SIGNAL_CONNECTOR_LIME);
+			registerItem.accept("signal_connector_pink", Items.SIGNAL_CONNECTOR_PINK);
+			registerItem.accept("signal_connector_gray", Items.SIGNAL_CONNECTOR_GRAY);
+			registerItem.accept("signal_connector_light_gray", Items.SIGNAL_CONNECTOR_LIGHT_GRAY);
+			registerItem.accept("signal_connector_cyan", Items.SIGNAL_CONNECTOR_CYAN);
+			registerItem.accept("signal_connector_purple", Items.SIGNAL_CONNECTOR_PURPLE);
+			registerItem.accept("signal_connector_blue", Items.SIGNAL_CONNECTOR_BLUE);
+			registerItem.accept("signal_connector_brown", Items.SIGNAL_CONNECTOR_BROWN);
+			registerItem.accept("signal_connector_green", Items.SIGNAL_CONNECTOR_GREEN);
+			registerItem.accept("signal_connector_red", Items.SIGNAL_CONNECTOR_RED);
+			registerItem.accept("signal_connector_black", Items.SIGNAL_CONNECTOR_BLACK);
+			registerItem.accept("signal_remover_white", Items.SIGNAL_REMOVER_WHITE);
+			registerItem.accept("signal_remover_orange", Items.SIGNAL_REMOVER_ORANGE);
+			registerItem.accept("signal_remover_magenta", Items.SIGNAL_REMOVER_MAGENTA);
+			registerItem.accept("signal_remover_light_blue", Items.SIGNAL_REMOVER_LIGHT_BLUE);
+			registerItem.accept("signal_remover_yellow", Items.SIGNAL_REMOVER_YELLOW);
+			registerItem.accept("signal_remover_lime", Items.SIGNAL_REMOVER_LIME);
+			registerItem.accept("signal_remover_pink", Items.SIGNAL_REMOVER_PINK);
+			registerItem.accept("signal_remover_gray", Items.SIGNAL_REMOVER_GRAY);
+			registerItem.accept("signal_remover_light_gray", Items.SIGNAL_REMOVER_LIGHT_GRAY);
+			registerItem.accept("signal_remover_cyan", Items.SIGNAL_REMOVER_CYAN);
+			registerItem.accept("signal_remover_purple", Items.SIGNAL_REMOVER_PURPLE);
+			registerItem.accept("signal_remover_blue", Items.SIGNAL_REMOVER_BLUE);
+			registerItem.accept("signal_remover_brown", Items.SIGNAL_REMOVER_BROWN);
+			registerItem.accept("signal_remover_green", Items.SIGNAL_REMOVER_GREEN);
+			registerItem.accept("signal_remover_red", Items.SIGNAL_REMOVER_RED);
+			registerItem.accept("signal_remover_black", Items.SIGNAL_REMOVER_BLACK);
+			registerItem.accept("bridge_creator_3", Items.BRIDGE_CREATOR_3);
+			registerItem.accept("bridge_creator_5", Items.BRIDGE_CREATOR_5);
+			registerItem.accept("bridge_creator_7", Items.BRIDGE_CREATOR_7);
+			registerItem.accept("bridge_creator_9", Items.BRIDGE_CREATOR_9);
+			registerItem.accept("tunnel_creator_4_3", Items.TUNNEL_CREATOR_4_3);
+			registerItem.accept("tunnel_creator_4_5", Items.TUNNEL_CREATOR_4_5);
+			registerItem.accept("tunnel_creator_4_7", Items.TUNNEL_CREATOR_4_7);
+			registerItem.accept("tunnel_creator_4_9", Items.TUNNEL_CREATOR_4_9);
+			registerItem.accept("tunnel_creator_5_3", Items.TUNNEL_CREATOR_5_3);
+			registerItem.accept("tunnel_creator_5_5", Items.TUNNEL_CREATOR_5_5);
+			registerItem.accept("tunnel_creator_5_7", Items.TUNNEL_CREATOR_5_7);
+			registerItem.accept("tunnel_creator_5_9", Items.TUNNEL_CREATOR_5_9);
+			registerItem.accept("tunnel_creator_6_3", Items.TUNNEL_CREATOR_6_3);
+			registerItem.accept("tunnel_creator_6_5", Items.TUNNEL_CREATOR_6_5);
+			registerItem.accept("tunnel_creator_6_7", Items.TUNNEL_CREATOR_6_7);
+			registerItem.accept("tunnel_creator_6_9", Items.TUNNEL_CREATOR_6_9);
+			registerItem.accept("tunnel_wall_creator_4_3", Items.TUNNEL_WALL_CREATOR_4_3);
+			registerItem.accept("tunnel_wall_creator_4_5", Items.TUNNEL_WALL_CREATOR_4_5);
+			registerItem.accept("tunnel_wall_creator_4_7", Items.TUNNEL_WALL_CREATOR_4_7);
+			registerItem.accept("tunnel_wall_creator_4_9", Items.TUNNEL_WALL_CREATOR_4_9);
+			registerItem.accept("tunnel_wall_creator_5_3", Items.TUNNEL_WALL_CREATOR_5_3);
+			registerItem.accept("tunnel_wall_creator_5_5", Items.TUNNEL_WALL_CREATOR_5_5);
+			registerItem.accept("tunnel_wall_creator_5_7", Items.TUNNEL_WALL_CREATOR_5_7);
+			registerItem.accept("tunnel_wall_creator_5_9", Items.TUNNEL_WALL_CREATOR_5_9);
+			registerItem.accept("tunnel_wall_creator_6_3", Items.TUNNEL_WALL_CREATOR_6_3);
+			registerItem.accept("tunnel_wall_creator_6_5", Items.TUNNEL_WALL_CREATOR_6_5);
+			registerItem.accept("tunnel_wall_creator_6_7", Items.TUNNEL_WALL_CREATOR_6_7);
+			registerItem.accept("tunnel_wall_creator_6_9", Items.TUNNEL_WALL_CREATOR_6_9);
+			registerItem.accept("boat_node", Items.BOAT_NODE);
 
 			registerBlockEntityType.accept("arrival_projector_1_small", BlockEntityTypes.ARRIVAL_PROJECTOR_1_SMALL_TILE_ENTITY);
 			registerBlockEntityType.accept("arrival_projector_1_medium", BlockEntityTypes.ARRIVAL_PROJECTOR_1_MEDIUM_TILE_ENTITY);
@@ -551,6 +551,6 @@ public class MTR implements IPacket {
 
 	@FunctionalInterface
 	public interface RegisterBlockItem {
-		void accept(String string, RegistryObject<Block> block, CreativeModeTabs.Wrapper tab);
+		void accept(String string, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper tab);
 	}
 }

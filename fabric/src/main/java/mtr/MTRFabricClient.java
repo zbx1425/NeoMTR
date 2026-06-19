@@ -40,9 +40,9 @@ public class MTRFabricClient implements ClientModInitializer, ICustomResources {
 		LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(context -> {
 			final PoseStack matrices = context.poseStack();
 			matrices.pushPose();
-			final Vec3 cameraPos = context.camera().getPosition();
+			final Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().position();
 			matrices.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
-			RenderTrains.render(0, matrices, context.consumers());
+			RenderTrains.render(0, matrices, context.bufferSource());
 			matrices.popPose();
 		});
 		LevelRenderEvents.BEFORE_BLOCK_OUTLINE.register((worldRenderContext, hitResult) -> {

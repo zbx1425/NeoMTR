@@ -35,6 +35,10 @@ public abstract class BlockPSDAPGDoorBase extends BlockPSDAPGBase implements Ent
 	public static final BooleanProperty END = BooleanProperty.create("end");
 	public static final BooleanProperty UNLOCKED = BooleanProperty.create("unlocked");
 
+	public BlockPSDAPGDoorBase(Properties properties) {
+		super(properties);
+	}
+
 	@Override
 	protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos posFrom, BlockState newState, RandomSource random) {
 		if (IBlock.getSideDirection(state) == direction && !newState.is(this)) {

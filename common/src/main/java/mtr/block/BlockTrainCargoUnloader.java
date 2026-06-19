@@ -9,6 +9,10 @@ import java.util.Set;
 
 public class BlockTrainCargoUnloader extends BlockTrainSensorBase {
 
+	public BlockTrainCargoUnloader(Properties properties) {
+		super(properties);
+	}
+
 	@Override
 	public BlockEntityMapper createBlockEntity(BlockPos pos, BlockState state) {
 		return new TileEntityTrainCargoUnloader(pos, state);

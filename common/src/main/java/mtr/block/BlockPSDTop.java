@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -42,8 +43,8 @@ public class BlockPSDTop extends BlockDirectionalMapper implements EntityBlockMa
 	public static final IntegerProperty ARROW_DIRECTION = IntegerProperty.create("propagate_property", 0, 3);
 	public static final EnumProperty<EnumPersistent> PERSISTENT = EnumProperty.create("persistent", EnumPersistent.class);
 
-	public BlockPSDTop() {
-		super(Properties.of().requiresCorrectToolForDrops().strength(2).noOcclusion());
+	public BlockPSDTop(BlockBehaviour.Properties properties) {
+		super(properties.requiresCorrectToolForDrops().strength(2).noOcclusion());
 	}
 
 	@Override

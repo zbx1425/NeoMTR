@@ -1,5 +1,6 @@
 package cn.zbx1425.mtrsteamloco;
 
+import mtr.BrandNewEpicRegistryObject;
 import mtr.CreativeModeTabs;
 import mtr.RegistryObject;
 import mtr.item.ItemWithCreativeTabBase;
@@ -18,11 +19,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public interface RegistriesWrapper {
 
-    void registerBlock(String id, RegistryObject<Block> block);
+    void registerBlock(String id, BrandNewEpicRegistryObject<Block> block);
 
-    void registerItem(String id, RegistryObject<ItemWithCreativeTabBase> item);
+    void registerItem(String id, BrandNewEpicRegistryObject<Item> item);
 
-    void registerBlockAndItem(String id, RegistryObject<Block> block, CreativeModeTabs.Wrapper tab);
+    void registerBlockAndItem(String id, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper tab);
 
     void registerBlockEntityType(String id, RegistryObject<? extends BlockEntityType<? extends BlockEntity>> blockEntityType);
 

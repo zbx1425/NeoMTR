@@ -7,8 +7,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class HorizontalBlockWithSoftLanding extends BlockDirectionalMapper {
 
-	public HorizontalBlockWithSoftLanding(Properties settings) {
-		super(settings);
+	public HorizontalBlockWithSoftLanding(Properties properties) {
+		super(properties);
 	}
 
 	@Override

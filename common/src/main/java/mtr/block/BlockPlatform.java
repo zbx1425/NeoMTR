@@ -25,8 +25,8 @@ public class BlockPlatform extends BlockDirectionalMapper {
 	public static final EnumProperty<EnumDoorType> DOOR_TYPE = EnumProperty.create("door_type", EnumDoorType.class);
 	public static final IntegerProperty SIDE = IntegerProperty.create("side", 0, 4);
 
-	public BlockPlatform(Properties settings, boolean isIndented) {
-		super(settings);
+	public BlockPlatform(Properties properties, boolean isIndented) {
+		super(properties);
 		this.isIndented = isIndented;
 		registerDefaultState(defaultBlockState().setValue(DOOR_TYPE, EnumDoorType.NONE));
 	}

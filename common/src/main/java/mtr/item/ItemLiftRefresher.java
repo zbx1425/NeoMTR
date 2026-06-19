@@ -13,6 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -26,8 +27,8 @@ import java.util.Set;
 
 public class ItemLiftRefresher extends ItemWithCreativeTabBase {
 
-	public ItemLiftRefresher() {
-		super(CreativeModeTabs.ESCALATORS_LIFTS, properties -> properties.stacksTo(1));
+	public ItemLiftRefresher(Item.Properties properties) {
+		super(properties, CreativeModeTabs.ESCALATORS_LIFTS, propModifier -> propModifier.stacksTo(1));
 	}
 
 	@Override

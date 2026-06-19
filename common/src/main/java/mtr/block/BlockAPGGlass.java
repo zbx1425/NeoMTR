@@ -20,6 +20,10 @@ public class BlockAPGGlass extends BlockPSDAPGGlassBase implements EntityBlockMa
 
 	public static final IntegerProperty ARROW_DIRECTION = IntegerProperty.create("propagate_property", 0, 3);
 
+	public BlockAPGGlass(Properties properties) {
+		super(properties);
+	}
+
 	@Override
 	public Item asItem() {
 		return Items.APG_GLASS.get();

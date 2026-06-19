@@ -30,7 +30,7 @@
 		"mtr.mixins.json"
 	],
 	"depends": {
-		"fabric": "*",
+		"fabric-api": "*",
 		"minecraft": ">=26.1 <=26.1.2"
 	}
 }

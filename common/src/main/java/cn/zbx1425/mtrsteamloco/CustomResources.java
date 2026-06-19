@@ -42,10 +42,12 @@ public class CustomResources {
     }
 
     public static void init(ResourceManager resourceManager) {
+        if(true) return; // TODO: Rendering WIP
+
         Main.LOGGER.info("MTR-NTE has started loading custom resources.");
 
-        EyeCandyRegistry.reload(resourceManager);
-        RailModelRegistry.reload(resourceManager);
+//        EyeCandyRegistry.reload(resourceManager);
+//        RailModelRegistry.reload(resourceManager);
 
         ScriptHolder.resetRunner();
         ScriptResourceUtil.init(resourceManager);

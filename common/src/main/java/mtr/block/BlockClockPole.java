@@ -10,8 +10,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockClockPole extends BlockMapper {
 
-	public BlockClockPole(Properties settings) {
-		super(settings);
+	public BlockClockPole(Properties properties) {
+		super(properties);
 	}
 
 	@Override

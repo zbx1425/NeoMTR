@@ -20,8 +20,8 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 public abstract class BlockDirectionalDoubleBlockBase extends BlockDirectionalMapper implements IBlock {
 
-	public BlockDirectionalDoubleBlockBase(Properties settings) {
-		super(settings);
+	public BlockDirectionalDoubleBlockBase(Properties properties) {
+		super(properties);
 	}
 
 	@Override

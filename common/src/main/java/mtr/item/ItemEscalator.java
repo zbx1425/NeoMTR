@@ -9,14 +9,15 @@ import mtr.block.IBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class ItemEscalator extends ItemWithCreativeTabBase implements IBlock {
 
-	public ItemEscalator() {
-		super(CreativeModeTabs.ESCALATORS_LIFTS);
+	public ItemEscalator(Item.Properties properties) {
+		super(properties, CreativeModeTabs.ESCALATORS_LIFTS);
 	}
 
 	@Override

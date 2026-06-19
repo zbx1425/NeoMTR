@@ -12,8 +12,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockPIDSPole extends BlockPoleCheckBase {
 
-	public BlockPIDSPole(Properties settings) {
-		super(settings);
+	public BlockPIDSPole(Properties properties) {
+		super(properties);
 	}
 
 	@Override

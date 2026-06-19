@@ -15,6 +15,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
@@ -42,8 +43,8 @@ public abstract class ItemNodeModifierBase extends ItemBlockClickingBase {
 
 	private static final ThreadLocal<Map<BlockPos, Float>> FREE_NODE_PENDING_RAW_ANGLES = ThreadLocal.withInitial(HashMap::new);
 
-	public ItemNodeModifierBase(boolean forNonContinuousMovementNode, boolean forContinuousMovementNode, boolean forAirplaneNode, boolean isConnector) {
-		super(CreativeModeTabs.CORE, properties -> properties.stacksTo(1));
+	public ItemNodeModifierBase(Item.Properties properties, boolean forNonContinuousMovementNode, boolean forContinuousMovementNode, boolean forAirplaneNode, boolean isConnector) {
+		super(properties, CreativeModeTabs.CORE, propModifier -> propModifier.stacksTo(1));
 		this.forNonContinuousMovementNode = forNonContinuousMovementNode;
 		this.forContinuousMovementNode = forContinuousMovementNode;
 		this.forAirplaneNode = forAirplaneNode;

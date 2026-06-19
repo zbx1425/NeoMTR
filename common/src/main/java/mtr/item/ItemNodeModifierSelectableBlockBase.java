@@ -15,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
@@ -37,8 +38,8 @@ public abstract class ItemNodeModifierSelectableBlockBase extends ItemNodeModifi
 
 	private static final String TAG_BLOCK_ID = "block_id";
 
-	public ItemNodeModifierSelectableBlockBase(boolean canSaveBlock, int height, int width) {
-		super(true, false, false, true);
+	public ItemNodeModifierSelectableBlockBase(Item.Properties properties, boolean canSaveBlock, int height, int width) {
+		super(properties, true, false, false, true);
 		this.canSaveBlock = canSaveBlock;
 		this.height = height;
 		this.width = width;

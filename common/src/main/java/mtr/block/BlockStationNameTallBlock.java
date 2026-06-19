@@ -14,6 +14,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockStationNameTallBlock extends BlockStationNameTallBase {
 
+	public BlockStationNameTallBlock(Properties properties) {
+		super(properties);
+	}
+
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter blockGetter, BlockPos pos, CollisionContext collisionContext) {
 		final Tuple<Integer, Integer> bounds = getBounds(state);

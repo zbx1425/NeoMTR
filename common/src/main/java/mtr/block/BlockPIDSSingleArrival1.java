@@ -10,6 +10,11 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockPIDSSingleArrival1 extends BlockPIDSBaseVertical {
+	
+	public BlockPIDSSingleArrival1(Properties properties) {
+		super(properties);
+	}
+
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter blockGetter, BlockPos pos, CollisionContext collisionContext) {
 		return IBlock.getVoxelShapeByDirection(0, 0, 0, 16, 16, 1, IBlock.getStatePropertySafe(state, FACING));

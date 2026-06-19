@@ -9,6 +9,7 @@ import mtr.path.PathData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,8 +18,8 @@ public class ItemSignalModifier extends ItemNodeModifierBase {
 
 	private final DyeColor color;
 
-	public ItemSignalModifier(boolean isConnector, DyeColor color) {
-		super(true, false, true, isConnector);
+	public ItemSignalModifier(Item.Properties properties, boolean isConnector, DyeColor color) {
+		super(properties, true, false, true, isConnector);
 		this.color = color;
 	}
 

@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.storage.ValueInput;
@@ -22,8 +23,8 @@ import java.util.Set;
 
 public class BlockTrainScheduleSensor extends BlockTrainPoweredSensorBase {
 
-	public BlockTrainScheduleSensor() {
-		super();
+	public BlockTrainScheduleSensor(BlockBehaviour.Properties properties) {
+		super(properties);
 	}
 
 	@Override

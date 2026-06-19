@@ -5,13 +5,14 @@ import mtr.mappings.BlockEntityMapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 
 public class BlockLiftPanelOdd1 extends BlockLiftPanelBase {
 
-	public BlockLiftPanelOdd1() {
-		super(true, false);
+	public BlockLiftPanelOdd1(BlockBehaviour.Properties properties) {
+		super(properties, true, false);
 	}
 
 	@Override

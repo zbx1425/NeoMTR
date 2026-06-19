@@ -17,6 +17,10 @@ import java.util.Set;
 
 public class BlockTrainAnnouncer extends BlockTrainSensorBase {
 
+	public BlockTrainAnnouncer(Properties properties) {
+		super(properties);
+	}
+
 	@Override
 	public BlockEntityMapper createBlockEntity(BlockPos pos, BlockState state) {
 		return new TileEntityTrainAnnouncer(pos, state);

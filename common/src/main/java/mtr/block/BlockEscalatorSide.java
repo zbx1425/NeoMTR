@@ -16,6 +16,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockEscalatorSide extends BlockEscalatorBase {
 
+	public BlockEscalatorSide(Properties properties) {
+		super(properties);
+	}
+
 	@Override
 	protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos posFrom, BlockState newState, RandomSource random) {
 		if (direction == Direction.DOWN && !(world.getBlockState(pos.below()).getBlock() instanceof BlockEscalatorStep)) {

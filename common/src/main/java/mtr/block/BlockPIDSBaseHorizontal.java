@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
@@ -33,8 +34,8 @@ import java.util.List;
 
 public abstract class BlockPIDSBaseHorizontal extends BlockDirectionalMapper implements EntityBlockMapper, IPIDS {
 
-	public BlockPIDSBaseHorizontal() {
-		super(Properties.of().requiresCorrectToolForDrops().strength(2).lightLevel(state -> 5));
+	public BlockPIDSBaseHorizontal(BlockBehaviour.Properties properties) {
+		super(properties.requiresCorrectToolForDrops().strength(2).lightLevel(state -> 5));
 	}
 
 	@Override

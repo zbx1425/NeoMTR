@@ -13,6 +13,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockRouteSignStandingLight extends BlockRouteSignBase implements IBlock {
 
+	public BlockRouteSignStandingLight(Properties properties) {
+		super(properties);
+	}
+
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter blockGetter, BlockPos pos, CollisionContext collisionContext) {
 		final boolean isLower = IBlock.getStatePropertySafe(state, HALF) == DoubleBlockHalf.LOWER;

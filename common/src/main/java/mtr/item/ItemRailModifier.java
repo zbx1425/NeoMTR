@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
@@ -25,14 +26,14 @@ public class ItemRailModifier extends ItemNodeModifierBase {
 	private final boolean isOneWay;
 	private final RailType railType;
 
-	public ItemRailModifier() {
-		super(true, true, true, false);
+	public ItemRailModifier(Item.Properties properties) {
+		super(properties, true, true, true, false);
 		isOneWay = false;
 		railType = null;
 	}
 
-	public ItemRailModifier(boolean forNonContinuousMovementNode, boolean forContinuousMovementNode, boolean forAirplaneNode, boolean isOneWay, RailType railType) {
-		super(forNonContinuousMovementNode, forContinuousMovementNode, forAirplaneNode, true);
+	public ItemRailModifier(Item.Properties properties, boolean forNonContinuousMovementNode, boolean forContinuousMovementNode, boolean forAirplaneNode, boolean isOneWay, RailType railType) {
+		super(properties, forNonContinuousMovementNode, forContinuousMovementNode, forAirplaneNode, true);
 		this.isOneWay = isOneWay;
 		this.railType = railType;
 	}

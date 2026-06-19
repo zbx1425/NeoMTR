@@ -19,6 +19,7 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.storage.ValueInput;
@@ -38,8 +39,8 @@ public class BlockRailwaySign extends BlockDirectionalMapper implements EntityBl
 
 	public static final float SMALL_SIGN_PERCENTAGE = 0.75F;
 
-	public BlockRailwaySign(int length, boolean isOdd) {
-		super(Properties.of().requiresCorrectToolForDrops().strength(2).lightLevel(state -> 15));
+	public BlockRailwaySign(BlockBehaviour.Properties properties, int length, boolean isOdd) {
+		super(properties.requiresCorrectToolForDrops().strength(2).lightLevel(state -> 15));
 		this.length = length;
 		this.isOdd = isOdd;
 	}

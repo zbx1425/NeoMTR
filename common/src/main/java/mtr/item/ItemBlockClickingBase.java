@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
@@ -25,8 +26,8 @@ public abstract class ItemBlockClickingBase extends ItemWithCreativeTabBase {
 
 	public static final String TAG_POS = "pos";
 
-	public ItemBlockClickingBase(CreativeModeTabs.Wrapper creativeModeTab, Function<Properties, Properties> propertiesConsumer) {
-		super(creativeModeTab, propertiesConsumer);
+	public ItemBlockClickingBase(Item.Properties properties, CreativeModeTabs.Wrapper creativeModeTab, Function<Properties, Properties> propertiesConsumer) {
+		super(properties, creativeModeTab, propertiesConsumer);
 	}
 
 	@Override

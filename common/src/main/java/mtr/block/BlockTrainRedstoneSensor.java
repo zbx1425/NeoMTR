@@ -4,6 +4,7 @@ import mtr.BlockEntityTypes;
 import mtr.mappings.BlockEntityMapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 
@@ -11,8 +12,8 @@ import java.util.Set;
 
 public class BlockTrainRedstoneSensor extends BlockTrainPoweredSensorBase {
 
-	public BlockTrainRedstoneSensor() {
-		super();
+	public BlockTrainRedstoneSensor(BlockBehaviour.Properties properties) {
+		super(properties);
 	}
 
 	@Override

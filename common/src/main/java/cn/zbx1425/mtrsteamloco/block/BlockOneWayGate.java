@@ -18,6 +18,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -30,8 +31,8 @@ public class BlockOneWayGate extends BlockDirectionalMapper {
 
     public static final EnumProperty<TicketSystem.EnumTicketBarrierOpen> OPEN = EnumProperty.create("open", TicketSystem.EnumTicketBarrierOpen.class);
 
-    public BlockOneWayGate() {
-        super(Properties.of().requiresCorrectToolForDrops().strength(2).lightLevel(state -> 5).noOcclusion());
+    public BlockOneWayGate(BlockBehaviour.Properties properties) {
+        super(properties.requiresCorrectToolForDrops().strength(2).lightLevel(state -> 5).noOcclusion());
     }
 
     @Override

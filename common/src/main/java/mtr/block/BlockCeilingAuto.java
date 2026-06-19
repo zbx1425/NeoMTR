@@ -17,8 +17,8 @@ public class BlockCeilingAuto extends BlockCeiling {
 
 	public static final BooleanProperty LIGHT = BooleanProperty.create("light");
 
-	public BlockCeilingAuto(Properties settings) {
-		super(settings);
+	public BlockCeilingAuto(Properties properties) {
+		super(properties);
 	}
 
 	@Override

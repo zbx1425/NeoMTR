@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -26,8 +27,8 @@ public abstract class BlockRouteSignBase extends BlockDirectionalDoubleBlockBase
 
 	public static final IntegerProperty ARROW_DIRECTION = IntegerProperty.create("propagate_property", 0, 3);
 
-	public BlockRouteSignBase() {
-		super(Properties.of().requiresCorrectToolForDrops().strength(2).lightLevel(state -> 15).noOcclusion());
+	public BlockRouteSignBase(BlockBehaviour.Properties properties) {
+		super(properties.requiresCorrectToolForDrops().strength(2).lightLevel(state -> 15).noOcclusion());
 	}
 
 	@Override

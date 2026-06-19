@@ -24,6 +24,10 @@ public class BlockEscalatorStep extends BlockEscalatorBase {
 	public static final BooleanProperty DIRECTION = BooleanProperty.create("direction");
 	public static final BooleanProperty STATUS = BooleanProperty.create("status");
 
+	public BlockEscalatorStep(Properties properties) {
+		super(properties);
+	}
+
 	@Override
 	protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos posFrom, BlockState newState, RandomSource random) {
 		if (direction == Direction.UP && !(world.getBlockState(pos.above()).getBlock() instanceof BlockEscalatorSide)) {

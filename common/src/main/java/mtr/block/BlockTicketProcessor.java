@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -30,8 +31,8 @@ public class BlockTicketProcessor extends BlockDirectionalDoubleBlockBase {
 
 	public static final EnumProperty<EnumTicketProcessorLights> LIGHTS = EnumProperty.create("lights", EnumTicketProcessorLights.class);
 
-	public BlockTicketProcessor(boolean hasLight, boolean canEnter, boolean canExit) {
-		super(Properties.of().requiresCorrectToolForDrops().strength(2).lightLevel(state -> 5).noOcclusion());
+	public BlockTicketProcessor(BlockBehaviour.Properties properties, boolean hasLight, boolean canEnter, boolean canExit) {
+		super(properties.requiresCorrectToolForDrops().strength(2).lightLevel(state -> 5).noOcclusion());
 		this.hasLight = hasLight;
 		this.canEnter = canEnter;
 		this.canExit = canExit;

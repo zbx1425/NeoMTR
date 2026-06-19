@@ -17,8 +17,8 @@ import java.util.List;
 
 public abstract class BlockPoleCheckBase extends BlockDirectionalMapper {
 
-	public BlockPoleCheckBase(Properties settings) {
-		super(settings);
+	public BlockPoleCheckBase(Properties properties) {
+		super(properties);
 	}
 
 	@Override

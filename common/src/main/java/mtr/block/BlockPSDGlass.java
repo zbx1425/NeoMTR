@@ -2,13 +2,14 @@ package mtr.block;
 
 import mtr.Items;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public class BlockPSDGlass extends BlockPSDAPGGlassBase {
 
 	private final int style;
 
-	public BlockPSDGlass(int style) {
-		super();
+	public BlockPSDGlass(BlockBehaviour.Properties properties, int style) {
+		super(properties);
 		this.style = style;
 	}
 

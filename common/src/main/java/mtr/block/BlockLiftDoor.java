@@ -9,6 +9,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockLiftDoor extends BlockPSDAPGDoorBase {
 
+	public BlockLiftDoor(Properties properties) {
+		super(properties);
+	}
+
 	@Override
 	public BlockEntityMapper createBlockEntity(BlockPos pos, BlockState state) {
 		return new TileEntityLiftDoor(pos, state);

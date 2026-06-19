@@ -27,8 +27,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class BlockEyeCandy extends BlockDirectionalMapper implements EntityBlockMapper {
 
-    public BlockEyeCandy() {
-        super(BlockBehaviour.Properties.of().strength(2).noCollision());
+    public BlockEyeCandy(BlockBehaviour.Properties properties) {
+        super(properties.strength(2).noCollision());
     }
 
     @Override

@@ -3,12 +3,13 @@ package mtr.item;
 import mtr.data.RailwayData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class ItemTunnelCreator extends ItemNodeModifierSelectableBlockBase {
 
-	public ItemTunnelCreator(int height, int width) {
-		super(false, height, width);
+	public ItemTunnelCreator(Item.Properties properties, int height, int width) {
+		super(properties, false, height, width);
 	}
 
 	@Override

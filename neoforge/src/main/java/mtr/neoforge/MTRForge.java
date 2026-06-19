@@ -88,7 +88,7 @@ public class MTRForge {
 		}
 	}
 
-	private static void registerItem(String path, RegistryObject<Item> item) {
+	private static void registerItem(String path, BrandNewEpicRegistryObject<Item> item) {
 		ITEMS.register(path, () -> {
 			final Item itemObject = item.get();
 			if (itemObject instanceof ItemWithCreativeTabBase) {
@@ -100,11 +100,11 @@ public class MTRForge {
 		});
 	}
 
-	private static void registerBlock(String path, RegistryObject<Block> block) {
+	private static void registerBlock(String path, BrandNewEpicRegistryObject<Block> block) {
 		BLOCKS.register(path, block::get);
 	}
 
-	private static void registerBlock(String path, RegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTabWrapper) {
+	private static void registerBlock(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTabWrapper) {
 		registerBlock(path, block);
 		ITEMS.register(path, () -> {
 			final BlockItem blockItem = new BlockItem(block.get(), RegistryUtilities.createItemProperties(creativeModeTabWrapper::get));
@@ -113,7 +113,7 @@ public class MTRForge {
 		});
 	}
 
-	private static void registerEnchantedBlock(String path, RegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTab) {
+	private static void registerEnchantedBlock(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTab) {
 		registerBlock(path, block);
 		ITEMS.register(path, () -> {
 			final ItemBlockEnchanted itemBlockEnchanted = new ItemBlockEnchanted(block.get(), RegistryUtilities.createItemProperties(creativeModeTab::get));

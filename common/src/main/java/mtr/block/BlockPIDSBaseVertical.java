@@ -21,6 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -30,8 +31,8 @@ import java.util.List;
 
 public abstract class BlockPIDSBaseVertical extends BlockDirectionalDoubleBlockBase implements EntityBlockMapper, IPIDS {
 
-	public BlockPIDSBaseVertical() {
-		super(Properties.of().requiresCorrectToolForDrops().strength(2).lightLevel(state -> 5));
+	public BlockPIDSBaseVertical(BlockBehaviour.Properties properties) {
+		super(properties.requiresCorrectToolForDrops().strength(2).lightLevel(state -> 5));
 	}
 
 	@Override

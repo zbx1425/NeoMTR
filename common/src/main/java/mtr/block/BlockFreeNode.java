@@ -14,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.storage.ValueInput;
@@ -22,8 +23,8 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public class BlockFreeNode extends BlockNode implements EntityBlockMapper {
 
-	public BlockFreeNode() {
-		super(TransportMode.TRAIN, false);
+	public BlockFreeNode(BlockBehaviour.Properties properties) {
+		super(properties, TransportMode.TRAIN, false);
 	}
 
 	public static TransportMode getEffectiveTransportMode(Level world, BlockPos pos) {

@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
@@ -31,8 +32,8 @@ public class ItemPSDAPGBase extends ItemWithCreativeTabBase implements IBlock {
 	private final EnumPSDAPGItem item;
 	private final EnumPSDAPGType type;
 
-	public ItemPSDAPGBase(EnumPSDAPGItem item, EnumPSDAPGType type) {
-		super(type.isLift ? CreativeModeTabs.ESCALATORS_LIFTS : CreativeModeTabs.RAILWAY_FACILITIES);
+	public ItemPSDAPGBase(Item.Properties properties, EnumPSDAPGItem item, EnumPSDAPGType type) {
+		super(properties, type.isLift ? CreativeModeTabs.ESCALATORS_LIFTS : CreativeModeTabs.RAILWAY_FACILITIES);
 		this.item = item;
 		this.type = type;
 	}

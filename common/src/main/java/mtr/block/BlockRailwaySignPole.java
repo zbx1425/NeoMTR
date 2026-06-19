@@ -17,8 +17,8 @@ public class BlockRailwaySignPole extends BlockPoleCheckBase {
 
 	public static final IntegerProperty TYPE = IntegerProperty.create("type", 0, 3);
 
-	public BlockRailwaySignPole(Properties settings) {
-		super(settings);
+	public BlockRailwaySignPole(Properties properties) {
+		super(properties);
 	}
 
 	@Override

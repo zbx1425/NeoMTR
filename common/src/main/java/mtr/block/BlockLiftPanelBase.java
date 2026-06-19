@@ -3,25 +3,20 @@ package mtr.block;
 import mtr.Items;
 import mtr.MTR;
 import mtr.mappings.*;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -30,8 +25,6 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import java.util.List;
 
 public abstract class BlockLiftPanelBase extends BlockDirectionalMapper implements EntityBlockMapper, ITripleBlock {
 
@@ -43,8 +36,8 @@ public abstract class BlockLiftPanelBase extends BlockDirectionalMapper implemen
 	@Deprecated
 	public static final BooleanProperty TEMP = BooleanProperty.create("temp");
 
-	public BlockLiftPanelBase(boolean isOdd, boolean isFlat) {
-		super(Properties.of().requiresCorrectToolForDrops().strength(2).lightLevel(state -> 5));
+	public BlockLiftPanelBase(BlockBehaviour.Properties properties, boolean isOdd, boolean isFlat) {
+		super(properties.requiresCorrectToolForDrops().strength(2).lightLevel(state -> 5));
 		this.isOdd = isOdd;
 		this.isFlat = isFlat;
 	}

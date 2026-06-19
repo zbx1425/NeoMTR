@@ -5,14 +5,15 @@ import mtr.Items;
 import mtr.mappings.BlockEntityMapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockPSDDoor extends BlockPSDAPGDoorBase {
 
 	private final int style;
 
-	public BlockPSDDoor(int style) {
-		super();
+	public BlockPSDDoor(BlockBehaviour.Properties properties, int style) {
+		super(properties);
 		this.style = style;
 	}
 

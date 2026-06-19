@@ -22,8 +22,8 @@ public class BlockRubbishBin extends BlockDirectionalMapper {
 	public static final int MAX_LEVEL = 15;
 	public static final IntegerProperty FILLED = IntegerProperty.create("filled", 0, MAX_LEVEL);
 
-	public BlockRubbishBin(Properties settings) {
-		super(settings);
+	public BlockRubbishBin(Properties properties) {
+		super(properties);
 		registerDefaultState(defaultBlockState().setValue(FILLED, 0));
 	}
 

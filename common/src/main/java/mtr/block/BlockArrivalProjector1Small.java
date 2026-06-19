@@ -7,6 +7,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockArrivalProjector1Small extends BlockArrivalProjectorBase {
 
+	public BlockArrivalProjector1Small(Properties properties) {
+		super(properties);
+	}
+
 	@Override
 	public BlockEntityMapper createBlockEntity(BlockPos pos, BlockState state) {
 		return new TileEntityArrivalProjector1Small(pos, state);

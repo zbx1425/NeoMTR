@@ -22,6 +22,10 @@ public abstract class BlockPSDAPGGlassEndBase extends BlockPSDAPGGlassBase {
 	public static final EnumProperty<EnumPSDAPGGlassEndSide> TOUCHING_LEFT = EnumProperty.create("touching_left", EnumPSDAPGGlassEndSide.class);
 	public static final EnumProperty<EnumPSDAPGGlassEndSide> TOUCHING_RIGHT = EnumProperty.create("touching_right", EnumPSDAPGGlassEndSide.class);
 
+	public BlockPSDAPGGlassEndBase(Properties properties) {
+		super(properties);
+	}
+
 	@Override
 	protected BlockState updateShape(BlockState state, LevelReader world, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos posFrom, BlockState newState, RandomSource random) {
 		final BlockState superState = super.updateShape(state, world, ticks, pos, direction, posFrom, newState, random);

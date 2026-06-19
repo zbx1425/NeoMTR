@@ -6,6 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
@@ -14,8 +15,8 @@ public abstract class BlockTrainPoweredSensorBase extends BlockTrainSensorBase {
 	public static final IntegerProperty POWERED = IntegerProperty.create("powered", 0, 2);
 	private static final int UPDATE_TICKS = 10;
 
-	public BlockTrainPoweredSensorBase() {
-		super();
+	public BlockTrainPoweredSensorBase(BlockBehaviour.Properties properties) {
+		super(properties);
 		registerDefaultState(defaultBlockState().setValue(POWERED, 0));
 	}
 

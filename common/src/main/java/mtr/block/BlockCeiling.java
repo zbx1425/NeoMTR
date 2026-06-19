@@ -16,8 +16,8 @@ public class BlockCeiling extends BlockMapper {
 
 	public static final BooleanProperty FACING = BooleanProperty.create("facing");
 
-	public BlockCeiling(Properties settings) {
-		super(settings);
+	public BlockCeiling(Properties properties) {
+		super(properties);
 	}
 
 	@Override

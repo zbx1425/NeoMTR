@@ -11,6 +11,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockRouteSignWallMetal extends BlockRouteSignBase implements IBlock {
 
+	public BlockRouteSignWallMetal(Properties properties) {
+		super(properties);
+	}
+
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter blockGetter, BlockPos pos, CollisionContext collisionContext) {
 		final boolean isBottom = IBlock.getStatePropertySafe(state, HALF) == DoubleBlockHalf.LOWER;

@@ -6,6 +6,7 @@ import mtr.block.BlockLiftPanelBase;
 import mtr.block.BlockLiftTrackFloor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -15,8 +16,8 @@ public class ItemLiftButtonsLinkModifier extends ItemBlockClickingBase {
 
 	private final boolean isConnector;
 
-	public ItemLiftButtonsLinkModifier(boolean isConnector) {
-		super(CreativeModeTabs.ESCALATORS_LIFTS, properties -> properties.stacksTo(1));
+	public ItemLiftButtonsLinkModifier(Item.Properties properties, boolean isConnector) {
+		super(properties, CreativeModeTabs.ESCALATORS_LIFTS, propModifier -> propModifier.stacksTo(1));
 		this.isConnector = isConnector;
 	}
 

@@ -11,6 +11,9 @@ import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -31,9 +34,12 @@ public class MTRFabric implements ModInitializer {
 		PACKET_REGISTRY.commitCommon();
 	}
 
-	private static void registerItem(String path, RegistryObject<Item> item) {
-		final Item itemObject = item.get();
-		Registry.register(RegistryUtilities.registryGetItem(), MTR.id(path), itemObject);
+	private static void registerItem(String path, BrandNewEpicRegistryObject<Item> item) {
+		final Identifier id = MTR.id(path);
+		final ResourceKey<Item> resourceKey = ResourceKey.create(Registries.ITEM, id);
+		final Item itemObject = item.create(resourceKey);
+
+		Registry.register(RegistryUtilities.registryGetItem(), id, itemObject);
 		if (itemObject instanceof ItemWithCreativeTabBase) {
 			FabricRegistryUtilities.registerCreativeModeTab(((ItemWithCreativeTabBase) itemObject).creativeModeTab.get(), itemObject);
 		} else if (itemObject instanceof ItemWithCreativeTabBase.ItemPlaceOnWater) {
@@ -41,21 +47,28 @@ public class MTRFabric implements ModInitializer {
 		}
 	}
 
-	private static void registerBlock(String path, RegistryObject<Block> block) {
-		Registry.register(RegistryUtilities.registryGetBlock(), MTR.id(path), block.get());
+	private static void registerBlock(String path, BrandNewEpicRegistryObject<Block> block) {
+		final Identifier id = MTR.id(path);
+		final ResourceKey<Block> resourceKey = ResourceKey.create(Registries.BLOCK, id);
+		Registry.register(RegistryUtilities.registryGetBlock(), resourceKey, block.create(resourceKey));
 	}
 
-	private static void registerBlock(String path, RegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTab) {
+	private static void registerBlock(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTab) {
 		registerBlock(path, block);
-		final BlockItem blockItem = new BlockItem(block.get(), RegistryUtilities.createItemProperties(creativeModeTab::get));
-		Registry.register(RegistryUtilities.registryGetItem(), MTR.id(path), blockItem);
+		final Identifier id = MTR.id(path);
+		final ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, id);
+		final BlockItem blockItem = new BlockItem(block.get(), new Item.Properties().setId(itemKey));
+		Registry.register(RegistryUtilities.registryGetItem(), id, blockItem);
 		FabricRegistryUtilities.registerCreativeModeTab(creativeModeTab.get(), blockItem);
 	}
 
-	private static void registerEnchantedBlock(String path, RegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTab) {
+	private static void registerEnchantedBlock(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTab) {
+		final Identifier id = MTR.id(path);
+		final ResourceKey<Item> resourceKey = ResourceKey.create(Registries.ITEM, id);
+
 		registerBlock(path, block);
-		final ItemBlockEnchanted itemBlockEnchanted = new ItemBlockEnchanted(block.get(), RegistryUtilities.createItemProperties(creativeModeTab::get));
-		Registry.register(RegistryUtilities.registryGetItem(), MTR.id(path), itemBlockEnchanted);
+		final ItemBlockEnchanted itemBlockEnchanted = new ItemBlockEnchanted(block.get(), new Item.Properties().setId(resourceKey));
+		Registry.register(RegistryUtilities.registryGetItem(), id, itemBlockEnchanted);
 		FabricRegistryUtilities.registerCreativeModeTab(creativeModeTab.get(), itemBlockEnchanted);
 	}
 

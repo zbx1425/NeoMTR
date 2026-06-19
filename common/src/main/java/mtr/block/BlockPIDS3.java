@@ -11,6 +11,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockPIDS3 extends BlockPIDSBaseHorizontal {
 
+	public BlockPIDS3(Properties properties) {
+		super(properties);
+	}
+
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter blockGetter, BlockPos pos, CollisionContext collisionContext) {
 		VoxelShape shape1 = IBlock.getVoxelShapeByDirection(6, 0, 0, 10, 10, 16, IBlock.getStatePropertySafe(state, FACING));

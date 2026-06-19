@@ -12,6 +12,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
@@ -27,8 +28,8 @@ public class BlockGlassFence extends BlockDirectionalDoubleBlockBase {
 
 	public static final IntegerProperty NUMBER = IntegerProperty.create("number", 1, 7);
 
-	public BlockGlassFence() {
-		super(Properties.of().requiresCorrectToolForDrops().strength(2).noOcclusion());
+	public BlockGlassFence(BlockBehaviour.Properties properties) {
+		super(properties.requiresCorrectToolForDrops().strength(2).noOcclusion());
 	}
 
 	@Override

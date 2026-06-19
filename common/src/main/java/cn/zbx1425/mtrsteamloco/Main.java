@@ -4,10 +4,7 @@ import cn.zbx1425.mtrsteamloco.block.BlockEyeCandy;
 import cn.zbx1425.mtrsteamloco.block.BlockOneWayGate;
 import cn.zbx1425.mtrsteamloco.network.*;
 import com.google.gson.JsonParser;
-import mtr.CreativeModeTabs;
-import mtr.Items;
-import mtr.Registry;
-import mtr.RegistryObject;
+import mtr.*;
 import mtr.item.ItemBridgeCreator;
 import mtr.item.ItemWithCreativeTabBase;
 import mtr.mappings.BlockEntityMapper;
@@ -18,6 +15,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,20 +46,20 @@ public class Main {
 		enableRegistry = enableRegistry1;
 	}
 
-	public static final RegistryObject<Block> BLOCK_EYE_CANDY = new RegistryObject<>(BlockEyeCandy::new);
+	public static final BrandNewEpicRegistryObject<Block> BLOCK_EYE_CANDY = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockEyeCandy(BlockBehaviour.Properties.of().setId(resourceKey)));
 	public static final RegistryObject<BlockEntityType<BlockEyeCandy.BlockEntityEyeCandy>>
 			BLOCK_ENTITY_TYPE_EYE_CANDY = new RegistryObject<>(() ->
 			Registry.getBlockEntityType(
 					BlockEyeCandy.BlockEntityEyeCandy::new,
 					BLOCK_EYE_CANDY.get()
 			));
-	public static final RegistryObject<Block> BLOCK_ONE_WAY_GATE = new RegistryObject<>(BlockOneWayGate::new);
+	public static final BrandNewEpicRegistryObject<Block> BLOCK_ONE_WAY_GATE = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockOneWayGate(BlockBehaviour.Properties.of().setId(resourceKey)));
 
-	public static final RegistryObject<ItemWithCreativeTabBase> BRIDGE_CREATOR_1 = new RegistryObject<>(() -> new ItemBridgeCreator(1));
-	public static final RegistryObject<ItemWithCreativeTabBase> RAIL_EDITOR_VISUAL = new RegistryObject<>(() ->
-		new ItemWithCreativeTabBase(CreativeModeTabs.CORE, properties -> properties.stacksTo(1)));
-	public static final RegistryObject<ItemWithCreativeTabBase> RAIL_EDITOR_GEOMETRY = new RegistryObject<>(() ->
-		new ItemWithCreativeTabBase(CreativeModeTabs.CORE, properties -> properties.stacksTo(1)));
+	public static final BrandNewEpicRegistryObject<Item> BRIDGE_CREATOR_1 = new BrandNewEpicRegistryObject<>((resourceKey) -> new ItemBridgeCreator(new Item.Properties().setId(resourceKey), 1));
+	public static final BrandNewEpicRegistryObject<Item> RAIL_EDITOR_VISUAL = new BrandNewEpicRegistryObject<>((resourceKey) ->
+		new ItemWithCreativeTabBase(new Item.Properties().setId(resourceKey), CreativeModeTabs.CORE, propModifier -> propModifier.stacksTo(1)));
+	public static final BrandNewEpicRegistryObject<Item> RAIL_EDITOR_GEOMETRY = new BrandNewEpicRegistryObject<>((resourceKey) ->
+		new ItemWithCreativeTabBase(new Item.Properties().setId(resourceKey), CreativeModeTabs.CORE, propModifier -> propModifier.stacksTo(1)));
 
 	public static final SoundEvent SOUND_EVENT_BELL = RegistryUtilities.createSoundEvent(Main.id("bell"));
 

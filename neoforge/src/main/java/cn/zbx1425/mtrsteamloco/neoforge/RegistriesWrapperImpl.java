@@ -2,6 +2,7 @@ package cn.zbx1425.mtrsteamloco.neoforge;
 
 import cn.zbx1425.mtrsteamloco.Main;
 import cn.zbx1425.mtrsteamloco.RegistriesWrapper;
+import mtr.BrandNewEpicRegistryObject;
 import mtr.CreativeModeTabs;
 import mtr.Registry;
 import mtr.RegistryObject;
@@ -11,6 +12,8 @@ import mtr.neoforge.DeferredRegisterHolder;
 import mtr.neoforge.mappings.ForgeUtilities;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -33,12 +36,12 @@ public class RegistriesWrapperImpl implements RegistriesWrapper {
 
 
     @Override
-    public void registerBlock(String id, RegistryObject<Block> block) {
+    public void registerBlock(String id, BrandNewEpicRegistryObject<Block> block) {
         BLOCKS.register(id, block::get);
     }
 
     @Override
-    public void registerBlockAndItem(String id, RegistryObject<Block> block, CreativeModeTabs.Wrapper tab) {
+    public void registerBlockAndItem(String id, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper tab) {
         BLOCKS.register(id, block::get);
         ITEMS.register(id, () -> {
             final BlockItem blockItem = new BlockItem(block.get(), RegistryUtilities.createItemProperties(tab::get));
@@ -48,9 +51,10 @@ public class RegistriesWrapperImpl implements RegistriesWrapper {
     }
 
     @Override
-    public void registerItem(String id, RegistryObject<ItemWithCreativeTabBase> item) {
+    public void registerItem(String id, BrandNewEpicRegistryObject<Item> item) {
         ITEMS.register(id, () -> {
-            final ItemWithCreativeTabBase itemObject = item.get();
+            final ResourceKey<Item> resourceKey = ResourceKey.create(Registries.ITEM, Main.id(id));
+            final ItemWithCreativeTabBase itemObject = (ItemWithCreativeTabBase) item.create(resourceKey);
             Registry.registerCreativeModeTab(itemObject.creativeModeTab.resourceLocation, itemObject);
             return itemObject;
         });

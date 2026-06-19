@@ -43,12 +43,12 @@ public class BlockNode extends BlockDirectionalMapper {
 	public static final BooleanProperty IS_45 = BooleanProperty.create("is_45");
 	public static final BooleanProperty IS_CONNECTED = BooleanProperty.create("is_connected");
 
-	public BlockNode(TransportMode transportMode) {
-		this(transportMode, true);
+	public BlockNode(BlockBehaviour.Properties properties, TransportMode transportMode) {
+		this(properties, transportMode, true);
 	}
 
-	protected BlockNode(TransportMode transportMode, boolean registerDiscreteAngleProperties) {
-		super(BlockBehaviour.Properties.of().strength(2).noOcclusion());
+	protected BlockNode(BlockBehaviour.Properties properties, TransportMode transportMode, boolean registerDiscreteAngleProperties) {
+		super(properties.strength(2).noOcclusion());
 		this.transportMode = transportMode;
 		if (registerDiscreteAngleProperties) {
 			registerDefaultState(defaultBlockState().setValue(FACING, false).setValue(IS_22_5, false).setValue(IS_45, false).setValue(IS_CONNECTED, false));
@@ -107,8 +107,8 @@ public class BlockNode extends BlockDirectionalMapper {
 
 	public static class BlockBoatNode extends BlockNode implements EntityBlockMapper {
 
-		public BlockBoatNode() {
-			super(TransportMode.BOAT);
+		public BlockBoatNode(BlockBehaviour.Properties properties) {
+			super(properties, TransportMode.BOAT);
 		}
 
 		@Override
@@ -144,8 +144,8 @@ public class BlockNode extends BlockDirectionalMapper {
 		public final boolean upper;
 		public final boolean isStation;
 
-		public BlockContinuousMovementNode(boolean upper, boolean isStation) {
-			super(TransportMode.CABLE_CAR);
+		public BlockContinuousMovementNode(BlockBehaviour.Properties properties, boolean upper, boolean isStation) {
+			super(properties, TransportMode.CABLE_CAR);
 			this.upper = upper;
 			this.isStation = isStation;
 		}

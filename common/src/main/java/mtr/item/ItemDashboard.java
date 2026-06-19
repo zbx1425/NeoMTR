@@ -8,14 +8,15 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 
 public class ItemDashboard extends ItemWithCreativeTabBase {
 
 	private final TransportMode transportMode;
 
-	public ItemDashboard(TransportMode transportMode) {
-		super(CreativeModeTabs.CORE, properties -> properties.stacksTo(1));
+	public ItemDashboard(Item.Properties properties, TransportMode transportMode) {
+		super(properties, CreativeModeTabs.CORE, propModifier -> propModifier.stacksTo(1));
 		this.transportMode = transportMode;
 	}
 

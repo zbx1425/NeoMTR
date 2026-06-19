@@ -12,6 +12,10 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public abstract class BlockPSDAPGGlassBase extends BlockPSDAPGBase {
 
+	public BlockPSDAPGGlassBase(Properties properties) {
+		super(properties);
+	}
+
 	@Override
 	public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult blockHitResult) {
 		return IBlock.checkHoldingBrush(world, player, () -> {

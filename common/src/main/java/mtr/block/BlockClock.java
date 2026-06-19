@@ -20,8 +20,8 @@ public class BlockClock extends BlockMapper implements EntityBlockMapper {
 
 	public static final BooleanProperty FACING = BooleanProperty.create("facing");
 
-	public BlockClock(Properties settings) {
-		super(settings);
+	public BlockClock(Properties properties) {
+		super(properties);
 	}
 
 	@Override

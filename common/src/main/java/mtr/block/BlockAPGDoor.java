@@ -1,16 +1,17 @@
 package mtr.block;
 
-import com.mojang.serialization.MapCodec;
 import mtr.BlockEntityTypes;
 import mtr.Items;
 import mtr.mappings.BlockEntityMapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockAPGDoor extends BlockPSDAPGDoorBase {
+
+	public BlockAPGDoor(Properties properties) {
+		super(properties);
+	}
 
 	@Override
 	public BlockEntityMapper createBlockEntity(BlockPos pos, BlockState state) {

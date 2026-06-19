@@ -6,12 +6,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 
 public class ItemResourcePackCreator extends ItemWithCreativeTabBase {
 
-	public ItemResourcePackCreator() {
-		super(CreativeModeTabs.CORE);
+	public ItemResourcePackCreator(Item.Properties properties) {
+		super(properties, CreativeModeTabs.CORE);
 	}
 
 	@Override
