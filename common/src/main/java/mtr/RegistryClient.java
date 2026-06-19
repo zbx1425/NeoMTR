@@ -4,9 +4,11 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import mtr.mappings.BlockEntityMapper;
 import mtr.mappings.BlockEntityRendererMapper;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
@@ -44,6 +46,11 @@ public class RegistryClient {
 
 	@ExpectPlatform
 	public static void sendToServer(Identifier id, FriendlyByteBuf packet) {
+		throw new AssertionError();
+	}
+
+	@ExpectPlatform
+	public static void submitGuiElementRenderState(GuiGraphicsExtractor guiGraphicsExtractor, GuiElementRenderState guiElementRenderState) {
 		throw new AssertionError();
 	}
 }

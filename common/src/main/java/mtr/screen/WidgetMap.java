@@ -1,9 +1,11 @@
 package mtr.screen;
 
 import cn.zbx1425.sowcer.math.Matrices;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import mtr.MTR;
+import mtr.RegistryClient;
 import mtr.client.ClientData;
 import mtr.client.IDrawing;
 import mtr.data.*;
@@ -15,15 +17,20 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.levelgen.Heightmap;
 import org.joml.Matrix3x2fStack;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ConcurrentModificationException;
 import java.util.List;
@@ -84,61 +91,76 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		final Tesselator tesselator = Tesselator.getInstance();
-		final BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-		UtilitiesClient.beginDrawingRectangle(buffer);
-
 		final Tuple<Integer, Integer> topLeft = coordsToWorldPos(0, 0);
 		final Tuple<Integer, Integer> bottomRight = coordsToWorldPos(width, height);
-		final int increment = scale >= 1 ? 1 : (int) Math.ceil(1 / scale);
-		for (int i = topLeft.getA(); i <= bottomRight.getA(); i += increment) {
-			for (int j = topLeft.getB(); j <= bottomRight.getB(); j += increment) {
-				if (world != null) {
-					final int color = divideColorRGB(world.getBlockState(RailwayData.newBlockPos(i, world.getHeight(Heightmap.Types.MOTION_BLOCKING, i, j) - 1, j)).getBlock().defaultMapColor().col, 2);
-					drawRectangleFromWorldCoords(guiGraphics.pose(), buffer, i, j, i + increment, j + increment, ARGB_BLACK | color);
-				}
-			}
-		}
-
 		final Tuple<Double, Double> mouseWorldPos = coordsToWorldPos((double) mouseX - x, mouseY - y);
-
-		try {
-			if (showStations) {
-				ClientData.DATA_CACHE.getPosToPlatforms(transportMode).forEach((platformPos, platforms) -> drawRectangleFromWorldCoords(guiGraphics.pose(), buffer, platformPos.getX(), platformPos.getZ(), platformPos.getX() + 1, platformPos.getZ() + 1, ARGB_WHITE));
-				for (final Station station : ClientData.STATIONS) {
-					if (AreaBase.nonNullCorners(station)) {
-						drawRectangleFromWorldCoords(guiGraphics.pose(), buffer, station.corner1, station.corner2, ARGB_BLACK_TRANSLUCENT + station.color);
-					}
-				}
-				mouseOnSavedRail(mouseWorldPos, (savedRail, x1, z1, x2, z2) -> drawRectangleFromWorldCoords(guiGraphics.pose(), buffer, x1, z1, x2, z2, ARGB_WHITE), true);
-			} else {
-				ClientData.DATA_CACHE.getPosToSidings(transportMode).forEach((sidingPos, sidings) -> drawRectangleFromWorldCoords(guiGraphics.pose(), buffer, sidingPos.getX(), sidingPos.getZ(), sidingPos.getX() + 1, sidingPos.getZ() + 1, ARGB_WHITE));
-				for (final Depot depot : ClientData.DEPOTS) {
-					if (depot.isTransportMode(transportMode) && AreaBase.nonNullCorners(depot)) {
-						drawRectangleFromWorldCoords(guiGraphics.pose(), buffer, depot.corner1, depot.corner2, ARGB_BLACK_TRANSLUCENT + depot.color);
-					}
-				}
-				mouseOnSavedRail(mouseWorldPos, (savedRail, x1, z1, x2, z2) -> drawRectangleFromWorldCoords(guiGraphics.pose(), buffer, x1, z1, x2, z2, ARGB_WHITE), false);
-			}
-		} catch (Exception e) {
-			MTR.LOGGER.error("", e);
-		}
-
-		if (mapState == MapState.EDITING_AREA && drawArea1 != null && drawArea2 != null) {
-			drawRectangleFromWorldCoords(guiGraphics.pose(), buffer, drawArea1, drawArea2, ARGB_WHITE_TRANSLUCENT);
-		}
+		final int increment = scale >= 1 ? 1 : (int) Math.ceil(1 / scale);
 
 		if (player != null) {
-			drawFromWorldCoords(player.getX(), player.getZ(), (x1, y1) -> {
-				drawRectangle(guiGraphics.pose(), buffer, x1 - 2, y1 - 3, x1 + 2, y1 + 3, ARGB_WHITE);
-				drawRectangle(guiGraphics.pose(), buffer, x1 - 3, y1 - 2, x1 + 3, y1 + 2, ARGB_WHITE);
-				drawRectangle(guiGraphics.pose(), buffer, x1 - 2, y1 - 2, x1 + 2, y1 + 2, ARGB_BLUE);
-			});
-		}
+			GuiElementRenderState mapRenderer = new GuiElementRenderState() {
+				@Override
+				public void buildVertices(VertexConsumer vertexConsumer) {
+					for (int i = topLeft.getA(); i <= bottomRight.getA(); i += increment) {
+						for (int j = topLeft.getB(); j <= bottomRight.getB(); j += increment) {
+							if (world != null) {
+								final int color = divideColorRGB(world.getBlockState(RailwayData.newBlockPos(i, world.getHeight(Heightmap.Types.MOTION_BLOCKING, i, j) - 1, j)).getBlock().defaultMapColor().col, 2);
+								drawRectangleFromWorldCoords(guiGraphics.pose(), vertexConsumer, i, j, i + increment, j + increment, ARGB_BLACK | color);
+							}
+						}
+					}
 
-		// TODO:
-//		BufferUploader.drawWithShader(buffer.buildOrThrow());
-		UtilitiesClient.finishDrawingRectangle();
+					if (showStations) {
+						ClientData.DATA_CACHE.getPosToPlatforms(transportMode).forEach((platformPos, platforms) -> drawRectangleFromWorldCoords(guiGraphics.pose(), vertexConsumer, platformPos.getX(), platformPos.getZ(), platformPos.getX() + 1, platformPos.getZ() + 1, ARGB_WHITE));
+						for (final Station station : ClientData.STATIONS) {
+							if (AreaBase.nonNullCorners(station)) {
+								drawRectangleFromWorldCoords(guiGraphics.pose(), vertexConsumer, station.corner1, station.corner2, ARGB_BLACK_TRANSLUCENT + station.color);
+							}
+						}
+						mouseOnSavedRail(mouseWorldPos, (savedRail, x1, z1, x2, z2) -> drawRectangleFromWorldCoords(guiGraphics.pose(), vertexConsumer, x1, z1, x2, z2, ARGB_WHITE), true);
+					} else {
+						ClientData.DATA_CACHE.getPosToSidings(transportMode).forEach((sidingPos, sidings) -> drawRectangleFromWorldCoords(guiGraphics.pose(), vertexConsumer, sidingPos.getX(), sidingPos.getZ(), sidingPos.getX() + 1, sidingPos.getZ() + 1, ARGB_WHITE));
+						for (final Depot depot : ClientData.DEPOTS) {
+							if (depot.isTransportMode(transportMode) && AreaBase.nonNullCorners(depot)) {
+								drawRectangleFromWorldCoords(guiGraphics.pose(), vertexConsumer, depot.corner1, depot.corner2, ARGB_BLACK_TRANSLUCENT + depot.color);
+							}
+						}
+						mouseOnSavedRail(mouseWorldPos, (savedRail, x1, z1, x2, z2) -> drawRectangleFromWorldCoords(guiGraphics.pose(), vertexConsumer, x1, z1, x2, z2, ARGB_WHITE), false);
+					}
+
+					if (mapState == MapState.EDITING_AREA && drawArea1 != null && drawArea2 != null) {
+						drawRectangleFromWorldCoords(guiGraphics.pose(), vertexConsumer, drawArea1, drawArea2, ARGB_WHITE_TRANSLUCENT);
+					}
+
+					drawFromWorldCoords(player.getX(), player.getZ(), (x1, y1) -> {
+						drawRectangle(guiGraphics.pose(), vertexConsumer, x1 - 2, y1 - 3, x1 + 2, y1 + 3, ARGB_WHITE);
+						drawRectangle(guiGraphics.pose(), vertexConsumer, x1 - 3, y1 - 2, x1 + 3, y1 + 2, ARGB_WHITE);
+						drawRectangle(guiGraphics.pose(), vertexConsumer, x1 - 2, y1 - 2, x1 + 2, y1 + 2, ARGB_BLUE);
+					});
+				}
+
+				@Override
+				public RenderPipeline pipeline() {
+					return RenderPipelines.GUI;
+				}
+
+				@Override
+				public TextureSetup textureSetup() {
+					return TextureSetup.noTexture();
+				}
+
+				@Override
+				public @Nullable ScreenRectangle scissorArea() {
+					return null;
+				}
+
+				@Override
+				public ScreenRectangle bounds() {
+					return new ScreenRectangle(0, 0, width, height);
+				}
+			};
+
+			RegistryClient.submitGuiElementRenderState(guiGraphics, mapRenderer);
+		}
 
 		if (mapState == MapState.EDITING_AREA) {
 			guiGraphics.text(textRenderer, Text.translatable("gui.mtr.edit_area").getString(), x + TEXT_PADDING, y + TEXT_PADDING, ARGB_WHITE);
@@ -177,7 +199,6 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 				}
 			}
 		}
-		immediate.endBatch();
 
 		final String mousePosText = String.format("(%s, %s)", RailwayData.round(mouseWorldPos.getA(), 1), RailwayData.round(mouseWorldPos.getB(), 1));
 		guiGraphics.text(textRenderer, mousePosText, x + width - TEXT_PADDING - textRenderer.width(mousePosText), y + TEXT_PADDING, ARGB_WHITE);
@@ -338,11 +359,11 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 		}
 	}
 
-	private void drawRectangleFromWorldCoords(Matrix3x2fStack matrices, BufferBuilder buffer, Tuple<Integer, Integer> corner1, Tuple<Integer, Integer> corner2, int color) {
+	private void drawRectangleFromWorldCoords(Matrix3x2fStack matrices, VertexConsumer buffer, Tuple<Integer, Integer> corner1, Tuple<Integer, Integer> corner2, int color) {
 		drawRectangleFromWorldCoords(matrices, buffer, corner1.getA(), corner1.getB(), corner2.getA(), corner2.getB(), color);
 	}
 
-	private void drawRectangleFromWorldCoords(Matrix3x2fStack matrices, BufferBuilder buffer, double posX1, double posZ1, double posX2, double posZ2, int color) {
+	private void drawRectangleFromWorldCoords(Matrix3x2fStack matrices, VertexConsumer buffer, double posX1, double posZ1, double posX2, double posZ2, int color) {
 		final double x1 = (posX1 - centerX) * scale + width / 2D;
 		final double z1 = (posZ1 - centerY) * scale + height / 2D;
 		final double x2 = (posX2 - centerX) * scale + width / 2D;
@@ -350,7 +371,7 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 		drawRectangle(matrices, buffer, x1, z1, x2, z2, color);
 	}
 
-	private void drawRectangle(Matrix3x2fStack matrices, BufferBuilder buffer, double xA, double yA, double xB, double yB, int color) {
+	private void drawRectangle(Matrix3x2fStack matrices, VertexConsumer buffer, double xA, double yA, double xB, double yB, int color) {
 		final double x1 = Math.min(xA, xB);
 		final double y1 = Math.min(yA, yB);
 		final double x2 = Math.max(xA, xB);

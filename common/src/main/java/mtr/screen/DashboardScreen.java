@@ -76,15 +76,11 @@ public class DashboardScreen extends ScreenMapper implements IGui, IPacket {
 		buttonZoomIn = UtilitiesClient.newButton(Text.literal("+"), button -> widgetMap.scale(1));
 		buttonZoomOut = UtilitiesClient.newButton(Text.literal("-"), button -> widgetMap.scale(-1));
 		buttonRailActions = UtilitiesClient.newButton(Text.translatable("gui.mtr.rail_actions_button"), button -> {
-			if (minecraft != null) {
-				UtilitiesClient.setScreen(minecraft, new RailActionsScreen());
-			}
-		});
+            UtilitiesClient.setScreen(minecraft, new RailActionsScreen());
+        });
 		buttonOptions = UtilitiesClient.newButton(Text.translatable("menu.options"), button -> {
-			if (minecraft != null) {
-				UtilitiesClient.setScreen(minecraft, new ConfigScreen(useTimeAndWindSync));
-			}
-		});
+            UtilitiesClient.setScreen(minecraft, new ConfigScreen(useTimeAndWindSync));
+        });
 
 		dashboardList = new DashboardList(this::onFind, this::onDrawArea, this::onEdit, this::onSort, null, this::onDelete, this::getList, () -> ClientData.DASHBOARD_SEARCH, text -> ClientData.DASHBOARD_SEARCH = text);
 

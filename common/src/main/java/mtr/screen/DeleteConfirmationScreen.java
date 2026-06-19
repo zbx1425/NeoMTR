@@ -53,10 +53,8 @@ public class DeleteConfirmationScreen extends ScreenMapper implements IGui {
 	@Override
 	public void onClose() {
 		super.onClose();
-		if (minecraft != null) {
-			UtilitiesClient.setScreen(minecraft, dashboardScreen);
-		}
-	}
+        UtilitiesClient.setScreen(minecraft, dashboardScreen);
+    }
 
 	private void onYes() {
 		deleteCallback.run();

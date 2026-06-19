@@ -87,17 +87,17 @@ public class WidgetShorterSlider extends AbstractSliderButton implements IGui {
 	private void render(GuiGraphicsExtractor guiGraphics) {
 		final Minecraft client = Minecraft.getInstance();
 
-		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this), UtilitiesClient.getWidgetY(this), 0, 46, width / 2, height / 2, width / 2, height / 2);
-		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this), UtilitiesClient.getWidgetY(this) + height / 2, 0, 66 - height / 2, width / 2, height / 2, width / 2, height / 2);
-		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + width / 2, UtilitiesClient.getWidgetY(this), 200 - width / 2, 46, width / 2, height / 2, width / 2, height / 2);
-		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + width / 2, UtilitiesClient.getWidgetY(this) + height / 2, 200 - width / 2, 66 - height / 2, width / 2, height / 2, width / 2, height / 2, width / 2, height / 2);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this), UtilitiesClient.getWidgetY(this), 0, 46, width / 2, height / 2, 256, 256);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this), UtilitiesClient.getWidgetY(this) + height / 2, 0, (66 - height / 2), width / 2, height / 2, 256, 256);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + width / 2, UtilitiesClient.getWidgetY(this), (200 - width / 2), 46, width / 2, height / 2, 256, 256);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + width / 2, UtilitiesClient.getWidgetY(this) + height / 2, (200 - width / 2), (66 - height / 2), width / 2, height / 2, 256, 256);
 
 		final int v = UtilitiesClient.isHovered(this) ? 86 : 66;
 		final int xOffset = (width - SLIDER_WIDTH) * getIntValue() / maxValue;
-		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset, UtilitiesClient.getWidgetY(this), 0, v, SLIDER_WIDTH / 2, height / 2, SLIDER_WIDTH / 2, height / 2);
-		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset, UtilitiesClient.getWidgetY(this) + height / 2, 0, v + 20 - height / 2, SLIDER_WIDTH / 2, height / 2, SLIDER_WIDTH / 2, height / 2);
-		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset + SLIDER_WIDTH / 2, UtilitiesClient.getWidgetY(this), 200 - SLIDER_WIDTH / 2, v, SLIDER_WIDTH / 2, height / 2, SLIDER_WIDTH / 2, height / 2);
-		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset + SLIDER_WIDTH / 2, UtilitiesClient.getWidgetY(this) + height / 2, 200 - SLIDER_WIDTH / 2, v + 20 - height / 2, SLIDER_WIDTH / 2, height / 2, SLIDER_WIDTH / 2, height / 2);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset, UtilitiesClient.getWidgetY(this), 0, v, SLIDER_WIDTH / 2, height / 2, 256, 256);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset, UtilitiesClient.getWidgetY(this) + height / 2, 0, v + 20 - height / 2, SLIDER_WIDTH / 2, height / 2, 256, 256);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset + SLIDER_WIDTH / 2, UtilitiesClient.getWidgetY(this), 200 - SLIDER_WIDTH / 2, v, SLIDER_WIDTH / 2, height / 2, 256, 256);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset + SLIDER_WIDTH / 2, UtilitiesClient.getWidgetY(this) + height / 2, 200 - SLIDER_WIDTH / 2, v + 20 - height / 2, SLIDER_WIDTH / 2, height / 2, 256, 256);
 
 		guiGraphics.text(client.font, getMessage().getString(), UtilitiesClient.getWidgetX(this) + width + TEXT_PADDING, UtilitiesClient.getWidgetY(this) + (height - TEXT_HEIGHT) / 2, ARGB_WHITE);
 

@@ -18,6 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class PacketUpdateBlockEntity {
 
@@ -31,9 +32,10 @@ public class PacketUpdateBlockEntity {
         packet.writeIdentifier(level.dimension().identifier());
         packet.writeBlockPos(blockEntity.getBlockPos());
         packet.writeVarInt(BuiltInRegistries.BLOCK_ENTITY_TYPE.getId(blockEntity.getType()));
-        CompoundTag tag = new CompoundTag();
-        blockEntity.writeCompoundTag(TagValueOutput.createWithContext(ProblemReporter.DISCARDING, blockEntity.getLevel().registryAccess()));
-        packet.writeNbt(tag);
+
+        TagValueOutput writer = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, blockEntity.getLevel().registryAccess());
+        blockEntity.writeCompoundTag(writer);
+        packet.writeNbt(writer.buildResult());
 
         RegistryClient.sendToServer(PACKET_UPDATE_BLOCK_ENTITY, packet);
     }

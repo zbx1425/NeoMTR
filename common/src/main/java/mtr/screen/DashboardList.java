@@ -158,13 +158,7 @@ public class DashboardList implements IGui {
 				Collections.sort(sortedKeys);
 				final NameColorDataBase data = dataFiltered.get(sortedKeys.get(i + itemsToShow * page));
 
-				Tesselator tesselator = Tesselator.getInstance();
-				BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-				UtilitiesClient.beginDrawingRectangle(buffer);
-				IDrawing.drawRectangle(guiGraphics.pose(), buffer, x + TEXT_PADDING, y + drawY, x + TEXT_PADDING + TEXT_HEIGHT, y + drawY + TEXT_HEIGHT, ARGB_BLACK | data.color);
-				// TODO:
-//				BufferUploader.drawWithShader(buffer.buildOrThrow());
-				UtilitiesClient.finishDrawingRectangle();
+				guiGraphics.fill(x + TEXT_PADDING, y + drawY, x + TEXT_PADDING + TEXT_HEIGHT, y + drawY + TEXT_HEIGHT, ARGB_BLACK | data.color);
 
 				final String drawString = IGui.formatStationName(data.name);
 				final int textStart = TEXT_PADDING * 2 + TEXT_HEIGHT;

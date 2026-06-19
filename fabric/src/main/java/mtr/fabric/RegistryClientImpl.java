@@ -11,9 +11,11 @@ import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
@@ -54,5 +56,9 @@ public class RegistryClientImpl {
 
 	public static void sendToServer(Identifier id, FriendlyByteBuf packet) {
 		MTRFabric.PACKET_REGISTRY.sendC2S(id, packet);
+	}
+
+	public static void submitGuiElementRenderState(GuiGraphicsExtractor guiGraphicsExtractor, GuiElementRenderState guiElementRenderState) {
+		guiGraphicsExtractor.guiRenderState.addGuiElement(guiElementRenderState);
 	}
 }

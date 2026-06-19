@@ -26,6 +26,7 @@
 			"mtr.ModMenuConfig"
 		]
 	},
+	"accessWidener": "mtrsteamloco.accesswidener",
 	"mixins": [
 		"mtr.mixins.json"
 	],

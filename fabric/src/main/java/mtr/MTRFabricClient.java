@@ -36,7 +36,7 @@ public class MTRFabricClient implements ClientModInitializer, ICustomResources {
 		MTRClient.initItemModelPredicate();
 		MainClient.init();
 
-		// TODO: AFTER_ENTITIES
+		// TODO: Correct injection point?
 		LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(context -> {
 			final PoseStack matrices = context.poseStack();
 			matrices.pushPose();

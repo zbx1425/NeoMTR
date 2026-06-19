@@ -11,10 +11,12 @@ import mtr.mappings.*;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockTintSource;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
@@ -54,6 +56,10 @@ public class RegistryClientImpl {
 	public static void sendToServer(Identifier id, FriendlyByteBuf packet) {
 		packet.resetReaderIndex();
 		MTRForge.PACKET_REGISTRY.sendC2S(id, packet);
+	}
+
+	public static void submitGuiElementRenderState(GuiGraphicsExtractor guiGraphicsExtractor, GuiElementRenderState guiElementRenderState) {
+		guiGraphicsExtractor.submitGuiElementRenderState(guiElementRenderState);
 	}
 
 	private static class StationColor implements BlockTintSource {

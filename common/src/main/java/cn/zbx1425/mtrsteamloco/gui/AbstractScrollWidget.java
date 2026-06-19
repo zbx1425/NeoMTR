@@ -67,19 +67,17 @@ public abstract class AbstractScrollWidget extends AbstractWidget {
 
     @Override
     public void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        Matrix3x2fStack poseStack = guiGraphics.pose();
         if (!this.visible) {
             return;
         }
+        Matrix3x2fStack poseStack = guiGraphics.pose();
+        poseStack.pushMatrix();
         this.renderBackground(guiGraphics);
-//        vcEnableScissor(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height);
         guiGraphics.enableScissor(getX(), getY(), getX() + this.width, getY() + this.height);
-        poseStack.popMatrix();
         poseStack.translate(0, (float)-this.offset);
         this.renderContents(guiGraphics, mouseX, mouseY, partialTick);
         poseStack.popMatrix();
         guiGraphics.disableScissor();
-//        RenderSystem.disableScissor();
         if (this.getScrollBarVisible()) {
             this.renderScrollBar(guiGraphics);
         }

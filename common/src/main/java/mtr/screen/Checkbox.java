@@ -28,11 +28,15 @@ public class Checkbox extends AbstractButton {
 
     @Override
     public void onPress(InputWithModifiers input) {
-        this.selected = !this.selected;
+        setSelected(!this.selected);
     }
 
     public boolean selected() {
         return this.selected;
+    }
+
+    protected void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     @Override

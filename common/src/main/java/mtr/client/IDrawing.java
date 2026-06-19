@@ -124,8 +124,8 @@ public interface IDrawing {
 
 	static void drawLine(RenderTrains.RenderCallback renderCallback, float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b) {
 		renderCallback.invoke(RenderTypes.lines(), (pose, vertexConsumer) -> {
-			vertexConsumer.addVertex(pose, x1, y1, z1).setColor(r, g, b, 0xFF).setNormal(pose, 0, 1, 0);
-			vertexConsumer.addVertex(pose, x2, y2, z2).setColor(r, g, b, 0xFF).setNormal(pose, 0, 1, 0);
+			vertexConsumer.addVertex(pose, x1, y1, z1).setLineWidth(2.0f).setColor(r, g, b, 0xFF).setNormal(pose, 0, 1, 0);
+			vertexConsumer.addVertex(pose, x2, y2, z2).setLineWidth(2.0f).setColor(r, g, b, 0xFF).setNormal(pose, 0, 1, 0);
 		});
 	}
 

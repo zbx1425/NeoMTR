@@ -194,11 +194,11 @@ public interface Blocks {
 	BrandNewEpicRegistryObject<Block> TICKET_PROCESSOR_ENTRANCE = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockTicketProcessor(createProperties(resourceKey), true, true, false));
 	BrandNewEpicRegistryObject<Block> TICKET_PROCESSOR_EXIT = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockTicketProcessor(createProperties(resourceKey), true, false, true));
 	BrandNewEpicRegistryObject<Block> TICKET_PROCESSOR_ENQUIRY = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockTicketProcessorEnquiry(createProperties(resourceKey)));
-	BrandNewEpicRegistryObject<Block> TRAIN_ANNOUNCER = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockTrainAnnouncer(createProperties(resourceKey)));
-	BrandNewEpicRegistryObject<Block> TRAIN_CARGO_LOADER = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockTrainCargoLoader(createProperties(resourceKey)));
-	BrandNewEpicRegistryObject<Block> TRAIN_CARGO_UNLOADER = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockTrainCargoUnloader(createProperties(resourceKey)));
-	BrandNewEpicRegistryObject<Block> TRAIN_REDSTONE_SENSOR = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockTrainRedstoneSensor(createProperties(resourceKey)));
-	BrandNewEpicRegistryObject<Block> TRAIN_SCHEDULE_SENSOR = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockTrainScheduleSensor(createProperties(resourceKey)));
+	BrandNewEpicRegistryObject<Block> TRAIN_ANNOUNCER = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockTrainAnnouncer(copyProperties(resourceKey, net.minecraft.world.level.block.Blocks.SMOOTH_STONE)));
+	BrandNewEpicRegistryObject<Block> TRAIN_CARGO_LOADER = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockTrainCargoLoader(copyProperties(resourceKey, net.minecraft.world.level.block.Blocks.SMOOTH_STONE)));
+	BrandNewEpicRegistryObject<Block> TRAIN_CARGO_UNLOADER = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockTrainCargoUnloader(copyProperties(resourceKey, net.minecraft.world.level.block.Blocks.SMOOTH_STONE)));
+	BrandNewEpicRegistryObject<Block> TRAIN_REDSTONE_SENSOR = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockTrainRedstoneSensor(copyProperties(resourceKey, net.minecraft.world.level.block.Blocks.SMOOTH_STONE)));
+	BrandNewEpicRegistryObject<Block> TRAIN_SCHEDULE_SENSOR = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockTrainScheduleSensor(copyProperties(resourceKey, net.minecraft.world.level.block.Blocks.SMOOTH_STONE)));
 
 	static BlockBehaviour.Properties createProperties(ResourceKey<Block> resourceKey) {
 		return BlockBehaviour.Properties.of().setId(resourceKey);

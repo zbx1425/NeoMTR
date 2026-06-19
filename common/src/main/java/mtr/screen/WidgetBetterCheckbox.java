@@ -19,6 +19,7 @@ public class WidgetBetterCheckbox extends Checkbox implements IGui {
 
 	@Override
 	public void onPress(InputWithModifiers input) {
+		super.onPress(input);
 		onClick.onClick(selected());
 	}
 
@@ -33,7 +34,7 @@ public class WidgetBetterCheckbox extends Checkbox implements IGui {
 
 	public void setChecked(boolean checked) {
 		if (checked != selected()) {
-			super.onPress(new KeyEvent(0, 0, 0));
+			setSelected(checked);
 		}
 	}
 

@@ -29,7 +29,6 @@ import java.util.Set;
 public abstract class BlockTrainSensorBase extends BlockMapper implements EntityBlockMapper {
 
 	public BlockTrainSensorBase(BlockBehaviour.Properties properties) {
-		// TODO: Smooth stone copy properties
 		super(properties);
 	}
 

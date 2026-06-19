@@ -71,6 +71,7 @@ public class BlockEntityEyeCandyRenderer extends BlockEntityRendererMapper<Block
 
     @Override
     public void extractRenderState(BlockEyeCandy.BlockEntityEyeCandy blockEntity, EyecandyRenderState state, final float partialTicks, final Vec3 cameraPosition, final ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+        super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.fullLight = blockEntity.fullLight;
         state.prefabId = blockEntity.prefabId;
         state.prop = EyeCandyRegistry.getProperty(state.prefabId);
@@ -91,7 +92,6 @@ public class BlockEntityEyeCandyRenderer extends BlockEntityRendererMapper<Block
             state.prop.script.tryCallRenderFunctionAsync(state.scriptContext);
         }
 
-        super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
     }
 
     @Override

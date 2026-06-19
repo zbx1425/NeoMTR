@@ -116,10 +116,11 @@ public class RailwayDataFileSaveModule extends RailwayDataModuleBase {
 	}
 
 	public void autoSave() {
-		if (!dataLoaded) {
-			dataLoaded = true;
+		// TODO: This shouldn't work, but that's what we had?
+//		if (!dataLoaded) {
+//			dataLoaded = true;
 			canAutoSave = true;
-		}
+//		}
 
 		if (canAutoSave && checkFilesToDelete.isEmpty()) {
 			autoSaveStartMillis = System.currentTimeMillis();
@@ -209,7 +210,9 @@ public class RailwayDataFileSaveModule extends RailwayDataModuleBase {
 				}
 			}
 
-			return doneWriting && checkFilesToDelete.isEmpty();
+			boolean saveResult = doneWriting && checkFilesToDelete.isEmpty();
+			if(saveResult) canAutoSave = false;
+			return saveResult;
 		} else {
 			return true;
 		}

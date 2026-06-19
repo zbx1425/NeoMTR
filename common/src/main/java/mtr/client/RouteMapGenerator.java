@@ -718,7 +718,7 @@ public class RouteMapGenerator implements IGui {
 		int drawX = 0;
 		int drawY = rotate90 ? textDimensions[0] - 1 : 0;
 		for (int i = 0; i < textDimensions[0] * textDimensions[1]; i++) {
-			blendPixel(nativeImage, (int) horizontalAlignment.getOffset(x + drawX, textDimensions[rotate90 ? 1 : 0]), (int) verticalAlignment.getOffset(y + drawY, textDimensions[rotate90 ? 0 : 1]), ((pixels[i] & 0xFF) << 24) + (textColor & RGB_WHITE));
+			blendPixel(nativeImage, (int) horizontalAlignment.getOffset(x + drawX, textDimensions[rotate90 ? 1 : 0]), (int) verticalAlignment.getOffset(y + drawY, textDimensions[rotate90 ? 0 : 1]), ((pixels[i] & 0xFF) << 24) + invertColor(textColor & RGB_WHITE));
 			if (rotate90) {
 				drawY--;
 				if (drawY < 0) {

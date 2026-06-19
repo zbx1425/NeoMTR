@@ -1,7 +1,9 @@
 package mtr.screen;
 
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.*;
 import mtr.MTR;
+import mtr.RegistryClient;
 import mtr.client.IDrawing;
 import mtr.data.IGui;
 import mtr.mappings.ButtonMapper;
@@ -11,10 +13,15 @@ import mtr.mappings.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.awt.*;
 import java.util.Locale;
@@ -45,7 +52,6 @@ public class WidgetColorSelector extends ButtonMapper implements IGui {
 
 	@Override
 	public void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		super.extractRenderState(guiGraphics, mouseX, mouseY, delta);
 		if (visible) {
 			final int margin = hasMargin ? 1 : 0;
 			guiGraphics.fill(UtilitiesClient.getWidgetX(this) - margin, UtilitiesClient.getWidgetY(this) - margin, UtilitiesClient.getWidgetX(this) + width + margin, UtilitiesClient.getWidgetY(this) + height + margin, ARGB_BLACK | color);
@@ -134,48 +140,64 @@ public class WidgetColorSelector extends ButtonMapper implements IGui {
 
 		@Override
 		public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-			try {
-				super.extractRenderState(guiGraphics, mouseX, mouseY, delta);
+			super.extractRenderState(guiGraphics, mouseX, mouseY, delta);
 
-				final int mainWidth = getMainWidth();
-				final int mainHeight = getMainHeight();
+			final int mainWidth = getMainWidth();
+			final int mainHeight = getMainHeight();
 
-				guiGraphics.centeredText(font, Text.translatable("gui.mtr.color"), SQUARE_SIZE * 4 + mainWidth + RIGHT_WIDTH / 2, SQUARE_SIZE, ARGB_WHITE);
-				guiGraphics.centeredText(font, "RGB", SQUARE_SIZE * 4 + mainWidth + RIGHT_WIDTH / 2, SQUARE_SIZE * 3 + TEXT_FIELD_PADDING, ARGB_WHITE);
+			guiGraphics.centeredText(font, Text.translatable("gui.mtr.color"), SQUARE_SIZE * 4 + mainWidth + RIGHT_WIDTH / 2, SQUARE_SIZE, ARGB_WHITE);
+			guiGraphics.centeredText(font, "RGB", SQUARE_SIZE * 4 + mainWidth + RIGHT_WIDTH / 2, SQUARE_SIZE * 3 + TEXT_FIELD_PADDING, ARGB_WHITE);
 
-				final Tesselator tesselator = Tesselator.getInstance();
-				final BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-				UtilitiesClient.beginDrawingRectangle(buffer);
+			final int selectedColor = Color.HSBtoRGB(hue, saturation, brightness);
+			GuiElementRenderState colorSpaceRenderer = new GuiElementRenderState() {
+				@Override
+				public void buildVertices(VertexConsumer vertexConsumer) {
+					IDrawing.drawRectangle(guiGraphics.pose(), vertexConsumer, SQUARE_SIZE * 4 + mainWidth + 1, SQUARE_SIZE * 7 + TEXT_FIELD_PADDING * 4 + 1, SQUARE_SIZE * 4 + mainWidth + RIGHT_WIDTH - 1, mainHeight - 1, selectedColor);
 
-				final int selectedColor = Color.HSBtoRGB(hue, saturation, brightness);
-				IDrawing.drawRectangle(guiGraphics.pose(), buffer, SQUARE_SIZE * 4 + mainWidth + 1, SQUARE_SIZE * 7 + TEXT_FIELD_PADDING * 4 + 1, SQUARE_SIZE * 4 + mainWidth + RIGHT_WIDTH - 1, mainHeight - 1, selectedColor);
-
-				for (int drawHue = 0; drawHue < mainHeight; drawHue++) {
-					final int color = Color.HSBtoRGB((float) drawHue / (mainHeight - 1), 1, 1);
-					IDrawing.drawRectangle(guiGraphics.pose(), buffer, SQUARE_SIZE * 2 + mainWidth, SQUARE_SIZE + drawHue, SQUARE_SIZE * 3 + mainWidth, SQUARE_SIZE + drawHue + 1, color);
-				}
-
-				for (int drawSaturation = 0; drawSaturation < mainWidth; drawSaturation++) {
-					for (int drawBrightness = 0; drawBrightness < mainHeight; drawBrightness++) {
-						final int color = Color.HSBtoRGB(hue, (float) drawSaturation / (mainWidth - 1), (float) drawBrightness / (mainHeight - 1));
-						IDrawing.drawRectangle(guiGraphics.pose(), buffer, SQUARE_SIZE + drawSaturation, SQUARE_SIZE + mainHeight - drawBrightness - 1, SQUARE_SIZE + drawSaturation + 1, SQUARE_SIZE + mainHeight - drawBrightness, color);
+					for (int drawHue = 0; drawHue < mainHeight; drawHue++) {
+						final int color = 0xFF000000 | Color.HSBtoRGB((float) drawHue / (mainHeight - 1), 1, 1);
+						IDrawing.drawRectangle(guiGraphics.pose(), vertexConsumer, SQUARE_SIZE * 2 + mainWidth, SQUARE_SIZE + drawHue, SQUARE_SIZE * 3 + mainWidth, SQUARE_SIZE + drawHue + 1, color);
 					}
+
+					for (int drawSaturation = 0; drawSaturation < mainWidth; drawSaturation++) {
+						for (int drawBrightness = 0; drawBrightness < mainHeight; drawBrightness++) {
+							final int color = 0xFF000000 | Color.HSBtoRGB(hue, (float) drawSaturation / (mainWidth - 1), (float) drawBrightness / (mainHeight - 1));
+							IDrawing.drawRectangle(guiGraphics.pose(), vertexConsumer, SQUARE_SIZE + drawSaturation, SQUARE_SIZE + mainHeight - drawBrightness - 1, SQUARE_SIZE + drawSaturation + 1, SQUARE_SIZE + mainHeight - drawBrightness, color);
+						}
+					}
+
+					final int selectedHueInt = Math.round(hue * (mainHeight - 1));
+					final int selectedSaturationInt = Math.round(saturation * (mainWidth - 1));
+					final int selectedBrightnessInt = Math.round(brightness * (mainHeight - 1));
+					IDrawing.drawRectangle(guiGraphics.pose(), vertexConsumer, SQUARE_SIZE * 2 + mainWidth, SQUARE_SIZE + selectedHueInt - 1, SQUARE_SIZE * 3 + mainWidth, SQUARE_SIZE + selectedHueInt + 2, ARGB_BLACK);
+					IDrawing.drawRectangle(guiGraphics.pose(), vertexConsumer, SQUARE_SIZE * 2 + mainWidth, SQUARE_SIZE + selectedHueInt, SQUARE_SIZE * 3 + mainWidth, SQUARE_SIZE + selectedHueInt + 1, ARGB_WHITE);
+					IDrawing.drawRectangle(guiGraphics.pose(), vertexConsumer, SQUARE_SIZE + selectedSaturationInt - 1, SQUARE_SIZE + mainHeight - selectedBrightnessInt - 1, SQUARE_SIZE + selectedSaturationInt + 2, SQUARE_SIZE + mainHeight - selectedBrightnessInt, ARGB_BLACK);
+					IDrawing.drawRectangle(guiGraphics.pose(), vertexConsumer, SQUARE_SIZE + selectedSaturationInt, SQUARE_SIZE + mainHeight - selectedBrightnessInt - 2, SQUARE_SIZE + selectedSaturationInt + 1, SQUARE_SIZE + mainHeight - selectedBrightnessInt + 1, ARGB_BLACK);
+					IDrawing.drawRectangle(guiGraphics.pose(), vertexConsumer, SQUARE_SIZE + selectedSaturationInt, SQUARE_SIZE + mainHeight - selectedBrightnessInt - 1, SQUARE_SIZE + selectedSaturationInt + 1, SQUARE_SIZE + mainHeight - selectedBrightnessInt, ARGB_WHITE);
 				}
 
-				final int selectedHueInt = Math.round(hue * (mainHeight - 1));
-				final int selectedSaturationInt = Math.round(saturation * (mainWidth - 1));
-				final int selectedBrightnessInt = Math.round(brightness * (mainHeight - 1));
-				IDrawing.drawRectangle(guiGraphics.pose(), buffer, SQUARE_SIZE * 2 + mainWidth, SQUARE_SIZE + selectedHueInt - 1, SQUARE_SIZE * 3 + mainWidth, SQUARE_SIZE + selectedHueInt + 2, ARGB_BLACK);
-				IDrawing.drawRectangle(guiGraphics.pose(), buffer, SQUARE_SIZE * 2 + mainWidth, SQUARE_SIZE + selectedHueInt, SQUARE_SIZE * 3 + mainWidth, SQUARE_SIZE + selectedHueInt + 1, ARGB_WHITE);
-				IDrawing.drawRectangle(guiGraphics.pose(), buffer, SQUARE_SIZE + selectedSaturationInt - 1, SQUARE_SIZE + mainHeight - selectedBrightnessInt - 1, SQUARE_SIZE + selectedSaturationInt + 2, SQUARE_SIZE + mainHeight - selectedBrightnessInt, ARGB_BLACK);
-				IDrawing.drawRectangle(guiGraphics.pose(), buffer, SQUARE_SIZE + selectedSaturationInt, SQUARE_SIZE + mainHeight - selectedBrightnessInt - 2, SQUARE_SIZE + selectedSaturationInt + 1, SQUARE_SIZE + mainHeight - selectedBrightnessInt + 1, ARGB_BLACK);
-				IDrawing.drawRectangle(guiGraphics.pose(), buffer, SQUARE_SIZE + selectedSaturationInt, SQUARE_SIZE + mainHeight - selectedBrightnessInt - 1, SQUARE_SIZE + selectedSaturationInt + 1, SQUARE_SIZE + mainHeight - selectedBrightnessInt, ARGB_WHITE);
+				@Override
+				public RenderPipeline pipeline() {
+					return RenderPipelines.GUI;
+				}
 
-//				BufferUploader.drawWithShader(buffer.buildOrThrow());
-				UtilitiesClient.finishDrawingRectangle();
-			} catch (Exception e) {
-				MTR.LOGGER.error("", e);
-			}
+				@Override
+				public TextureSetup textureSetup() {
+					return TextureSetup.noTexture();
+				}
+
+				@Override
+				public @Nullable ScreenRectangle scissorArea() {
+					return null;
+				}
+
+				@Override
+				public ScreenRectangle bounds() {
+					return new ScreenRectangle(0, 0, width, height);
+				}
+			};
+
+			RegistryClient.submitGuiElementRenderState(guiGraphics, colorSpaceRenderer);
 		}
 
 		@Override
