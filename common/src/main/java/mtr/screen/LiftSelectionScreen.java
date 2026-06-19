@@ -62,14 +62,13 @@ public class LiftSelectionScreen extends ScreenMapper implements IGui {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
+	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+		super.extractBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			selectionList.render(guiGraphics, font);
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);
 		}
-		guiGraphics.pose().translate(0, 0, 100);
 	}
 
 	@Override

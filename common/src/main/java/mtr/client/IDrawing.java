@@ -24,6 +24,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import org.joml.Matrix3x2fStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,7 +129,7 @@ public interface IDrawing {
 		});
 	}
 
-	static void drawRectangle(PoseStack.Pose pose, VertexConsumer vertexConsumer, double x1, double y1, double x2, double y2, int color) {
+	static void drawRectangle(Matrix3x2fStack pose, VertexConsumer vertexConsumer, double x1, double y1, double x2, double y2, int color) {
 		final int a = (color >> 24) & 0xFF;
 		final int r = (color >> 16) & 0xFF;
 		final int g = (color >> 8) & 0xFF;
@@ -136,10 +137,10 @@ public interface IDrawing {
 		if (a == 0) {
 			return;
 		}
-		vertexConsumer.addVertex(pose, (float)x1, (float)y1, 0).setColor(r, g, b, a);
-		vertexConsumer.addVertex(pose, (float)x1, (float)y2, 0).setColor(r, g, b, a);
-		vertexConsumer.addVertex(pose, (float)x2, (float)y2, 0).setColor(r, g, b, a);
-		vertexConsumer.addVertex(pose, (float)x2, (float)y1, 0).setColor(r, g, b, a);
+		vertexConsumer.addVertexWith2DPose(pose, (float)x1, (float)y1).setColor(r, g, b, a);
+		vertexConsumer.addVertexWith2DPose(pose, (float)x1, (float)y2).setColor(r, g, b, a);
+		vertexConsumer.addVertexWith2DPose(pose, (float)x2, (float)y2).setColor(r, g, b, a);
+		vertexConsumer.addVertexWith2DPose(pose, (float)x2, (float)y1).setColor(r, g, b, a);
 	}
 
 	static void drawTexture(PoseStack.Pose matrices, VertexConsumer vertexConsumer, float x1, float y1, float z1, float x2, float y2, float z2, Direction facing, int color, int light) {

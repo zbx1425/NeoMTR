@@ -18,8 +18,10 @@ import mtr.render.RenderTrains;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.LightCoordsUtil;
@@ -369,8 +371,8 @@ public class ResourcePackCreatorScreen extends ScreenMapper implements IResource
 	}
 
 	@Override
-	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
+	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+		super.extractBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			if (guiCounter == 0 && minecraft != null) {
 				hideGui = minecraft.options.hideGui;
@@ -396,7 +398,6 @@ public class ResourcePackCreatorScreen extends ScreenMapper implements IResource
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);
 		}
-		guiGraphics.pose().translate(0, 0, 100);
 		guiCounter = 2;
 	}
 
@@ -419,9 +420,9 @@ public class ResourcePackCreatorScreen extends ScreenMapper implements IResource
 	}
 
 	@Override
-	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-		if (mouseX >= PANEL_WIDTH && mouseX < width - PANEL_WIDTH && mouseY < height - TEXT_HEIGHT - SQUARE_SIZE * 3) {
-			if (button == 0) {
+	public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
+		if (event.x() >= PANEL_WIDTH && event.x() < width - PANEL_WIDTH && event.y() < height - TEXT_HEIGHT - SQUARE_SIZE * 3) {
+			if (event.button() == 0) {
 				final Vec3 movement = new Vec3(0, deltaY * MOUSE_SCALE * scale, deltaX * MOUSE_SCALE * scale).yRot(yaw).zRot(roll);
 				final float bound = cars * RenderTrains.creatorProperties.getLength() / 2F;
 				translation = Mth.clamp(translation - (float) movement.z, -bound, bound);
@@ -430,7 +431,7 @@ public class ResourcePackCreatorScreen extends ScreenMapper implements IResource
 				roll -= (float) deltaY * MOUSE_SCALE * scale * Math.cos(yaw);
 			}
 		}
-		return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+		return super.mouseDragged(event, deltaX, deltaY);
 	}
 
 	@Override
@@ -669,7 +670,8 @@ public class ResourcePackCreatorScreen extends ScreenMapper implements IResource
 
 			matrices.pushPose();
 			final MultiBufferSource.BufferSource immediate = minecraft.renderBuffers().bufferSource();
-			IDrawing.drawTexture(matrices.last(), immediate.getBuffer(RenderType.solid()), Integer.MIN_VALUE, Integer.MAX_VALUE, -256, Integer.MAX_VALUE, Integer.MIN_VALUE, -256, Direction.UP, ARGB_BLACK, 0);
+			// TODO:
+			IDrawing.drawTexture(matrices.last(), immediate.getBuffer(RenderTypes.solidMovingBlock()), Integer.MIN_VALUE, Integer.MAX_VALUE, -256, Integer.MAX_VALUE, Integer.MIN_VALUE, -256, Direction.UP, ARGB_BLACK, 0);
 			immediate.endBatch();
 			matrices.translate(0, 0, -scale);
 			UtilitiesClient.rotateYDegrees(matrices, 90);

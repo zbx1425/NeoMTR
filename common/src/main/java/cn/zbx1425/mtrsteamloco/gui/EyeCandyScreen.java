@@ -51,8 +51,8 @@ public class EyeCandyScreen extends SelectListScreen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
-        super.render(guiGraphics, i, j, f);
+    public void extractRenderState(@NotNull GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
+        super.extractRenderState(guiGraphics, i, j, f);
 
         if (isSelectingModel) {
             super.renderSelectPage(guiGraphics);

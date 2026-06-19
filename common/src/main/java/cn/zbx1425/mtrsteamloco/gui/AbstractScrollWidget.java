@@ -6,9 +6,13 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
+import org.joml.Matrix3x2fStack;
 
 public abstract class AbstractScrollWidget extends AbstractWidget {
     private double offset;
@@ -19,12 +23,12 @@ public abstract class AbstractScrollWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
         if (!this.visible) return false;
-        boolean clickInside = this.isMouseInside(mouseX, mouseY);
-        boolean clickBar = this.getScrollBarVisible() && mouseX >= (double)(this.getX() + this.width) && mouseX <= (double)(this.getX() + this.width + 8) && mouseY >= (double)this.getY() && mouseY < (double)(this.getY() + this.height);
+        boolean clickInside = this.isMouseInside(event.x(), event.y());
+        boolean clickBar = this.getScrollBarVisible() && event.x() >= (double)(this.getX() + this.width) && event.x() <= (double)(this.getX() + this.width + 8) && event.y() >= (double)this.getY() && event.y() < (double)(this.getY() + this.height);
         this.setFocused(clickInside || clickBar);
-        if (clickBar && button == 0) {
+        if (clickBar && event.button() == 0) {
             this.holdingScrollBar = true;
             return true;
         }
@@ -32,24 +36,24 @@ public abstract class AbstractScrollWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (button == 0) {
+    public boolean mouseReleased(MouseButtonEvent event) {
+        if (event.button() == 0) {
             this.holdingScrollBar = false;
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(event);
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+    public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
         if (!(this.visible && this.isFocused() && this.holdingScrollBar)) return false;
-        if (mouseY < (double)this.getY()) {
+        if (event.y() < (double)this.getY()) {
             this.setOffset(0.0);
-        } else if (mouseY > (double)(this.getY() + this.height)) {
+        } else if (event.y() > (double)(this.getY() + this.height)) {
             this.setOffset(this.getMaxOffset());
         } else {
             int i = this.getScrollBarHeight();
             double d = Math.max(1, this.getMaxOffset() / (this.height - i));
-            this.setOffset(this.offset + dragY * d);
+            this.setOffset(this.offset + deltaY * d);
         }
         return true;
     }
@@ -62,32 +66,23 @@ public abstract class AbstractScrollWidget extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        PoseStack poseStack = guiGraphics.pose();
+    public void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        Matrix3x2fStack poseStack = guiGraphics.pose();
         if (!this.visible) {
             return;
         }
         this.renderBackground(guiGraphics);
-        vcEnableScissor(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height);
-        poseStack.pushMatrix();
-        poseStack.translate(0.0, -this.offset, 0.0);
+//        vcEnableScissor(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height);
+        guiGraphics.enableScissor(getX(), getY(), getX() + this.width, getY() + this.height);
+        poseStack.popMatrix();
+        poseStack.translate(0, (float)-this.offset);
         this.renderContents(guiGraphics, mouseX, mouseY, partialTick);
         poseStack.popMatrix();
-        RenderSystem.disableScissor();
+        guiGraphics.disableScissor();
+//        RenderSystem.disableScissor();
         if (this.getScrollBarVisible()) {
-            this.renderScrollBar();
+            this.renderScrollBar(guiGraphics);
         }
-    }
-
-    public static void vcEnableScissor(int x1, int y1, int x2, int y2) {
-        Window window = Minecraft.getInstance().getWindow();
-        int wndHeight = window.getHeight();
-        double guiScale = window.getGuiScale();
-        double scaledX1 = (double)x1 * guiScale;
-        double scaledY1 = (double)wndHeight - (double)y2 * guiScale;
-        double scaledWidth = (double)(x2 - x1) * guiScale;
-        double scaledHeight = (double)(y2 - y1) * guiScale;
-        RenderSystem.enableScissor((int)scaledX1, (int)scaledY1, Math.max(0, (int)scaledWidth), Math.max(0, (int)scaledHeight));
     }
 
     private int getScrollBarHeight() {
@@ -111,24 +106,33 @@ public abstract class AbstractScrollWidget extends AbstractWidget {
         guiGraphics.fill(this.getX() + 1, this.getY() + 1, this.getX() + this.width - 1, this.getY() + this.height - 1, 0xff555555);
     }
 
-    private void renderScrollBar() {
-        int i = this.getScrollBarHeight();
-        int j = this.getX() + this.width;
-        int k = this.getX() + this.width + 8;
-        int l = Math.max(this.getY(), (int)this.offset * (this.height - i) / this.getMaxOffset() + this.getY());
-        int m = l + i;
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        Tesselator tesselator = Tesselator.getInstance();
-        BufferBuilder bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        bufferBuilder.addVertex(j, m, 0).setColor(128, 128, 128, 255);
-        bufferBuilder.addVertex(k, m, 0).setColor(128, 128, 128, 255);
-        bufferBuilder.addVertex(k, l, 0).setColor(128, 128, 128, 255);
-        bufferBuilder.addVertex(j, l, 0).setColor(128, 128, 128, 255);
-        bufferBuilder.addVertex(j, m - 1, 0).setColor(192, 192, 192, 255);
-        bufferBuilder.addVertex(k - 1, m - 1, 0).setColor(192, 192, 192, 255);
-        bufferBuilder.addVertex(k - 1, l, 0).setColor(192, 192, 192, 255);
-        bufferBuilder.addVertex(j, l, 0).setColor(192, 192, 192, 255);
-        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
+    private void renderScrollBar(GuiGraphicsExtractor guiGraphics) {
+        int h = this.getScrollBarHeight();
+        int x1 = this.getX() + this.width;
+        int x2 = this.getX() + this.width + 8;
+        int y1 = Math.max(this.getY(), (int)this.offset * (this.height - h) / this.getMaxOffset() + this.getY());
+        int y2 = y1 + h;
+
+        // TODO:
+//        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+//        MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+//        Tesselator tesselator = Tesselator.getInstance();
+//        BufferBuilder bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+//        bufferBuilder.addVertex(x1, y2, 0).setColor(128, 128, 128, 255);
+//        bufferBuilder.addVertex(x2, y2, 0).setColor(128, 128, 128, 255);
+//        bufferBuilder.addVertex(x2, y1, 0).setColor(128, 128, 128, 255);
+//        bufferBuilder.addVertex(x1, y1, 0).setColor(128, 128, 128, 255);
+//        bufferBuilder.addVertex(x1, y2 - 1, 0).setColor(192, 192, 192, 255);
+//        bufferBuilder.addVertex(x2 - 1, y2 - 1, 0).setColor(192, 192, 192, 255);
+//        bufferBuilder.addVertex(x2 - 1, y1, 0).setColor(192, 192, 192, 255);
+//        bufferBuilder.addVertex(x1, y1, 0).setColor(192, 192, 192, 255);
+
+        // Shadow
+        guiGraphics.fill(x1, y1, x2, y2, ARGB.color(255, 128, 128, 128));
+        // Scroll bar
+        guiGraphics.fill(x1, y1, x2-1, y2-1, ARGB.color(255, 192, 192, 192));
+
+//        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
     }
 
     protected boolean isMouseInside(double x, double y) {

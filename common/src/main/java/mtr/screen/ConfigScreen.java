@@ -174,8 +174,8 @@ public class ConfigScreen extends ScreenMapper implements IGui {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
+	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+		super.extractBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			guiGraphics.centeredText(font, Text.translatable("gui.mtr.mtr_options"), width / 2, TEXT_PADDING, ARGB_WHITE);
 
@@ -223,7 +223,6 @@ public class ConfigScreen extends ScreenMapper implements IGui {
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);
 		}
-		guiGraphics.pose().translate(0, 0, 100);
 	}
 
 	@Override

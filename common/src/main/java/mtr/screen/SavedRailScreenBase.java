@@ -38,7 +38,6 @@ public abstract class SavedRailScreenBase<T extends SavedRailBase> extends Scree
 		this.dashboardScreen = dashboardScreen;
 		savedRailNumberText = Text.translatable(getNumberStringKey());
 
-		font = Minecraft.getInstance().font;
 		textFieldSavedRailNumber = new WidgetBetterTextField("1", MAX_SAVED_RAIL_NUMBER_LENGTH);
 
 		int additionalTextWidths = 0;
@@ -91,8 +90,8 @@ public abstract class SavedRailScreenBase<T extends SavedRailBase> extends Scree
 	}
 
 	@Override
-	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
+	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+		super.extractBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			if (shouldRenderExtra()) {
 				renderExtra(guiGraphics, mouseX, mouseY, delta);
@@ -102,7 +101,6 @@ public abstract class SavedRailScreenBase<T extends SavedRailBase> extends Scree
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);
 		}
-		guiGraphics.pose().translate(0, 0, 100);
 	}
 
 	@Override

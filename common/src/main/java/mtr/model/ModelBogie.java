@@ -15,7 +15,11 @@ public class ModelBogie extends EntityModel<EntityRenderState> {
 	private final Identifier texture = Identifier.parse("mtr:textures/entity/bogie_1.png");
 
 	public ModelBogie() {
-		final int textureWidth = 186;
+		// TODO: Check if this works
+		ModelDataWrapper dummyRoot = new ModelDataWrapper();
+		dummyRoot.setModelPart(16, 16);
+        super(dummyRoot.modelPart);
+        final int textureWidth = 186;
 		final int textureHeight = 77;
 
 		final ModelDataWrapper modelDataWrapper = new ModelDataWrapper(this, textureWidth, textureHeight);

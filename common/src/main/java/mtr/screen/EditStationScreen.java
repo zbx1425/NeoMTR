@@ -125,12 +125,12 @@ public class EditStationScreen extends EditNameColorScreenBase<Station> {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
+	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+		super.extractBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			renderTextFields(guiGraphics);
 
-			guiGraphics.vLine(width / 2, EXIT_PANELS_START - SQUARE_SIZE, height, ARGB_WHITE_TRANSLUCENT);
+			guiGraphics.verticalLine(width / 2, EXIT_PANELS_START - SQUARE_SIZE, height, ARGB_WHITE_TRANSLUCENT);
 
 			exitParentList.render(guiGraphics, font);
 			exitDestinationList.render(guiGraphics, font);
@@ -143,7 +143,6 @@ public class EditStationScreen extends EditNameColorScreenBase<Station> {
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);
 		}
-		guiGraphics.pose().translate(0, 0, 100);
 	}
 
 	@Override

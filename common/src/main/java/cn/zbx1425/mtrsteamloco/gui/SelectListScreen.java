@@ -112,9 +112,9 @@ public abstract class SelectListScreen extends ScreenMapper {
     }
 
     @Override
-    public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (scrollList.visible) return;
-        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     public boolean isSelecting() {

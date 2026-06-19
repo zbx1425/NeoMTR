@@ -1042,36 +1042,36 @@ public class RailEditorVisualScreen extends SelectListScreen {
     }
 
     static List<RailModelRepeater> readRepeatersFromNbt(CompoundTag tag) {
-        int count = tag.getInt("RepeaterCount");
+        int count = tag.getIntOr("RepeaterCount", 0);
         List<RailModelRepeater> result = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            CompoundTag layerTag = tag.getCompound("Repeater_" + i);
+            CompoundTag layerTag = tag.getCompoundOrEmpty("Repeater_" + i);
             if (layerTag.isEmpty()) continue;
             RailModelRepeater p = new RailModelRepeater();
-            p.id = layerTag.getString("Id");
-            p.repeaterMode = RepeaterMode.fromIndex(layerTag.getInt("Mode"));
-            p.intervalOverride = layerTag.getFloat("IntervalOverride");
+            p.id = layerTag.getStringOr("Id", "");
+            p.repeaterMode = RepeaterMode.fromIndex(layerTag.getIntOr("Mode", 0));
+            p.intervalOverride = layerTag.getFloatOr("IntervalOverride", 0);
 
-            int attCount = layerTag.getInt("AttachmentCount");
+            int attCount = layerTag.getIntOr("AttachmentCount", 0);
             if (attCount > 0) {
                 p.attachments.clear();
                 for (int j = 0; j < attCount; j++) {
-                    CompoundTag attTag = layerTag.getCompound("Att_" + j);
+                    CompoundTag attTag = layerTag.getCompoundOrEmpty("Att_" + j);
                     RepeaterAttachment att = new RepeaterAttachment();
-                    att.modelTypeKey = attTag.getString("ModelTypeKey");
-                    att.reversed = attTag.getBoolean("Reversed");
-                    att.offsetX = attTag.getFloat("OffsetX");
-                    att.offsetY = attTag.getFloat("OffsetY");
-                    att.offsetZ = attTag.getFloat("OffsetZ");
-                    att.firstModelIndex = attTag.getInt("FirstModelIndex");
+                    att.modelTypeKey = attTag.getStringOr("ModelTypeKey", "");
+                    att.reversed = attTag.getBooleanOr("Reversed", false);
+                    att.offsetX = attTag.getFloatOr("OffsetX", 0);
+                    att.offsetY = attTag.getFloatOr("OffsetY", 0);
+                    att.offsetZ = attTag.getFloatOr("OffsetZ", 0);
+                    att.firstModelIndex = attTag.getIntOr("FirstModelIndex", 0);
                     p.attachments.add(att);
                 }
             } else if (layerTag.contains("ModelKey")) {
                 // Legacy NBT compat
                 p.attachments.clear();
                 RepeaterAttachment att = new RepeaterAttachment();
-                att.modelTypeKey = layerTag.getString("ModelKey");
-                att.reversed = layerTag.getBoolean("Reversed");
+                att.modelTypeKey = layerTag.getStringOr("ModelKey", "");
+                att.reversed = layerTag.getBooleanOr("Reversed", false);
                 p.attachments.add(att);
             }
             result.add(p);
@@ -1080,8 +1080,8 @@ public class RailEditorVisualScreen extends SelectListScreen {
     }
 
     @Override
-    public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
         if (modelSelectTarget != ModelSelectTarget.NONE) {
             renderSelectPage(guiGraphics);
         }

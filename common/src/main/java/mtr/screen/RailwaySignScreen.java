@@ -173,18 +173,15 @@ public class RailwaySignScreen extends ScreenMapper implements IGui {
 	}
 
 	@Override
-	public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		super.render(guiGraphics, mouseX, mouseY, delta);
+	public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+		super.extractRenderState(guiGraphics, mouseX, mouseY, delta);
 		try {
-			if (minecraft == null) {
-				return;
-			}
-
 			for (int i = 0; i < signIds.length; i++) {
 				if (signIds[i] != null) {
-					RenderRailwaySign.drawSign(guiGraphics.pose(), null, null, font, signPos, signIds[i], (width - SIGN_SIZE * length) / 2F + i * SIGN_SIZE, 0, SIGN_SIZE, RenderRailwaySign.getMaxWidth(signIds, i, false), RenderRailwaySign.getMaxWidth(signIds, i, true), selectedIds, Direction.UP, 0, (textureId, x, y, size, flipTexture) -> {
-						guiGraphics.blit(textureId, (int) x, (int) y, 0, 0, (int) size, (int) size, (int) (flipTexture ? -size : size), (int) size);
-					});
+					// TODO:
+//					RenderRailwaySign.drawSign(guiGraphics.pose(), true, null, font, signPos, signIds[i], (width - SIGN_SIZE * length) / 2F + i * SIGN_SIZE, 0, SIGN_SIZE, RenderRailwaySign.getMaxWidth(signIds, i, false), RenderRailwaySign.getMaxWidth(signIds, i, true), selectedIds, Direction.UP, 0, (textureId, x, y, size, flipTexture) -> {
+//						guiGraphics.blit(textureId, (int) x, (int) y, 0, 0, (int) size, (int) size, (int) (flipTexture ? -size : size), (int) size);
+//					});
 				}
 			}
 
@@ -198,7 +195,8 @@ public class RailwaySignScreen extends ScreenMapper implements IGui {
 					if (sign != null) {
 						final boolean moveRight = sign.hasCustomText() && sign.flipCustomText;
 						UtilitiesClient.beginDrawingTexture(sign.textureId);
-						RenderRailwaySign.drawSign(guiGraphics.pose(), null, null, font, signPos, signId, (isBig ? xOffsetBig : xOffsetSmall) + x + (moveRight ? SIGN_BUTTON_SIZE * 2 : 0), BUTTON_Y_START + y, SIGN_BUTTON_SIZE, 2, 2, selectedIds, Direction.UP, 0, (textureId, x1, y1, size, flipTexture) -> guiGraphics.blit(textureId, (int) x1, (int) y1, 0, 0, (int) size, (int) size, (int) (flipTexture ? -size : size), (int) size));
+						// TODO:
+//						RenderRailwaySign.drawSign(guiGraphics.pose(), true, null, font, signPos, signId, (isBig ? xOffsetBig : xOffsetSmall) + x + (moveRight ? SIGN_BUTTON_SIZE * 2 : 0), BUTTON_Y_START + y, SIGN_BUTTON_SIZE, 2, 2, selectedIds, Direction.UP, 0, (textureId, x1, y1, size, flipTexture) -> guiGraphics.blit(textureId, (int) x1, (int) y1, 0, 0, (int) size, (int) size, (int) (flipTexture ? -size : size), (int) size));
 					}
 				}, false);
 
@@ -227,8 +225,8 @@ public class RailwaySignScreen extends ScreenMapper implements IGui {
 	}
 
 	@Override
-	public void resize(Minecraft client, int width, int height) {
-		super.resize(client, width, height);
+	public void resize(int width, int height) {
+		super.resize(width, height);
 		for (Button button : buttonsEdit) {
 			button.active = true;
 		}

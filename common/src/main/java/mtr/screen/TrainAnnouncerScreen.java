@@ -8,6 +8,7 @@ import mtr.mappings.Text;
 import mtr.mappings.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
@@ -31,7 +32,6 @@ public class TrainAnnouncerScreen extends TrainSensorScreenBase {
 				new Tuple<>(new WidgetBetterTextField("", MAX_MESSAGE_LENGTH), Text.translatable("gui.mtr.sound_file"))
 		);
 
-		minecraft = Minecraft.getInstance();
 		final ClientLevel world = minecraft.level;
 		if (world != null) {
 			final BlockEntity entity = world.getBlockEntity(pos);
@@ -80,15 +80,15 @@ public class TrainAnnouncerScreen extends TrainSensorScreenBase {
 	}
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if (button == 0) {
-			if (RailwayData.isBetween(mouseX, UtilitiesClient.getWidgetX(textFields[1]), UtilitiesClient.getWidgetX(textFields[1]) + textFields[1].getWidth()) && RailwayData.isBetween(mouseY, UtilitiesClient.getWidgetY(textFields[1]), UtilitiesClient.getWidgetY(textFields[1]) + textFields[1].getHeight())) {
+	public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
+		if (event.button() == 0) {
+			if (RailwayData.isBetween(event.x(), UtilitiesClient.getWidgetX(textFields[1]), UtilitiesClient.getWidgetX(textFields[1]) + textFields[1].getWidth()) && RailwayData.isBetween(event.y(), UtilitiesClient.getWidgetY(textFields[1]), UtilitiesClient.getWidgetY(textFields[1]) + textFields[1].getHeight())) {
 				setListVisibility(true);
-			} else if (!RailwayData.isBetween(mouseX, availableSoundsList.x, availableSoundsList.x + availableSoundsList.width) || !RailwayData.isBetween(mouseY, availableSoundsList.y, availableSoundsList.y + availableSoundsList.height)) {
+			} else if (!RailwayData.isBetween(event.x(), availableSoundsList.x, availableSoundsList.x + availableSoundsList.width) || !RailwayData.isBetween(event.y(), availableSoundsList.y, availableSoundsList.y + availableSoundsList.height)) {
 				setListVisibility(false);
 			}
 		}
-		return super.mouseClicked(mouseX, mouseY, button);
+		return super.mouseClicked(event, isDoubleClick);
 	}
 
 	@Override

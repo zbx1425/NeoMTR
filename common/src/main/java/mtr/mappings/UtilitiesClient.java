@@ -35,15 +35,15 @@ import java.util.List;
 public interface UtilitiesClient {
 
 	static void beginDrawingRectangle(BufferBuilder buffer) {
-		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+//		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 	}
 
 	static void finishDrawingRectangle() {
 	}
 
 	static void beginDrawingTexture(Identifier textureId) {
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderTexture(0, textureId);
+//		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+//		RenderSystem.setShaderTexture(0, textureId);
 	}
 
 	static void drawInBatch(Font textRenderer, FormattedCharSequence formattedCharSequence, float x, float y, int color, boolean shadow, Matrix4f matrix4f, MultiBufferSource immediate, int overlay, int light) {

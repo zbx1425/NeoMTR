@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -22,6 +23,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.levelgen.Heightmap;
+import org.joml.Matrix3x2fStack;
 
 import java.util.ConcurrentModificationException;
 import java.util.List;
@@ -81,11 +83,10 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 	}
 
 	@Override
-	public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+	public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		final Tesselator tesselator = Tesselator.getInstance();
 		final BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		UtilitiesClient.beginDrawingRectangle(buffer);
-		RenderSystem.enableBlend();
 
 		final Tuple<Integer, Integer> topLeft = coordsToWorldPos(0, 0);
 		final Tuple<Integer, Integer> bottomRight = coordsToWorldPos(width, height);
@@ -135,8 +136,8 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 			});
 		}
 
-		BufferUploader.drawWithShader(buffer.buildOrThrow());
-		RenderSystem.disableBlend();
+		// TODO:
+//		BufferUploader.drawWithShader(buffer.buildOrThrow());
 		UtilitiesClient.finishDrawingRectangle();
 
 		if (mapState == MapState.EDITING_AREA) {
@@ -163,14 +164,16 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 				if (canDrawAreaText(station)) {
 					final BlockPos pos = station.getCenter();
 					final String stationString = String.format("%s|(%s)", station.name, Text.translatable("gui.mtr.zone_number", station.zone).getString());
-					drawFromWorldCoords(pos.getX(), pos.getZ(), (x1, y1) -> IDrawing.drawStringWithFont(guiGraphics.pose(), textRenderer, immediate, stationString, x + x1.floatValue(), y + y1.floatValue(), MAX_LIGHT_GLOWING));
+					// TODO:
+//					drawFromWorldCoords(pos.getX(), pos.getZ(), (x1, y1) -> IDrawing.drawStringWithFont(guiGraphics.pose(), textRenderer, immediate, stationString, x + x1.floatValue(), y + y1.floatValue(), MAX_LIGHT_GLOWING));
 				}
 			}
 		} else {
 			for (final Depot depot : ClientData.DEPOTS) {
 				if (canDrawAreaText(depot)) {
 					final BlockPos pos = depot.getCenter();
-					drawFromWorldCoords(pos.getX(), pos.getZ(), (x1, y1) -> IDrawing.drawStringWithFont(guiGraphics.pose(), textRenderer, immediate, depot.name, x + x1.floatValue(), y + y1.floatValue(), MAX_LIGHT_GLOWING));
+					// TODO:
+//					drawFromWorldCoords(pos.getX(), pos.getZ(), (x1, y1) -> IDrawing.drawStringWithFont(guiGraphics.pose(), textRenderer, immediate, depot.name, x + x1.floatValue(), y + y1.floatValue(), MAX_LIGHT_GLOWING));
 				}
 			}
 		}
@@ -181,9 +184,9 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 	}
 
 	@Override
-	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+	public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
 		if (mapState == MapState.EDITING_AREA) {
-			drawArea2 = coordsToWorldPos((int) Math.round(mouseX - x), (int) Math.round(mouseY - y));
+			drawArea2 = coordsToWorldPos((int) Math.round(event.x() - x), (int) Math.round(event.y() - y));
 			if (drawArea1.getA().equals(drawArea2.getA())) {
 				drawArea2 = new Tuple<>(drawArea2.getA() + 1, drawArea2.getB());
 			}
@@ -199,7 +202,7 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 	}
 
 	@Override
-	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+	public boolean mouseReleased(MouseButtonEvent event) {
 		if (mapState == MapState.EDITING_AREA) {
 			onDrawCornersMouseRelease.run();
 		}
@@ -207,17 +210,17 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 	}
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if (isMouseOver(mouseX, mouseY)) {
+	public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
+		if (isMouseOver(event.x(), event.y())) {
 			if (ClientData.hasPermission()) {
 				if (mapState == MapState.EDITING_AREA) {
-					drawArea1 = coordsToWorldPos((int) (mouseX - x), (int) (mouseY - y));
+					drawArea1 = coordsToWorldPos((int) (event.x() - x), (int) (event.y() - y));
 					drawArea2 = null;
 				} else if (mapState == MapState.EDITING_ROUTE) {
-					final Tuple<Double, Double> mouseWorldPos = coordsToWorldPos(mouseX - x, mouseY - y);
+					final Tuple<Double, Double> mouseWorldPos = coordsToWorldPos(event.x() - x, event.y() - y);
 					mouseOnSavedRail(mouseWorldPos, (savedRail, x1, z1, x2, z2) -> onClickAddPlatformToRoute.accept(savedRail.id), true);
 				} else {
-					final Tuple<Double, Double> mouseWorldPos = coordsToWorldPos(mouseX - x, mouseY - y);
+					final Tuple<Double, Double> mouseWorldPos = coordsToWorldPos(event.x() - x, event.y() - y);
 					mouseOnSavedRail(mouseWorldPos, (savedRail, x1, z1, x2, z2) -> onClickEditSavedRail.accept(savedRail), showStations);
 				}
 			}
@@ -335,11 +338,11 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 		}
 	}
 
-	private void drawRectangleFromWorldCoords(PoseStack matrices, BufferBuilder buffer, Tuple<Integer, Integer> corner1, Tuple<Integer, Integer> corner2, int color) {
+	private void drawRectangleFromWorldCoords(Matrix3x2fStack matrices, BufferBuilder buffer, Tuple<Integer, Integer> corner1, Tuple<Integer, Integer> corner2, int color) {
 		drawRectangleFromWorldCoords(matrices, buffer, corner1.getA(), corner1.getB(), corner2.getA(), corner2.getB(), color);
 	}
 
-	private void drawRectangleFromWorldCoords(PoseStack matrices, BufferBuilder buffer, double posX1, double posZ1, double posX2, double posZ2, int color) {
+	private void drawRectangleFromWorldCoords(Matrix3x2fStack matrices, BufferBuilder buffer, double posX1, double posZ1, double posX2, double posZ2, int color) {
 		final double x1 = (posX1 - centerX) * scale + width / 2D;
 		final double z1 = (posZ1 - centerY) * scale + height / 2D;
 		final double x2 = (posX2 - centerX) * scale + width / 2D;
@@ -347,7 +350,7 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 		drawRectangle(matrices, buffer, x1, z1, x2, z2, color);
 	}
 
-	private void drawRectangle(PoseStack matrices, BufferBuilder buffer, double xA, double yA, double xB, double yB, int color) {
+	private void drawRectangle(Matrix3x2fStack matrices, BufferBuilder buffer, double xA, double yA, double xB, double yB, int color) {
 		final double x1 = Math.min(xA, xB);
 		final double y1 = Math.min(yA, yB);
 		final double x2 = Math.max(xA, xB);

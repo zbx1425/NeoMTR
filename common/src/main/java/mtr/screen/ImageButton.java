@@ -4,6 +4,7 @@ package mtr.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -57,7 +58,7 @@ public class ImageButton extends Button {
         );
     }
 
-    public void renderTexture(GuiGraphicsExtractor var1, Identifier var2, int var3, int var4, int var5, int var6, int var7, int var8, int var9, int var10, int var11) {
+    public void renderTexture(GuiGraphicsExtractor var1, Identifier textureId, int var3, int var4, int var5, int var6, int var7, int var8, int var9, int var10, int var11) {
         int var12 = var6;
         if (!this.isActive()) {
             var12 = var6 + var7 * 2;
@@ -65,7 +66,6 @@ public class ImageButton extends Button {
             var12 = var6 + var7;
         }
 
-        RenderSystem.enableDepthTest();
-        var1.blit(var2, var3, var4, (float)var5, (float)var12, var8, var9, var10, var11);
+        var1.blit(RenderPipelines.GUI_TEXTURED, textureId, var3, var4, (float)var5, (float)var12, var8, var9, var10, var11);
     }
 }

@@ -6,6 +6,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
 import java.util.*;
@@ -193,7 +194,7 @@ public class WidgetManualPositionBar extends AbstractWidget {
 
     // --- Rendering ---
     @Override
-    public void renderWidget(GuiGraphicsExtractor g, int mouseX, int mouseY, float delta) {
+    public void extractWidgetRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float delta) {
         if (!visible) return;
         Font font = Minecraft.getInstance().font;
 
@@ -279,7 +280,7 @@ public class WidgetManualPositionBar extends AbstractWidget {
             if (px < pxL - 1 || px > pxR + 1) continue;
             dfill(g, px, y, px + 1, y + TICK_LEN, 0xFF606060);
             String label = formatTickLabel(t, step);
-            g.drawString(font, label, px - font.width(label) / 2, y + TICK_LEN + 1, 0xFF888888);
+            g.text(font, label, px - font.width(label) / 2, y + TICK_LEN + 1, 0xFF888888);
         }
     }
 
@@ -300,24 +301,24 @@ public class WidgetManualPositionBar extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
         if (!visible || !active) return false;
 
-        if (isInOverview(mouseX, mouseY) && button == 0) {
-            viewCenter = ovPixelToPos(mouseX);
+        if (isInOverview(event.x(), event.y()) && event.button() == 0) {
+            viewCenter = ovPixelToPos(event.x());
             clampViewport();
             isDraggingOverview = true;
             return true;
         }
 
-        if (isInDetail(mouseX, mouseY)) {
-            if (button == 0) {
-                int closestIdx = findClosestDetailHandle(mouseX);
+        if (isInDetail(event.x(), event.y())) {
+            if (event.button() == 0) {
+                int closestIdx = findClosestDetailHandle(event.x());
                 if (closestIdx >= 0) {
                     selectedIndex = closestIdx;
                     if (editable) isDragging = true;
                 } else if (editable) {
-                    float newPos = quantize(dtPixelToPos(mouseX));
+                    float newPos = quantize(dtPixelToPos(event.x()));
                     positions.add(newPos);
                     Collections.sort(positions);
                     selectedIndex = positions.indexOf(newPos);
@@ -326,8 +327,8 @@ public class WidgetManualPositionBar extends AbstractWidget {
                 }
                 notifySelectionChange();
                 return true;
-            } else if (button == 1 && editable) {
-                int closestIdx = findClosestDetailHandle(mouseX);
+            } else if (event.button() == 1 && editable) {
+                int closestIdx = findClosestDetailHandle(event.x());
                 if (closestIdx >= 0) {
                     positions.remove(closestIdx);
                     if (selectedIndex >= positions.size()) {
@@ -361,14 +362,14 @@ public class WidgetManualPositionBar extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (isDraggingOverview && button == 0) {
-            viewCenter = ovPixelToPos(mouseX);
+    public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
+        if (isDraggingOverview && event.button() == 0) {
+            viewCenter = ovPixelToPos(event.x());
             clampViewport();
             return true;
         }
-        if (editable && isDragging && selectedIndex >= 0 && selectedIndex < positions.size() && button == 0) {
-            float newPos = quantize(dtPixelToPos(mouseX));
+        if (editable && isDragging && selectedIndex >= 0 && selectedIndex < positions.size() && event.button() == 0) {
+            float newPos = quantize(dtPixelToPos(event.x()));
             positions.set(selectedIndex, newPos);
             notifyChange();
             notifySelectionChange();
@@ -378,12 +379,12 @@ public class WidgetManualPositionBar extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (isDraggingOverview && button == 0) {
+    public boolean mouseReleased(MouseButtonEvent event) {
+        if (isDraggingOverview && event.button() == 0) {
             isDraggingOverview = false;
             return true;
         }
-        if (isDragging && button == 0) {
+        if (isDragging && event.button() == 0) {
             isDragging = false;
             float draggedValue = (selectedIndex >= 0 && selectedIndex < positions.size())
                     ? positions.get(selectedIndex) : -1;
@@ -393,7 +394,7 @@ public class WidgetManualPositionBar extends AbstractWidget {
             notifySelectionChange();
             return true;
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(event);
     }
 
     @Override

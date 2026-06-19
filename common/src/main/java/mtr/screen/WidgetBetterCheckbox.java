@@ -4,6 +4,8 @@ import mtr.data.IGui;
 import mtr.mappings.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 
 public class WidgetBetterCheckbox extends Checkbox implements IGui {
@@ -16,14 +18,13 @@ public class WidgetBetterCheckbox extends Checkbox implements IGui {
 	}
 
 	@Override
-	public void onPress() {
-		super.onPress();
+	public void onPress(InputWithModifiers input) {
 		onClick.onClick(selected());
 	}
 
 	@Override
-	public void renderWidget(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		super.renderWidget(guiGraphics, mouseX, mouseY, delta);
+	public void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+		super.extractContents(guiGraphics, mouseX, mouseY, delta);
 		if (visible) {
 			guiGraphics.text(Minecraft.getInstance().font, getMessage(), UtilitiesClient.getWidgetX(this) + 24, UtilitiesClient.getWidgetY(this) + (height - 8) / 2, ARGB_WHITE);
 		}
@@ -32,7 +33,7 @@ public class WidgetBetterCheckbox extends Checkbox implements IGui {
 
 	public void setChecked(boolean checked) {
 		if (checked != selected()) {
-			super.onPress();
+			super.onPress(new KeyEvent(0, 0, 0));
 		}
 	}
 

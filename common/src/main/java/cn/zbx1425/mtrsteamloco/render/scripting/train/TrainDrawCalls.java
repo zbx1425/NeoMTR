@@ -100,7 +100,7 @@ public class TrainDrawCalls extends AbstractDrawCalls {
     }
 
     private static void drawTexture(PoseStack matrices, VertexConsumer vertexConsumer, Vec3 pos1, Vec3 pos2, Vec3 pos3, Vec3 pos4, float u1, float v1, float u2, float v2, int light) {
-        IDrawing.drawTexture(matrices, vertexConsumer,
+        IDrawing.drawTexture(matrices.last(), vertexConsumer,
                 (float)pos1.x, (float)pos1.y, (float)pos1.z, (float)pos2.x, (float)pos2.y, (float)pos2.z,
                 (float)pos3.x, (float)pos3.y, (float)pos3.z, (float)pos4.x, (float)pos4.y, (float)pos4.z,
                 u1, v1, u2, v2, Direction.UP, -1, light);

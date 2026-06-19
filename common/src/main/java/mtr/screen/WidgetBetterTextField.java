@@ -6,6 +6,7 @@ import mtr.mappings.Text;
 import mtr.mappings.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.input.MouseButtonEvent;
 
 import java.util.Locale;
 import java.util.function.Consumer;
@@ -58,12 +59,12 @@ public class WidgetBetterTextField extends EditBox implements IGui {
 	}
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if (isVisible() && RailwayData.isBetween(mouseX, UtilitiesClient.getWidgetX(this), UtilitiesClient.getWidgetX(this) + width) && RailwayData.isBetween(mouseY, UtilitiesClient.getWidgetY(this), UtilitiesClient.getWidgetY(this) + height)) {
-			if (button == 1) {
+	public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
+		if (isVisible() && RailwayData.isBetween(event.x(), UtilitiesClient.getWidgetX(this), UtilitiesClient.getWidgetX(this) + width) && RailwayData.isBetween(event.y(), UtilitiesClient.getWidgetY(this), UtilitiesClient.getWidgetY(this) + height)) {
+			if (event.button() == 1) {
 				setValue("");
 			}
-			return super.mouseClicked(mouseX, mouseY, 0);
+			return super.mouseClicked(event, isDoubleClick);
 		} else {
 			setFocused(false);
 			return false;

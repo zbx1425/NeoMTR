@@ -7,6 +7,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
 import java.util.function.Consumer;
@@ -39,8 +41,8 @@ public class WidgetShorterSlider extends AbstractSliderButton implements IGui {
 	}
 
 	@Override
-	public void onClick(double d, double e) {
-		super.onClick(d, e);
+	public void onClick(MouseButtonEvent event, boolean isDoubleClick) {
+		super.onClick(event, isDoubleClick);
 		checkShiftClick();
 	}
 
@@ -55,8 +57,8 @@ public class WidgetShorterSlider extends AbstractSliderButton implements IGui {
 	}
 
 	@Override
-	protected void onDrag(double d, double e, double f, double g) {
-		super.onDrag(d, e, f, g);
+	protected void onDrag(MouseButtonEvent event, double dx, double dy) {
+		super.onDrag(event, dx, dy);
 		checkShiftClick();
 	}
 
@@ -64,14 +66,11 @@ public class WidgetShorterSlider extends AbstractSliderButton implements IGui {
 	protected void applyValue() {
 	}
 
-	public void renderWidget(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+	@Override
+	public void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		render(guiGraphics);
 	}
-
-	public void renderButton(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		render(guiGraphics);
-	}
-
+	
 	public void setValue(int valueInt) {
 		value = (double) valueInt / maxValue;
 		updateMessage();
@@ -88,31 +87,31 @@ public class WidgetShorterSlider extends AbstractSliderButton implements IGui {
 	private void render(GuiGraphicsExtractor guiGraphics) {
 		final Minecraft client = Minecraft.getInstance();
 
-		guiGraphics.blit(WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this), UtilitiesClient.getWidgetY(this), 0, 46, width / 2, height / 2);
-		guiGraphics.blit(WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this), UtilitiesClient.getWidgetY(this) + height / 2, 0, 66 - height / 2, width / 2, height / 2);
-		guiGraphics.blit(WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + width / 2, UtilitiesClient.getWidgetY(this), 200 - width / 2, 46, width / 2, height / 2);
-		guiGraphics.blit(WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + width / 2, UtilitiesClient.getWidgetY(this) + height / 2, 200 - width / 2, 66 - height / 2, width / 2, height / 2);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this), UtilitiesClient.getWidgetY(this), 0, 46, width / 2, height / 2, width / 2, height / 2);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this), UtilitiesClient.getWidgetY(this) + height / 2, 0, 66 - height / 2, width / 2, height / 2, width / 2, height / 2);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + width / 2, UtilitiesClient.getWidgetY(this), 200 - width / 2, 46, width / 2, height / 2, width / 2, height / 2);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + width / 2, UtilitiesClient.getWidgetY(this) + height / 2, 200 - width / 2, 66 - height / 2, width / 2, height / 2, width / 2, height / 2, width / 2, height / 2);
 
 		final int v = UtilitiesClient.isHovered(this) ? 86 : 66;
 		final int xOffset = (width - SLIDER_WIDTH) * getIntValue() / maxValue;
-		guiGraphics.blit(WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset, UtilitiesClient.getWidgetY(this), 0, v, SLIDER_WIDTH / 2, height / 2);
-		guiGraphics.blit(WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset, UtilitiesClient.getWidgetY(this) + height / 2, 0, v + 20 - height / 2, SLIDER_WIDTH / 2, height / 2);
-		guiGraphics.blit(WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset + SLIDER_WIDTH / 2, UtilitiesClient.getWidgetY(this), 200 - SLIDER_WIDTH / 2, v, SLIDER_WIDTH / 2, height / 2);
-		guiGraphics.blit(WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset + SLIDER_WIDTH / 2, UtilitiesClient.getWidgetY(this) + height / 2, 200 - SLIDER_WIDTH / 2, v + 20 - height / 2, SLIDER_WIDTH / 2, height / 2);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset, UtilitiesClient.getWidgetY(this), 0, v, SLIDER_WIDTH / 2, height / 2, SLIDER_WIDTH / 2, height / 2);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset, UtilitiesClient.getWidgetY(this) + height / 2, 0, v + 20 - height / 2, SLIDER_WIDTH / 2, height / 2, SLIDER_WIDTH / 2, height / 2);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset + SLIDER_WIDTH / 2, UtilitiesClient.getWidgetY(this), 200 - SLIDER_WIDTH / 2, v, SLIDER_WIDTH / 2, height / 2, SLIDER_WIDTH / 2, height / 2);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset + SLIDER_WIDTH / 2, UtilitiesClient.getWidgetY(this) + height / 2, 200 - SLIDER_WIDTH / 2, v + 20 - height / 2, SLIDER_WIDTH / 2, height / 2, SLIDER_WIDTH / 2, height / 2);
 
 		guiGraphics.text(client.font, getMessage().getString(), UtilitiesClient.getWidgetX(this) + width + TEXT_PADDING, UtilitiesClient.getWidgetY(this) + (height - TEXT_HEIGHT) / 2, ARGB_WHITE);
 
 		if (markerFrequency > 0) {
 			for (int i = 1; i <= maxValue / markerFrequency; i++) {
 				final int xOffset1 = (width - SLIDER_WIDTH) * i * markerFrequency / maxValue;
-				guiGraphics.blit(WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset1 + SLIDER_WIDTH / 3, UtilitiesClient.getWidgetY(this) + height, 10, 68, 2, TICK_HEIGHT);
+				guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset1 + SLIDER_WIDTH / 3, UtilitiesClient.getWidgetY(this) + height, 10, 68, 2, TICK_HEIGHT, 2, TICK_HEIGHT);
 				guiGraphics.centeredText(client.font, String.valueOf(i * markerFrequency / markerDisplayedRatio), UtilitiesClient.getWidgetX(this) + xOffset1 + SLIDER_WIDTH / 2, UtilitiesClient.getWidgetY(this) + height + TICK_HEIGHT + 2, ARGB_WHITE);
 			}
 		}
 	}
 
 	private void checkShiftClick() {
-		if (shiftClickAction != null && Screen.hasShiftDown()) {
+		if (shiftClickAction != null && Minecraft.getInstance().hasShiftDown()) {
 			shiftClickAction.accept(getIntValue());
 		}
 	}

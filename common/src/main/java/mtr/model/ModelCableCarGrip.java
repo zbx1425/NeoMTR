@@ -17,7 +17,11 @@ public class ModelCableCarGrip extends EntityModel<EntityRenderState> {
 	private final Identifier texture = Identifier.parse("mtr:textures/entity/cable_car_grip.png");
 
 	public ModelCableCarGrip() {
-		final int textureWidth = 48;
+		// TODO: Check if this will work
+		ModelDataWrapper dummyRoot = new ModelDataWrapper();
+		dummyRoot.setModelPart(16, 16);
+        super(dummyRoot.modelPart);
+        final int textureWidth = 48;
 		final int textureHeight = 48;
 
 		final ModelDataWrapper modelDataWrapper = new ModelDataWrapper(this, textureWidth, textureHeight);
@@ -38,13 +42,5 @@ public class ModelCableCarGrip extends EntityModel<EntityRenderState> {
 
 	public void render(PoseStack matrices, MultiBufferSource vertexConsumers, int light) {
 		ModelTrainBase.renderOnce(grip, matrices, vertexConsumers.getBuffer(MoreRenderLayers.getExterior(texture)), light, 0);
-	}
-
-	@Override
-	public void setupAnim(Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-	}
-
-	@Override
-	public final void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
 	}
 }

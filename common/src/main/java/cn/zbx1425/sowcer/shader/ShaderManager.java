@@ -63,7 +63,7 @@ public class ShaderManager {
 //            shaderInstance = shaders.get(materialProp.shaderName);
             materialProp.setupCompositeState();
         } else {
-            RenderType renderType = materialProp.getBlazeRenderType();
+//            RenderType renderType = materialProp.getBlazeRenderType();
 //            renderType.setupRenderState();
 //            shaderInstance = RenderSystem.getShader();
         }

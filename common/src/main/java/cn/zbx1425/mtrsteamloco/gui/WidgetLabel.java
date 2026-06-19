@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
 public class WidgetLabel extends AbstractWidget {
@@ -26,7 +27,7 @@ public class WidgetLabel extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+    public void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
         if (!visible) return;
         String[] lines = this.getMessage().getString().split("\n");
         this.height = lines.length * 10;
@@ -36,10 +37,12 @@ public class WidgetLabel extends AbstractWidget {
             int y = this.getY() + 10 * i;
             if (textWidth > this.width) {
                 int offset = (int)(System.currentTimeMillis() / 25 % (textWidth + 40));
-                AbstractScrollWidget.vcEnableScissor(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height);
+//                AbstractScrollWidget.vcEnableScissor(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height);
+                guiGraphics.enableScissor(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height);
                 guiGraphics.text(Minecraft.getInstance().font, lines[i], x - offset, y, -1);
                 guiGraphics.text(Minecraft.getInstance().font, lines[i], x + textWidth + 40 - offset, y, -1);
-                RenderSystem.disableScissor();
+                guiGraphics.disableScissor();
+//                RenderSystem.disableScissor();
             } else {
                 guiGraphics.text(Minecraft.getInstance().font, lines[i], x, y, -1);
             }
@@ -50,8 +53,8 @@ public class WidgetLabel extends AbstractWidget {
     }
 
     @Override
-    public void onClick(double d, double e) {
-        super.onClick(d, e);
+    public void onClick(MouseButtonEvent event, boolean isDoubleClick) {
+        super.onClick(event, isDoubleClick);
         if (onClick != null) onClick.run();
     }
 

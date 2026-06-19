@@ -11,8 +11,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
+import org.joml.Matrix3x2fStack;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,12 +23,12 @@ import java.util.Map;
 public class ScriptDebugOverlay {
 
     public static void render(GuiGraphicsExtractor vdStuff) {
-        PoseStack matrices = vdStuff.pose();
+        Matrix3x2fStack matrices = vdStuff.pose();
         if (!ClientConfig.enableScriptDebugOverlay) return;
         if (Minecraft.getInstance().screen != null) return;
 
         matrices.pushMatrix();
-        matrices.translate(10, 10, 0);
+        matrices.translate(10, 10);
 
         Map<ScriptHolder, List<AbstractScriptContext>> contexts = new HashMap<>();
         for (Map.Entry<AbstractScriptContext, ScriptHolder> entry : ScriptContextManager.livingContexts.entrySet()) {
@@ -79,6 +81,6 @@ public class ScriptDebugOverlay {
         guiGraphics.text(font, text, x, y, color);
     }
     private static void blit(GuiGraphicsExtractor guiGraphics, Identifier texture, int x, int y, int width, int height) {
-        guiGraphics.blit(texture, x, y, width, height, 0, 0, 1, 1, 1, 1);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, width, height, 0, 0, 1, 1, 1, 1);
     }
 }

@@ -36,8 +36,9 @@ public class MTRFabricClient implements ClientModInitializer, ICustomResources {
 		MTRClient.initItemModelPredicate();
 		MainClient.init();
 
-		LevelRenderEvents.AFTER_ENTITIES.register(context -> {
-			final PoseStack matrices = context.matrixStack();
+		// TODO: AFTER_ENTITIES
+		LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(context -> {
+			final PoseStack matrices = context.poseStack();
 			matrices.pushPose();
 			final Vec3 cameraPos = context.camera().getPosition();
 			matrices.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);

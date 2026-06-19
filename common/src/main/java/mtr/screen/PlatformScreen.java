@@ -25,12 +25,12 @@ public class PlatformScreen extends SavedRailScreenBase<Platform> {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
+	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+		super.extractBackground(guiGraphics, mouseX, mouseY, delta);
 		if (showScheduleControls) {
 			guiGraphics.text(font, DWELL_TIME_TEXT, SQUARE_SIZE, SQUARE_SIZE * 2 + TEXT_FIELD_PADDING + TEXT_PADDING, ARGB_WHITE);
 		}
-		guiGraphics.pose().translate(0, 0, 100);
+		guiGraphics.pose().translate(0, 0);
 	}
 
 	@Override

@@ -112,8 +112,8 @@ public abstract class TrainSensorScreenBase extends ScreenMapper implements IGui
 	}
 
 	@Override
-	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
+	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+		super.extractBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			for (int i = 0; i < textFieldCount; i++) {
 				guiGraphics.text(font, textFieldLabels[i], SQUARE_SIZE + (width / 2 - SQUARE_SIZE) * i, SQUARE_SIZE, ARGB_WHITE);
@@ -132,7 +132,6 @@ public abstract class TrainSensorScreenBase extends ScreenMapper implements IGui
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);
 		}
-		guiGraphics.pose().translate(0, 0, 100);
 	}
 
 	@Override

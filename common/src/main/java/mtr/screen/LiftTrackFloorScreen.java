@@ -65,7 +65,6 @@ public class LiftTrackFloorScreen extends ScreenMapper implements IGui, IPacket 
 			}
 		}
 
-		font = Minecraft.getInstance().font;
 		textWidth = Math.max(font.width(TEXT_FLOOR_NUMBER), font.width(TEXT_FLOOR_DESCRIPTION));
 	}
 
@@ -97,8 +96,8 @@ public class LiftTrackFloorScreen extends ScreenMapper implements IGui, IPacket 
 	}
 
 	@Override
-	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
+	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+		super.extractBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			final int startX = (width - textWidth - TEXT_PADDING - TEXT_FIELD_WIDTH) / 2;
 			final int startY = (height - SQUARE_SIZE * 3 - TEXT_FIELD_PADDING * 2) / 2;
@@ -107,7 +106,6 @@ public class LiftTrackFloorScreen extends ScreenMapper implements IGui, IPacket 
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);
 		}
-		guiGraphics.pose().translate(0, 0, 100);
 	}
 
 	@Override

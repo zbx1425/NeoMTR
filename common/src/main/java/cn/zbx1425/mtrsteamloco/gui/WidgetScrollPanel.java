@@ -5,6 +5,10 @@ import mtr.mappings.Text;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import org.joml.Matrix3x2fStack;
 
 import java.util.ArrayList;
 
@@ -22,20 +26,20 @@ public class WidgetScrollPanel extends AbstractScrollWidget {
 
     @Override
     protected void renderContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        PoseStack poseStack = guiGraphics.pose();
-        poseStack.translate(this.getX(), this.getY(), 0.0);
+        Matrix3x2fStack poseStack = guiGraphics.pose();
+        poseStack.translate(this.getX(), this.getY());
         for (AbstractWidget widget : children) {
-            widget.render(guiGraphics, mouseX - this.getX(), (int) (mouseY + getOffset()) - this.getY(), partialTick);
+            widget.extractRenderState(guiGraphics, mouseX - this.getX(), (int) (mouseY + getOffset()) - this.getY(), partialTick);
         }
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (isMouseInside(mouseX, mouseY)) {
-            double cx = mouseX - this.getX();
-            double cy = mouseY + getOffset() - this.getY();
+    public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
+        if (isMouseInside(event.x(), event.y())) {
+            double cx = event.x() - this.getX();
+            double cy = event.y() + getOffset() - this.getY();
             for (AbstractWidget widget : new ArrayList<>(children)) {
-                if (widget.mouseClicked(cx, cy, button)) {
+                if (widget.mouseClicked(new MouseButtonEvent(cx, cy, event.buttonInfo()), isDoubleClick)) {
                     setChildFocus(widget);
                     this.setFocused(true);
                     return true;
@@ -43,7 +47,7 @@ public class WidgetScrollPanel extends AbstractScrollWidget {
             }
             setChildFocus(null);
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, isDoubleClick);
     }
 
     private void setChildFocus(AbstractWidget child) {
@@ -57,23 +61,23 @@ public class WidgetScrollPanel extends AbstractScrollWidget {
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        double cx = mouseX - this.getX();
-        double cy = mouseY + getOffset() - this.getY();
+    public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
+        double cx = event.x() - this.getX();
+        double cy = event.y() + getOffset() - this.getY();
         for (AbstractWidget widget : new ArrayList<>(children)) {
-            if (widget.mouseDragged(cx, cy, button, dragX, dragY)) return true;
+            if (widget.mouseDragged(new MouseButtonEvent(cx, cy, event.buttonInfo()), deltaX, deltaY)) return true;
         }
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return super.mouseDragged(event, deltaX, deltaY);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        double cx = mouseX - this.getX();
-        double cy = mouseY + getOffset() - this.getY();
+    public boolean mouseReleased(MouseButtonEvent event) {
+        double cx = event.x() - this.getX();
+        double cy = event.y() + getOffset() - this.getY();
         for (AbstractWidget widget : new ArrayList<>(children)) {
-            if (widget.mouseReleased(cx, cy, button)) return true;
+            if (widget.mouseReleased(new MouseButtonEvent(cx, cy, event.buttonInfo()))) return true;
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(event);
     }
 
     @Override
@@ -97,15 +101,15 @@ public class WidgetScrollPanel extends AbstractScrollWidget {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (focusedChild != null && focusedChild.keyPressed(keyCode, scanCode, modifiers)) return true;
-        return super.keyPressed(keyCode, scanCode, modifiers);
+    public boolean keyPressed(KeyEvent event) {
+        if (focusedChild != null && focusedChild.keyPressed(event)) return true;
+        return super.keyPressed(event);
     }
 
     @Override
-    public boolean charTyped(char ch, int modifiers) {
-        if (focusedChild != null && focusedChild.charTyped(ch, modifiers)) return true;
-        return super.charTyped(ch, modifiers);
+    public boolean charTyped(CharacterEvent event) {
+        if (focusedChild != null && focusedChild.charTyped(event)) return true;
+        return super.charTyped(event);
     }
 
     @Override

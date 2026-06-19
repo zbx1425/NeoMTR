@@ -61,8 +61,8 @@ public class TicketMachineScreen extends ScreenMapper implements IGui, IPacket {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
+	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+		super.extractBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			final Component emeraldsText = Text.translatable("gui.mtr.emeralds", getEmeraldCount());
 			guiGraphics.text(font, balanceText, TEXT_PADDING, TEXT_PADDING, ARGB_WHITE);
@@ -74,7 +74,6 @@ public class TicketMachineScreen extends ScreenMapper implements IGui, IPacket {
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);
 		}
-		guiGraphics.pose().translate(0, 0, 100);
 	}
 
 	@Override

@@ -73,7 +73,7 @@ public class ScriptedTrainRenderer extends TrainRendererBase {
         trainScripting.trainExtraWriting.lastCarPosition[carIndex] = carPos.copy();
         trainScripting.trainExtraWriting.lastCarRotation[carIndex] = new Vector3f(hasPitch ? pitch : 0, (float) Math.PI + yaw, roll);
         trainScripting.trainExtraWriting.isInDetailDistance |= posAverage != null
-                && posAverage.distSqr(camera.getBlockPosition()) <= RenderTrains.DETAIL_RADIUS_SQUARED;
+                && posAverage.distSqr(camera.blockPosition()) <= RenderTrains.DETAIL_RADIUS_SQUARED;
         trainScripting.trainExtraWriting.shouldRender = shouldRender;
 
         if (posAverage == null) {

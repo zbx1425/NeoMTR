@@ -8,9 +8,10 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Mth;
 
 public class Checkbox extends AbstractButton {
     private static final Identifier CHECKBOX_SELECTED_HIGHLIGHTED_SPRITE = Identifier.withDefaultNamespace("widget/checkbox_selected_highlighted");
@@ -26,7 +27,7 @@ public class Checkbox extends AbstractButton {
     }
 
     @Override
-    public void onPress() {
+    public void onPress(InputWithModifiers input) {
         this.selected = !this.selected;
     }
 
@@ -53,24 +54,20 @@ public class Checkbox extends AbstractButton {
 
 
     @Override
-    public void renderWidget(GuiGraphicsExtractor var1, int var2, int var3, float var4) {
+    public void extractContents(GuiGraphicsExtractor guiGraphics, int var2, int var3, float var4) {
         Minecraft var5 = Minecraft.getInstance();
-        RenderSystem.enableDepthTest();
         Font var6 = var5.font;
-        var1.setColor(1.0F, 1.0F, 1.0F, this.alpha);
-        RenderSystem.enableBlend();
-        Identifier var7;
+        Identifier textureId;
         if (this.selected) {
-            var7 = this.isFocused() ? CHECKBOX_SELECTED_HIGHLIGHTED_SPRITE : CHECKBOX_SELECTED_SPRITE;
+            textureId = this.isFocused() ? CHECKBOX_SELECTED_HIGHLIGHTED_SPRITE : CHECKBOX_SELECTED_SPRITE;
         } else {
-            var7 = this.isFocused() ? CHECKBOX_HIGHLIGHTED_SPRITE : CHECKBOX_SPRITE;
+            textureId = this.isFocused() ? CHECKBOX_HIGHLIGHTED_SPRITE : CHECKBOX_SPRITE;
         }
 
         int var8 = boxSize(var6);
         int var9 = this.getX() + var8 + 4;
         int var10 = this.getY() + (this.height >> 1) - (9 >> 1);
-        var1.blitSprite(var7, this.getX(), this.getY(), var8, var8);
-        var1.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, textureId, this.getX(), this.getY(), var8, var8, alpha);
 //        var1.drawString(var6, this.getMessage(), var9, var10, 14737632 | Mth.ceil(this.alpha * 255.0F) << 24);
     }
 }

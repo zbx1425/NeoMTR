@@ -20,7 +20,11 @@ public class ModelDoorOverlayTop extends EntityModel<EntityRenderState> {
 	private static final Identifier TEXTURE_ID = Identifier.parse("mtr:textures/block/sign/door_overlay_sp1900_top.png");
 
 	public ModelDoorOverlayTop() {
-		final int textureWidth = 24;
+		// TODO: Check if this works
+		final ModelDataWrapper dummyRoot = new ModelDataWrapper();
+		dummyRoot.setModelPart(16, 16);
+        super(dummyRoot.modelPart);
+        final int textureWidth = 24;
 		final int textureHeight = 3;
 
 		final ModelDataWrapper modelDataWrapper = new ModelDataWrapper(this, textureWidth, textureHeight);
@@ -43,14 +47,6 @@ public class ModelDoorOverlayTop extends EntityModel<EntityRenderState> {
 
 		modelDataWrapper.setModelPart(textureWidth, textureHeight);
 		bb_main.setModelPart();
-	}
-
-	@Override
-	public void setupAnim(Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-	}
-
-	@Override
-	public final void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
 	}
 
 	public void render(PoseStack matrices, MultiBufferSource vertexConsumers, int light, int position) {

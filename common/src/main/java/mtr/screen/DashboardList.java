@@ -7,6 +7,7 @@ import mtr.data.IGui;
 import mtr.data.NameColorDataBase;
 import mtr.mappings.Text;
 import mtr.mappings.UtilitiesClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -161,7 +162,8 @@ public class DashboardList implements IGui {
 				BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 				UtilitiesClient.beginDrawingRectangle(buffer);
 				IDrawing.drawRectangle(guiGraphics.pose(), buffer, x + TEXT_PADDING, y + drawY, x + TEXT_PADDING + TEXT_HEIGHT, y + drawY + TEXT_HEIGHT, ARGB_BLACK | data.color);
-				BufferUploader.drawWithShader(buffer.buildOrThrow());
+				// TODO:
+//				BufferUploader.drawWithShader(buffer.buildOrThrow());
 				UtilitiesClient.finishDrawingRectangle();
 
 				final String drawString = IGui.formatStationName(data.name);
@@ -169,9 +171,9 @@ public class DashboardList implements IGui {
 				final int textWidth = textRenderer.width(drawString);
 				final int availableSpace = width - textStart;
 				guiGraphics.pose().pushMatrix();
-				guiGraphics.pose().translate(x + textStart, 0, 0);
+				guiGraphics.pose().translate(x + textStart, 0);
 				if (textWidth > availableSpace) {
-					guiGraphics.pose().scale((float) availableSpace / textWidth, 1, 1);
+					guiGraphics.pose().scale((float) availableSpace / textWidth, 1);
 				}
 				guiGraphics.text(textRenderer, drawString, 0, y + drawY, ARGB_WHITE);
 				guiGraphics.pose().popMatrix();
@@ -261,7 +263,7 @@ public class DashboardList implements IGui {
 		if (textFieldSearch.getValue().isEmpty()) {
 			final int index = hoverIndex + itemsToShow() * page;
 			final List<T> list = getList.get();
-			if (Screen.hasShiftDown()) {
+			if (Minecraft.getInstance().hasShiftDown()) {
 				list.add(0, list.remove(index));
 			} else {
 				final T aboveItem = list.get(index - 1);
@@ -276,7 +278,7 @@ public class DashboardList implements IGui {
 		if (textFieldSearch.getValue().isEmpty()) {
 			final int index = hoverIndex + itemsToShow() * page;
 			final List<T> list = getList.get();
-			if (Screen.hasShiftDown()) {
+			if (Minecraft.getInstance().hasShiftDown()) {
 				list.add(list.remove(index));
 			} else {
 				final T thisItem = list.get(index);

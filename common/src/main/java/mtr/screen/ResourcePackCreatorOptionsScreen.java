@@ -138,8 +138,8 @@ public class ResourcePackCreatorOptionsScreen extends ScreenMapper implements IR
 	}
 
 	@Override
-	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
+	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+		super.extractBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			final int yStart = (height - SQUARE_SIZE * 10 - TEXT_FIELD_PADDING * 4) / 2;
 			guiGraphics.text(font, FILE_MODEL_TEXT, SQUARE_SIZE, yStart + TEXT_PADDING, ARGB_WHITE);
@@ -152,16 +152,13 @@ public class ResourcePackCreatorOptionsScreen extends ScreenMapper implements IR
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);
 		}
-		guiGraphics.pose().translate(0, 0, 100);
 	}
 
 	@Override
 	public void onClose() {
 		super.onClose();
-		if (minecraft != null) {
-			UtilitiesClient.setScreen(minecraft, resourcePackCreatorScreen);
-		}
-	}
+        UtilitiesClient.setScreen(minecraft, resourcePackCreatorScreen);
+    }
 
 	private void updateControls(boolean formatTextFields) {
 		final String modelFileName = RenderTrains.creatorProperties.getModelFileName();

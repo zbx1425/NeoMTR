@@ -151,8 +151,8 @@ public class LiftCustomizationScreen extends ScreenMapper implements IGui, IPack
 	}
 
 	@Override
-	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
+	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+		super.extractBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			guiGraphics.fill(0, 0, width2, height, ARGB_BACKGROUND);
 			guiGraphics.centeredText(font, Text.translatable("tooltip.mtr.rail_action_height", lift.liftHeight / 2F), width2 / 2, TEXT_PADDING, ARGB_WHITE);
@@ -164,7 +164,6 @@ public class LiftCustomizationScreen extends ScreenMapper implements IGui, IPack
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);
 		}
-		guiGraphics.pose().translate(0, 0, 100);
 	}
 
 	@Override

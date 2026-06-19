@@ -427,8 +427,8 @@ public class RailEditorGeometryScreen extends ScreenMapper {
         y += SQUARE_SIZE;
 
         CompoundTag toolTag = getToolTag();
-        boolean batchEnabled = toolTag != null && toolTag.getBoolean("BatchApplyVerticalCurve");
-        float toolRadius = toolTag != null ? toolTag.getFloat("VerticalCurveRadius") : 0;
+        boolean batchEnabled = toolTag != null && toolTag.getBooleanOr("BatchApplyVerticalCurve", false);
+        float toolRadius = toolTag != null ? toolTag.getFloatOr("VerticalCurveRadius", 0) : 0;
 
         Button btnBatchOn = UtilitiesClient.newButton(
                 Text.translatable("gui.mtrsteamloco.rail_editor_geometry.batch_apply_on"),
@@ -553,8 +553,8 @@ public class RailEditorGeometryScreen extends ScreenMapper {
         RailExtraSupplier extra = (RailExtraSupplier) pickedRail;
         boolean propertyUpdated = false;
 
-        if (toolTag.getBoolean("BatchApplyVerticalCurve")) {
-            float toolRadius = toolTag.getFloat("VerticalCurveRadius");
+        if (toolTag.getBooleanOr("BatchApplyVerticalCurve", false)) {
+            float toolRadius = toolTag.getFloatOr("VerticalCurveRadius", 0);
             if (toolRadius != extra.getVerticalCurveRadius()) {
                 extra.setVerticalCurveRadius(toolRadius);
                 propertyUpdated = true;
@@ -570,13 +570,13 @@ public class RailEditorGeometryScreen extends ScreenMapper {
     // ==================== Rendering ====================
 
     @Override
-    public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     @Override
-    public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTick);
 
         if (currentTab == 0 && !isUndetermined && isNodeFree(editingStartNode ? pickedPosStart : pickedPosEnd)) {
             int rightPanelWidth = Math.min(width - LEFT_PANEL_WIDTH - SQUARE_SIZE * 2, 380);
@@ -632,8 +632,10 @@ public class RailEditorGeometryScreen extends ScreenMapper {
 
     private static void drawLine(GuiGraphicsExtractor guiGraphics, int cx, int cy, float angleDeg, int rStart, int rEnd, int thickness, int color) {
         guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(cx, cy, 0);
-        guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(angleDeg));
+        guiGraphics.pose().translate(cx, cy);
+        // TODO: Check if this is correct
+        guiGraphics.pose().rotate(angleDeg);
+//        guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(angleDeg));
         guiGraphics.fill(rStart, -thickness / 2, rEnd, -thickness / 2 + thickness, color);
         guiGraphics.pose().popMatrix();
     }
@@ -645,8 +647,10 @@ public class RailEditorGeometryScreen extends ScreenMapper {
         if (len < 0.001F) return;
         float angleDeg = (float) Math.toDegrees(Math.atan2(dy, dx));
         guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(x1, y1, 0);
-        guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(angleDeg));
+        guiGraphics.pose().translate(x1, y1);
+        guiGraphics.pose().rotate(angleDeg);
+        // TODO: Check if this is correct
+//        guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(angleDeg));
         guiGraphics.fill(0, -thickness / 2, (int) Math.ceil(len), -thickness / 2 + thickness, color);
         guiGraphics.pose().popMatrix();
     }

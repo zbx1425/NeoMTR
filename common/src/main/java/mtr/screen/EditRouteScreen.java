@@ -88,8 +88,8 @@ public class EditRouteScreen extends EditNameColorScreenBase<Route> implements I
 	}
 
 	@Override
-	public void renderBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		super.renderBackground(guiGraphics, mouseX, mouseY, delta);
+	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+		super.extractBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
 			renderTextFields(guiGraphics);
 			if (textFieldLightRailRouteNumber.visible) {
@@ -98,7 +98,6 @@ public class EditRouteScreen extends EditNameColorScreenBase<Route> implements I
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);
 		}
-		guiGraphics.pose().translate(0, 0, 100);
 	}
 
 	@Override

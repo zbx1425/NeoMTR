@@ -11,6 +11,8 @@ import mtr.mappings.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.StringUtils;
 
@@ -42,8 +44,8 @@ public class WidgetColorSelector extends ButtonMapper implements IGui {
 	}
 
 	@Override
-	public void renderWidget(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		super.renderWidget(guiGraphics, mouseX, mouseY, delta);
+	public void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+		super.extractRenderState(guiGraphics, mouseX, mouseY, delta);
 		if (visible) {
 			final int margin = hasMargin ? 1 : 0;
 			guiGraphics.fill(UtilitiesClient.getWidgetX(this) - margin, UtilitiesClient.getWidgetY(this) - margin, UtilitiesClient.getWidgetX(this) + width + margin, UtilitiesClient.getWidgetY(this) + height + margin, ARGB_BLACK | color);
@@ -51,7 +53,7 @@ public class WidgetColorSelector extends ButtonMapper implements IGui {
 	}
 
 	@Override
-	public void onPress() {
+	public void onPress(InputWithModifiers input) {
 		UtilitiesClient.setScreen(Minecraft.getInstance(), new ColorSelectorScreen(color, color -> {
 			UtilitiesClient.setScreen(Minecraft.getInstance(), screen);
 			setColor(color);
@@ -131,12 +133,9 @@ public class WidgetColorSelector extends ButtonMapper implements IGui {
 		}
 
 		@Override
-		public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+		public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 			try {
-				super.render(guiGraphics, mouseX, mouseY, delta);
-				guiGraphics.pose().pushMatrix();
-				guiGraphics.pose().translate(0, 0, -100);
-				guiGraphics.pose().popMatrix();
+				super.extractRenderState(guiGraphics, mouseX, mouseY, delta);
 
 				final int mainWidth = getMainWidth();
 				final int mainHeight = getMainHeight();
@@ -172,7 +171,7 @@ public class WidgetColorSelector extends ButtonMapper implements IGui {
 				IDrawing.drawRectangle(guiGraphics.pose(), buffer, SQUARE_SIZE + selectedSaturationInt, SQUARE_SIZE + mainHeight - selectedBrightnessInt - 2, SQUARE_SIZE + selectedSaturationInt + 1, SQUARE_SIZE + mainHeight - selectedBrightnessInt + 1, ARGB_BLACK);
 				IDrawing.drawRectangle(guiGraphics.pose(), buffer, SQUARE_SIZE + selectedSaturationInt, SQUARE_SIZE + mainHeight - selectedBrightnessInt - 1, SQUARE_SIZE + selectedSaturationInt + 1, SQUARE_SIZE + mainHeight - selectedBrightnessInt, ARGB_WHITE);
 
-				BufferUploader.drawWithShader(buffer.buildOrThrow());
+//				BufferUploader.drawWithShader(buffer.buildOrThrow());
 				UtilitiesClient.finishDrawingRectangle();
 			} catch (Exception e) {
 				MTR.LOGGER.error("", e);
@@ -190,25 +189,25 @@ public class WidgetColorSelector extends ButtonMapper implements IGui {
 		}
 
 		@Override
-		public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
 			final int mainWidth = getMainWidth();
 			final int mainHeight = getMainHeight();
 			draggingState = DraggingState.NONE;
-			if (mouseY >= SQUARE_SIZE && mouseY < SQUARE_SIZE + mainHeight) {
-				if (mouseX >= SQUARE_SIZE && mouseX < SQUARE_SIZE + mainWidth) {
+			if (event.y() >= SQUARE_SIZE && event.y() < SQUARE_SIZE + mainHeight) {
+				if (event.x() >= SQUARE_SIZE && event.x() < SQUARE_SIZE + mainWidth) {
 					draggingState = DraggingState.SATURATION_BRIGHTNESS;
-				} else if (mouseX >= SQUARE_SIZE * 2 + mainWidth && mouseX < SQUARE_SIZE * 3 + mainWidth) {
+				} else if (event.x() >= SQUARE_SIZE * 2 + mainWidth && event.x() < SQUARE_SIZE * 3 + mainWidth) {
 					draggingState = DraggingState.HUE;
 				}
 			}
-			selectColor(mouseX, mouseY);
-			return super.mouseClicked(mouseX, mouseY, button);
+			selectColor(event.x(), event.y());
+			return super.mouseClicked(event, isDoubleClick);
 		}
 
 		@Override
-		public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-			selectColor(mouseX, mouseY);
-			return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+		public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
+			selectColor(event.x(), event.y());
+			return super.mouseDragged(event, deltaX, deltaY);
 		}
 
 		private void selectColor(double mouseX, double mouseY) {
