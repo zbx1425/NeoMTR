@@ -47,7 +47,7 @@ public abstract class AreaBase extends NameColorDataBase {
 	@Deprecated
 	public AreaBase(CompoundTag compoundTag) {
 		super(compoundTag);
-		setCorners(compoundTag.getInt(KEY_X_MIN), compoundTag.getInt(KEY_Z_MIN), compoundTag.getInt(KEY_X_MAX), compoundTag.getInt(KEY_Z_MAX));
+		setCorners(compoundTag.getIntOr(KEY_X_MIN, 0), compoundTag.getIntOr(KEY_Z_MIN, 0), compoundTag.getIntOr(KEY_X_MAX, 0), compoundTag.getIntOr(KEY_Z_MAX, 0));
 	}
 
 	public AreaBase(FriendlyByteBuf packet) {

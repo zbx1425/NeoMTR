@@ -13,6 +13,7 @@ import mtr.render.RenderTrains;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -23,6 +24,7 @@ import net.minecraft.world.entity.Entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public abstract class ModelTrainBase extends EntityModel<EntityRenderState> implements IGui {
 
@@ -32,7 +34,8 @@ public abstract class ModelTrainBase extends EntityModel<EntityRenderState> impl
 	private final List<ScrollingText> tempScrollingTexts = new ArrayList<>();
 
 	public ModelTrainBase(DoorAnimationType doorAnimationType, boolean renderDoorOverlay) {
-        this.doorAnimationType = doorAnimationType;
+        super(new ModelPart(List.of(), Map.of())); // TODO: Figure out how would this work
+		this.doorAnimationType = doorAnimationType;
 		this.renderDoorOverlay = renderDoorOverlay;
 	}
 

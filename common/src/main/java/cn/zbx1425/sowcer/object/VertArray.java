@@ -5,6 +5,7 @@ import cn.zbx1425.sowcer.model.Mesh;
 import cn.zbx1425.sowcer.util.GlStateTracker;
 import cn.zbx1425.sowcer.vertex.VertAttrMapping;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL33;
 
 import java.io.Closeable;
@@ -75,7 +76,7 @@ public class VertArray implements Closeable {
             GL33.glDeleteVertexArrays(id);
             id = 0;
         } else {
-            RenderSystem.recordRenderCall(this::close);
+            Minecraft.getInstance().execute(this::close);
         }
     }
 }

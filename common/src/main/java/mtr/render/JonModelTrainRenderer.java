@@ -23,18 +23,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.entity.vehicle.Minecart;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.function.Function;
 
 public class JonModelTrainRenderer extends TrainRendererBase implements IGui {
@@ -48,7 +41,6 @@ public class JonModelTrainRenderer extends TrainRendererBase implements IGui {
 
 	private static final EntityModel<MinecartRenderState> MODEL_MINECART = UtilitiesClient.getMinecartModel();
 	private static final EntityModel<BoatRenderState> MODEL_BOAT = UtilitiesClient.getBoatModel();
-	private static final Map<Long, FakeBoat> BOATS = new HashMap<>();
 	private static final ModelCableCarGrip MODEL_CABLE_CAR_GRIP = new ModelCableCarGrip();
 	private static final ModelBogie MODEL_BOGIE = new ModelBogie();
 
@@ -103,12 +95,12 @@ public class JonModelTrainRenderer extends TrainRendererBase implements IGui {
 			final VertexConsumer vertexConsumer = vertexConsumers.getBuffer(model.renderType(resolveTexture(textureId, textureId -> textureId + ".png")));
 
 			if (isBoat) {
-				if (!BOATS.containsKey(train.id)) {
-					BOATS.put(train.id, new FakeBoat());
-				}
-				MODEL_BOAT.setupAnim(BOATS.get(train.id), (train.getSpeed() + Train.ACCELERATION_DEFAULT) * (doorLeftValue == 0 && doorRightValue == 0 ? lastFrameDuration : 0), 0, -0.1F, 0, 0);
+				BoatRenderState renderState = new BoatRenderState();
+				renderState.rowingTimeLeft = (train.getSpeed() + Train.ACCELERATION_DEFAULT) * (doorLeftValue == 0 && doorRightValue == 0 ? lastFrameDuration : 0);
+				renderState.rowingTimeRight = renderState.rowingTimeLeft;
+				MODEL_BOAT.setupAnim(renderState);
 			} else {
-				model.setupAnim(null, 0, 0, -0.1F, 0, 0);
+//				model.setupAnim(null, 0, 0, -0.1F, 0, 0);
 			}
 
 			model.renderToBuffer(matrices, vertexConsumer, light, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
@@ -232,25 +224,10 @@ public class JonModelTrainRenderer extends TrainRendererBase implements IGui {
 	}
 
 	private static void drawTexture(PoseStack matrices, VertexConsumer vertexConsumer, Vec3 pos1, Vec3 pos2, Vec3 pos3, Vec3 pos4, int light) {
-		mtr.client.IDrawing.drawTexture(matrices, vertexConsumer, (float) pos1.x, (float) pos1.y, (float) pos1.z, (float) pos2.x, (float) pos2.y, (float) pos2.z, (float) pos3.x, (float) pos3.y, (float) pos3.z, (float) pos4.x, (float) pos4.y, (float) pos4.z, 0, 0, 1, 1, Direction.UP, -1, light);
+		mtr.client.IDrawing.drawTexture(matrices.last(), vertexConsumer, (float) pos1.x, (float) pos1.y, (float) pos1.z, (float) pos2.x, (float) pos2.y, (float) pos2.z, (float) pos3.x, (float) pos3.y, (float) pos3.z, (float) pos4.x, (float) pos4.y, (float) pos4.z, 0, 0, 1, 1, Direction.UP, -1, light);
 	}
 
 	private static String resolvePath(String path) {
 		return path == null ? null : path.toLowerCase(Locale.ENGLISH).split("\\.png")[0];
-	}
-
-	private static class FakeBoat extends Boat {
-
-		private float progress;
-
-		public FakeBoat() {
-			super(EntityType.BOAT, null);
-		}
-
-		@Override
-		public float getRowingTime(int paddle, float newProgress) {
-			progress += newProgress;
-			return progress;
-		}
 	}
 }

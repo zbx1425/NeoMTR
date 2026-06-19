@@ -6,7 +6,7 @@ import cn.zbx1425.sowcer.batch.ShaderProp;
 import cn.zbx1425.sowcer.util.AttrUtil;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.shaders.ProgramManager;
+//import com.mojang.blaze3d.shaders.ProgramManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -14,18 +14,16 @@ import com.mojang.blaze3d.vertex.VertexFormatElement;
 import cn.zbx1425.sowcer.math.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.ShaderInstance;
+//import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceProvider;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ShaderManager {
 
     public static final VertexFormatElement MC_ELEMENT_MATRIX =
-            new VertexFormatElement(6, 0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.GENERIC, 16);
+            new VertexFormatElement(6, 0, VertexFormatElement.Type.FLOAT, true, 16);
 
     public static final VertexFormat MC_FORMAT_ENTITY_MAT = VertexFormat.builder()
             .add("Position", VertexFormatElement.POSITION).add("Color", VertexFormatElement.COLOR)
@@ -35,15 +33,16 @@ public class ShaderManager {
             .padding(1)
             .build();
 
-    public final Map<String, ShaderInstance> shaders = new HashMap<>();
+//    public final Map<String, ShaderInstance> shaders = new HashMap<>();
 
     public boolean isReady() {
-        return this.shaders.size() > 0;
+//        return this.shaders.size() > 0;
+        return false;
     }
 
     public void reloadShaders(ResourceManager resourceManager) throws IOException {
-        this.shaders.values().forEach(ShaderInstance::close);
-        this.shaders.clear();
+//        this.shaders.values().forEach(ShaderInstance::close);
+//        this.shaders.clear();
         PatchingResourceProvider provider = new PatchingResourceProvider(resourceManager);
 
         loadShader(provider, "rendertype_entity_cutout");
@@ -52,56 +51,56 @@ public class ShaderManager {
     }
 
     private void loadShader(ResourceProvider resourceManager, String name) throws IOException {
-        ShaderInstance shader = new ShaderInstance(resourceManager, name, MC_FORMAT_ENTITY_MAT);
-        shaders.put(name, shader);
+//        ShaderInstance shader = new ShaderInstance(resourceManager, name, MC_FORMAT_ENTITY_MAT);
+//        shaders.put(name, shader);
     }
 
     public void setupShaderBatchState(MaterialProp materialProp, ShaderProp shaderProp) {
         final boolean useCustomShader = ShadersModHandler.canUseCustomShader();
-        ShaderInstance shaderInstance;
+//        ShaderInstance shaderInstance;
 
         if (useCustomShader) {
-            shaderInstance = shaders.get(materialProp.shaderName);
+//            shaderInstance = shaders.get(materialProp.shaderName);
             materialProp.setupCompositeState();
         } else {
             RenderType renderType = materialProp.getBlazeRenderType();
-            renderType.setupRenderState();
-            shaderInstance = RenderSystem.getShader();
+//            renderType.setupRenderState();
+//            shaderInstance = RenderSystem.getShader();
         }
 
-        if (shaderInstance == null) {
-            throw new IllegalArgumentException("Cannot get shader: " + materialProp.shaderName
-                    + (useCustomShader ? "_modelmat" : ""));
-        }
+//        if (shaderInstance == null) {
+//            throw new IllegalArgumentException("Cannot get shader: " + materialProp.shaderName
+//                    + (useCustomShader ? "_modelmat" : ""));
+//        }
 
         Matrix4f mvMatrix = new Matrix4f(RenderSystem.getModelViewMatrix()).copy();
         if (shaderProp.viewMatrix != null) mvMatrix.multiply(shaderProp.viewMatrix);
         if (materialProp.billboard) AttrUtil.zeroRotation(mvMatrix);
         shaderProp.renderSystemViewMatrix = mvMatrix;
 
-        shaderInstance.setDefaultUniforms(VertexFormat.Mode.TRIANGLES, mvMatrix.asMoj(),
-                RenderSystem.getProjectionMatrix(), Minecraft.getInstance().getWindow());
-        shaderInstance.apply();
-
-        if (shaderInstance.programId != ShaderInstance.lastProgramId) {
-            ProgramManager.glUseProgram(shaderInstance.programId);
-            ShaderInstance.lastProgramId = shaderInstance.programId;
-        }
+//        shaderInstance.setDefaultUniforms(VertexFormat.Mode.TRIANGLES, mvMatrix.asMoj(),
+//                RenderSystem.getProjectionMatrix(), Minecraft.getInstance().getWindow());
+//        shaderInstance.apply();
+//
+//        if (shaderInstance.programId != ShaderInstance.lastProgramId) {
+//            ProgramManager.glUseProgram(shaderInstance.programId);
+//            ShaderInstance.lastProgramId = shaderInstance.programId;
+//        }
     }
 
     public void cleanupShaderBatchState(MaterialProp materialProp, ShaderProp shaderProp) {
         final boolean useCustomShader = ShadersModHandler.canUseCustomShader();
         if (!useCustomShader) {
-            ShaderInstance shaderInstance = RenderSystem.getShader();
-            if (shaderInstance != null && shaderInstance.MODEL_VIEW_MATRIX != null) {
-                // ModelViewMatrix might have got set in VertAttrState, reset it
-                shaderInstance.MODEL_VIEW_MATRIX.set(RenderSystem.getModelViewMatrix());
-                if (ShadersModHandler.canUseCustomShader()) {
-                    shaderInstance.MODEL_VIEW_MATRIX.upload();
-                } else {
-                    shaderInstance.apply();
-                }
-            }
+//            ShaderInstance shaderInstance = RenderSystem.getShader();
+//            if (shaderInstance != null && shaderInstance.MODEL_VIEW_MATRIX != null) {
+//                // ModelViewMatrix might have got set in VertAttrState, reset it
+//                shaderInstance.MODEL_VIEW_MATRIX.set(RenderSystem.getModelViewMatrix());
+//                if (ShadersModHandler.canUseCustomShader()) {
+//                    shaderInstance.MODEL_VIEW_MATRIX.upload();
+//                } else {
+//                    shaderInstance.apply();
+//                }
+//            }
         }
     }
 

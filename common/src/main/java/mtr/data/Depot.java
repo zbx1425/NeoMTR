@@ -92,7 +92,7 @@ public class Depot extends AreaBase implements IReducedSaveData {
 	public Depot(CompoundTag compoundTag) {
 		super(compoundTag);
 
-		final long[] routeIdsArray = compoundTag.getLongArray(KEY_ROUTE_IDS);
+		final long[] routeIdsArray = compoundTag.getLongArray(KEY_ROUTE_IDS).orElse(new long[]{});
 		for (final long routeId : routeIdsArray) {
 			routeIds.add(routeId);
 		}
@@ -395,7 +395,7 @@ public class Depot extends AreaBase implements IReducedSaveData {
 	}
 
 	private static int getHour(Level world, int offsetMillis) {
-		return (int) wrapTime(world.getDayTime() + (float) offsetMillis / MILLIS_PER_TICK) / TICKS_PER_HOUR;
+		return (int) wrapTime(world.getOverworldClockTime() + (float) offsetMillis / MILLIS_PER_TICK) / TICKS_PER_HOUR;
 	}
 
 	private static float wrapTime(float time) {

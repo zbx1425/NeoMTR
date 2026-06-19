@@ -1,8 +1,8 @@
 package cn.zbx1425.sowcer.util;
 
-import com.mojang.blaze3d.shaders.ProgramManager;
+//import com.mojang.blaze3d.shaders.ProgramManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.renderer.ShaderInstance;
+//import net.minecraft.client.renderer.ShaderInstance;
 import org.lwjgl.opengl.GL33;
 
 public class GlStateTracker {
@@ -11,7 +11,7 @@ public class GlStateTracker {
     private static int arrayBufBinding;
     private static int elementBufBinding;
 
-    private static ShaderInstance currentShaderInstance;
+//    private static ShaderInstance currentShaderInstance;
 
     public static boolean isStateProtected;
 
@@ -23,7 +23,7 @@ public class GlStateTracker {
         arrayBufBinding = GL33.glGetInteger(GL33.GL_ARRAY_BUFFER_BINDING);
         elementBufBinding = GL33.glGetInteger(GL33.GL_ELEMENT_ARRAY_BUFFER_BINDING);
 
-        currentShaderInstance = RenderSystem.getShader();
+//        currentShaderInstance = RenderSystem.getShader();
 
         isStateProtected = true;
     }
@@ -34,11 +34,11 @@ public class GlStateTracker {
         GL33.glBindBuffer(GL33.GL_ARRAY_BUFFER, arrayBufBinding);
         GL33.glBindBuffer(GL33.GL_ELEMENT_ARRAY_BUFFER, elementBufBinding);
 
-        RenderSystem.setShader(() -> currentShaderInstance);
+//        RenderSystem.setShader(() -> currentShaderInstance);
 
         // Obtain original state from RenderSystem?
-        RenderSystem.enableCull();
-        RenderSystem.depthMask(true);
+//        RenderSystem.enableCull();
+//        RenderSystem.depthMask(true);
 
         isStateProtected = false;
     }

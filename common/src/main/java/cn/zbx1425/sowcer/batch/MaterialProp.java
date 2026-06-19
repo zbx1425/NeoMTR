@@ -5,7 +5,7 @@ import cn.zbx1425.sowcer.vertex.VertAttrState;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mojang.blaze3d.platform.GlStateManager;
+//import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -71,25 +71,25 @@ public class MaterialProp {
         if (texture != null) {
             // TextureManager textureManager = Minecraft.getInstance().getTextureManager();
             // textureManager.getTexture(texture).setFilter(false, false);
-            RenderSystem.setShaderTexture(0, texture);
+//            RenderSystem.setShaderTexture(0, texture);
         } else {
-            RenderSystem.setShaderTexture(0, WHITE_TEXTURE_LOCATION);
+//            RenderSystem.setShaderTexture(0, WHITE_TEXTURE_LOCATION);
         }
 
         // HACK: To make cutout transparency on beacon_beam work
         if (translucent || cutoutHack) {
-            RenderSystem.enableBlend(); // TransparentState
-            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-                    GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+//            RenderSystem.enableBlend(); // TransparentState
+//            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+//                    GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         } else {
-            RenderSystem.disableBlend();
+//            RenderSystem.disableBlend();
         }
-        RenderSystem.enableDepthTest(); // DepthTestState
-        RenderSystem.depthFunc(GL33.GL_LEQUAL);
-        RenderSystem.enableCull();
-        Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer(); // LightmapState
-        Minecraft.getInstance().gameRenderer.overlayTexture().setupOverlayColor(); // OverlayState
-        RenderSystem.depthMask(writeDepthBuf); // WriteMaskState
+//        RenderSystem.enableDepthTest(); // DepthTestState
+//        RenderSystem.depthFunc(GL33.GL_LEQUAL);
+//        RenderSystem.enableCull();
+//        Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer(); // LightmapState
+//        Minecraft.getInstance().gameRenderer.overlayTexture().setupOverlayColor(); // OverlayState
+//        RenderSystem.depthMask(writeDepthBuf); // WriteMaskState
     }
 
     public RenderType getBlazeRenderType() {

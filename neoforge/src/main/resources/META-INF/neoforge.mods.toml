@@ -27,5 +27,5 @@ side = "BOTH"
 [[mixins]]
 config = "mtr.mixins.json"
 
-[[mixins]]
-config = "mtrsteamloco.mixins.json"
+#[[mixins]]
+#config = "mtrsteamloco.mixins.json"

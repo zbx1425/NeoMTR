@@ -6,11 +6,15 @@ import mtr.mappings.ModelDataWrapper;
 import mtr.mappings.ModelMapper;
 import mtr.render.MoreRenderLayers;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
+
+import java.util.List;
+import java.util.Map;
 
 public class ModelDoorOverlay extends EntityModel<EntityRenderState> {
 
@@ -42,6 +46,7 @@ public class ModelDoorOverlay extends EntityModel<EntityRenderState> {
 	}
 
 	public ModelDoorOverlay(int doorMax, float angle, int pivotY, String overlayLeftTextureName, String overlayRightTextureName, boolean renderLeft, boolean renderRight) {
+		super(new ModelPart(List.of(), Map.of())); // TODO: Figure out how would this work
 		float angleRadians = (float) Math.toRadians(angle);
 		doorOverlayTextureLeft = Identifier.parse("mtr:textures/entity/door_overlay/" + overlayLeftTextureName);
 		doorOverlayTextureRight = Identifier.parse("mtr:textures/entity/door_overlay/" + overlayRightTextureName);
@@ -157,13 +162,5 @@ public class ModelDoorOverlay extends EntityModel<EntityRenderState> {
 				}
 				break;
 		}
-	}
-
-	@Override
-	public void setupAnim(Entity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-	}
-
-	@Override
-	public final void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
 	}
 }

@@ -2,6 +2,7 @@ package cn.zbx1425.sowcer.object;
 
 import cn.zbx1425.sowcer.util.GlStateTracker;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL33;
 import org.lwjgl.system.MemoryUtil;
 
@@ -48,7 +49,7 @@ public class VertBuf implements Closeable {
             GL33.glDeleteBuffers(id);
             id = 0;
         } else {
-            RenderSystem.recordRenderCall(this::close);
+            Minecraft.getInstance().execute(this::close);
         }
     }
 }

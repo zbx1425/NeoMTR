@@ -21,7 +21,7 @@ configurations {
 
 dependencies {
 	neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
-	api "${rootProject.architectury_id}:architectury-neoforge:${rootProject.architectury_version}"
+	api "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
 
 	forgeRuntimeLibrary "org.eclipse.jetty:jetty-http:9.+"
 	forgeRuntimeLibrary "org.eclipse.jetty:jetty-io:9.+"

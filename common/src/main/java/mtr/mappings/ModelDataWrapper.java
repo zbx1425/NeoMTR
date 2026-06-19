@@ -12,9 +12,15 @@ public class ModelDataWrapper {
 	public final PartDefinition modelPartData;
 	public ModelPart modelPart;
 
-	public ModelDataWrapper(Model model, int textureWidth, int textureHeight) {
+	public ModelDataWrapper() {
 		modelData = new MeshDefinition();
 		modelPartData = modelData.getRoot();
+	}
+
+	// TODO: Remove this in cleanup
+	@Deprecated
+	public ModelDataWrapper(Model model, int textureWidth, int textureHeight) {
+		this();
 	}
 
 	public void setModelPart(int textureWidth, int textureHeight) {

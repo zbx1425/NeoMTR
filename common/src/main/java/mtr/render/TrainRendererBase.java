@@ -13,7 +13,14 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollection;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -52,14 +59,30 @@ public abstract class TrainRendererBase {
 		matrices.translate(0, RenderTrains.PLAYER_RENDER_OFFSET, 0);
 		final Player renderPlayer = world.getPlayerByUUID(playerId);
 		if (renderPlayer != null && (!playerId.equals(player.getUUID()) || camera.isDetached())) {
+			// TODO: Render the player
+			EntityRenderState playerRenderState = entityRenderDispatcher.extractEntity(renderPlayer, 0);
 			// Maybe this can stop the player from appearing moving and cape from flapping
-			renderPlayer.walkDistO = renderPlayer.walkDist;
-			renderPlayer.xCloak = renderPlayer.xCloakO = renderPlayer.xo;
-			renderPlayer.yCloak = renderPlayer.yCloakO = renderPlayer.yo;
-			renderPlayer.zCloak = renderPlayer.zCloakO = renderPlayer.zo;
+//			playerRenderState.walkDistO = renderPlayer.walkDist;
+//			playerRenderState.xCloak = renderPlayer.xCloakO = renderPlayer.xo;
+//			playerRenderState.yCloak = renderPlayer.yCloakO = renderPlayer.yo;
+//			playerRenderState.zCloak = renderPlayer.zCloakO = renderPlayer.zo;
+
 			renderPlayer.walkAnimation.setSpeed(0);
 
-			entityRenderDispatcher.render(renderPlayer, playerPositionOffset.x, playerPositionOffset.y, playerPositionOffset.z, 0, 1, matrices, vertexConsumers, 0xF000F0);
+//			SubmitNodeStorage submitNodeStorage = new SubmitNodeStorage();
+//
+//			CameraRenderState cameraRenderState = new CameraRenderState();
+//			Minecraft.getInstance().gameRenderer.getMainCamera().extractRenderState(cameraRenderState, 0);
+//
+//			entityRenderDispatcher.submit(playerRenderState, cameraRenderState, playerPositionOffset.x, playerPositionOffset.y, playerPositionOffset.z, matrices, submitNodeStorage);
+//
+//			ModelFeatureRenderer modelFeatureRenderer = new ModelFeatureRenderer();
+//			submitNodeStorage.getSubmitsPerOrder().forEach((order, submitNodeCollection) -> {
+//				modelFeatureRenderer.renderSolid(submitNodeCollection);
+//				submitNodeCollection.getModelPartSubmits()
+//			});
+
+
 		}
 		matrices.popPose();
 	}

@@ -27,12 +27,10 @@
 		]
 	},
 	"mixins": [
-		"mtr.mixins.json",
-		"mtrsteamloco.mixins.json"
+		"mtr.mixins.json"
 	],
 	"depends": {
 		"fabric": "*",
 		"minecraft": ">=26.1 <=26.1.2"
-	},
-	"accessWidener" : "mtrsteamloco.accesswidener"
+	}
 }

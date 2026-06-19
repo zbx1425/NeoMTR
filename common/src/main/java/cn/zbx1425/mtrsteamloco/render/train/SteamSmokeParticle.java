@@ -3,20 +3,20 @@ package cn.zbx1425.mtrsteamloco.render.train;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.util.RandomSource;
 
-public class SteamSmokeParticle extends TextureSheetParticle {
+public class SteamSmokeParticle extends SingleQuadParticle {
 
-    SteamSmokeParticle(ClientLevel clientLevel, double d, double e, double f, double g, double h, double i) {
-        super(clientLevel, d, e, f);
+    SteamSmokeParticle(ClientLevel clientLevel, double x, double y, double z, double xAux, double yAux, double zAux, SpriteSet sprite) {
+        super(clientLevel, x, y, z, xAux, yAux, zAux, sprite.first());
         this.scale(3.0f);
         this.setSize(0.25f, 0.25f);
         this.lifetime = this.random.nextInt(10) + 50;
         this.gravity = 3.0E-6f;
         this.hasPhysics = true;
-        this.xd = g;
-        this.yd = h + (double)(this.random.nextFloat() / 500.0f);
-        this.zd = i;
+        this.xd = xAux;
+        this.yd = yAux + (double)(this.random.nextFloat() / 500.0f);
+        this.zd = zAux;
     }
 
     @Override
@@ -46,8 +46,8 @@ public class SteamSmokeParticle extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    protected Layer getLayer() {
+        return Layer.TRANSLUCENT;
     }
 
     public static class Provider implements ParticleProvider<SimpleParticleType> {
@@ -58,12 +58,10 @@ public class SteamSmokeParticle extends TextureSheetParticle {
             this.sprites = spriteSet;
         }
 
-        @Nullable
         @Override
-        public Particle createParticle(SimpleParticleType particleOptions, ClientLevel clientLevel, double d, double e, double f, double g, double h, double i) {
-            SteamSmokeParticle campfireSmokeParticle = new SteamSmokeParticle(clientLevel, d, e, f, g, h, i);
+        public Particle createParticle(SimpleParticleType particleOptions, ClientLevel clientLevel, double x, double y, double z, double xAux, double yAux, double zAux, RandomSource random) {
+            SteamSmokeParticle campfireSmokeParticle = new SteamSmokeParticle(clientLevel, x, y, z, xAux, yAux, zAux, this.sprites);
             campfireSmokeParticle.setAlpha(1f);
-            campfireSmokeParticle.pickSprite(this.sprites);
             return campfireSmokeParticle;
         }
     }

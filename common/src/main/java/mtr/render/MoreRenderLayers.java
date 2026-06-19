@@ -25,7 +25,7 @@ public class MoreRenderLayers {
 	}
 
 	public static RenderType getInteriorTranslucent(Identifier texture) {
-		return checkCache(texture, () -> RenderTypes.entityTranslucentCull(texture), INTERIOR_TRANSLUCENT_CACHE);
+		return checkCache(texture, () -> RenderTypes.entityTranslucent/*TODO: Cull?*/(texture), INTERIOR_TRANSLUCENT_CACHE);
 	}
 
 	public static RenderType getExterior(Identifier texture) {
@@ -33,7 +33,7 @@ public class MoreRenderLayers {
 	}
 
 	public static RenderType getExteriorTranslucent(Identifier texture) {
-		return checkCache(texture, () -> RenderTypes.entityTranslucentCull(texture), EXTERIOR_TRANSLUCENT_CACHE);
+		return checkCache(texture, () -> RenderTypes.entityTranslucent/*TODO: Cull?*/(texture), EXTERIOR_TRANSLUCENT_CACHE);
 	}
 
 	private static <T> RenderType checkCache(T identifier, Supplier<RenderType> supplier, Map<T, RenderType> cache) {
