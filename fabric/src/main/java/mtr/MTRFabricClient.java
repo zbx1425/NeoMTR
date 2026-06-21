@@ -32,7 +32,6 @@ public class MTRFabricClient implements ClientModInitializer, ICustomResources {
 	@Override
 	public void onInitializeClient() {
 		MTRClient.init();
-		MTRClient.initItemModelPredicate();
 		MainClient.init();
 
 		LevelRenderEvents.AFTER_SOLID_FEATURES.register(context -> {

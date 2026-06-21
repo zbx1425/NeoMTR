@@ -37,7 +37,7 @@ public abstract class ItemNodeModifierBase extends ItemBlockClickingBase {
 	public final boolean forAirplaneNode;
 	protected final boolean isConnector;
 
-	public static final String TAG_POS = "pos";
+	public static final String TAG_POS = "start_pos";
 	private static final String TAG_TRANSPORT_MODE = "transport_mode";
 
 	private static final ThreadLocal<Map<BlockPos, Float>> FREE_NODE_PENDING_RAW_ANGLES = ThreadLocal.withInitial(HashMap::new);

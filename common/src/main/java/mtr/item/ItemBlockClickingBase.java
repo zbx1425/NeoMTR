@@ -22,7 +22,7 @@ import java.util.function.Function;
 
 public abstract class ItemBlockClickingBase extends ItemWithCreativeTabBase {
 
-	public static final String TAG_POS = "pos";
+	public static final String TAG_POS = "start_pos";
 
 	public ItemBlockClickingBase(Item.Properties properties, CreativeModeTabs.Wrapper creativeModeTab, Function<Properties, Properties> propertiesConsumer) {
 		super(properties, creativeModeTab, propertiesConsumer);
@@ -45,7 +45,7 @@ public abstract class ItemBlockClickingBase extends ItemWithCreativeTabBase {
 					onStartClick(context, compoundTag);
 				}
 				context.getItemInHand().set(DataComponents.CUSTOM_DATA, CustomData.of(compoundTag));
-				return InteractionResult.SUCCESS;
+				return InteractionResult.SUCCESS_SERVER;
 			} else {
 				return InteractionResult.FAIL;
 			}
