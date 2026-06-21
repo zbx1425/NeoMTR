@@ -62,7 +62,8 @@ public class WidgetBetterTextField extends EditBox implements IGui {
 	public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
 		if (isVisible() && RailwayData.isBetween(event.x(), UtilitiesClient.getWidgetX(this), UtilitiesClient.getWidgetX(this) + width) && RailwayData.isBetween(event.y(), UtilitiesClient.getWidgetY(this), UtilitiesClient.getWidgetY(this) + height)) {
 			if (event.button() == 1) {
-				setValue("");
+				// Removed as i mispressed this way too many times qwq
+//				setValue("");
 			}
 			return super.mouseClicked(event, isDoubleClick);
 		} else {
