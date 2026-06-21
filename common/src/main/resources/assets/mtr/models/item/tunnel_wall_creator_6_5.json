@@ -1,14 +1,6 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/tunnel_wall_creator_6_5"
-	},
-	"overrides": [
-		{
-			"predicate": {
-				"mtr:selected": 1
-			},
-			"model": "mtr:item/tunnel_wall_creator_6_5_selected"
-		}
-	]
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:item/tunnel_wall_creator_6_5"
+  }
 }
