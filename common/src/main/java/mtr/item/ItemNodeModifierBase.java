@@ -106,7 +106,7 @@ public abstract class ItemNodeModifierBase extends ItemBlockClickingBase {
 
 		try {
 			if (railwayData != null && stateEnd.getBlock() instanceof BlockNode && blockStart instanceof BlockNode
-					&& transportModeStart.toString().equals(compoundTag.getString(TAG_TRANSPORT_MODE))
+					&& transportModeStart.toString().equals(compoundTag.getStringOr(TAG_TRANSPORT_MODE, "TRAIN"))
 					&& transportModeStart == transportModeEnd) {
 				final Player player = context.getPlayer();
 
