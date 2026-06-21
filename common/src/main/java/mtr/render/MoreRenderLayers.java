@@ -1,14 +1,30 @@
 package mtr.render;
 
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class MoreRenderLayers {
+
+	private static final Function<Identifier, RenderType> ENTITY_TRANSLUCENT_CULL = Util.memoize((texture) -> {
+		RenderSetup state = RenderSetup.builder(RenderPipelines.ENTITY_TRANSLUCENT_CULL)
+				.withTexture("Sampler0", texture)
+				.useLightmap()
+				.useOverlay()
+				.affectsCrumbling()
+				.sortOnUpload()
+				.setOutline(RenderSetup.OutlineProperty.NONE)
+				.createRenderSetup();
+		return RenderType.create("mtr_entity_translucent_cull", state);
+	});
 
 	private static final Map<String, RenderType> LIGHT_CACHE = new HashMap<>();
 	private static final Map<Identifier, RenderType> INTERIOR_CACHE = new HashMap<>();
@@ -21,19 +37,19 @@ public class MoreRenderLayers {
 	}
 
 	public static RenderType getInterior(Identifier texture) {
-		return checkCache(texture, () -> RenderTypes.entityCutout(texture), INTERIOR_CACHE);
+		return checkCache(texture, () -> RenderTypes.entityCutoutCull(texture), INTERIOR_CACHE);
 	}
 
 	public static RenderType getInteriorTranslucent(Identifier texture) {
-		return checkCache(texture, () -> RenderTypes.entityTranslucent/*TODO: Cull?*/(texture), INTERIOR_TRANSLUCENT_CACHE);
+		return checkCache(texture, () -> ENTITY_TRANSLUCENT_CULL.apply(texture), INTERIOR_TRANSLUCENT_CACHE);
 	}
 
 	public static RenderType getExterior(Identifier texture) {
-		return checkCache(texture, () -> RenderTypes.entityCutout(texture), EXTERIOR_CACHE);
+		return checkCache(texture, () -> RenderTypes.entityCutoutCull(texture), EXTERIOR_CACHE);
 	}
 
 	public static RenderType getExteriorTranslucent(Identifier texture) {
-		return checkCache(texture, () -> RenderTypes.entityTranslucent/*TODO: Cull?*/(texture), EXTERIOR_TRANSLUCENT_CACHE);
+		return checkCache(texture, () -> ENTITY_TRANSLUCENT_CULL.apply(texture), EXTERIOR_TRANSLUCENT_CACHE);
 	}
 
 	private static <T> RenderType checkCache(T identifier, Supplier<RenderType> supplier, Map<T, RenderType> cache) {
