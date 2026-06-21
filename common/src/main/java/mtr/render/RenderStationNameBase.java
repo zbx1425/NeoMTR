@@ -47,7 +47,7 @@ public abstract class RenderStationNameBase<T extends BlockStationNameBase.TileE
 				}
 				matricesNew.translate(0, 0, 0.5 - state.zOffset - SMALL_OFFSET);
 			});
-			drawStationName(state, state.blockPos, state.facing, storedMatrixTransformations2, state.stationName, state.textColor, state.textColor, state.lightCoords);
+			drawStationName(state, state.blockPos, state.facing, storedMatrixTransformations2, state.stationName, state.stationColor, state.textColor, state.lightCoords);
 		}
 	}
 

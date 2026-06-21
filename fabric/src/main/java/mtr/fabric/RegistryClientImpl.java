@@ -2,6 +2,7 @@ package mtr.fabric;
 
 import mtr.MTRClient;
 import mtr.MTRFabric;
+import mtr.data.IGui;
 import mtr.mappings.BlockEntityMapper;
 import mtr.mappings.BlockEntityRendererMapper;
 import mtr.mappings.FabricRegistryUtilities;
@@ -11,16 +12,21 @@ import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.color.block.BlockTintSource;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -35,7 +41,17 @@ public class RegistryClientImpl {
 	}
 
 	public static void registerBlockColors(Block block) {
-		BlockColorRegistry.register((state, world, pos, tintIndex) -> MTRClient.getStationColor(pos), block);
+		BlockColorRegistry.register(List.of(new BlockTintSource() {
+			@Override
+			public int color(BlockState state) {
+				return IGui.ARGB_GRAY;
+			}
+
+			@Override
+			public int colorInWorld(final BlockState state, final BlockAndTintGetter level, final BlockPos pos) {
+				return MTRClient.getStationColor(pos);
+			}
+		}), block);
 	}
 
 	public static void registerNetworkReceiver(Identifier resourceLocation, Consumer<FriendlyByteBuf> consumer) {

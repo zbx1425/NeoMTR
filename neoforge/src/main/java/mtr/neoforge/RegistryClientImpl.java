@@ -38,7 +38,7 @@ public class RegistryClientImpl {
 	}
 
 	public static void registerBlockColors(Block block) {
-		RegistryUtilitiesClient.registerBlockColors( new StationColor(), block);
+		RegistryUtilitiesClient.registerBlockColors(new StationColor(), block);
 	}
 
 	public static void registerNetworkReceiver(Identifier resourceLocation, Consumer<FriendlyByteBuf> consumer) {

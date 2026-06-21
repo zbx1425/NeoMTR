@@ -115,8 +115,8 @@ public class RouteMapGenerator implements IGui {
 
 			final NativeImage nativeImage = new NativeImage(NativeImage.Format.RGBA, width, height, false);
 			nativeImage.fillRect(0, 0, width, height, 0);
-			drawString(nativeImage, pixels, width / 2, height / 2, dimensions, HorizontalAlignment.CENTER, VerticalAlignment.CENTER, ARGB_BLACK | stationColor, textColor, false);
-			clearColor(nativeImage, invertColor(ARGB_BLACK | stationColor));
+			drawString(nativeImage, pixels, width / 2, height / 2, dimensions, HorizontalAlignment.CENTER, VerticalAlignment.CENTER, invertColor(ARGB_BLACK | stationColor), textColor, false);
+			clearColor(nativeImage, ARGB_BLACK | stationColor);
 			return nativeImage;
 		} catch (Exception e) {
 			MTR.LOGGER.error("", e);
