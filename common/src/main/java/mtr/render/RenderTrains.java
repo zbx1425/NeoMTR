@@ -11,6 +11,7 @@ import mtr.block.BlockSignalSemaphoreBase;
 import mtr.client.*;
 import mtr.data.*;
 import mtr.item.ItemNodeModifierBase;
+import mtr.mappings.MatrixStackWrapper;
 import mtr.mappings.Text;
 import mtr.mappings.Utilities;
 import mtr.mappings.UtilitiesClient;
@@ -363,7 +364,7 @@ public class RenderTrains implements IGui {
 		}
 
 		final MultiBufferSource.BufferSource immediate = Minecraft.getInstance().renderBuffers().bufferSource();
-		IDrawing.drawStringWithFont(matrices, Minecraft.getInstance().font, immediate, floorNumber, IGui.HorizontalAlignment.CENTER, VerticalAlignment.BOTTOM, 0, height, maxWidth, -1, 18 / maxWidth, LIFT_LIGHT_COLOR, false, MAX_LIGHT_GLOWING, null);
+		IDrawing.drawStringWithFont(new MatrixStackWrapper.PoseStack(matrices), Minecraft.getInstance().font, immediate, floorNumber, IGui.HorizontalAlignment.CENTER, VerticalAlignment.BOTTOM, 0, height, maxWidth, -1, 18 / maxWidth, LIFT_LIGHT_COLOR, false, MAX_LIGHT_GLOWING, null, new IDrawing.TextDrawingCallback.World());
 		immediate.endBatch();
 
 		if (liftDirection != Lift.LiftDirection.NONE) {

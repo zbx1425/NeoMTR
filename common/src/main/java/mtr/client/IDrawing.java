@@ -5,12 +5,14 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.text2speech.Narrator;
 import mtr.MTR;
 import mtr.data.IGui;
+import mtr.mappings.MatrixStackWrapper;
 import mtr.mappings.Text;
 import mtr.mappings.UtilitiesClient;
 import mtr.render.RenderTrains;
 import mtr.screen.WidgetBetterTextField;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -25,25 +27,26 @@ import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Matrix3x2fStack;
+import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public interface IDrawing {
 
-	static void drawStringWithFont(PoseStack matrices, Font textRenderer, MultiBufferSource.BufferSource immediate, String text, float x, float y, int light) {
-		drawStringWithFont(matrices, textRenderer, immediate, text, IGui.HorizontalAlignment.CENTER, IGui.VerticalAlignment.CENTER, x, y, -1, -1, 1, IGui.ARGB_WHITE, true, light, null);
+	static void drawStringWithFont(MatrixStackWrapper matrices, Font textRenderer, MultiBufferSource.BufferSource immediate, String text, float x, float y, int light, TextDrawingCallback textDrawingCallback) {
+		drawStringWithFont(matrices, textRenderer, immediate, text, IGui.HorizontalAlignment.CENTER, IGui.VerticalAlignment.CENTER, x, y, -1, -1, 1, IGui.ARGB_WHITE, true, light, null, textDrawingCallback);
 	}
 
-	static void drawStringWithFont(PoseStack matrices, Font textRenderer, MultiBufferSource.BufferSource immediate, String text, IGui.HorizontalAlignment horizontalAlignment, IGui.VerticalAlignment verticalAlignment, float x, float y, float maxWidth, float maxHeight, float scale, int textColor, boolean shadow, int light, DrawingCallback drawingCallback) {
-		drawStringWithFont(matrices, textRenderer, immediate, text, horizontalAlignment, verticalAlignment, horizontalAlignment, x, y, maxWidth, maxHeight, scale, textColor, shadow, light, drawingCallback);
+	static void drawStringWithFont(MatrixStackWrapper matrices, Font textRenderer, MultiBufferSource.BufferSource immediate, String text, IGui.HorizontalAlignment horizontalAlignment, IGui.VerticalAlignment verticalAlignment, float x, float y, float maxWidth, float maxHeight, float scale, int textColor, boolean shadow, int light, DrawingCallback drawingCallback, TextDrawingCallback textDrawingCallback) {
+		drawStringWithFont(matrices, textRenderer, immediate, text, horizontalAlignment, verticalAlignment, horizontalAlignment, x, y, maxWidth, maxHeight, scale, textColor, shadow, light, drawingCallback, textDrawingCallback);
 	}
 
-	static void drawStringWithFont(PoseStack matrices, Font textRenderer, MultiBufferSource.BufferSource immediate, String text, IGui.HorizontalAlignment horizontalAlignment, IGui.VerticalAlignment verticalAlignment, IGui.HorizontalAlignment xAlignment, float x, float y, float maxWidth, float maxHeight, float scale, int textColor, boolean shadow, int light, DrawingCallback drawingCallback) {
-		drawStringWithFont(matrices, textRenderer, immediate, text, horizontalAlignment, verticalAlignment, xAlignment, x, y, maxWidth, maxHeight, scale, textColor, textColor, 2, shadow, light, drawingCallback);
+	static void drawStringWithFont(MatrixStackWrapper matrices, Font textRenderer, MultiBufferSource.BufferSource immediate, String text, IGui.HorizontalAlignment horizontalAlignment, IGui.VerticalAlignment verticalAlignment, IGui.HorizontalAlignment xAlignment, float x, float y, float maxWidth, float maxHeight, float scale, int textColor, boolean shadow, int light, DrawingCallback drawingCallback, TextDrawingCallback textDrawingCallback) {
+		drawStringWithFont(matrices, textRenderer, immediate, text, horizontalAlignment, verticalAlignment, xAlignment, x, y, maxWidth, maxHeight, scale, textColor, textColor, 2, shadow, light, drawingCallback, textDrawingCallback);
 	}
 
-	static void drawStringWithFont(PoseStack matrices, Font textRenderer, MultiBufferSource.BufferSource immediate, String text, IGui.HorizontalAlignment horizontalAlignment, IGui.VerticalAlignment verticalAlignment, IGui.HorizontalAlignment xAlignment, float x, float y, float maxWidth, float maxHeight, float scale, int textColorCjk, int textColor, float fontSizeRatio, boolean shadow, int light, DrawingCallback drawingCallback) {
+	static void drawStringWithFont(MatrixStackWrapper matrices, Font textRenderer, MultiBufferSource.BufferSource immediate, String text, IGui.HorizontalAlignment horizontalAlignment, IGui.VerticalAlignment verticalAlignment, IGui.HorizontalAlignment xAlignment, float x, float y, float maxWidth, float maxHeight, float scale, int textColorCjk, int textColor, float fontSizeRatio, boolean shadow, int light, DrawingCallback drawingCallback, TextDrawingCallback textDrawingCallback) {
 		final Style style = false && Config.useMTRFont() ? Style.EMPTY.withFont(new FontDescription.Resource(MTR.id("mtr"))) : Style.EMPTY;
 
 		while (text.contains("||")) {
@@ -103,7 +106,7 @@ public interface IDrawing {
 			final int b = (int) (((isCJK ? textColorCjk : textColor) & 0xFF) * shade);
 
 			if (immediate != null) {
-				UtilitiesClient.drawInBatch(textRenderer, orderedTexts.get(i), xOffset / extraScale, offset / extraScale, (a << 24) + (r << 16) + (g << 8) + b, shadow, matrices.last().pose(), immediate, 0, light);
+				textDrawingCallback.draw(textRenderer, orderedTexts.get(i), xOffset / extraScale, offset / extraScale, (a << 24) + (r << 16) + (g << 8) + b, shadow, matrices.last(), immediate, 0, light);
 			}
 
 			if (isCJK) {
@@ -198,5 +201,31 @@ public interface IDrawing {
 	@FunctionalInterface
 	interface DrawingCallback {
 		void drawingCallback(float x1, float y1, float x2, float y2);
+	}
+
+	@FunctionalInterface
+	interface TextDrawingCallback {
+		void draw(Font font, FormattedCharSequence formattedCharSequence, float x, float y, int color, boolean shadow, Matrix4f matrix4f, MultiBufferSource immediate, int overlay, int light);
+
+		class World implements TextDrawingCallback {
+
+			@Override
+			public void draw(Font font, FormattedCharSequence formattedCharSequence, float x, float y, int color, boolean shadow, Matrix4f matrix4f, MultiBufferSource immediate, int overlay, int light) {
+				UtilitiesClient.drawInBatch(font, formattedCharSequence, x, y, color, shadow, matrix4f, immediate, overlay, light);
+			}
+		}
+
+		class GUI implements TextDrawingCallback {
+			private final GuiGraphicsExtractor guiGraphicsExtractor;
+
+			public GUI(GuiGraphicsExtractor guiGraphicsExtractor) {
+				this.guiGraphicsExtractor = guiGraphicsExtractor;
+			}
+
+			@Override
+			public void draw(Font font, FormattedCharSequence formattedCharSequence, float x, float y, int color, boolean shadow, Matrix4f matrix4f, MultiBufferSource immediate, int overlay, int light) {
+				guiGraphicsExtractor.text(font, formattedCharSequence, (int)x, (int)y, color, shadow);
+			}
+		}
 	}
 }

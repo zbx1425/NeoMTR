@@ -9,10 +9,7 @@ import mtr.RegistryClient;
 import mtr.client.ClientData;
 import mtr.client.IDrawing;
 import mtr.data.*;
-import mtr.mappings.SelectableMapper;
-import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
-import mtr.mappings.WidgetMapper;
+import mtr.mappings.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -187,7 +184,8 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 					final BlockPos pos = station.getCenter();
 					final String stationString = String.format("%s|(%s)", station.name, Text.translatable("gui.mtr.zone_number", station.zone).getString());
 					// TODO:
-//					drawFromWorldCoords(pos.getX(), pos.getZ(), (x1, y1) -> IDrawing.drawStringWithFont(guiGraphics.pose(), textRenderer, immediate, stationString, x + x1.floatValue(), y + y1.floatValue(), MAX_LIGHT_GLOWING));
+					drawFromWorldCoords(pos.getX(), pos.getZ(), (x1, y1) -> IDrawing.drawStringWithFont(new MatrixStackWrapper.Matrix3x2f(guiGraphics.pose()), textRenderer, immediate, stationString, x + x1.floatValue(), y + y1.floatValue(), MAX_LIGHT_GLOWING,
+					new IDrawing.TextDrawingCallback.GUI(guiGraphics)));
 				}
 			}
 		} else {
@@ -195,7 +193,8 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 				if (canDrawAreaText(depot)) {
 					final BlockPos pos = depot.getCenter();
 					// TODO:
-//					drawFromWorldCoords(pos.getX(), pos.getZ(), (x1, y1) -> IDrawing.drawStringWithFont(guiGraphics.pose(), textRenderer, immediate, depot.name, x + x1.floatValue(), y + y1.floatValue(), MAX_LIGHT_GLOWING));
+					drawFromWorldCoords(pos.getX(), pos.getZ(), (x1, y1) -> IDrawing.drawStringWithFont(new MatrixStackWrapper.Matrix3x2f(guiGraphics.pose()), textRenderer, immediate, depot.name, x + x1.floatValue(), y + y1.floatValue(), MAX_LIGHT_GLOWING,
+					new IDrawing.TextDrawingCallback.GUI(guiGraphics)));
 				}
 			}
 		}

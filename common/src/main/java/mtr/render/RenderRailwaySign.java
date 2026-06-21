@@ -13,6 +13,7 @@ import mtr.data.Platform;
 import mtr.data.RailwayData;
 import mtr.data.Station;
 import mtr.mappings.BlockEntityRendererMapper;
+import mtr.mappings.MatrixStackWrapper;
 import mtr.mappings.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -64,13 +65,13 @@ public class RenderRailwaySign<T extends BlockRailwaySign.TileEntityRailwaySign>
 		}
 		for (int i = 0; i < state.signIds.length; i++) {
 			if (state.signIds[i] != null) {
-				drawSign(poseStack, false, storedMatrixTransformations, Minecraft.getInstance().font, state.blockPos, state.signIds[i], 0.5F * i, 0, 0.5F, getMaxWidth(state.signIds, i, false), getMaxWidth(state.signIds, i, true), state.featureIds, state.facing, state.backgroundColor | ARGB_BLACK, (textureId, x, y, size, flipTexture) -> {
+				drawSign(new MatrixStackWrapper.PoseStack(poseStack), false, storedMatrixTransformations, Minecraft.getInstance().font, state.blockPos, state.signIds[i], 0.5F * i, 0, 0.5F, getMaxWidth(state.signIds, i, false), getMaxWidth(state.signIds, i, true), state.featureIds, state.facing, state.backgroundColor | ARGB_BLACK, (textureId, x, y, size, flipTexture) -> {
 					RenderTrains.scheduleRender(Identifier.parse(textureId.toString()), true, RenderTrains.QueuedRenderLayer.LIGHT_TRANSLUCENT, (matricesNew, vertexConsumer) -> {
 						storedMatrixTransformations.transform(matricesNew);
 						IDrawing.drawTexture(matricesNew.last(), vertexConsumer, x, y, size, size, flipTexture ? 1 : 0, 0, flipTexture ? 0 : 1, 1, state.facing, -1, MAX_LIGHT_GLOWING);
 						matricesNew.popPose();
 					});
-				});
+				}, new TextDrawingCallback.World());
 			}
 		}
 
@@ -125,7 +126,7 @@ public class RenderRailwaySign<T extends BlockRailwaySign.TileEntityRailwaySign>
 		return true;
 	}
 
-	public static void drawSign(PoseStack poseStack, boolean isPreview, StoredMatrixTransformations storedMatrixTransformations, Font textRenderer, BlockPos pos, String signId, float x, float y, float size, float maxWidthLeft, float maxWidthRight, Set<Long> featureIds, Direction facing, int backgroundColor, DrawTexture drawTexture) {
+	public static void drawSign(MatrixStackWrapper poseStack, boolean isPreview, StoredMatrixTransformations storedMatrixTransformations, Font textRenderer, BlockPos pos, String signId, float x, float y, float size, float maxWidthLeft, float maxWidthRight, Set<Long> featureIds, Direction facing, int backgroundColor, DrawTexture drawTexture, TextDrawingCallback textDrawingCallback) {
 		if (RenderTrains.shouldNotRender(pos, RenderTrains.maxTrainRenderDistance, facing)) {
 			return;
 		}
@@ -256,7 +257,7 @@ public class RenderRailwaySign<T extends BlockRailwaySign.TileEntityRailwaySign>
 				final float maxWidth = Math.max(0, (flipCustomText ? maxWidthLeft : maxWidthRight) * size - fixedMargin * (isSmall ? 1 : 2));
 				final float start = flipCustomText ? x - (isSmall ? 0 : fixedMargin) : x + size + (isSmall ? 0 : fixedMargin);
 				if (isPreview) {
-					IDrawing.drawStringWithFont(poseStack, textRenderer, immediate, isExit || isLine ? "..." : sign.customText, flipCustomText ? HorizontalAlignment.RIGHT : HorizontalAlignment.LEFT, VerticalAlignment.TOP, start, y + fixedMargin, maxWidth, size - fixedMargin * 2, 0.01F, ARGB_WHITE, false, MAX_LIGHT_GLOWING, null);
+					IDrawing.drawStringWithFont(poseStack, textRenderer, immediate, isExit || isLine ? "..." : sign.customText, flipCustomText ? HorizontalAlignment.RIGHT : HorizontalAlignment.LEFT, VerticalAlignment.TOP, start, y + fixedMargin, maxWidth, size - fixedMargin * 2, 0.01F, ARGB_WHITE, false, MAX_LIGHT_GLOWING, null, new IDrawing.TextDrawingCallback.World());
 				} else {
 					final String signText;
 					if (isStation) {

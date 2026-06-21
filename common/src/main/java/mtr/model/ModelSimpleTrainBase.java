@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import mtr.client.DoorAnimationType;
 import mtr.client.IDrawing;
 import mtr.data.IGui;
+import mtr.mappings.MatrixStackWrapper;
 import mtr.mappings.UtilitiesClient;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -73,7 +74,7 @@ public abstract class ModelSimpleTrainBase<T> extends ModelTrainBase {
 					UtilitiesClient.rotateXDegrees(matrices, rotationX);
 				}
 				matrices.translate(x2, y2, z2);
-				IDrawing.drawStringWithFont(matrices, font, immediate, text, HorizontalAlignment.CENTER, VerticalAlignment.CENTER, HorizontalAlignment.CENTER, 0, 0, maxWidth, (padOneLine && !text.contains("|") ? IGui.isCjk(text) ? fontSizeRatio / (fontSizeRatio + 1) : 0.5F : 1) * maxHeight, 1, colorCjk, color, fontSizeRatio, false, MAX_LIGHT_GLOWING, null);
+				IDrawing.drawStringWithFont(new MatrixStackWrapper.PoseStack(matrices), font, immediate, text, HorizontalAlignment.CENTER, VerticalAlignment.CENTER, HorizontalAlignment.CENTER, 0, 0, maxWidth, (padOneLine && !text.contains("|") ? IGui.isCjk(text) ? fontSizeRatio / (fontSizeRatio + 1) : 0.5F : 1) * maxHeight, 1, colorCjk, color, fontSizeRatio, false, MAX_LIGHT_GLOWING, null, new IDrawing.TextDrawingCallback.World());
 				matrices.popPose();
 			}
 		}

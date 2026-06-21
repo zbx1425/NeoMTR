@@ -104,7 +104,7 @@ public class WidgetShorterSlider extends AbstractSliderButton implements IGui {
 		if (markerFrequency > 0) {
 			for (int i = 1; i <= maxValue / markerFrequency; i++) {
 				final int xOffset1 = (width - SLIDER_WIDTH) * i * markerFrequency / maxValue;
-				guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset1 + SLIDER_WIDTH / 3, UtilitiesClient.getWidgetY(this) + height, 10, 68, 2, TICK_HEIGHT, 2, TICK_HEIGHT);
+				guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this) + xOffset1 + SLIDER_WIDTH / 3, UtilitiesClient.getWidgetY(this) + height, 10, 68, 2, TICK_HEIGHT, 256, 256);
 				guiGraphics.centeredText(client.font, String.valueOf(i * markerFrequency / markerDisplayedRatio), UtilitiesClient.getWidgetX(this) + xOffset1 + SLIDER_WIDTH / 2, UtilitiesClient.getWidgetY(this) + height + TICK_HEIGHT + 2, ARGB_WHITE);
 			}
 		}

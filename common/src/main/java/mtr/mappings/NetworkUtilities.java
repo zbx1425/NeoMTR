@@ -8,32 +8,6 @@ import net.minecraft.world.entity.player.Player;
 
 public interface NetworkUtilities {
 
-	/*
-
-	static void registerReceiverS2C(Identifier id, NetworkManager.NetworkReceiver receiver) {
-		NetworkManager.registerReceiver(NetworkManager.Side.S2C, id, receiver);
-	}
-
-	static void registerReceiverC2S(Identifier id, PacketCallback packetCallback) {
-		NetworkManager.registerReceiver(NetworkManager.Side.C2S, id, (packet, context) -> {
-			final Player player = context.getPlayer();
-			if (player != null) {
-				packetCallback.packetCallback(player.getServer(), (ServerPlayer) player, packet);
-			}
-		});
-	}
-
-	static void sendToPlayer(ServerPlayer player, Identifier id, FriendlyByteBuf packet) {
-		packet.resetReaderIndex();
-		NetworkManager.sendToPlayer(player, id, packet);
-	}
-
-	static void sendToServer(Identifier id, FriendlyByteBuf packet) {
-		NetworkManager.sendToServer(id, packet);
-	}
-
-	 */
-
 	@FunctionalInterface
 	interface PacketCallback {
 		void packetCallback(MinecraftServer server, ServerPlayer player, FriendlyByteBuf packet);

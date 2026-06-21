@@ -7,10 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import mtr.MTR;
 import mtr.data.*;
-import mtr.mappings.ModelDataWrapper;
-import mtr.mappings.ModelMapper;
-import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.mappings.*;
 import mtr.model.ModelTrainBase;
 import mtr.screen.ResourcePackCreatorScreen;
 import net.minecraft.client.Minecraft;
@@ -257,7 +254,7 @@ public class DynamicTrainModel extends ModelTrainBase implements IResourcePackCr
 						scrollingTexts.get(scrollIndex[0]).scrollText(matrices);
 						scrollIndex[0]++;
 					} else {
-						IDrawing.drawStringWithFont(matrices, Minecraft.getInstance().font, immediate, text, HorizontalAlignment.CENTER, VerticalAlignment.CENTER, HorizontalAlignment.CENTER, 0, 0, width, height, 1, colorCjk, color, cjkSizeRatio < 0 ? 1 / (1 - cjkSizeRatio) : 1 + cjkSizeRatio, false, MAX_LIGHT_GLOWING, null);
+						IDrawing.drawStringWithFont(new MatrixStackWrapper.PoseStack(matrices), Minecraft.getInstance().font, immediate, text, HorizontalAlignment.CENTER, VerticalAlignment.CENTER, HorizontalAlignment.CENTER, 0, 0, width, height, 1, colorCjk, color, cjkSizeRatio < 0 ? 1 / (1 - cjkSizeRatio) : 1 + cjkSizeRatio, false, MAX_LIGHT_GLOWING, null, new IDrawing.TextDrawingCallback.World());
 					}
 
 					matrices.popPose();

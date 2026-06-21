@@ -35,8 +35,7 @@ public class MTRFabricClient implements ClientModInitializer, ICustomResources {
 		MTRClient.initItemModelPredicate();
 		MainClient.init();
 
-		// TODO: Correct injection point?
-		LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(context -> {
+		LevelRenderEvents.AFTER_SOLID_FEATURES.register(context -> {
 			final PoseStack matrices = context.poseStack();
 			matrices.pushPose();
 			final Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().position();

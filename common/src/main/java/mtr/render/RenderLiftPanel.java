@@ -12,6 +12,7 @@ import mtr.client.IDrawing;
 import mtr.data.Lift;
 import mtr.item.ItemLiftButtonsLinkModifier;
 import mtr.mappings.BlockEntityRendererMapper;
+import mtr.mappings.MatrixStackWrapper;
 import mtr.mappings.Utilities;
 import mtr.mappings.UtilitiesClient;
 import net.minecraft.client.Minecraft;
@@ -71,7 +72,7 @@ public class RenderLiftPanel<T extends BlockLiftPanelBase.TileEntityLiftPanel1Ba
 				poseStack.pushPose();
 				poseStack.translate(0, 0, (isFlat ? 0.4375F : 0.25F) - SMALL_OFFSET * 2);
 				final MultiBufferSource.BufferSource immediate = Minecraft.getInstance().renderBuffers().bufferSource();
-				IDrawing.drawStringWithFont(poseStack, textRenderer, immediate, ClientData.DATA_CACHE.requestLiftFloorText(state.linkedPosition)[0], HorizontalAlignment.CENTER, VerticalAlignment.CENTER, 0, -0.47F, 0.1875F, 0.1875F, 1, ARGB_BLACK, false, MAX_LIGHT_GLOWING, null);
+				IDrawing.drawStringWithFont(new MatrixStackWrapper.PoseStack(poseStack), textRenderer, immediate, ClientData.DATA_CACHE.requestLiftFloorText(state.linkedPosition)[0], HorizontalAlignment.CENTER, VerticalAlignment.CENTER, 0, -0.47F, 0.1875F, 0.1875F, 1, ARGB_BLACK, false, MAX_LIGHT_GLOWING, null, new IDrawing.TextDrawingCallback.World());
 				immediate.endBatch();
 				poseStack.popPose();
 
