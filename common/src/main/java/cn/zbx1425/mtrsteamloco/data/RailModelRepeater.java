@@ -359,7 +359,7 @@ public class RailModelRepeater {
                                  int placementIndex, String repeaterId,
                                  float interval, float initialOffset,
                                  int[] modelCounts, int[] initialFirstModelIndices) {
-        ServerLevel level = (ServerLevel) player.level();
+        ServerLevel level = player.level();
         List<UndoEntry> snapshot = new ArrayList<>();
         List<BlockPos[]> modifiedRails = new ArrayList<>();
 
@@ -459,7 +459,7 @@ public class RailModelRepeater {
             player.sendSystemMessage(Component.literal("Nothing to undo."));
             return;
         }
-        ServerLevel level = (ServerLevel) player.level();
+        ServerLevel level = player.level();
         List<BlockPos[]> modifiedRails = new ArrayList<>();
         for (UndoEntry entry : snapshot) {
             Rail railAB = railwayData.getRail(entry.posA, entry.posB);

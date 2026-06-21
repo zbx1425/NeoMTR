@@ -24,7 +24,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 public class ItemPSDAPGBase extends ItemWithCreativeTabBase implements IBlock {
@@ -82,32 +81,23 @@ public class ItemPSDAPGBase extends ItemWithCreativeTabBase implements IBlock {
 	private BlockState getBlockStateFromItem() {
 		switch (type) {
 			case PSD_1:
-				switch (item) {
-					case PSD_APG_DOOR:
-						return Blocks.PSD_DOOR_1.get().defaultBlockState();
-					case PSD_APG_GLASS:
-						return Blocks.PSD_GLASS_1.get().defaultBlockState();
-					case PSD_APG_GLASS_END:
-						return Blocks.PSD_GLASS_END_1.get().defaultBlockState();
-				}
+                return switch (item) {
+                    case PSD_APG_DOOR -> Blocks.PSD_DOOR_1.get().defaultBlockState();
+                    case PSD_APG_GLASS -> Blocks.PSD_GLASS_1.get().defaultBlockState();
+                    case PSD_APG_GLASS_END -> Blocks.PSD_GLASS_END_1.get().defaultBlockState();
+                };
 			case PSD_2:
-				switch (item) {
-					case PSD_APG_DOOR:
-						return Blocks.PSD_DOOR_2.get().defaultBlockState();
-					case PSD_APG_GLASS:
-						return Blocks.PSD_GLASS_2.get().defaultBlockState();
-					case PSD_APG_GLASS_END:
-						return Blocks.PSD_GLASS_END_2.get().defaultBlockState();
-				}
+                return switch (item) {
+                    case PSD_APG_DOOR -> Blocks.PSD_DOOR_2.get().defaultBlockState();
+                    case PSD_APG_GLASS -> Blocks.PSD_GLASS_2.get().defaultBlockState();
+                    case PSD_APG_GLASS_END -> Blocks.PSD_GLASS_END_2.get().defaultBlockState();
+                };
 			case APG:
-				switch (item) {
-					case PSD_APG_DOOR:
-						return Blocks.APG_DOOR.get().defaultBlockState();
-					case PSD_APG_GLASS:
-						return Blocks.APG_GLASS.get().defaultBlockState();
-					case PSD_APG_GLASS_END:
-						return Blocks.APG_GLASS_END.get().defaultBlockState();
-				}
+                return switch (item) {
+                    case PSD_APG_DOOR -> Blocks.APG_DOOR.get().defaultBlockState();
+                    case PSD_APG_GLASS -> Blocks.APG_GLASS.get().defaultBlockState();
+                    case PSD_APG_GLASS_END -> Blocks.APG_GLASS_END.get().defaultBlockState();
+                };
 			case LIFT_DOOR_1:
 				return Blocks.LIFT_DOOR_EVEN_1.get().defaultBlockState();
 			case LIFT_DOOR_ODD_1:

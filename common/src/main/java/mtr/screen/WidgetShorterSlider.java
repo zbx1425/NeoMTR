@@ -2,11 +2,10 @@ package mtr.screen;
 
 import mtr.data.IGui;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSliderButton;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
@@ -68,23 +67,6 @@ public class WidgetShorterSlider extends AbstractSliderButton implements IGui {
 
 	@Override
 	public void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
-		render(guiGraphics);
-	}
-	
-	public void setValue(int valueInt) {
-		value = (double) valueInt / maxValue;
-		updateMessage();
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
-	}
-
-	public int getIntValue() {
-		return (int) Math.round(value * maxValue);
-	}
-
-	private void render(GuiGraphicsExtractor guiGraphics) {
 		final Minecraft client = Minecraft.getInstance();
 
 		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WIDGETS_LOCATION, UtilitiesClient.getWidgetX(this), UtilitiesClient.getWidgetY(this), 0, 46, width / 2, height / 2, 256, 256);
@@ -108,6 +90,19 @@ public class WidgetShorterSlider extends AbstractSliderButton implements IGui {
 				guiGraphics.centeredText(client.font, String.valueOf(i * markerFrequency / markerDisplayedRatio), UtilitiesClient.getWidgetX(this) + xOffset1 + SLIDER_WIDTH / 2, UtilitiesClient.getWidgetY(this) + height + TICK_HEIGHT + 2, ARGB_WHITE);
 			}
 		}
+	}
+	
+	public void setValue(int valueInt) {
+		value = (double) valueInt / maxValue;
+		updateMessage();
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
+	public int getIntValue() {
+		return (int) Math.round(value * maxValue);
 	}
 
 	private void checkShiftClick() {

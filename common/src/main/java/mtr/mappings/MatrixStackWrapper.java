@@ -3,6 +3,7 @@ package mtr.mappings;
 import org.joml.Matrix3x2fStack;
 import org.joml.Matrix4f;
 
+/** Contains matrix stack operations for both Matrix3x2fStack and PoseStack */
 public interface MatrixStackWrapper {
 
     void pushPose();

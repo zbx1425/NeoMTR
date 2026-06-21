@@ -2,7 +2,7 @@ package cn.zbx1425.mtrsteamloco.mixin;
 
 import mtr.data.TrainClient;
 import mtr.render.TrainRendererBase;
-import mtr.sound.TrainSoundBase;
+import mtr.sound.train.TrainSoundBase;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;

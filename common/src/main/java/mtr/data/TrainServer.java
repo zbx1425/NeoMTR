@@ -1,6 +1,6 @@
 package mtr.data;
 
-import mtr.TrigCache;
+import mtr.util.TrigCache;
 import mtr.block.*;
 import mtr.path.PathData;
 import net.minecraft.core.BlockPos;

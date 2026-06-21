@@ -14,7 +14,7 @@ import mtr.data.RailwayData;
 import mtr.data.Station;
 import mtr.mappings.BlockEntityRendererMapper;
 import mtr.mappings.MatrixStackWrapper;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -156,7 +156,7 @@ public class RenderRailwaySign<T extends BlockRailwaySign.TileEntityRailwaySign>
 			}
 
 			final Map<String, List<String>> exits = station.getGeneratedExits();
-			final List<String> selectedExitsSorted = featureIds.stream().map(Station::deserializeExit).filter(exits::containsKey).sorted(String::compareTo).collect(Collectors.toList());
+			final List<String> selectedExitsSorted = featureIds.stream().map(Station::deserializeExit).filter(exits::containsKey).sorted(String::compareTo).toList();
 
 			poseStack.pushPose();
 			poseStack.translate(x + margin + (flipCustomText ? signSize : 0), y + margin, 0);
@@ -189,7 +189,7 @@ public class RenderRailwaySign<T extends BlockRailwaySign.TileEntityRailwaySign>
 			}
 
 			final Map<Integer, ClientCache.ColorNameTuple> routesInStation = ClientData.DATA_CACHE.getAllRoutesIncludingConnectingStations(station);
-			final List<ClientCache.ColorNameTuple> selectedIdsSorted = featureIds.stream().filter(selectedId -> RailwayData.isBetween(selectedId, Integer.MIN_VALUE, Integer.MAX_VALUE)).map(Math::toIntExact).filter(routesInStation::containsKey).map(routesInStation::get).sorted(Comparator.comparingInt(route -> route.color)).collect(Collectors.toList());
+			final List<ClientCache.ColorNameTuple> selectedIdsSorted = featureIds.stream().filter(selectedId -> RailwayData.isBetween(selectedId, Integer.MIN_VALUE, Integer.MAX_VALUE)).map(Math::toIntExact).filter(routesInStation::containsKey).map(routesInStation::get).sorted(Comparator.comparingInt(route -> route.color)).toList();
 
 			final float maxWidth = Math.max(0, ((flipCustomText ? maxWidthLeft : maxWidthRight) + 1) * size - margin * 2);
 			final float height = size - margin * 2;
@@ -231,7 +231,7 @@ public class RenderRailwaySign<T extends BlockRailwaySign.TileEntityRailwaySign>
 
 			final Map<Long, Platform> platformPositions = ClientData.DATA_CACHE.requestStationIdToPlatforms(station.id);
 			if (platformPositions != null) {
-				final List<Long> selectedIdsSorted = featureIds.stream().filter(platformPositions::containsKey).sorted(Comparator.comparing(platformPositions::get)).collect(Collectors.toList());
+				final List<Long> selectedIdsSorted = featureIds.stream().filter(platformPositions::containsKey).sorted(Comparator.comparing(platformPositions::get)).toList();
 				final int selectedCount = selectedIdsSorted.size();
 
 				final float extraMargin = margin - margin / selectedCount;

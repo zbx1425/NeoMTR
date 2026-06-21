@@ -6,7 +6,7 @@ import cn.zbx1425.mtrsteamloco.gui.RailEditorVisualScreen;
 import cn.zbx1425.mtrsteamloco.gui.EyeCandyScreen;
 import io.netty.buffer.Unpooled;
 import mtr.Registry;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;

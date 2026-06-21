@@ -1,7 +1,4 @@
-package mtr;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+package mtr.util;
 
 public class MaterialColor {
 
@@ -78,7 +75,6 @@ public class MaterialColor {
 		}
 	}
 
-	@Environment(EnvType.CLIENT)
 	public int calculateRGBColor(int i) {
 		int j = 220;
 		if (i == 3) {

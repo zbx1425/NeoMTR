@@ -1,6 +1,5 @@
 package cn.zbx1425.mtrsteamloco.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mtr.mappings.Text;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -11,7 +10,6 @@ import net.minecraft.client.input.MouseButtonEvent;
 import org.joml.Matrix3x2fStack;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class WidgetScrollList extends AbstractScrollWidget {
 

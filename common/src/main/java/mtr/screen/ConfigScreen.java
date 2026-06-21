@@ -7,16 +7,16 @@ import mtr.client.ClientData;
 import mtr.client.Config;
 import mtr.client.IDrawing;
 import mtr.data.IGui;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.packet.PacketTrainDataGuiClient;
 import net.minecraft.util.Util;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
-public class ConfigScreen extends ScreenMapper implements IGui {
+public class ConfigScreen extends MTRScreen implements IGui {
 
 	private boolean useMTRFont;
 	private boolean showAnnouncementMessages;
@@ -155,22 +155,22 @@ public class ConfigScreen extends ScreenMapper implements IGui {
 		buttonSupportPatreon.setMessage(Text.translatable("gui.mtr.support"));
 
 		if (hasTimeAndWindControls) {
-			addDrawableChild(checkboxUseTimeAndWindSync);
+			addRenderableWidget(checkboxUseTimeAndWindSync);
 		}
-		addDrawableChild(buttonUseMTRFont);
+		addRenderableWidget(buttonUseMTRFont);
 		if (!Keys.LIFTS_ONLY) {
-			addDrawableChild(buttonShowAnnouncementMessages);
-			addDrawableChild(buttonUseTTSAnnouncements);
-			addDrawableChild(buttonHideSpecialRailColors);
-			addDrawableChild(buttonHideTranslucentParts);
-			addDrawableChild(buttonShiftToToggleSitting);
-			addDrawableChild(buttonLanguageOptions);
-			addDrawableChild(buttonUseDynamicFPS);
-			addDrawableChild(sliderTrackTextureOffset);
-			addDrawableChild(sliderDynamicTextureResolution);
-			addDrawableChild(sliderTrainRenderDistanceRatio);
+			addRenderableWidget(buttonShowAnnouncementMessages);
+			addRenderableWidget(buttonUseTTSAnnouncements);
+			addRenderableWidget(buttonHideSpecialRailColors);
+			addRenderableWidget(buttonHideTranslucentParts);
+			addRenderableWidget(buttonShiftToToggleSitting);
+			addRenderableWidget(buttonLanguageOptions);
+			addRenderableWidget(buttonUseDynamicFPS);
+			addRenderableWidget(sliderTrackTextureOffset);
+			addRenderableWidget(sliderDynamicTextureResolution);
+			addRenderableWidget(sliderTrainRenderDistanceRatio);
 		}
-		addDrawableChild(buttonSupportPatreon);
+		addRenderableWidget(buttonSupportPatreon);
 	}
 
 	@Override
@@ -187,7 +187,7 @@ public class ConfigScreen extends ScreenMapper implements IGui {
 				guiGraphics.text(font, Text.translatable("options.mtr.use_tts_announcements"), SQUARE_SIZE, BUTTON_HEIGHT * (i++) + yStart1, ARGB_WHITE);
 				guiGraphics.text(font, Text.translatable("options.mtr.hide_special_rail_colors"), SQUARE_SIZE, BUTTON_HEIGHT * (i++) + yStart1, ARGB_WHITE);
 				guiGraphics.text(font, Text.translatable("options.mtr.hide_translucent_parts"), SQUARE_SIZE, BUTTON_HEIGHT * (i++) + yStart1, ARGB_WHITE);
-				guiGraphics.text(font, Text.translatable("options.mtr.shift_to_toggle_sitting", minecraft == null ? "" : minecraft.options.keyShift.getTranslatedKeyMessage()), SQUARE_SIZE, BUTTON_HEIGHT * (i++) + yStart1, ARGB_WHITE);
+				guiGraphics.text(font, Text.translatable("options.mtr.shift_to_toggle_sitting", minecraft.options.keyShift.getTranslatedKeyMessage()), SQUARE_SIZE, BUTTON_HEIGHT * (i++) + yStart1, ARGB_WHITE);
 				guiGraphics.text(font, Text.translatable("options.mtr.language_options"), SQUARE_SIZE, BUTTON_HEIGHT * (i++) + yStart1, ARGB_WHITE);
 				guiGraphics.text(font, Text.translatable("options.mtr.use_dynamic_fps"), SQUARE_SIZE, BUTTON_HEIGHT * (i++) + yStart1, ARGB_WHITE);
 				guiGraphics.text(font, Text.translatable("options.mtr.track_texture_offset"), SQUARE_SIZE, BUTTON_HEIGHT * (i++) + yStart1, ARGB_WHITE);

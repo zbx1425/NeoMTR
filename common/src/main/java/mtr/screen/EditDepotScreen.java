@@ -5,7 +5,7 @@ import mtr.client.ClientData;
 import mtr.client.IDrawing;
 import mtr.data.*;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.packet.PacketTrainDataGuiClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -90,13 +90,11 @@ public class EditDepotScreen extends EditNameColorScreenBase<Depot> {
 		});
 
 		buttonEditInstructions = UtilitiesClient.newButton(Text.translatable("gui.mtr.edit_instructions"), button -> {
-			if (minecraft != null) {
-				saveData();
-				final List<NameColorDataBase> routes = new ArrayList<>(ClientData.getFilteredDataSet(transportMode, ClientData.ROUTES));
-				Collections.sort(routes);
-				UtilitiesClient.setScreen(minecraft, new DashboardListSelectorScreen(this, routes, data.routeIds, false, true));
-			}
-		});
+            saveData();
+            final List<NameColorDataBase> routes = new ArrayList<>(ClientData.getFilteredDataSet(transportMode, ClientData.ROUTES));
+            Collections.sort(routes);
+            UtilitiesClient.setScreen(minecraft, new DashboardListSelectorScreen(this, routes, data.routeIds, false, true));
+        });
 		buttonGenerateRoute = UtilitiesClient.newButton(Text.translatable("gui.mtr.refresh_path"), button -> {
 			saveData();
 			depot.clientPathGenerationSuccessfulSegments = -1;
@@ -131,7 +129,7 @@ public class EditDepotScreen extends EditNameColorScreenBase<Depot> {
 
 		if (showScheduleControls) {
 			for (WidgetShorterSlider slider : sliders) {
-				addDrawableChild(slider);
+				addRenderableWidget(slider);
 			}
 		}
 		for (int i = 0; i < Depot.HOURS_IN_DAY; i++) {
@@ -145,25 +143,25 @@ public class EditDepotScreen extends EditNameColorScreenBase<Depot> {
 		departuresList.y = SQUARE_SIZE;
 		departuresList.height = height - SQUARE_SIZE * 2 - TEXT_FIELD_PADDING;
 		departuresList.width = leftWidth;
-		departuresList.init(this::addDrawableChild);
+		departuresList.init(this::addRenderableWidget);
 
 		IDrawing.setPositionAndWidth(textFieldDeparture, TEXT_FIELD_PADDING / 2, height - SQUARE_SIZE - TEXT_FIELD_PADDING / 2, leftWidth - TEXT_FIELD_PADDING - SQUARE_SIZE);
-		addDrawableChild(textFieldDeparture);
+		addRenderableWidget(textFieldDeparture);
 		textFieldDeparture.setResponder(text -> buttonAddDeparture.active = checkDeparture(text, false, false));
 		IDrawing.setPositionAndWidth(buttonAddDeparture, leftWidth - SQUARE_SIZE, height - SQUARE_SIZE - TEXT_FIELD_PADDING / 2, SQUARE_SIZE);
-		addDrawableChild(buttonAddDeparture);
+		addRenderableWidget(buttonAddDeparture);
 		buttonAddDeparture.active = false;
 
-		addDrawableChild(buttonEditInstructions);
-		addDrawableChild(buttonGenerateRoute);
+		addRenderableWidget(buttonEditInstructions);
+		addRenderableWidget(buttonGenerateRoute);
 		if (showScheduleControls) {
-			addDrawableChild(buttonUseRealTime);
-			addDrawableChild(buttonReset);
-			addDrawableChild(buttonClearTrains);
-			addDrawableChild(checkboxRepeatIndefinitely);
+			addRenderableWidget(buttonUseRealTime);
+			addRenderableWidget(buttonReset);
+			addRenderableWidget(buttonClearTrains);
+			addRenderableWidget(checkboxRepeatIndefinitely);
 		}
 		if (showCruisingAltitude) {
-			addDrawableChild(textFieldCruisingAltitude);
+			addRenderableWidget(textFieldCruisingAltitude);
 		}
 
 		toggleRealTime();

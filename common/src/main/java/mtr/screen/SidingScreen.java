@@ -1,7 +1,7 @@
 package mtr.screen;
 
 import com.google.gson.JsonObject;
-import mtr.Icons;
+import mtr.util.Icons;
 import mtr.Patreon;
 import mtr.client.ClientData;
 import mtr.client.IDrawing;
@@ -9,7 +9,7 @@ import mtr.client.TrainClientRegistry;
 import mtr.client.TrainProperties;
 import mtr.data.*;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiClient;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -93,12 +93,12 @@ public class SidingScreen extends SavedRailScreenBase<Siding> implements Icons {
 		IDrawing.setPositionAndWidth(buttonSelectTrain, SQUARE_SIZE + textWidth, SQUARE_SIZE * 2 + TEXT_FIELD_PADDING, width - textWidth - SQUARE_SIZE * 2);
 		IDrawing.setPositionAndWidth(buttonUnlimitedTrains, SQUARE_SIZE + textWidth + MAX_TRAINS_WIDTH + TEXT_FIELD_PADDING + TEXT_FIELD_PADDING, SQUARE_SIZE * 3 + TEXT_FIELD_PADDING * 3 / 2, width - textWidth - SQUARE_SIZE * 2);
 
-		addDrawableChild(buttonSelectTrain);
+		addRenderableWidget(buttonSelectTrain);
 
 		availableTrainsList.y = SQUARE_SIZE;
 		availableTrainsList.height = height - SQUARE_SIZE * 2;
 		availableTrainsList.width = width - DESCRIPTION_WIDTH - SQUARE_SIZE * 3;
-		availableTrainsList.init(this::addDrawableChild);
+		availableTrainsList.init(this::addRenderableWidget);
 
 		buttonIsManual.setChecked(savedRailBase.getIsManual());
 		buttonUnlimitedTrains.setChecked(savedRailBase.getUnlimitedTrains());
@@ -131,11 +131,11 @@ public class SidingScreen extends SavedRailScreenBase<Siding> implements Icons {
 		setIsSelectingTrain(false);
 
 		if (showScheduleControls) {
-			addDrawableChild(buttonUnlimitedTrains);
-			addDrawableChild(textFieldMaxTrains);
-			addDrawableChild(sliderAccelerationConstant);
-			addDrawableChild(buttonIsManual);
-			addDrawableChild(sliderMaxManualSpeed);
+			addRenderableWidget(buttonUnlimitedTrains);
+			addRenderableWidget(textFieldMaxTrains);
+			addRenderableWidget(sliderAccelerationConstant);
+			addRenderableWidget(buttonIsManual);
+			addRenderableWidget(sliderMaxManualSpeed);
 		}
 	}
 

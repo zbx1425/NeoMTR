@@ -1,19 +1,20 @@
-package mtr.sound;
+package mtr.sound.train;
 
 import mtr.data.TrainClient;
-import mtr.mappings.TickableSoundInstanceMapper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 
-public class TrainLoopingSoundInstance extends TickableSoundInstanceMapper {
+public class TrainLoopingSoundInstance extends AbstractTickableSoundInstance {
 
 	private final TrainClient train;
 
 	public TrainLoopingSoundInstance(SoundEvent event, TrainClient train) {
-		super(event, SoundSource.BLOCKS);
+		super(event, SoundSource.BLOCKS, RandomSource.create());
 		this.train = train;
 		looping = true;
 		delay = 0;

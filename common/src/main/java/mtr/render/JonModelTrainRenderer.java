@@ -10,7 +10,7 @@ import mtr.data.IGui;
 import mtr.data.Train;
 import mtr.data.TrainClient;
 import mtr.data.TransportMode;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.model.ModelBogie;
 import mtr.model.ModelCableCarGrip;
 import mtr.model.ModelTrainBase;

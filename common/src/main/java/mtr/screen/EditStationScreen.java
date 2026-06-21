@@ -7,7 +7,7 @@ import mtr.data.DataConverter;
 import mtr.data.NameColorDataBase;
 import mtr.data.Station;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.packet.PacketTrainDataGuiClient;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -87,17 +87,17 @@ public class EditStationScreen extends EditNameColorScreenBase<Station> {
 		exitDestinationList.height = height - EXIT_PANELS_START - SQUARE_SIZE;
 		exitDestinationList.width = width / 2;
 
-		exitParentList.init(this::addDrawableChild);
-		exitDestinationList.init(this::addDrawableChild);
+		exitParentList.init(this::addRenderableWidget);
+		exitDestinationList.init(this::addRenderableWidget);
 
-		addDrawableChild(textFieldZone);
-		addDrawableChild(textFieldExitParentLetter);
-		addDrawableChild(textFieldExitParentNumber);
-		addDrawableChild(textFieldExitDestination);
-		addDrawableChild(buttonAddExitParent);
-		addDrawableChild(buttonDoneExitParent);
-		addDrawableChild(buttonAddExitDestination);
-		addDrawableChild(buttonDoneExitDestination);
+		addRenderableWidget(textFieldZone);
+		addRenderableWidget(textFieldExitParentLetter);
+		addRenderableWidget(textFieldExitParentNumber);
+		addRenderableWidget(textFieldExitDestination);
+		addRenderableWidget(buttonAddExitParent);
+		addRenderableWidget(buttonDoneExitParent);
+		addRenderableWidget(buttonAddExitDestination);
+		addRenderableWidget(buttonDoneExitDestination);
 
 		changeEditingExit(null, -1);
 	}

@@ -3,13 +3,13 @@ package mtr.screen;
 import mtr.MTR;
 import mtr.client.IDrawing;
 import mtr.data.IGui;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 
-public class DeleteConfirmationScreen extends ScreenMapper implements IGui {
+public class DeleteConfirmationScreen extends MTRScreen implements IGui {
 
 	private final Runnable deleteCallback;
 	private final String name;
@@ -36,8 +36,8 @@ public class DeleteConfirmationScreen extends ScreenMapper implements IGui {
 		super.init();
 		IDrawing.setPositionAndWidth(buttonYes, width / 2 - BUTTON_WIDTH - BUTTON_HALF_PADDING, height / 2, BUTTON_WIDTH);
 		IDrawing.setPositionAndWidth(buttonNo, width / 2 + BUTTON_HALF_PADDING, height / 2, BUTTON_WIDTH);
-		addDrawableChild(buttonYes);
-		addDrawableChild(buttonNo);
+		addRenderableWidget(buttonYes);
+		addRenderableWidget(buttonNo);
 	}
 
 	@Override

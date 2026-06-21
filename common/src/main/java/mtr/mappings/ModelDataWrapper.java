@@ -1,6 +1,5 @@
 package mtr.mappings;
 
-import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
@@ -15,12 +14,6 @@ public class ModelDataWrapper {
 	public ModelDataWrapper() {
 		modelData = new MeshDefinition();
 		modelPartData = modelData.getRoot();
-	}
-
-	// TODO: Remove this in cleanup
-	@Deprecated
-	public ModelDataWrapper(Model model, int textureWidth, int textureHeight) {
-		this();
 	}
 
 	public void setModelPart(int textureWidth, int textureHeight) {

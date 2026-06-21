@@ -1,7 +1,9 @@
-package mtr.mappings;
+package mtr.util;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import mtr.mappings.Text;
+import mtr.screen.base.MTRScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -13,12 +15,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.state.BoatRenderState;
 import net.minecraft.client.renderer.entity.state.MinecartRenderState;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.entity.Entity;
 import org.joml.Matrix4f;
 
 import java.io.File;
@@ -31,7 +31,7 @@ public interface UtilitiesClient {
 		textRenderer.drawInBatch(formattedCharSequence, x, y, color, shadow, matrix4f, immediate, Font.DisplayMode.NORMAL, overlay, light);
 	}
 
-	static void setScreen(Minecraft client, ScreenMapper screen) {
+	static void setScreen(Minecraft client, MTRScreen screen) {
 		client.setScreen(screen);
 	}
 
@@ -41,14 +41,6 @@ public interface UtilitiesClient {
 
 	static EntityModel<BoatRenderState> getBoatModel() {
 		return new BoatModel(BoatModel.createBoatModel().bakeRoot());
-	}
-
-	static void setPacketCoordinates(Entity entity, double x, double y, double z) {
-		entity.syncPacketPositionCodec(x, y, z);
-	}
-
-	static float getPacketYaw(ClientboundAddEntityPacket packet) {
-		return packet.getYRot();
 	}
 
 	static int getRenderDistance() {

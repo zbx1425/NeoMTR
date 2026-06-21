@@ -1,4 +1,4 @@
-package mtr.sound.bve;
+package mtr.sound.train.bve;
 
 public abstract class MotorDataBase {
 

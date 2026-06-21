@@ -6,11 +6,8 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 //import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.opengl.GL33;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -95,20 +92,12 @@ public class MaterialProp {
     public RenderType getBlazeRenderType() {
         RenderType result;
         Identifier textureToUse = texture == null ? WHITE_TEXTURE_LOCATION : texture;
-        switch (shaderName) {
-            case "rendertype_entity_cutout":
-                result = BlazeRenderType.entityCutout(textureToUse);
-                break;
-            case "rendertype_entity_translucent_cull":
-                result = BlazeRenderType.entityTranslucentCull(textureToUse);
-                break;
-            case "rendertype_beacon_beam":
-                result = BlazeRenderType.beaconBeam(textureToUse, translucent);
-                break;
-            default:
-                result = BlazeRenderType.entityCutout(textureToUse);
-                break;
-        }
+        result = switch (shaderName) {
+            case "rendertype_entity_cutout" -> BlazeRenderType.entityCutout(textureToUse);
+            case "rendertype_entity_translucent_cull" -> BlazeRenderType.entityTranslucentCull(textureToUse);
+            case "rendertype_beacon_beam" -> BlazeRenderType.beaconBeam(textureToUse, translucent);
+            default -> BlazeRenderType.entityCutout(textureToUse);
+        };
         return result;
     }
 

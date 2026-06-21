@@ -2,21 +2,21 @@ package mtr.screen;
 
 import mtr.MTR;
 import mtr.data.IGui;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class FileUploaderScreen extends ScreenMapper implements IGui {
+public class FileUploaderScreen extends MTRScreen implements IGui {
 
-	private final ScreenMapper screen;
+	private final MTRScreen screen;
 	private final Consumer<List<Path>> filesCallback;
 
-	public FileUploaderScreen(ScreenMapper screen, Consumer<List<Path>> filesCallback) {
+	public FileUploaderScreen(MTRScreen screen, Consumer<List<Path>> filesCallback) {
 		super(Text.literal(""));
 		this.screen = screen;
 		this.filesCallback = filesCallback;
@@ -40,8 +40,6 @@ public class FileUploaderScreen extends ScreenMapper implements IGui {
 
 	@Override
 	public void onClose() {
-		if (minecraft != null) {
-			UtilitiesClient.setScreen(minecraft, screen);
-		}
-	}
+        UtilitiesClient.setScreen(minecraft, screen);
+    }
 }

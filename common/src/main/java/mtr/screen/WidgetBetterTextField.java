@@ -3,7 +3,7 @@ package mtr.screen;
 import mtr.data.IGui;
 import mtr.data.RailwayData;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.input.MouseButtonEvent;

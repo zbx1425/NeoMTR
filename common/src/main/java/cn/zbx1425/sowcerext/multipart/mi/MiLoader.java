@@ -1,7 +1,6 @@
 package cn.zbx1425.sowcerext.multipart.mi;
 
 import cn.zbx1425.mtrsteamloco.Main;
-import cn.zbx1425.sowcer.model.VertArrays;
 import cn.zbx1425.sowcerext.model.RawModel;
 import cn.zbx1425.sowcerext.multipart.MultipartContainer;
 import cn.zbx1425.sowcerext.multipart.PartBase;
@@ -10,7 +9,6 @@ import cn.zbx1425.sowcerext.reuse.ModelManager;
 import cn.zbx1425.sowcerext.util.ResourceUtil;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import cn.zbx1425.sowcer.math.Vector3f;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;

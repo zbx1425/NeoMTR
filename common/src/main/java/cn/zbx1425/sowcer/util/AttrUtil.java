@@ -3,7 +3,6 @@ package cn.zbx1425.sowcer.util;
 import cn.zbx1425.sowcer.math.Matrix4f;
 
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 
 public class AttrUtil {
 

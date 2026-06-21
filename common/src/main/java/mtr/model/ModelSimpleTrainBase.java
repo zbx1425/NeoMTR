@@ -6,7 +6,7 @@ import mtr.client.DoorAnimationType;
 import mtr.client.IDrawing;
 import mtr.data.IGui;
 import mtr.mappings.MatrixStackWrapper;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 

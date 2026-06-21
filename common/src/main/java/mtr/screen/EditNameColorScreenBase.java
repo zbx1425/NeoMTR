@@ -3,14 +3,14 @@ package mtr.screen;
 import mtr.client.IDrawing;
 import mtr.data.IGui;
 import mtr.data.NameColorDataBase;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.packet.IPacket;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
-public abstract class EditNameColorScreenBase<T extends NameColorDataBase> extends ScreenMapper implements IGui, IPacket {
+public abstract class EditNameColorScreenBase<T extends NameColorDataBase> extends MTRScreen implements IGui, IPacket {
 
 	private int nameStart;
 	private int colorStart;
@@ -44,10 +44,8 @@ public abstract class EditNameColorScreenBase<T extends NameColorDataBase> exten
 	@Override
 	public void onClose() {
 		super.onClose();
-		if (minecraft != null) {
-			UtilitiesClient.setScreen(minecraft, dashboardScreen);
-		}
-		saveData();
+        UtilitiesClient.setScreen(minecraft, dashboardScreen);
+        saveData();
 	}
 
 	@Override
@@ -68,8 +66,8 @@ public abstract class EditNameColorScreenBase<T extends NameColorDataBase> exten
 		textFieldName.setValue(data.name);
 		colorSelector.setColor(data.color);
 
-		addDrawableChild(textFieldName);
-		addDrawableChild(colorSelector);
+		addRenderableWidget(textFieldName);
+		addRenderableWidget(colorSelector);
 	}
 
 	protected void renderTextFields(GuiGraphicsExtractor guiGraphics) {

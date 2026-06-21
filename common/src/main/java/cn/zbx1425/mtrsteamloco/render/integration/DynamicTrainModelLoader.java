@@ -1,10 +1,8 @@
 package cn.zbx1425.mtrsteamloco.render.integration;
 
 import cn.zbx1425.mtrsteamloco.ClientConfig;
-import cn.zbx1425.mtrsteamloco.CustomResources;
 import cn.zbx1425.mtrsteamloco.Main;
 import cn.zbx1425.mtrsteamloco.MainClient;
-import cn.zbx1425.mtrsteamloco.mixin.ModelMapperAccessor;
 import cn.zbx1425.sowcer.math.Vector3f;
 import cn.zbx1425.sowcer.util.GlStateTracker;
 import cn.zbx1425.sowcerext.model.RawModel;
@@ -13,18 +11,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mtr.MTR;
 import mtr.client.DynamicTrainModel;
-import mtr.client.DynamicTrainModelLegacy;
 import mtr.client.IResourcePackCreatorProperties;
 import mtr.client.ResourcePackCreatorProperties;
 import mtr.data.EnumHelper;
-import mtr.mappings.ModelMapper;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.model.ModelTrainBase;
 import mtr.render.RenderTrains;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.StringUtils;
 

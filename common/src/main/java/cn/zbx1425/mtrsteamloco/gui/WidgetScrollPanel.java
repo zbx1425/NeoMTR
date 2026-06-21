@@ -1,6 +1,5 @@
 package cn.zbx1425.mtrsteamloco.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mtr.mappings.Text;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;

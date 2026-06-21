@@ -4,7 +4,7 @@ import mtr.MTRFabric;
 import mtr.mappings.BlockEntityMapper;
 import mtr.mappings.FabricRegistryUtilities;
 import mtr.mappings.NetworkUtilities;
-import mtr.mappings.Utilities;
+import mtr.util.Utilities;
 import mtr.mixin.PlayerTeleportationStateAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;

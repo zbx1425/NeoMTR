@@ -5,15 +5,14 @@ import cn.zbx1425.mtrsteamloco.data.RailExtraSupplier;
 import cn.zbx1425.mtrsteamloco.network.PacketUpdateHoldingItem;
 import cn.zbx1425.mtrsteamloco.network.PacketUpdateRail;
 import cn.zbx1425.mtrsteamloco.render.RailPicker;
-import com.mojang.math.Axis;
 import mtr.block.BlockFreeNode;
 import mtr.block.BlockNode;
 import mtr.client.ClientData;
 import mtr.client.IDrawing;
 import mtr.data.*;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.packet.PacketTrainDataGuiClient;
 import mtr.screen.WidgetBetterTextField;
 import net.minecraft.client.Minecraft;
@@ -31,7 +30,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Map;
 
-public class RailEditorGeometryScreen extends ScreenMapper {
+public class RailEditorGeometryScreen extends MTRScreen {
 
     private static final int SQUARE_SIZE = 20;
     private static final int LEFT_PANEL_WIDTH = 140;

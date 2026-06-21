@@ -1,7 +1,6 @@
-package mtr.sound.bve;
+package mtr.sound.train.bve;
 
-import mtr.mappings.Utilities;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -37,7 +36,7 @@ public class BveTrainSoundConfig {
 			if (resources.size() < 1) {
 				return "";
 			}
-			return IOUtils.toString(Utilities.getInputStream(resources.get(0)), StandardCharsets.UTF_8);
+            return IOUtils.toString(resources.get(0).open(), StandardCharsets.UTF_8);
 		} catch (Exception e) {
 			return "";
 		}

@@ -2,12 +2,9 @@ package cn.zbx1425.mtrsteamloco.render.scripting.train;
 
 import cn.zbx1425.mtrsteamloco.MainClient;
 import cn.zbx1425.mtrsteamloco.render.RenderUtil;
-import cn.zbx1425.mtrsteamloco.render.scripting.ScriptContextManager;
 import cn.zbx1425.mtrsteamloco.render.scripting.ScriptHolder;
 import cn.zbx1425.sowcer.math.Matrix4f;
-import cn.zbx1425.sowcer.math.PoseStackUtil;
 import cn.zbx1425.sowcer.math.Vector3f;
-import mtr.client.ClientData;
 import mtr.data.TrainClient;
 import mtr.render.RenderTrains;
 import mtr.render.TrainRendererBase;
@@ -15,10 +12,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 public class ScriptedTrainRenderer extends TrainRendererBase {
 

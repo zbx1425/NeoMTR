@@ -1,7 +1,5 @@
 package cn.zbx1425.sowcer.object;
 
-import org.lwjgl.opengl.GL33;
-
 public class IndexBuf extends VertBuf {
 
     public int faceCount;

@@ -1,6 +1,5 @@
 package mtr.block;
 
-import mtr.mappings.Utilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -26,8 +25,8 @@ public abstract class BlockTrainPoweredSensorBase extends BlockTrainSensorBase {
 		if (oldPowered > 0) {
 			world.setBlockAndUpdate(pos, state.setValue(POWERED, oldPowered - 1));
 			if (!world.getBlockTicks().hasScheduledTick(pos, this)) {
-				Utilities.scheduleBlockTick(world, pos, this, UPDATE_TICKS);
-			}
+                world.scheduleTick(pos, this, UPDATE_TICKS);
+            }
 		}
 	}
 
@@ -46,8 +45,8 @@ public abstract class BlockTrainPoweredSensorBase extends BlockTrainSensorBase {
 		if (oldPowered < 2) {
 			world.setBlockAndUpdate(pos, state.setValue(POWERED, 2));
 			if (oldPowered == 0 && !world.getBlockTicks().hasScheduledTick(pos, this)) {
-				Utilities.scheduleBlockTick(world, pos, this, UPDATE_TICKS);
-			}
+                world.scheduleTick(pos, this, UPDATE_TICKS);
+            }
 		}
 	}
 }

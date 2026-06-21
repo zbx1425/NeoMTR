@@ -16,7 +16,7 @@ public class SowcerModelAgent extends ModelMapper {
     private final boolean bbCoords;
 
     public SowcerModelAgent(RawModel rawModel, boolean bbCoords) {
-        super(new ModelDataWrapper(null, 0, 0));
+        super(new ModelDataWrapper());
         this.uploadedModel = MainClient.modelManager.uploadVertArrays(rawModel);
         this.bbCoords = bbCoords;
     }

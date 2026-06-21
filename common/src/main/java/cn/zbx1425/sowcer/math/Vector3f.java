@@ -92,7 +92,7 @@ public class Vector3f {
         float dx = x() - other.x();
         float dy = y() - other.y();
         float dz = z() - other.z();
-        return (float)(dx * dx + dy * dy + dz * dz);
+        return (dx * dx + dy * dy + dz * dz);
     }
 
     public Vector3f(BlockPos blockPos) {

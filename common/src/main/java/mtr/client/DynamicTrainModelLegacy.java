@@ -32,7 +32,7 @@ public class DynamicTrainModelLegacy extends ModelSimpleTrainBase<DynamicTrainMo
 			final int textureWidth = resolution.get("width").getAsInt();
 			final int textureHeight = resolution.get("height").getAsInt();
 
-			final ModelDataWrapper modelDataWrapper = new ModelDataWrapper(this, textureWidth, textureHeight);
+			final ModelDataWrapper modelDataWrapper = new ModelDataWrapper();
 
 			final Map<String, ModelMapper> elementsByKey = new HashMap<>();
 			model.getAsJsonArray("elements").forEach(element -> elementsByKey.put(element.getAsJsonObject().get("uuid").getAsString(), new ModelMapper(modelDataWrapper)));
@@ -186,23 +186,13 @@ public class DynamicTrainModelLegacy extends ModelSimpleTrainBase<DynamicTrainMo
 				if (part != null) {
 					final float zOffset;
 					if (partObject.has("door_offset_z")) {
-						switch (partObject.get("door_offset_z").getAsString()) {
-							case "left":
-								zOffset = doorLeftZ;
-								break;
-							case "right":
-								zOffset = doorRightZ;
-								break;
-							case "left_negative":
-								zOffset = -doorLeftZ;
-								break;
-							case "right_negative":
-								zOffset = -doorRightZ;
-								break;
-							default:
-								zOffset = 0;
-								break;
-						}
+                        zOffset = switch (partObject.get("door_offset_z").getAsString()) {
+                            case "left" -> doorLeftZ;
+                            case "right" -> doorRightZ;
+                            case "left_negative" -> -doorLeftZ;
+                            case "right_negative" -> -doorRightZ;
+                            default -> 0;
+                        };
 					} else {
 						zOffset = 0;
 					}
@@ -287,25 +277,14 @@ public class DynamicTrainModelLegacy extends ModelSimpleTrainBase<DynamicTrainMo
 				newPartObject.addProperty(KEY_PROPERTIES_MIRROR, i == 1);
 				newPartObject.addProperty(KEY_PROPERTIES_STAGE, getOrDefault(partObject, "stage", "", JsonElement::getAsString).toUpperCase(Locale.ENGLISH));
 				newPartObject.addProperty(KEY_PROPERTIES_SKIP_RENDERING_IF_TOO_FAR, getOrDefault(partObject, "skip_rendering_if_too_far", false, JsonElement::getAsBoolean));
-				final String newDoorOffsetString;
-				switch (getOrDefault(partObject, "door_offset_z", "", JsonElement::getAsString)) {
-					case "left":
-						newDoorOffsetString = "LEFT_POSITIVE";
-						break;
-					case "left_negative":
-						newDoorOffsetString = "LEFT_NEGATIVE";
-						break;
-					case "right":
-						newDoorOffsetString = "RIGHT_POSITIVE";
-						break;
-					case "right_negative":
-						newDoorOffsetString = "RIGHT_NEGATIVE";
-						break;
-					default:
-						newDoorOffsetString = "NONE";
-						break;
-				}
-				newPartObject.addProperty(KEY_PROPERTIES_DOOR_OFFSET, newDoorOffsetString);
+				final String newDoorOffsetString = switch (getOrDefault(partObject, "door_offset_z", "", JsonElement::getAsString)) {
+                    case "left" -> "LEFT_POSITIVE";
+                    case "left_negative" -> "LEFT_NEGATIVE";
+                    case "right" -> "RIGHT_POSITIVE";
+                    case "right_negative" -> "RIGHT_NEGATIVE";
+                    default -> "NONE";
+                };
+                newPartObject.addProperty(KEY_PROPERTIES_DOOR_OFFSET, newDoorOffsetString);
 				newPartObject.addProperty(KEY_PROPERTIES_RENDER_CONDITION, renderCondition.toString());
 				newPartObject.addProperty(KEY_PROPERTIES_WHITELISTED_CARS, whitelistedCars);
 				newPartObject.addProperty(KEY_PROPERTIES_BLACKLISTED_CARS, blacklistedCars);

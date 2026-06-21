@@ -1,19 +1,15 @@
 package cn.zbx1425.sowcerext.util;
 
-import cn.zbx1425.sowcer.batch.MaterialProp;
-import mtr.mappings.Utilities;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
 
@@ -22,7 +18,7 @@ public class ResourceUtil {
     public static String readResource(ResourceManager manager, Identifier location) throws IOException {
         final List<Resource> resources = UtilitiesClient.getResources(manager, location);
         if (resources.isEmpty()) return "";
-        return IOUtils.toString(new BOMInputStream(Utilities.getInputStream(resources.get(0))), StandardCharsets.UTF_8);
+        return IOUtils.toString(new BOMInputStream(resources.get(0).open()), StandardCharsets.UTF_8);
     }
 
     public static Identifier resolveRelativePath(Identifier baseFile, String relative, String expectExtension) {

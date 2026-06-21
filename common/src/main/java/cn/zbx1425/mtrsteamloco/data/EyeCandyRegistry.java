@@ -15,15 +15,12 @@ import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import mtr.mappings.Text;
-import mtr.mappings.Utilities;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -42,7 +39,7 @@ public class EyeCandyRegistry {
                 MtrModelRegistryUtil.listResources(resourceManager, "mtrsteamloco", "eyecandies", ".json");
         for (Pair<Identifier, Resource> pair : resources) {
             try {
-                try (InputStream is = Utilities.getInputStream(pair.getSecond())) {
+                try (InputStream is = pair.getSecond().open()) {
                     JsonObject rootObj = (new JsonParser()).parse(IOUtils.toString(is, StandardCharsets.UTF_8)).getAsJsonObject();
                     if (rootObj.has("model")) {
                         String key = FilenameUtils.getBaseName(pair.getFirst().getPath());

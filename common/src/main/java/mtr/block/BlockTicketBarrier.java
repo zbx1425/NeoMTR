@@ -1,9 +1,8 @@
 package mtr.block;
 
-import mtr.SoundEvents;
+import mtr.sound.SoundEvents;
 import mtr.data.TicketSystem;
 import mtr.mappings.BlockDirectionalMapper;
-import mtr.mappings.Utilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -47,8 +46,8 @@ public class BlockTicketBarrier extends BlockDirectionalMapper {
 				final TicketSystem.EnumTicketBarrierOpen newOpen = TicketSystem.passThrough(world, pos, (Player) entity, isEntrance, !isEntrance, SoundEvents.TICKET_BARRIER, SoundEvents.TICKET_BARRIER_CONCESSIONARY, SoundEvents.TICKET_BARRIER, SoundEvents.TICKET_BARRIER_CONCESSIONARY, null, false);
 				world.setBlockAndUpdate(pos, state.setValue(OPEN, newOpen));
 				if (newOpen != TicketSystem.EnumTicketBarrierOpen.CLOSED && !world.getBlockTicks().hasScheduledTick(pos, this)) {
-					Utilities.scheduleBlockTick(world, pos, this, 40);
-				}
+                    world.scheduleTick(pos, this, 40);
+                }
 			}
 		}
 	}

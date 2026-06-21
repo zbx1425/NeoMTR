@@ -3,16 +3,16 @@ package mtr.screen;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mtr.Icons;
+import mtr.util.Icons;
 import mtr.MTR;
 import mtr.client.CustomResources;
 import mtr.client.DoorAnimationType;
 import mtr.client.IDrawing;
 import mtr.client.IResourcePackCreatorProperties;
 import mtr.data.*;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.model.ModelTrainBase;
 import mtr.render.RenderTrains;
 import net.minecraft.client.Minecraft;
@@ -20,7 +20,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -33,7 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 
-public class ResourcePackCreatorScreen extends ScreenMapper implements IResourcePackCreatorProperties, IGui, Icons {
+public class ResourcePackCreatorScreen extends MTRScreen implements IResourcePackCreatorProperties, IGui, Icons {
 
 	private int editingPartIndex = -1;
 
@@ -96,10 +95,8 @@ public class ResourcePackCreatorScreen extends ScreenMapper implements IResource
 		super(Text.literal(""));
 
 		buttonOptions = UtilitiesClient.newButton(Text.translatable("menu.options"), button -> {
-			if (minecraft != null) {
-				UtilitiesClient.setScreen(minecraft, new ResourcePackCreatorOptionsScreen(this));
-			}
-		});
+            UtilitiesClient.setScreen(minecraft, new ResourcePackCreatorOptionsScreen(this));
+        });
 		availableModelPartsList = new DashboardList(null, null, null, null, this::onAdd, null, null, () -> "", text -> {
 		});
 		usedModelPartsList = new DashboardList(null, null, this::onEdit, null, null, this::onDelete, null, () -> "", text -> {
@@ -331,50 +328,50 @@ public class ResourcePackCreatorScreen extends ScreenMapper implements IResource
 
 		updateControls(true);
 
-		addDrawableChild(buttonOptions);
-		availableModelPartsList.init(this::addDrawableChild);
-		usedModelPartsList.init(this::addDrawableChild);
+		addRenderableWidget(buttonOptions);
+		availableModelPartsList.init(this::addRenderableWidget);
+		usedModelPartsList.init(this::addRenderableWidget);
 
-		addDrawableChild(sliderCars);
-		addDrawableChild(sliderBrightness);
-		addDrawableChild(buttonToggleTrainDirection);
-		addDrawableChild(buttonDoorLeft);
-		addDrawableChild(buttonDoorRight);
+		addRenderableWidget(sliderCars);
+		addRenderableWidget(sliderBrightness);
+		addRenderableWidget(buttonToggleTrainDirection);
+		addRenderableWidget(buttonDoorLeft);
+		addRenderableWidget(buttonDoorRight);
 
-		addDrawableChild(buttonTransportMode);
-		addDrawableChild(sliderLength);
-		addDrawableChild(sliderWidth);
-		addDrawableChild(sliderDoorMax);
-		addDrawableChild(buttonDoorAnimationType);
+		addRenderableWidget(buttonTransportMode);
+		addRenderableWidget(sliderLength);
+		addRenderableWidget(sliderWidth);
+		addRenderableWidget(sliderDoorMax);
+		addRenderableWidget(buttonDoorAnimationType);
 
-		addDrawableChild(checkboxPartMirror);
-		addDrawableChild(checkboxPartSkipRenderingIfTooFar);
-		addDrawableChild(checkboxIsDisplay);
-		addDrawableChild(sliderDisplayXPadding);
-		addDrawableChild(sliderDisplayYPadding);
-		addDrawableChild(sliderDisplayCjkSizeRatio);
-		addDrawableChild(buttonDisplayType);
-		addDrawableChild(colorSelectorDisplayCjk);
-		addDrawableChild(colorSelectorDisplay);
-		addDrawableChild(checkboxShouldScroll);
-		addDrawableChild(checkboxForceUpperCase);
-		addDrawableChild(checkboxForceSingleLine);
-		addDrawableChild(textFieldDisplayTest);
+		addRenderableWidget(checkboxPartMirror);
+		addRenderableWidget(checkboxPartSkipRenderingIfTooFar);
+		addRenderableWidget(checkboxIsDisplay);
+		addRenderableWidget(sliderDisplayXPadding);
+		addRenderableWidget(sliderDisplayYPadding);
+		addRenderableWidget(sliderDisplayCjkSizeRatio);
+		addRenderableWidget(buttonDisplayType);
+		addRenderableWidget(colorSelectorDisplayCjk);
+		addRenderableWidget(colorSelectorDisplay);
+		addRenderableWidget(checkboxShouldScroll);
+		addRenderableWidget(checkboxForceUpperCase);
+		addRenderableWidget(checkboxForceSingleLine);
+		addRenderableWidget(textFieldDisplayTest);
 
-		addDrawableChild(buttonPartStage);
-		addDrawableChild(buttonPartDoorOffset);
-		addDrawableChild(buttonPartRenderCondition);
-		addDrawableChild(textFieldPositions);
-		addDrawableChild(textFieldWhitelistedCars);
-		addDrawableChild(textFieldBlacklistedCars);
-		addDrawableChild(buttonDone);
+		addRenderableWidget(buttonPartStage);
+		addRenderableWidget(buttonPartDoorOffset);
+		addRenderableWidget(buttonPartRenderCondition);
+		addRenderableWidget(textFieldPositions);
+		addRenderableWidget(textFieldWhitelistedCars);
+		addRenderableWidget(textFieldBlacklistedCars);
+		addRenderableWidget(buttonDone);
 	}
 
 	@Override
 	public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		super.extractBackground(guiGraphics, mouseX, mouseY, delta);
 		try {
-			if (guiCounter == 0 && minecraft != null) {
+			if (guiCounter == 0) {
 				hideGui = minecraft.options.hideGui;
 				guiGraphics.fill(0, 0, width, height, ARGB_BLACK);
 			}
@@ -691,20 +688,14 @@ public class ResourcePackCreatorScreen extends ScreenMapper implements IResource
 
 	private static int getColor(JsonObject jsonObject) {
 		final ModelTrainBase.RenderStage renderStage = EnumHelper.valueOf(ModelTrainBase.RenderStage.EXTERIOR, jsonObject.get(KEY_PROPERTIES_STAGE).getAsString());
-		switch (renderStage) {
-			case EXTERIOR:
-				return 0x61BD4F;
-			case INTERIOR:
-				return 0xE53935;
-			case INTERIOR_TRANSLUCENT:
-				return 0xFB8C00;
-			case LIGHTS:
-				return 0xF2D600;
-			case ALWAYS_ON_LIGHTS:
-				return 0x1E88E5;
-			default:
-				return 0;
-		}
+        return switch (renderStage) {
+            case EXTERIOR -> 0x61BD4F;
+            case INTERIOR -> 0xE53935;
+            case INTERIOR_TRANSLUCENT -> 0xFB8C00;
+            case LIGHTS -> 0xF2D600;
+            case ALWAYS_ON_LIGHTS -> 0x1E88E5;
+            default -> 0;
+        };
 	}
 
 	private static String getName(JsonObject jsonObject) {

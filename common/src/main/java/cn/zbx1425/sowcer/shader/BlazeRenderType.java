@@ -1,15 +1,8 @@
 package cn.zbx1425.sowcer.shader;
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.rendertype.RenderSetup;
-import net.minecraft.util.Util;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.NotImplementedException;
-
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class BlazeRenderType {
 

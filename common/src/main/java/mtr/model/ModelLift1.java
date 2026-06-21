@@ -62,7 +62,7 @@ public class ModelLift1 extends ModelTrainBase {
 		final int textureWidth = 128;
 		final int textureHeight = 128;
 
-		final ModelDataWrapper modelDataWrapper = new ModelDataWrapper(this, textureWidth, textureHeight);
+		final ModelDataWrapper modelDataWrapper = new ModelDataWrapper();
 
 		main = new ModelMapper(modelDataWrapper);
 		main.setPos(0, 24, 0);

@@ -10,8 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import mtr.client.ICustomResources;
-import mtr.mappings.Utilities;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -22,7 +21,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -71,17 +69,16 @@ public class CustomResourcesMixin {
         Identifier location = Identifier.parse(path);
         try {
             UtilitiesClient.getResources(manager, location).forEach(resource -> {
-                try (final InputStream stream = Utilities.getInputStream(resource)) {
-                    JsonObject modelObject = new JsonParser().parse(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
-                    if (path.toLowerCase(Locale.ROOT).endsWith(".bbmodel")) {
-                        JsonObject dummyBbData = MtrModelRegistryUtil.createDummyBbDataPack(path, capturedTextureId, capturedFlipV, captureBbModelPreload);
-                        modelObject.add("dummyBbData", dummyBbData);
-                    }
-                    callback.accept(modelObject);
-                } catch (Exception e) { Main.LOGGER.error("On behalf of MTR: Parsing JSON " + path, e); }
                 try {
-                    Utilities.closeResource(resource);
-                } catch (IOException e) { Main.LOGGER.error("On behalf of MTR: Closing resource " + path, e); }
+                    try (final InputStream stream = resource.open()) {
+                        JsonObject modelObject = new JsonParser().parse(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
+                        if (path.toLowerCase(Locale.ROOT).endsWith(".bbmodel")) {
+                            JsonObject dummyBbData = MtrModelRegistryUtil.createDummyBbDataPack(path, capturedTextureId, capturedFlipV, captureBbModelPreload);
+                            modelObject.add("dummyBbData", dummyBbData);
+                        }
+                        callback.accept(modelObject);
+                    }
+                } catch (Exception e) { Main.LOGGER.error("On behalf of MTR: Parsing JSON " + path, e); }
             });
         } catch (Exception ignored) { }
         ci.cancel();

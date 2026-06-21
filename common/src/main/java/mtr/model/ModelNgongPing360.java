@@ -44,7 +44,7 @@ public class ModelNgongPing360 extends ModelSimpleTrainBase<ModelNgongPing360> {
 		final int textureWidth = 192;
 		final int textureHeight = 192;
 
-		final ModelDataWrapper modelDataWrapper = new ModelDataWrapper(this, textureWidth, textureHeight);
+		final ModelDataWrapper modelDataWrapper = new ModelDataWrapper();
 
 		body = new ModelMapper(modelDataWrapper);
 		body.setPos(0, 24, 0);

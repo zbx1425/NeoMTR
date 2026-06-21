@@ -3,7 +3,6 @@ package cn.zbx1425.sowcer.shader;
 import cn.zbx1425.mtrsteamloco.Main;
 import cn.zbx1425.sowcer.ContextCapability;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
@@ -14,7 +13,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 import java.util.Optional;
 
 public class PatchingResourceProvider implements ResourceProvider {

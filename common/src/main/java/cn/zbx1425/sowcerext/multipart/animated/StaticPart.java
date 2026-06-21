@@ -1,6 +1,5 @@
 package cn.zbx1425.sowcerext.multipart.animated;
 
-import cn.zbx1425.sowcer.model.VertArrays;
 import cn.zbx1425.sowcer.util.AttrUtil;
 import cn.zbx1425.sowcerext.model.ModelCluster;
 import cn.zbx1425.sowcerext.model.RawModel;
@@ -8,7 +7,6 @@ import cn.zbx1425.sowcerext.multipart.MultipartUpdateProp;
 import cn.zbx1425.sowcerext.multipart.PartBase;
 import cn.zbx1425.sowcerext.reuse.ModelManager;
 import cn.zbx1425.sowcer.math.Matrix4f;
-import cn.zbx1425.sowcer.math.Vector3f;
 
 public class StaticPart extends PartBase {
 

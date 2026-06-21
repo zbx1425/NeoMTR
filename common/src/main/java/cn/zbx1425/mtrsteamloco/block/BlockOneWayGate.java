@@ -1,11 +1,10 @@
 package cn.zbx1425.mtrsteamloco.block;
 
-import mtr.SoundEvents;
+import mtr.sound.SoundEvents;
 import mtr.block.IBlock;
 import mtr.data.TicketSystem;
 import mtr.mappings.BlockDirectionalMapper;
 import mtr.mappings.Text;
-import mtr.mappings.Utilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -55,7 +54,7 @@ public class BlockOneWayGate extends BlockDirectionalMapper {
                     world.playSound(null, pos, SoundEvents.TICKET_BARRIER_CONCESSIONARY, SoundSource.BLOCKS, 1, 1);
                     world.setBlockAndUpdate(pos, state.setValue(OPEN, TicketSystem.EnumTicketBarrierOpen.OPEN_CONCESSIONARY));
                     if (!world.getBlockTicks().hasScheduledTick(pos, this)) {
-                        Utilities.scheduleBlockTick(world, pos, this, 40);
+                        world.scheduleTick(pos, this, 40);
                     }
                 }
             }

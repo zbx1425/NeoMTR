@@ -5,7 +5,6 @@ import cn.zbx1425.mtrsteamloco.Main;
 import cn.zbx1425.mtrsteamloco.RegistriesWrapper;
 import mtr.item.ItemWithCreativeTabBase;
 import mtr.mappings.FabricRegistryUtilities;
-import mtr.mappings.RegistryUtilities;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleType;
@@ -40,14 +39,14 @@ public class RegistriesWrapperImpl implements RegistriesWrapper {
                 .useBlockDescriptionPrefix();
 
         final BlockItem blockItem = new BlockItem(block.get(), itemProperties);
-        Registry.register(RegistryUtilities.registryGetItem(), Main.id(path), blockItem);
+        Registry.register(BuiltInRegistries.ITEM, Main.id(path), blockItem);
         FabricRegistryUtilities.registerCreativeModeTab(tab.get(), blockItem);
     }
 
     @Override
     public void registerItem(String path, BrandNewEpicRegistryObject<Item> item) {
         item.setResourceKey(ResourceKey.create(Registries.ITEM, Main.id(path)));
-        Registry.register(RegistryUtilities.registryGetItem(), Main.id(path), item.get());
+        Registry.register(BuiltInRegistries.ITEM, Main.id(path), item.get());
 
         if(item.get() instanceof ItemWithCreativeTabBase itemWithCreativeTabBase) {
             FabricRegistryUtilities.registerCreativeModeTab(itemWithCreativeTabBase.creativeModeTab.get(), item.get());
@@ -56,22 +55,22 @@ public class RegistriesWrapperImpl implements RegistriesWrapper {
 
     @Override
     public void registerBlockEntityType(String path, RegistryObject<? extends BlockEntityType<? extends BlockEntity>> blockEntityType) {
-        Registry.register(RegistryUtilities.registryGetBlockEntityType(), Main.id(path), blockEntityType.get());
+        Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, Main.id(path), blockEntityType.get());
     }
 
     @Override
     public void registerEntityType(String path, RegistryObject<? extends EntityType<? extends Entity>> entityType) {
-        Registry.register(RegistryUtilities.registryGetEntityType(), Main.id(path), entityType.get());
+        Registry.register(BuiltInRegistries.ENTITY_TYPE, Main.id(path), entityType.get());
     }
 
     @Override
     public void registerSoundEvent(String path, SoundEvent soundEvent) {
-        Registry.register(RegistryUtilities.registryGetSoundEvent(), Main.id(path), soundEvent);
+        Registry.register(BuiltInRegistries.SOUND_EVENT, Main.id(path), soundEvent);
     }
 
     @Override
     public void registerParticleType(String path, ParticleType<?> particleType) {
-        Registry.register(RegistryUtilities.registryGetParticleType(), Main.id(path), particleType);
+        Registry.register(BuiltInRegistries.PARTICLE_TYPE, Main.id(path), particleType);
     }
 
     @Override

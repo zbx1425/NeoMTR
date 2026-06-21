@@ -4,7 +4,7 @@ import mtr.MTR;
 import mtr.block.BlockArrivalProjectorBase;
 import mtr.client.IDrawing;
 import mtr.data.IGui;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiClient;
@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ArrivalProjectorConfigScreen extends ScreenMapper implements IGui, IPacket {
+public class ArrivalProjectorConfigScreen extends MTRScreen implements IGui, IPacket {
 
 	private final BlockPos pos;
 	private final Set<Long> filterPlatformIds;
@@ -60,15 +60,15 @@ public class ArrivalProjectorConfigScreen extends ScreenMapper implements IGui, 
 
 		IDrawing.setPositionAndWidth(selectAllCheckbox, SQUARE_SIZE, SQUARE_SIZE, PANEL_WIDTH);
 		selectAllCheckbox.setChecked(filterPlatformIds.isEmpty());
-		addDrawableChild(selectAllCheckbox);
+		addRenderableWidget(selectAllCheckbox);
 
 		IDrawing.setPositionAndWidth(filterButton, SQUARE_SIZE, SQUARE_SIZE * 3, PANEL_WIDTH / 2);
 		filterButton.setMessage(Text.translatable("selectWorld.edit"));
-		addDrawableChild(filterButton);
+		addRenderableWidget(filterButton);
 
 		IDrawing.setPositionAndWidth(displayPageInput, SQUARE_SIZE + TEXT_FIELD_PADDING / 2, SQUARE_SIZE * 5 + TEXT_FIELD_PADDING / 2, PANEL_WIDTH / 2 - TEXT_FIELD_PADDING);
 		displayPageInput.setValue(String.valueOf(displayPage + 1));
-		addDrawableChild(displayPageInput);
+		addRenderableWidget(displayPageInput);
 	}
 
 	@Override

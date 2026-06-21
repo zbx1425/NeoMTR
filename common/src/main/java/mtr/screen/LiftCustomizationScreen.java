@@ -5,19 +5,18 @@ import mtr.client.IDrawing;
 import mtr.data.IGui;
 import mtr.data.Lift;
 import mtr.data.LiftClient;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiClient;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
 import java.util.Locale;
 
-public class LiftCustomizationScreen extends ScreenMapper implements IGui, IPacket {
+public class LiftCustomizationScreen extends MTRScreen implements IGui, IPacket {
 
 	private final LiftClient lift;
 	private final Button buttonHeightMinus;
@@ -131,22 +130,22 @@ public class LiftCustomizationScreen extends ScreenMapper implements IGui, IPack
 		IDrawing.setPositionAndWidth(buttonRotateAnticlockwise, 0, SQUARE_SIZE * 9, width2);
 		IDrawing.setPositionAndWidth(buttonRotateClockwise, 0, SQUARE_SIZE * 10, width2);
 
-		addDrawableChild(buttonHeightMinus);
-		addDrawableChild(buttonHeightAdd);
-		addDrawableChild(buttonWidthMinus);
-		addDrawableChild(buttonWidthAdd);
-		addDrawableChild(buttonDepthMinus);
-		addDrawableChild(buttonDepthAdd);
-		addDrawableChild(buttonOffsetXMinus);
-		addDrawableChild(buttonOffsetXAdd);
-		addDrawableChild(buttonOffsetYMinus);
-		addDrawableChild(buttonOffsetYAdd);
-		addDrawableChild(buttonOffsetZMinus);
-		addDrawableChild(buttonOffsetZAdd);
-		addDrawableChild(buttonIsDoubleSided);
+		addRenderableWidget(buttonHeightMinus);
+		addRenderableWidget(buttonHeightAdd);
+		addRenderableWidget(buttonWidthMinus);
+		addRenderableWidget(buttonWidthAdd);
+		addRenderableWidget(buttonDepthMinus);
+		addRenderableWidget(buttonDepthAdd);
+		addRenderableWidget(buttonOffsetXMinus);
+		addRenderableWidget(buttonOffsetXAdd);
+		addRenderableWidget(buttonOffsetYMinus);
+		addRenderableWidget(buttonOffsetYAdd);
+		addRenderableWidget(buttonOffsetZMinus);
+		addRenderableWidget(buttonOffsetZAdd);
+		addRenderableWidget(buttonIsDoubleSided);
 //		addDrawableChild(buttonLiftStyle);
-		addDrawableChild(buttonRotateAnticlockwise);
-		addDrawableChild(buttonRotateClockwise);
+		addRenderableWidget(buttonRotateAnticlockwise);
+		addRenderableWidget(buttonRotateClockwise);
 		updateControls();
 	}
 

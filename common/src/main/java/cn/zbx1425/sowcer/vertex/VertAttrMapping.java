@@ -5,7 +5,6 @@ import cn.zbx1425.sowcer.object.VertBuf;
 import org.lwjgl.opengl.GL33;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 public class VertAttrMapping {
 

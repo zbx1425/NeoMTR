@@ -8,8 +8,8 @@ import cn.zbx1425.mtrsteamloco.render.scripting.util.GraphicsTexture;
 import cn.zbx1425.sowcerext.util.ResourceUtil;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import mtr.client.ClientData;
-import mtr.mappings.Utilities;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.Utilities;
+import mtr.util.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -107,7 +107,7 @@ public class ScriptResourceUtil {
     public static InputStream readStream(Identifier identifier) throws IOException {
         final List<Resource> resources = UtilitiesClient.getResources(manager(), identifier);
         if (resources.isEmpty()) throw new FileNotFoundException(identifier.toString());
-        return Utilities.getInputStream(resources.get(0));
+        return resources.get(0).open();
     }
 
     public static String readString(Identifier identifier) {

@@ -12,7 +12,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Pair;
 import mtr.mappings.Text;
-import mtr.mappings.Utilities;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -57,7 +56,7 @@ public class RailModelRegistry {
                 MtrModelRegistryUtil.listResources(resourceManager, "mtrsteamloco", "rails", ".json");
         for (Pair<Identifier, Resource> pair : resources) {
             try {
-                try (InputStream is = Utilities.getInputStream(pair.getSecond())) {
+                try (InputStream is = pair.getSecond().open()) {
                     JsonObject rootObj = (new JsonParser()).parse(IOUtils.toString(is, StandardCharsets.UTF_8)).getAsJsonObject();
                     if (rootObj.has("model") || rootObj.has("models")) {
                         String key = FilenameUtils.getBaseName(pair.getFirst().getPath());
@@ -71,7 +70,7 @@ public class RailModelRegistry {
                     }
                 }
             } catch (Exception ex) {
-                Main.LOGGER.error("Failed loading rail: " + pair.getFirst().toString(), ex);
+                Main.LOGGER.error("Failed loading rail: {}", pair.getFirst().toString(), ex);
                 MtrModelRegistryUtil.recordLoadingError("Failed loading Rail " + pair.getFirst().toString(), ex);
             }
         }

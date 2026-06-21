@@ -90,14 +90,11 @@ public class BlockStationNameEntrance extends BlockStationNameBase implements IB
 
 		@Override
 		public int getColor(BlockState state) {
-			switch (IBlock.getStatePropertySafe(state, BlockStationNameBase.COLOR)) {
-				case 1:
-					return ARGB_LIGHT_GRAY;
-				case 2:
-					return ARGB_BLACK;
-				default:
-					return ARGB_WHITE;
-			}
+            return switch (IBlock.getStatePropertySafe(state, BlockStationNameBase.COLOR)) {
+                case 1 -> ARGB_LIGHT_GRAY;
+                case 2 -> ARGB_BLACK;
+                default -> ARGB_WHITE;
+            };
 		}
 	}
 }

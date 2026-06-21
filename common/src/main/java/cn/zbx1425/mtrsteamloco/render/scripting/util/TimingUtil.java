@@ -2,7 +2,6 @@ package cn.zbx1425.mtrsteamloco.render.scripting.util;
 
 import cn.zbx1425.mtrsteamloco.render.RenderUtil;
 import cn.zbx1425.mtrsteamloco.render.scripting.AbstractScriptContext;
-import cn.zbx1425.mtrsteamloco.render.scripting.ScriptHolder;
 
 @SuppressWarnings("unused")
 public class TimingUtil {

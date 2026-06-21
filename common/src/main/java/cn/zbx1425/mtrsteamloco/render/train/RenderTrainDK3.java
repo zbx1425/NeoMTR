@@ -11,13 +11,11 @@ import cn.zbx1425.sowcerext.multipart.animated.AnimatedLoader;
 import cn.zbx1425.sowcerext.multipart.mi.MiLoader;
 import cn.zbx1425.sowcerext.multipart.mi.MiScheduleHelper;
 import com.google.common.collect.ImmutableSet;
-import cn.zbx1425.sowcer.math.Vector3f;
 import mtr.MTRClient;
 import mtr.client.TrainClientRegistry;
 import mtr.client.TrainProperties;
 import mtr.data.TrainClient;
 import mtr.model.ModelBogie;
-import mtr.render.RenderTrains;
 import mtr.render.TrainRendererBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -27,7 +25,6 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 
 import java.io.IOException;
-import java.util.List;
 
 public class RenderTrainDK3 extends TrainRendererBase {
 

@@ -6,8 +6,6 @@ import cn.zbx1425.mtrsteamloco.render.scripting.ScriptContextManager;
 import cn.zbx1425.mtrsteamloco.render.scripting.ScriptHolder;
 import cn.zbx1425.mtrsteamloco.render.scripting.util.GraphicsTexture;
 import com.google.common.base.Splitter;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -60,8 +58,7 @@ public class ScriptDebugOverlay {
                 y += lineHeight;
                 for (Map.Entry<String, Object> debugInfo : context.debugInfo.entrySet()) {
                     Object value = debugInfo.getValue();
-                    if (value instanceof GraphicsTexture) {
-                        GraphicsTexture texture = (GraphicsTexture) value;
+                    if (value instanceof GraphicsTexture texture) {
                         float scale = (Minecraft.getInstance().getWindow().getGuiScaledWidth() - 40) / (float) texture.width;
                         blit(vdStuff, texture.identifier, 20, y, (int)(texture.width * scale), (int)(texture.height * scale));
                         drawText(vdStuff, font, debugInfo.getKey() + ": GraphicsTexture", 20, y, 0xFFFFFFFF);

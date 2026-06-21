@@ -6,7 +6,7 @@ import mtr.data.DataConverter;
 import mtr.data.IGui;
 import mtr.data.LiftClient;
 import mtr.data.NameColorDataBase;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
 import mtr.packet.PacketTrainDataGuiClient;
 import mtr.render.RenderTrains;
@@ -16,7 +16,7 @@ import net.minecraft.core.BlockPos;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LiftSelectionScreen extends ScreenMapper implements IGui {
+public class LiftSelectionScreen extends MTRScreen implements IGui {
 
 	private final DashboardList selectionList;
 	private final List<BlockPos> floorLevels = new ArrayList<>();
@@ -43,7 +43,7 @@ public class LiftSelectionScreen extends ScreenMapper implements IGui {
 		selectionList.y = SQUARE_SIZE;
 		selectionList.width = PANEL_WIDTH * 2;
 		selectionList.height = height - SQUARE_SIZE * 2;
-		selectionList.init(this::addDrawableChild);
+		selectionList.init(this::addRenderableWidget);
 	}
 
 	@Override

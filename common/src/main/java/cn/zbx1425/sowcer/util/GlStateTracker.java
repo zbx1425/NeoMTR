@@ -1,7 +1,6 @@
 package cn.zbx1425.sowcer.util;
 
 //import com.mojang.blaze3d.shaders.ProgramManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 //import net.minecraft.client.renderer.ShaderInstance;
 import org.lwjgl.opengl.GL33;
 

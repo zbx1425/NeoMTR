@@ -1,7 +1,6 @@
 package mtr;
 
 import mtr.block.*;
-import mtr.mappings.RegistryUtilities;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public interface BlockEntityTypes {

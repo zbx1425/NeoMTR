@@ -2,9 +2,9 @@ package cn.zbx1425.mtrsteamloco.sound;
 
 import mtr.MTRClient;
 import mtr.data.TrainClient;
-import mtr.sound.TrainSoundBase;
-import mtr.sound.bve.BveTrainSound;
-import mtr.sound.bve.BveTrainSoundConfig;
+import mtr.sound.train.TrainSoundBase;
+import mtr.sound.train.bve.BveTrainSound;
+import mtr.sound.train.bve.BveTrainSoundConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -89,10 +89,10 @@ public class DwellTimeBveTrainSound extends TrainSoundBase {
         bveTrainSound.stopAll();
     }
 
-    private static void playLocalSound(Level world, SoundEvent event, BlockPos pos) {
+    private static void playLocalSound(Level level, SoundEvent event, BlockPos pos) {
         if (event == null) {
             return;
         }
-        ((ClientLevel) world).playLocalSound(pos, event, SoundSource.BLOCKS, 1, 1, false);
+        (level).playLocalSound(pos, event, SoundSource.BLOCKS, 1, 1, false);
     }
 }

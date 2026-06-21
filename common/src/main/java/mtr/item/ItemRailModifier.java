@@ -1,6 +1,5 @@
 package mtr.item;
 
-import cn.zbx1425.mtrsteamloco.data.RailExtraSupplier;
 import mtr.block.BlockNode;
 import mtr.data.*;
 import mtr.mappings.Text;
@@ -18,7 +17,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 public class ItemRailModifier extends ItemNodeModifierBase {

@@ -1,4 +1,4 @@
-package mtr.sound.bve;
+package mtr.sound.train.bve;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;

@@ -2,15 +2,12 @@ package cn.zbx1425.sowcerext.model;
 
 import cn.zbx1425.sowcer.batch.MaterialProp;
 import cn.zbx1425.sowcer.model.Model;
-import cn.zbx1425.sowcer.util.AttrUtil;
 import cn.zbx1425.sowcer.util.DrawContext;
 import cn.zbx1425.sowcer.vertex.VertAttrMapping;
 import cn.zbx1425.sowcer.math.Matrix4f;
 import cn.zbx1425.sowcer.math.Vector3f;
-import cn.zbx1425.sowcer.vertex.VertAttrState;
 import cn.zbx1425.sowcer.vertex.VertAttrType;
 import cn.zbx1425.sowcerext.model.integration.BufferSourceProxy;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
 
 import java.io.DataInputStream;
@@ -185,6 +182,7 @@ public class RawModel {
     }
 
     public void writeBlazeBuffer(BufferSourceProxy vertexConsumers, Matrix4f matrix, int light, DrawContext drawContext) {
+        // TODO
         if (meshList.isEmpty()) return;
 //        for (Map.Entry<MaterialProp, RawMesh> entry : meshList.entrySet()) {
 //            RenderType renderType = entry.getKey().getBlazeRenderType();

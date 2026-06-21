@@ -3,7 +3,7 @@ package mtr;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import mtr.mappings.BlockEntityMapper;
 import mtr.mappings.NetworkUtilities;
-import mtr.mappings.Utilities;
+import mtr.util.Utilities;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.Identifier;

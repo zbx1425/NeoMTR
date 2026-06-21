@@ -4,15 +4,13 @@ import io.netty.buffer.Unpooled;
 import mtr.MTRClient;
 import mtr.RegistryClient;
 import mtr.client.ClientData;
-import mtr.mappings.Utilities;
-import mtr.packet.PacketTrainDataGuiClient;
+import mtr.util.Utilities;
 import mtr.render.TrainRendererBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
@@ -129,7 +127,7 @@ public class VehicleRidingClient {
 		}
 
 		if (uuid.equals(clientPlayer.getUUID())) {
-			final Vec3 movement = new Vec3(Math.abs(clientPlayer.xxa) > 0.5 ? Math.copySign(speedMultiplier, clientPlayer.xxa) : 0, 0, Math.abs(clientPlayer.zza) > 0.5 ? Math.copySign(speedMultiplier, clientPlayer.zza) : 0).yRot((float) -Math.toRadians(Utilities.getYaw(clientPlayer)) - yaw);
+            final Vec3 movement = new Vec3(Math.abs(clientPlayer.xxa) > 0.5 ? Math.copySign(speedMultiplier, clientPlayer.xxa) : 0, 0, Math.abs(clientPlayer.zza) > 0.5 ? Math.copySign(speedMultiplier, clientPlayer.zza) : 0).yRot((float) -Math.toRadians(clientPlayer.getYRot()) - yaw);
 			final float tempPercentageX = riderRatioPos.get(uuid).x + (float) movement.x / width;
 			final float tempPercentageZ = riderRatioPos.get(uuid).z + (length == 0 ? 0 : (float) movement.z / (float) length);
 			newPercentageX = Mth.clamp(tempPercentageX, doorLeftOpen ? -3 : 0, doorRightOpen ? 4 : 1);

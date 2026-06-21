@@ -5,11 +5,10 @@ import cn.zbx1425.mtrsteamloco.block.BlockEyeCandy;
 import cn.zbx1425.mtrsteamloco.data.EyeCandyProperties;
 import cn.zbx1425.mtrsteamloco.data.EyeCandyRegistry;
 import cn.zbx1425.mtrsteamloco.network.PacketUpdateBlockEntity;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import mtr.client.IDrawing;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.screen.WidgetBetterCheckbox;
 import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
@@ -100,15 +99,15 @@ public class EyeCandyScreen extends SelectListScreen {
         )), SQUARE_SIZE, SQUARE_SIZE, COLUMN_WIDTH * 3);
 
         IDrawing.setPositionAndWidth(addRenderableWidget(new WidgetSlider(
-                20 * 2, (int)Math.round(blockEntity.translateX * 100 / 5f) + 20,
+                20 * 2, Math.round(blockEntity.translateX * 100 / 5f) + 20,
                 value -> { updateBlockEntity(be -> be.translateX = (value - 20) * 5f / 100f); return "TX " + ((value - 20) * 5) + "cm"; }
         )), SQUARE_SIZE, SQUARE_SIZE * 3, (width - SQUARE_SIZE * 2) / 3);
         IDrawing.setPositionAndWidth(addRenderableWidget(new WidgetSlider(
-                20 * 2, (int)Math.round(blockEntity.translateY * 100 / 5f) + 20,
+                20 * 2, Math.round(blockEntity.translateY * 100 / 5f) + 20,
                 value -> { updateBlockEntity(be -> be.translateY = (value - 20) * 5f / 100f); return "TY " + ((value - 20) * 5) + "cm"; }
         )), SQUARE_SIZE + (width - SQUARE_SIZE * 2) / 3, SQUARE_SIZE * 3, (width - SQUARE_SIZE * 2) / 3);
         IDrawing.setPositionAndWidth(addRenderableWidget(new WidgetSlider(
-                20 * 2, (int)Math.round(blockEntity.translateZ * 100 / 5f) + 20,
+                20 * 2, Math.round(blockEntity.translateZ * 100 / 5f) + 20,
                 value -> { updateBlockEntity(be -> be.translateZ = (value - 20) * 5f / 100f); return "TZ " + ((value - 20) * 5) + "cm"; }
         )), SQUARE_SIZE + (width - SQUARE_SIZE * 2) / 3 * 2, SQUARE_SIZE * 3, (width - SQUARE_SIZE * 2) / 3);
 

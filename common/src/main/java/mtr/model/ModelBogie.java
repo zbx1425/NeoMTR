@@ -22,7 +22,7 @@ public class ModelBogie extends EntityModel<EntityRenderState> {
         final int textureWidth = 186;
 		final int textureHeight = 77;
 
-		final ModelDataWrapper modelDataWrapper = new ModelDataWrapper(this, textureWidth, textureHeight);
+		final ModelDataWrapper modelDataWrapper = new ModelDataWrapper();
 
 		bogie = new ModelMapper(modelDataWrapper);
 		bogie.setPos(0, 24, 0);

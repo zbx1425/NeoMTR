@@ -3,8 +3,7 @@ package cn.zbx1425.sowcerext.model.loader;
 import cn.zbx1425.sowcerext.model.RawMesh;
 import cn.zbx1425.sowcerext.model.RawModel;
 import cn.zbx1425.sowcerext.reuse.AtlasManager;
-import mtr.mappings.Utilities;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -24,7 +23,7 @@ public class NmbModelLoader {
     public static RawModel loadModel(ResourceManager resourceManager, Identifier location, AtlasManager atlasManager) throws IOException {
         final List<Resource> resources = UtilitiesClient.getResources(resourceManager, location);
         if (resources.size() < 1) throw new FileNotFoundException();
-        DataInputStream dis = new DataInputStream(Utilities.getInputStream(resources.get(0)));
+        DataInputStream dis = new DataInputStream(resources.get(0).open());
         dis.skipNBytes(8);
         int versionMajor = dis.readInt();
         int versionMinor = dis.readInt();

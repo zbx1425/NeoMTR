@@ -1,6 +1,6 @@
 package mtr.data;
 
-import mtr.MaterialColor;
+import mtr.util.MaterialColor;
 
 public enum RailType implements IGui {
 	WOODEN(20, MaterialColor.WOOD, false, true, true, RailSlopeStyle.CURVE),

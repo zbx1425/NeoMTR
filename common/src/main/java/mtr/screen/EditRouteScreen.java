@@ -5,7 +5,7 @@ import mtr.client.ClientData;
 import mtr.client.IDrawing;
 import mtr.data.*;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiClient;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -69,15 +69,15 @@ public class EditRouteScreen extends EditNameColorScreenBase<Route> implements I
 		IDrawing.setPositionAndWidth(buttonIsAntiClockwiseRoute, SQUARE_SIZE, SQUARE_SIZE * 10 + TEXT_FIELD_PADDING, CHECKBOX_WIDTH);
 
 		if (data.transportMode.hasRouteTypeVariation) {
-			addDrawableChild(buttonRouteType);
+			addRenderableWidget(buttonRouteType);
 		}
-		addDrawableChild(textFieldLightRailRouteNumber);
-		addDrawableChild(buttonIsLightRailRoute);
-		addDrawableChild(buttonIsRouteHidden);
-		addDrawableChild(buttonDisableNextStationAnnouncements);
+		addRenderableWidget(textFieldLightRailRouteNumber);
+		addRenderableWidget(buttonIsLightRailRoute);
+		addRenderableWidget(buttonIsRouteHidden);
+		addRenderableWidget(buttonDisableNextStationAnnouncements);
 		if (isCircular) {
-			addDrawableChild(buttonIsClockwiseRoute);
-			addDrawableChild(buttonIsAntiClockwiseRoute);
+			addRenderableWidget(buttonIsClockwiseRoute);
+			addRenderableWidget(buttonIsAntiClockwiseRoute);
 		}
 
 		setIsLightRailRoute(data.isLightRailRoute);

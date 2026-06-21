@@ -1,8 +1,6 @@
 package mtr.screen;
 
-import cn.zbx1425.sowcer.math.Matrices;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import mtr.MTR;
 import mtr.RegistryClient;
@@ -13,7 +11,10 @@ import mtr.mappings.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -36,7 +37,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 
-public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListener, IGui {
+public class WidgetMap implements Renderable, NarratableEntry, GuiEventListener, IGui {
 
 	private int x;
 	private int y;
@@ -268,6 +269,15 @@ public class WidgetMap implements WidgetMapper, SelectableMapper, GuiEventListen
 	@Override
 	public boolean isMouseOver(double mouseX, double mouseY) {
 		return mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height && !(mouseX >= x + width - SQUARE_SIZE * 10 && mouseY >= y + height - SQUARE_SIZE) && !isRestrictedMouseArea.apply(mouseX, mouseY);
+	}
+
+	@Override
+	public NarrationPriority narrationPriority() {
+		return NarrationPriority.NONE;
+	}
+
+	@Override
+	public void updateNarration(NarrationElementOutput narrationElementOutput) {
 	}
 
 	public void setFocused(boolean focused) {

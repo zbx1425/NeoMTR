@@ -146,7 +146,7 @@ public class ModelKTrain extends ModelSimpleTrainBase<ModelKTrain> {
 		final int textureWidth = 320;
 		final int textureHeight = 320;
 
-		final ModelDataWrapper modelDataWrapper = new ModelDataWrapper(this, textureWidth, textureHeight);
+		final ModelDataWrapper modelDataWrapper = new ModelDataWrapper();
 
 		window = new ModelMapper(modelDataWrapper);
 		window.setPos(0, 24, 0);

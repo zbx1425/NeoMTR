@@ -17,7 +17,6 @@ import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 

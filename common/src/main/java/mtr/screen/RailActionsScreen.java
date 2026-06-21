@@ -6,13 +6,13 @@ import mtr.RegistryClient;
 import mtr.client.ClientData;
 import mtr.data.IGui;
 import mtr.data.NameColorDataBase;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
 import mtr.packet.IPacket;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.FriendlyByteBuf;
 
-public class RailActionsScreen extends ScreenMapper implements IGui, IPacket {
+public class RailActionsScreen extends MTRScreen implements IGui, IPacket {
 
 	final DashboardList railActionsList;
 
@@ -30,7 +30,7 @@ public class RailActionsScreen extends ScreenMapper implements IGui, IPacket {
 		railActionsList.y = SQUARE_SIZE * 2;
 		railActionsList.width = width - SQUARE_SIZE * 2;
 		railActionsList.height = height - SQUARE_SIZE * 2;
-		railActionsList.init(this::addDrawableChild);
+		railActionsList.init(this::addRenderableWidget);
 	}
 
 	@Override

@@ -7,7 +7,6 @@ import mtr.MTR;
 import mtr.Registry;
 import mtr.block.BlockNode;
 import mtr.storage.RailwayDataManager;
-import mtr.mappings.Utilities;
 import mtr.packet.*;
 import mtr.path.PathData;
 import net.minecraft.commands.CommandSourceStack;
@@ -810,7 +809,7 @@ public class RailwayData /*extends PersistentStateMapper*/ implements IPacket {
 
 	private static void runCommand(MinecraftServer server, CommandSourceStack commandSourceStack, String command) {
 		MTR.LOGGER.info("[NeoMTR] Running command {}", command);
-		Utilities.sendCommand(server, commandSourceStack, command);
+		server.getCommands().performPrefixedCommand(commandSourceStack, command);
 	}
 
 	// TODO temporary code start

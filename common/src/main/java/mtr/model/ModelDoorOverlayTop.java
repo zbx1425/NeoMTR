@@ -1,7 +1,6 @@
 package mtr.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import mtr.mappings.ModelDataWrapper;
 import mtr.mappings.ModelMapper;
 import mtr.render.MoreRenderLayers;
@@ -9,7 +8,6 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.Entity;
 
 public class ModelDoorOverlayTop extends EntityModel<EntityRenderState> {
 
@@ -27,7 +25,7 @@ public class ModelDoorOverlayTop extends EntityModel<EntityRenderState> {
         final int textureWidth = 24;
 		final int textureHeight = 3;
 
-		final ModelDataWrapper modelDataWrapper = new ModelDataWrapper(this, textureWidth, textureHeight);
+		final ModelDataWrapper modelDataWrapper = new ModelDataWrapper();
 
 		bb_main = new ModelMapper(modelDataWrapper);
 		bb_main.setPos(0, 24, 0);

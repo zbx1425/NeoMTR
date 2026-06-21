@@ -7,8 +7,6 @@ import com.google.gson.JsonParser;
 import mtr.*;
 import mtr.item.ItemBridgeCreator;
 import mtr.item.ItemWithCreativeTabBase;
-import mtr.mappings.BlockEntityMapper;
-import mtr.mappings.RegistryUtilities;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
@@ -22,9 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URISyntaxException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Locale;
-import java.util.function.BiConsumer;
 
 public class Main {
 
@@ -57,7 +53,7 @@ public class Main {
 	public static final BrandNewEpicRegistryObject<Item> RAIL_EDITOR_GEOMETRY = new BrandNewEpicRegistryObject<>((resourceKey) ->
 		new ItemWithCreativeTabBase(new Item.Properties().setId(resourceKey), CreativeModeTabs.CORE, propModifier -> propModifier.stacksTo(1)));
 
-	public static final SoundEvent SOUND_EVENT_BELL = RegistryUtilities.createSoundEvent(Main.id("bell"));
+	public static final SoundEvent SOUND_EVENT_BELL = SoundEvent.createVariableRangeEvent(Main.id("bell"));
 
 	public static SimpleParticleType PARTICLE_STEAM_SMOKE;
 
@@ -66,8 +62,7 @@ public class Main {
 	}
 
 	public static void init(RegistriesWrapper registries) {
-		LOGGER.info("MTR-NTE " + BuildConfig.MOD_VERSION + " built at "
-				+ DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.systemDefault()).format(BuildConfig.BUILD_TIME));
+        LOGGER.info("MTR-NTE " + BuildConfig.MOD_VERSION + " built at {}", DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.systemDefault()).format(BuildConfig.BUILD_TIME));
 		if (enableRegistry) {
 			registries.registerBlockAndItem("eye_candy", BLOCK_EYE_CANDY, CreativeModeTabs.STATION_BUILDING_BLOCKS);
 			registries.registerBlockEntityType("eye_candy", BLOCK_ENTITY_TYPE_EYE_CANDY);

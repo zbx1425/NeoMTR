@@ -324,7 +324,7 @@ public class Depot extends AreaBase implements IReducedSaveData {
 			final List<Siding> sidingsInDepot = railwayData.sidings.stream().filter(siding -> {
 				final BlockPos sidingPos = siding.getMidPos();
 				return siding.isTransportMode(transportMode) && inArea(sidingPos.getX(), sidingPos.getZ());
-			}).sorted().collect(Collectors.toList());
+			}).sorted().toList();
 
 			final int sidingsInDepotSize = sidingsInDepot.size();
 			for (int i = deployIndex; i < deployIndex + sidingsInDepotSize; i++) {

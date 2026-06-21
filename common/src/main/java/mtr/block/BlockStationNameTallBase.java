@@ -4,13 +4,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
@@ -96,20 +94,20 @@ public abstract class BlockStationNameTallBase extends BlockStationNameBase impl
 	protected static Tuple<Integer, Integer> getBounds(BlockState state) {
 		final EnumThird third = IBlock.getStatePropertySafe(state, THIRD);
 		final int start, end;
-		switch (third) {
-			case LOWER:
-				start = 10;
-				end = 16;
-				break;
-			case UPPER:
-				start = 0;
-				end = 8;
-				break;
-			default:
-				start = 0;
-				end = 16;
-				break;
-		}
+        end = switch (third) {
+            case LOWER -> {
+                start = 10;
+                yield 16;
+            }
+            case UPPER -> {
+                start = 0;
+                yield 8;
+            }
+            default -> {
+                start = 0;
+                yield 16;
+            }
+        };
 		return new Tuple<>(start, end);
 	}
 
@@ -125,14 +123,11 @@ public abstract class BlockStationNameTallBase extends BlockStationNameBase impl
 
 		@Override
 		public int getColor(BlockState state) {
-			switch (IBlock.getStatePropertySafe(state, BlockStationNameBase.COLOR)) {
-				case 1:
-					return ARGB_LIGHT_GRAY;
-				case 2:
-					return ARGB_BLACK;
-				default:
-					return ARGB_WHITE;
-			}
+            return switch (IBlock.getStatePropertySafe(state, BlockStationNameBase.COLOR)) {
+                case 1 -> ARGB_LIGHT_GRAY;
+                case 2 -> ARGB_BLACK;
+                default -> ARGB_WHITE;
+            };
 		}
 	}
 }

@@ -5,25 +5,15 @@ import cn.zbx1425.mtrsteamloco.data.EyeCandyRegistry;
 import cn.zbx1425.sowcerext.model.ModelCluster;
 import cn.zbx1425.sowcerext.model.RawModel;
 import cn.zbx1425.sowcerext.model.loader.NmbModelLoader;
-import cn.zbx1425.sowcerext.model.loader.ObjModelLoader;
-import mtr.data.TransportMode;
 import mtr.mappings.Text;
-import mtr.mappings.Utilities;
-import mtr.mappings.UtilitiesClient;
-import mtr.model.ModelSimpleTrainBase;
-import mtr.render.JonModelTrainRenderer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.resources.Resource;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Map;
 
 public class Debug {

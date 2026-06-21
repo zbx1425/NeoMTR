@@ -1,11 +1,10 @@
 package mtr.screen;
 
 import mtr.data.IGui;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.InputWithModifiers;
-import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 
 public class WidgetBetterCheckbox extends Checkbox implements IGui {

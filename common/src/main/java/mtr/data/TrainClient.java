@@ -9,7 +9,7 @@ import mtr.block.IBlock;
 import mtr.client.*;
 import mtr.render.RenderDrivingOverlay;
 import mtr.render.TrainRendererBase;
-import mtr.sound.TrainSoundBase;
+import mtr.sound.train.TrainSoundBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;

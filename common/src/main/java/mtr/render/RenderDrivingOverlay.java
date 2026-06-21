@@ -35,7 +35,7 @@ public class RenderDrivingOverlay implements IGui {
 		final Minecraft client = Minecraft.getInstance();
 		final LocalPlayer player = client.player;
 		final Window window = client.getWindow();
-		if (window == null || player == null) {
+		if (player == null) {
 			return;
 		}
 

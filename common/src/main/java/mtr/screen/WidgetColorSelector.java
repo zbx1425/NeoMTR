@@ -2,14 +2,12 @@ package mtr.screen;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.*;
-import mtr.MTR;
 import mtr.RegistryClient;
 import mtr.client.IDrawing;
 import mtr.data.IGui;
-import mtr.mappings.ButtonMapper;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -28,17 +26,16 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.function.Consumer;
 
-public class WidgetColorSelector extends ButtonMapper implements IGui {
+public class WidgetColorSelector extends Button implements IGui {
 
 	private int color;
-	private final ScreenMapper screen;
+	private final MTRScreen screen;
 	private final boolean hasMargin;
 	private final Runnable callback;
 
 
-	public WidgetColorSelector(ScreenMapper screen, boolean hasMargin, Runnable callback) {
-		super(0, 0, 0, SQUARE_SIZE, Text.literal(""), button -> {
-		});
+	public WidgetColorSelector(MTRScreen screen, boolean hasMargin, Runnable callback) {
+		super(0, 0, 0, SQUARE_SIZE, Text.literal(""), button -> {}, DEFAULT_NARRATION);
 		this.screen = screen;
 		this.hasMargin = hasMargin;
 		this.callback = callback;
@@ -46,7 +43,7 @@ public class WidgetColorSelector extends ButtonMapper implements IGui {
 
 	// TODO temporary code for backwards compatibility
 	@Deprecated
-	public WidgetColorSelector(ScreenMapper screen, Runnable callback) {
+	public WidgetColorSelector(MTRScreen screen, Runnable callback) {
 		this(screen, true, callback);
 	}
 
@@ -81,7 +78,7 @@ public class WidgetColorSelector extends ButtonMapper implements IGui {
 		color = clampedColor;
 	}
 
-	private static class ColorSelectorScreen extends ScreenMapper {
+	private static class ColorSelectorScreen extends MTRScreen {
 
 		private float hue;
 		private float saturation;
@@ -131,11 +128,11 @@ public class WidgetColorSelector extends ButtonMapper implements IGui {
 			textFieldGreen.setResponder(text -> textCallback(text, 8));
 			textFieldBlue.setResponder(text -> textCallback(text, 0));
 
-			addDrawableChild(textFieldColor);
-			addDrawableChild(textFieldRed);
-			addDrawableChild(textFieldGreen);
-			addDrawableChild(textFieldBlue);
-			addDrawableChild(buttonReset);
+			addRenderableWidget(textFieldColor);
+			addRenderableWidget(textFieldRed);
+			addRenderableWidget(textFieldGreen);
+			addRenderableWidget(textFieldBlue);
+			addRenderableWidget(buttonReset);
 		}
 
 		@Override

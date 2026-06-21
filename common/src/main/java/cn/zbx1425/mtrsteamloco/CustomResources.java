@@ -1,8 +1,6 @@
 package cn.zbx1425.mtrsteamloco;
 
 import cn.zbx1425.mtrsteamloco.data.ScriptedCustomTrains;
-import cn.zbx1425.mtrsteamloco.data.EyeCandyRegistry;
-import cn.zbx1425.mtrsteamloco.data.RailModelRegistry;
 import cn.zbx1425.mtrsteamloco.mixin.TrainClientAccessor;
 import cn.zbx1425.mtrsteamloco.render.scripting.AbstractScriptContext;
 import cn.zbx1425.mtrsteamloco.render.scripting.ScriptContextManager;
@@ -21,8 +19,8 @@ import mtr.client.TrainProperties;
 import mtr.data.TransportMode;
 import mtr.mappings.Text;
 import mtr.render.TrainRendererBase;
-import mtr.sound.TrainSoundBase;
-import mtr.sound.bve.BveTrainSoundConfig;
+import mtr.sound.train.TrainSoundBase;
+import mtr.sound.train.bve.BveTrainSoundConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.resources.ResourceManager;
 

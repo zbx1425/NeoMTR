@@ -3,7 +3,6 @@ package cn.zbx1425.sowcerext.multipart.animated.script;
 import com.google.common.primitives.Doubles;
 
 import java.time.Duration;
-import java.util.Locale;
 
 public class CSUtil {
 

@@ -6,16 +6,15 @@ import mtr.data.IGui;
 import mtr.data.Platform;
 import mtr.data.SavedRailBase;
 import mtr.data.TransportMode;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.packet.IPacket;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
-public abstract class SavedRailScreenBase<T extends SavedRailBase> extends ScreenMapper implements IGui, IPacket {
+public abstract class SavedRailScreenBase<T extends SavedRailBase> extends MTRScreen implements IGui, IPacket {
 
 	protected final T savedRailBase;
 	protected final int textWidth;
@@ -69,10 +68,10 @@ public abstract class SavedRailScreenBase<T extends SavedRailBase> extends Scree
 		sliderDwellTimeSec.setWidth(width - textWidth - SQUARE_SIZE * 2 - sliderTextWidth);
 		sliderDwellTimeSec.setValue(savedRailBase.getDwellTime() % (SECONDS_PER_MINUTE * 2));
 
-		addDrawableChild(textFieldSavedRailNumber);
+		addRenderableWidget(textFieldSavedRailNumber);
 		if (showScheduleControls) {
-			addDrawableChild(sliderDwellTimeMin);
-			addDrawableChild(sliderDwellTimeSec);
+			addRenderableWidget(sliderDwellTimeMin);
+			addRenderableWidget(sliderDwellTimeSec);
 		}
 	}
 
@@ -106,10 +105,8 @@ public abstract class SavedRailScreenBase<T extends SavedRailBase> extends Scree
 	@Override
 	public void onClose() {
 		super.onClose();
-		if (minecraft != null) {
-			UtilitiesClient.setScreen(minecraft, dashboardScreen);
-		}
-	}
+        UtilitiesClient.setScreen(minecraft, dashboardScreen);
+    }
 
 	@Override
 	public boolean isPauseScreen() {

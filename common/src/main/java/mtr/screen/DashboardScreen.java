@@ -4,9 +4,9 @@ import mtr.MTR;
 import mtr.client.ClientData;
 import mtr.client.IDrawing;
 import mtr.data.*;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiClient;
 import net.minecraft.client.Minecraft;
@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class DashboardScreen extends ScreenMapper implements IGui, IPacket {
+public class DashboardScreen extends MTRScreen implements IGui, IPacket {
 
 	private SelectedTab selectedTab;
 	private AreaBase editingArea;
@@ -75,12 +75,12 @@ public class DashboardScreen extends ScreenMapper implements IGui, IPacket {
 		buttonDoneEditingRouteDestination = UtilitiesClient.newButton(Text.translatable("gui.done"), button -> onDoneEditingRouteDestination());
 		buttonZoomIn = UtilitiesClient.newButton(Text.literal("+"), button -> widgetMap.scale(1));
 		buttonZoomOut = UtilitiesClient.newButton(Text.literal("-"), button -> widgetMap.scale(-1));
-		buttonRailActions = UtilitiesClient.newButton(Text.translatable("gui.mtr.rail_actions_button"), button -> {
-            UtilitiesClient.setScreen(minecraft, new RailActionsScreen());
-        });
-		buttonOptions = UtilitiesClient.newButton(Text.translatable("menu.options"), button -> {
-            UtilitiesClient.setScreen(minecraft, new ConfigScreen(useTimeAndWindSync));
-        });
+		buttonRailActions = UtilitiesClient.newButton(Text.translatable("gui.mtr.rail_actions_button"), button ->
+            UtilitiesClient.setScreen(minecraft, new RailActionsScreen())
+        );
+		buttonOptions = UtilitiesClient.newButton(Text.translatable("menu.options"), button ->
+            UtilitiesClient.setScreen(minecraft, new ConfigScreen(useTimeAndWindSync))
+        );
 
 		dashboardList = new DashboardList(this::onFind, this::onDrawArea, this::onEdit, this::onSort, null, this::onDelete, this::getList, () -> ClientData.DASHBOARD_SEARCH, text -> ClientData.DASHBOARD_SEARCH = text);
 
@@ -119,26 +119,26 @@ public class DashboardScreen extends ScreenMapper implements IGui, IPacket {
 		dashboardList.width = PANEL_WIDTH;
 
 		toggleButtons();
-		dashboardList.init(this::addDrawableChild);
+		dashboardList.init(this::addRenderableWidget);
 		addWidget(widgetMap);
 
-		addDrawableChild(buttonTabStations);
-		addDrawableChild(buttonTabRoutes);
-		addDrawableChild(buttonTabDepots);
-		addDrawableChild(buttonAddStation);
-		addDrawableChild(buttonAddRoute);
-		addDrawableChild(buttonAddDepot);
-		addDrawableChild(buttonDoneEditingStation);
-		addDrawableChild(buttonDoneEditingRoute);
-		addDrawableChild(buttonDoneEditingRouteDestination);
-		addDrawableChild(buttonZoomIn);
-		addDrawableChild(buttonZoomOut);
-		addDrawableChild(buttonRailActions);
-		addDrawableChild(buttonOptions);
+		addRenderableWidget(buttonTabStations);
+		addRenderableWidget(buttonTabRoutes);
+		addRenderableWidget(buttonTabDepots);
+		addRenderableWidget(buttonAddStation);
+		addRenderableWidget(buttonAddRoute);
+		addRenderableWidget(buttonAddDepot);
+		addRenderableWidget(buttonDoneEditingStation);
+		addRenderableWidget(buttonDoneEditingRoute);
+		addRenderableWidget(buttonDoneEditingRouteDestination);
+		addRenderableWidget(buttonZoomIn);
+		addRenderableWidget(buttonZoomOut);
+		addRenderableWidget(buttonRailActions);
+		addRenderableWidget(buttonOptions);
 
-		addDrawableChild(textFieldName);
-		addDrawableChild(textFieldCustomDestination);
-		addDrawableChild(colorSelector);
+		addRenderableWidget(textFieldName);
+		addRenderableWidget(textFieldCustomDestination);
+		addRenderableWidget(colorSelector);
 	}
 
 	@Override
@@ -229,9 +229,8 @@ public class DashboardScreen extends ScreenMapper implements IGui, IPacket {
 
 	private void onFind(NameColorDataBase data, int index) {
 		if (selectedTab == SelectedTab.STATIONS || selectedTab == SelectedTab.DEPOTS) {
-			if (editingArea == null && data instanceof AreaBase) {
-				final AreaBase area = (AreaBase) data;
-				if (AreaBase.nonNullCorners(area)) {
+			if (editingArea == null && data instanceof AreaBase area) {
+                if (AreaBase.nonNullCorners(area)) {
 					widgetMap.find(area.corner1.getA(), area.corner1.getB(), area.corner2.getA(), area.corner2.getB());
 				}
 			} else if (selectedTab == SelectedTab.STATIONS) {
@@ -259,40 +258,38 @@ public class DashboardScreen extends ScreenMapper implements IGui, IPacket {
 	}
 
 	private void onEdit(NameColorDataBase data, int index) {
-		if (minecraft != null) {
-			switch (selectedTab) {
-				case STATIONS:
-					if (editingArea == null) {
-						if (data instanceof Station) {
-							UtilitiesClient.setScreen(minecraft, new EditStationScreen((Station) data, this));
-						}
-					} else {
-						if (data instanceof Platform) {
-							UtilitiesClient.setScreen(minecraft, new PlatformScreen((Platform) data, transportMode, this));
-						}
-					}
-					break;
-				case ROUTES:
-					if (editingRoute == null && data instanceof Route) {
-						UtilitiesClient.setScreen(minecraft, new EditRouteScreen((Route) data, this));
-					} else {
-						startEditingRouteDestination(index);
-					}
-					break;
-				case DEPOTS:
-					if (editingArea == null) {
-						if (data instanceof Depot) {
-							UtilitiesClient.setScreen(minecraft, new EditDepotScreen((Depot) data, transportMode, this));
-						}
-					} else {
-						if (data instanceof Siding) {
-							UtilitiesClient.setScreen(minecraft, new SidingScreen((Siding) data, transportMode, this));
-						}
-					}
-					break;
-			}
-		}
-	}
+        switch (selectedTab) {
+            case STATIONS:
+                if (editingArea == null) {
+                    if (data instanceof Station) {
+                        UtilitiesClient.setScreen(minecraft, new EditStationScreen((Station) data, this));
+                    }
+                } else {
+                    if (data instanceof Platform) {
+                        UtilitiesClient.setScreen(minecraft, new PlatformScreen((Platform) data, transportMode, this));
+                    }
+                }
+                break;
+            case ROUTES:
+                if (editingRoute == null && data instanceof Route) {
+                    UtilitiesClient.setScreen(minecraft, new EditRouteScreen((Route) data, this));
+                } else {
+                    startEditingRouteDestination(index);
+                }
+                break;
+            case DEPOTS:
+                if (editingArea == null) {
+                    if (data instanceof Depot) {
+                        UtilitiesClient.setScreen(minecraft, new EditDepotScreen((Depot) data, transportMode, this));
+                    }
+                } else {
+                    if (data instanceof Siding) {
+                        UtilitiesClient.setScreen(minecraft, new SidingScreen((Siding) data, transportMode, this));
+                    }
+                }
+                break;
+        }
+    }
 
 	private void onSort() {
 		if (selectedTab == SelectedTab.ROUTES && editingRoute != null) {
@@ -304,17 +301,15 @@ public class DashboardScreen extends ScreenMapper implements IGui, IPacket {
 		try {
 			switch (selectedTab) {
 				case STATIONS:
-					if (minecraft != null) {
-						final Station station = (Station) data;
-						UtilitiesClient.setScreen(minecraft, new DeleteConfirmationScreen(() -> {
-							PacketTrainDataGuiClient.sendDeleteData(PACKET_DELETE_STATION, station.id);
-							ClientData.STATIONS.remove(station);
-						}, IGui.formatStationName(station.name), this));
-					}
-					break;
+                    final Station station = (Station) data;
+                    UtilitiesClient.setScreen(minecraft, new DeleteConfirmationScreen(() -> {
+                        PacketTrainDataGuiClient.sendDeleteData(PACKET_DELETE_STATION, station.id);
+                        ClientData.STATIONS.remove(station);
+                    }, IGui.formatStationName(station.name), this));
+                    break;
 				case ROUTES:
 					if (editingRoute == null) {
-						if (minecraft != null && data instanceof Route) {
+						if (data instanceof Route) {
 							final Route route = (Route) data;
 							UtilitiesClient.setScreen(minecraft, new DeleteConfirmationScreen(() -> {
 								PacketTrainDataGuiClient.sendDeleteData(PACKET_DELETE_ROUTE, route.id);
@@ -327,7 +322,7 @@ public class DashboardScreen extends ScreenMapper implements IGui, IPacket {
 					}
 					break;
 				case DEPOTS:
-					if (minecraft != null && data instanceof Depot) {
+					if (data instanceof Depot) {
 						final Depot depot = (Depot) data;
 						UtilitiesClient.setScreen(minecraft, new DeleteConfirmationScreen(() -> {
 							PacketTrainDataGuiClient.sendDeleteData(PACKET_DELETE_DEPOT, depot.id);

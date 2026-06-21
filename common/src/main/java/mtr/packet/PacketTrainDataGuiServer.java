@@ -8,9 +8,7 @@ import mtr.Registry;
 import mtr.block.*;
 import mtr.data.*;
 import mtr.mappings.BlockEntityMapper;
-import mtr.mappings.Utilities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
@@ -494,7 +492,7 @@ public class PacketTrainDataGuiServer extends PacketTrainDataBase {
 			ScoreAccess balanceScore = TicketSystem.getPlayerScore(world, player, TicketSystem.BALANCE_OBJECTIVE);
 			balanceScore.add(addAmount);
 
-			ContainerHelper.clearOrCountMatchingItems(Utilities.getInventory(player), itemStack -> itemStack.getItem() == Items.EMERALD, emeralds, false);
+			ContainerHelper.clearOrCountMatchingItems(player.getInventory(), itemStack -> itemStack.getItem() == Items.EMERALD, emeralds, false);
 			world.playSound(null, player.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS, 1, 1);
 		});
 	}

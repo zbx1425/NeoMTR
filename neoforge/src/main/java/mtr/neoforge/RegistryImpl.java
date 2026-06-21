@@ -10,7 +10,7 @@ import dev.architectury.utils.Env;
 import mtr.neoforge.mappings.ForgeUtilities;
 import mtr.mappings.BlockEntityMapper;
 import mtr.mappings.NetworkUtilities;
-import mtr.mappings.Utilities;
+import mtr.util.Utilities;
 import mtr.mixin.PlayerTeleportationStateAccessor;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.FriendlyByteBuf;

@@ -4,7 +4,7 @@ import mtr.MTR;
 import mtr.block.BlockLiftTrackFloor;
 import mtr.client.IDrawing;
 import mtr.data.IGui;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiClient;
@@ -15,7 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-public class LiftTrackFloorScreen extends ScreenMapper implements IGui, IPacket {
+public class LiftTrackFloorScreen extends MTRScreen implements IGui, IPacket {
 
 	private final WidgetBetterTextField textFieldFloorNumber;
 	private final WidgetBetterTextField textFieldFloorDescription;
@@ -84,10 +84,10 @@ public class LiftTrackFloorScreen extends ScreenMapper implements IGui, IPacket 
 		checkboxShouldDing.setChecked(initialShouldDing);
 		checkboxDisableCarCall.setChecked(initialDisableCarCall);
 
-		addDrawableChild(textFieldFloorNumber);
-		addDrawableChild(textFieldFloorDescription);
-		addDrawableChild(checkboxShouldDing);
-		addDrawableChild(checkboxDisableCarCall);
+		addRenderableWidget(textFieldFloorNumber);
+		addRenderableWidget(textFieldFloorDescription);
+		addRenderableWidget(checkboxShouldDing);
+		addRenderableWidget(checkboxDisableCarCall);
 	}
 
 	@Override

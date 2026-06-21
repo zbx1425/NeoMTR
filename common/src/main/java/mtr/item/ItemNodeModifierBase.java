@@ -27,7 +27,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -54,9 +53,8 @@ public abstract class ItemNodeModifierBase extends ItemBlockClickingBase {
 	public static void applyQueuedFreeNodeAngles(Level world) {
 		for (final Map.Entry<BlockPos, Float> entry : FREE_NODE_PENDING_RAW_ANGLES.get().entrySet()) {
 			final BlockEntity blockEntity = world.getBlockEntity(entry.getKey());
-			if (blockEntity instanceof BlockFreeNode.TileEntityFreeNode) {
-				final BlockFreeNode.TileEntityFreeNode tileEntityFreeNode = (BlockFreeNode.TileEntityFreeNode) blockEntity;
-				tileEntityFreeNode.setAngleAndMode(entry.getValue(), tileEntityFreeNode.getTransportMode());
+			if (blockEntity instanceof BlockFreeNode.TileEntityFreeNode tileEntityFreeNode) {
+                tileEntityFreeNode.setAngleAndMode(entry.getValue(), tileEntityFreeNode.getTransportMode());
 			}
 		}
 		FREE_NODE_PENDING_RAW_ANGLES.get().clear();

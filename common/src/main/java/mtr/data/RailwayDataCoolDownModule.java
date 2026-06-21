@@ -1,7 +1,6 @@
 package mtr.data;
 
 import mtr.Registry;
-import mtr.mappings.Utilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -76,12 +75,12 @@ public class RailwayDataCoolDownModule extends RailwayDataModuleBase {
 		player.setNoGravity(isRiding);
 		player.noPhysics = isRiding;
 		if (isRiding) {
-			Utilities.getAbilities(player).mayfly = true;
+			player.getAbilities().mayfly = true;
 			playerRidingCoolDown.put(player, 2);
 			playerRidingRoute.put(player, routeId);
 		} else {
 			playerInVirtualDrive.remove(player);
-			((ServerPlayer) player).gameMode.getGameModeForPlayer().updatePlayerAbilities(Utilities.getAbilities(player));
+			((ServerPlayer) player).gameMode.getGameModeForPlayer().updatePlayerAbilities(player.getAbilities());
 		}
 		Registry.setInTeleportationState(player, isRiding);
 	}
@@ -95,11 +94,11 @@ public class RailwayDataCoolDownModule extends RailwayDataModuleBase {
 		player.setNoGravity(isRiding);
 		player.noPhysics = isRiding;
 		if (isRiding) {
-			Utilities.getAbilities(player).mayfly = true;
+			player.getAbilities().mayfly = true;
 			playerInVirtualDrive.add(player);
 		} else {
 			playerInVirtualDrive.remove(player);
-			((ServerPlayer) player).gameMode.getGameModeForPlayer().updatePlayerAbilities(Utilities.getAbilities(player));
+			((ServerPlayer) player).gameMode.getGameModeForPlayer().updatePlayerAbilities(player.getAbilities());
 		}
 		Registry.setInTeleportationState(player, isRiding);
 	}

@@ -10,6 +10,7 @@ import mtr.data.*;
 import mtr.mappings.*;
 import mtr.model.ModelTrainBase;
 import mtr.screen.ResourcePackCreatorScreen;
+import mtr.util.UtilitiesClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
@@ -41,7 +42,7 @@ public class DynamicTrainModel extends ModelTrainBase implements IResourcePackCr
 			final int textureWidth = resolution.get("width").getAsInt();
 			final int textureHeight = resolution.get("height").getAsInt();
 
-			final ModelDataWrapper modelDataWrapper = new ModelDataWrapper(this, textureWidth, textureHeight);
+			final ModelDataWrapper modelDataWrapper = new ModelDataWrapper();
 
 			final Map<String, ModelMapper> elementsByKey = new HashMap<>();
 			model.getAsJsonArray("elements").forEach(element -> elementsByKey.put(element.getAsJsonObject().get("uuid").getAsString(), new ModelMapper(modelDataWrapper)));
@@ -182,25 +183,16 @@ public class DynamicTrainModel extends ModelTrainBase implements IResourcePackCr
 					testStation.name = testText;
 					testRoute.name = testText;
 
-					switch (displayType) {
-						case DESTINATION:
-						case ROUTE_NUMBER:
-						case NEXT_STATION_PLAIN:
-							tempText1 = testText;
-							break;
-						case NEXT_STATION_KCR:
-							tempText1 = getHongKongNextStationString(testStation, testStation, atPlatform, true);
-							break;
-						case NEXT_STATION_MTR:
-							tempText1 = getHongKongNextStationString(testStation, testStation, atPlatform, false);
-							break;
-						case NEXT_STATION_UK:
-							tempText1 = getLondonNextStationString(testRoute, testRoute, testStation, testStation, testStation, testText, atPlatform);
-							break;
-						default:
-							tempText1 = "";
-							break;
-					}
+                    tempText1 = switch (displayType) {
+                        case DESTINATION, ROUTE_NUMBER, NEXT_STATION_PLAIN -> testText;
+                        case NEXT_STATION_KCR ->
+                                getHongKongNextStationString(testStation, testStation, atPlatform, true);
+                        case NEXT_STATION_MTR ->
+                                getHongKongNextStationString(testStation, testStation, atPlatform, false);
+                        case NEXT_STATION_UK ->
+                                getLondonNextStationString(testRoute, testRoute, testStation, testStation, testStation, testText, atPlatform);
+                        default -> "";
+                    };
 				} else {
 					switch (displayType) {
 						case DESTINATION:
@@ -346,54 +338,35 @@ public class DynamicTrainModel extends ModelTrainBase implements IResourcePackCr
 	}
 
 	private boolean shouldSkipRender(JsonObject partObject) {
-		switch (EnumHelper.valueOf(ResourcePackCreatorProperties.RenderCondition.ALL, partObject.get(KEY_PROPERTIES_RENDER_CONDITION).getAsString())) {
-			case DOORS_OPEN:
-				return doorLeftZ == 0 && doorRightZ == 0;
-			case DOORS_CLOSED:
-				return doorLeftZ > 0 || doorRightZ > 0;
-			case DOOR_LEFT_OPEN:
-				return doorLeftZ == 0;
-			case DOOR_RIGHT_OPEN:
-				return doorRightZ == 0;
-			case DOOR_LEFT_CLOSED:
-				return doorLeftZ > 0;
-			case DOOR_RIGHT_CLOSED:
-				return doorRightZ > 0;
-			case MOVING_FORWARDS:
-				return !head1IsFront;
-			case MOVING_BACKWARDS:
-				return head1IsFront;
-			default:
-				return false;
-		}
+        return switch (EnumHelper.valueOf(ResourcePackCreatorProperties.RenderCondition.ALL, partObject.get(KEY_PROPERTIES_RENDER_CONDITION).getAsString())) {
+            case DOORS_OPEN -> doorLeftZ == 0 && doorRightZ == 0;
+            case DOORS_CLOSED -> doorLeftZ > 0 || doorRightZ > 0;
+            case DOOR_LEFT_OPEN -> doorLeftZ == 0;
+            case DOOR_RIGHT_OPEN -> doorRightZ == 0;
+            case DOOR_LEFT_CLOSED -> doorLeftZ > 0;
+            case DOOR_RIGHT_CLOSED -> doorRightZ > 0;
+            case MOVING_FORWARDS -> !head1IsFront;
+            case MOVING_BACKWARDS -> head1IsFront;
+            default -> false;
+        };
 	}
 
 	private float getOffsetX(JsonObject partObject) {
-		switch (EnumHelper.valueOf(ResourcePackCreatorProperties.DoorOffset.NONE, partObject.get(KEY_PROPERTIES_DOOR_OFFSET).getAsString())) {
-			case LEFT_POSITIVE:
-			case LEFT_NEGATIVE:
-				return -doorLeftX;
-			case RIGHT_POSITIVE:
-			case RIGHT_NEGATIVE:
-				return doorRightX;
-			default:
-				return 0;
-		}
+        return switch (EnumHelper.valueOf(ResourcePackCreatorProperties.DoorOffset.NONE, partObject.get(KEY_PROPERTIES_DOOR_OFFSET).getAsString())) {
+            case LEFT_POSITIVE, LEFT_NEGATIVE -> -doorLeftX;
+            case RIGHT_POSITIVE, RIGHT_NEGATIVE -> doorRightX;
+            default -> 0;
+        };
 	}
 
 	private float getOffsetZ(JsonObject partObject) {
-		switch (EnumHelper.valueOf(ResourcePackCreatorProperties.DoorOffset.NONE, partObject.get(KEY_PROPERTIES_DOOR_OFFSET).getAsString())) {
-			case LEFT_POSITIVE:
-				return doorLeftZ;
-			case RIGHT_POSITIVE:
-				return doorRightZ;
-			case LEFT_NEGATIVE:
-				return -doorLeftZ;
-			case RIGHT_NEGATIVE:
-				return -doorRightZ;
-			default:
-				return 0;
-		}
+        return switch (EnumHelper.valueOf(ResourcePackCreatorProperties.DoorOffset.NONE, partObject.get(KEY_PROPERTIES_DOOR_OFFSET).getAsString())) {
+            case LEFT_POSITIVE -> doorLeftZ;
+            case RIGHT_POSITIVE -> doorRightZ;
+            case LEFT_NEGATIVE -> -doorLeftZ;
+            case RIGHT_NEGATIVE -> -doorRightZ;
+            default -> 0;
+        };
 	}
 
 	private static class PartInfo {

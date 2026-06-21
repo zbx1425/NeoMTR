@@ -13,7 +13,7 @@ import mtr.client.IDrawing;
 import mtr.client.ClientData;
 import mtr.data.Rail;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.packet.IPacket;
 import mtr.screen.WidgetBetterTextField;
 import net.minecraft.client.Minecraft;

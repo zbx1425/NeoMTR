@@ -9,7 +9,7 @@ import mtr.MTR;
 import mtr.data.EnumHelper;
 import mtr.data.IGui;
 import mtr.data.TransportMode;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.model.ModelTrainBase;
 import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;

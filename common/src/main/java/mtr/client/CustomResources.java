@@ -5,19 +5,17 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import mtr.MTR;
 import mtr.data.EnumHelper;
-import mtr.mappings.Utilities;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.model.ModelSimpleTrainBase;
 import mtr.model.ModelTrainBase;
 import mtr.render.JonModelTrainRenderer;
 import mtr.render.RenderTrains;
-import mtr.sound.JonTrainSound;
-import mtr.sound.bve.BveTrainSound;
+import mtr.sound.train.JonTrainSound;
+import mtr.sound.train.bve.BveTrainSound;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -157,14 +155,11 @@ public class CustomResources implements IResourcePackCreatorProperties, ICustomR
 	private static void readResource(ResourceManager manager, String path, Consumer<JsonObject> callback) {
 		try {
 			UtilitiesClient.getResources(manager, Identifier.parse(path)).forEach(resource -> {
-				try (final InputStream stream = Utilities.getInputStream(resource)) {
-					callback.accept(JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject());
-				} catch (Exception e) {
-					MTR.LOGGER.error("", e);
-				}
 				try {
-					Utilities.closeResource(resource);
-				} catch (IOException e) {
+					try (final InputStream stream = resource.open()) {
+						callback.accept(JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject());
+					}
+				} catch (Exception e) {
 					MTR.LOGGER.error("", e);
 				}
 			});

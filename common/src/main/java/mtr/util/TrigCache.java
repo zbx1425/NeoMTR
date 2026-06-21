@@ -1,4 +1,4 @@
-package mtr;
+package mtr.util;
 
 import net.minecraft.util.Mth;
 

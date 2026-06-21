@@ -4,20 +4,17 @@ import cn.zbx1425.mtrsteamloco.Main;
 import cn.zbx1425.mtrsteamloco.render.integration.MtrModelRegistryUtil;
 import cn.zbx1425.mtrsteamloco.render.scripting.train.ScriptedTrainRenderer;
 import cn.zbx1425.mtrsteamloco.render.scripting.ScriptHolder;
-import cn.zbx1425.sowcerext.util.ResourceUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import mtr.client.*;
-import mtr.mappings.Utilities;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.render.TrainRendererBase;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -87,12 +84,12 @@ public class ScriptedCustomTrains implements IResourcePackCreatorProperties, ICu
     private static void readResource(ResourceManager manager, String path, Consumer<JsonObject> callback) {
         try {
             UtilitiesClient.getResources(manager, Identifier.parse(path)).forEach(resource -> {
-                try (final InputStream stream = Utilities.getInputStream(resource)) {
-                    callback.accept(new JsonParser().parse(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject());
-                } catch (Exception e) { Main.LOGGER.error("On behalf of MTR: Parsing JSON " + path, e); }
                 try {
-                    Utilities.closeResource(resource);
-                } catch (IOException e) { Main.LOGGER.error("On behalf of MTR: Closing resource " + path, e); }
+                    try (final InputStream stream = resource.open()) {
+                        callback.accept(JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject());
+                    }
+                } catch (Exception e) {
+                    Main.LOGGER.error("On behalf of MTR: Parsing JSON {}", path, e); }
             });
         } catch (Exception ignored) { }
     }

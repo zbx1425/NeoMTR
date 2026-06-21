@@ -20,7 +20,6 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 
 import java.io.IOException;
-import java.util.List;
 
 public class RenderTrainD51 extends TrainRendererBase {
 

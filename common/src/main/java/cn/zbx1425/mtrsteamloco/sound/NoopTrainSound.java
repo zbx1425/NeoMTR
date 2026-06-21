@@ -1,7 +1,7 @@
 package cn.zbx1425.mtrsteamloco.sound;
 
 import mtr.data.TrainClient;
-import mtr.sound.TrainSoundBase;
+import mtr.sound.train.TrainSoundBase;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 

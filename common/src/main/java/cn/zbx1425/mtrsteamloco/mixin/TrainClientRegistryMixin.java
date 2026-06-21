@@ -4,7 +4,7 @@ import mtr.client.TrainClientRegistry;
 import mtr.client.TrainProperties;
 import mtr.mappings.Text;
 import mtr.render.JonModelTrainRenderer;
-import mtr.sound.JonTrainSound;
+import mtr.sound.train.JonTrainSound;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;

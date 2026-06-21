@@ -1,13 +1,10 @@
 package cn.zbx1425.mtrsteamloco.render;
 
 import cn.zbx1425.mtrsteamloco.mixin.RailAccessor;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mtr.Blocks;
 import mtr.client.ClientData;
 import mtr.client.IDrawing;
 import mtr.data.Rail;
-import mtr.mappings.Text;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -83,7 +80,7 @@ public class RailPicker {
         Font font = Minecraft.getInstance().font;
         int yOffset = -contents.length / 2 * font.lineHeight;
         for (var text : contents) {
-            if (text != null && !StringUtils.isEmpty(text)) {
+            if (!StringUtils.isEmpty(text)) {
                 float xOffset = (float) (-font.width(text) / 2);
                 font.drawInBatch(text, xOffset, yOffset, 0xFFFFFFFF, false, matrices.last().pose(), vertexConsumers, Font.DisplayMode.SEE_THROUGH, bgColor, LightCoordsUtil.FULL_BRIGHT);
             }

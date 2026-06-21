@@ -1,4 +1,4 @@
-package mtr.sound.bve;
+package mtr.sound.train.bve;
 
 import cn.zbx1425.mtrsteamloco.game.TrainVirtualDrive;
 import mtr.MTRClient;
@@ -6,8 +6,8 @@ import mtr.client.TrainClientRegistry;
 import mtr.client.TrainProperties;
 import mtr.data.Train;
 import mtr.data.TrainClient;
-import mtr.sound.TrainLoopingSoundInstance;
-import mtr.sound.TrainSoundBase;
+import mtr.sound.train.TrainLoopingSoundInstance;
+import mtr.sound.train.TrainSoundBase;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;

@@ -1,19 +1,10 @@
 package mtr.block;
 
 import mtr.mappings.BlockDirectionalMapper;
-import mtr.mappings.Text;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.List;
 
 public abstract class BlockPoleCheckBase extends BlockDirectionalMapper {
 

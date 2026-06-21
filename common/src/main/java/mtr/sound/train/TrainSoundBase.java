@@ -1,4 +1,4 @@
-package mtr.sound;
+package mtr.sound.train;
 
 import mtr.data.TrainClient;
 import net.minecraft.core.BlockPos;

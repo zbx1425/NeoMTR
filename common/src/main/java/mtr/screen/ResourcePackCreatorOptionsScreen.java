@@ -7,9 +7,9 @@ import mtr.client.ICustomResources;
 import mtr.client.IDrawing;
 import mtr.client.IResourcePackCreatorProperties;
 import mtr.data.IGui;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.render.RenderTrains;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -19,7 +19,7 @@ import java.nio.file.Path;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-public class ResourcePackCreatorOptionsScreen extends ScreenMapper implements IResourcePackCreatorProperties, ICustomResources, IGui {
+public class ResourcePackCreatorOptionsScreen extends MTRScreen implements IResourcePackCreatorProperties, ICustomResources, IGui {
 
 	private final ResourcePackCreatorScreen resourcePackCreatorScreen;
 
@@ -118,18 +118,18 @@ public class ResourcePackCreatorOptionsScreen extends ScreenMapper implements IR
 
 		updateControls(true);
 
-		addDrawableChild(buttonChooseModelFile);
-		addDrawableChild(buttonChoosePropertiesFile);
-		addDrawableChild(buttonChooseTextureFile);
+		addRenderableWidget(buttonChooseModelFile);
+		addRenderableWidget(buttonChoosePropertiesFile);
+		addRenderableWidget(buttonChooseTextureFile);
 
-		addDrawableChild(textFieldId);
-		addDrawableChild(colorSelector);
-		addDrawableChild(textFieldName);
-		addDrawableChild(textFieldGangwayConnectionId);
-		addDrawableChild(textFieldTrainBarrierId);
-		addDrawableChild(sliderRiderOffset);
-		addDrawableChild(buttonDone);
-		addDrawableChild(buttonExport);
+		addRenderableWidget(textFieldId);
+		addRenderableWidget(colorSelector);
+		addRenderableWidget(textFieldName);
+		addRenderableWidget(textFieldGangwayConnectionId);
+		addRenderableWidget(textFieldTrainBarrierId);
+		addRenderableWidget(sliderRiderOffset);
+		addRenderableWidget(buttonDone);
+		addRenderableWidget(buttonExport);
 	}
 
 	@Override
@@ -195,18 +195,16 @@ public class ResourcePackCreatorOptionsScreen extends ScreenMapper implements IR
 	}
 
 	private void buttonCallback(Consumer<Path> callback) {
-		if (minecraft != null) {
-			UtilitiesClient.setScreen(minecraft, new FileUploaderScreen(this, paths -> {
-				if (!paths.isEmpty()) {
-					try {
-						callback.accept(paths.get(0));
-					} catch (Exception e) {
-						MTR.LOGGER.error("", e);
-					}
-				}
-			}));
-		}
-	}
+        UtilitiesClient.setScreen(minecraft, new FileUploaderScreen(this, paths -> {
+            if (!paths.isEmpty()) {
+                try {
+                    callback.accept(paths.get(0));
+                } catch (Exception e) {
+                    MTR.LOGGER.error("", e);
+                }
+            }
+        }));
+    }
 
 	private static String formatText(WidgetBetterTextField textField, String text, boolean isFileName) {
 		String cutText = text.toLowerCase(Locale.ENGLISH).replaceAll(isFileName ? "[^\\w:/]" : "\\W", "");

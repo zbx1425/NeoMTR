@@ -13,7 +13,6 @@ import cn.zbx1425.sowcerext.reuse.AtlasManager;
 import cn.zbx1425.sowcerext.reuse.DrawScheduler;
 import cn.zbx1425.sowcerext.reuse.ModelManager;
 import mtr.RegistryClient;
-import mtr.item.ItemBlockClickingBase;
 
 public class MainClient {
 

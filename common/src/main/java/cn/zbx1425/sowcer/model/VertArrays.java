@@ -1,17 +1,12 @@
 package cn.zbx1425.sowcer.model;
 
-import cn.zbx1425.sowcer.batch.MaterialProp;
 import cn.zbx1425.sowcer.object.InstanceBuf;
 import cn.zbx1425.sowcer.object.VertArray;
 import cn.zbx1425.sowcer.vertex.VertAttrMapping;
-import cn.zbx1425.sowcerext.model.RawMesh;
 import net.minecraft.resources.Identifier;
 
 import java.io.Closeable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class VertArrays implements Closeable {
 

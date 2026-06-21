@@ -6,10 +6,10 @@ import mtr.mappings.Text;
 import mtr.model.*;
 import mtr.render.JonModelTrainRenderer;
 import mtr.render.TrainRendererBase;
-import mtr.sound.JonTrainSound;
-import mtr.sound.TrainSoundBase;
-import mtr.sound.bve.BveTrainSound;
-import mtr.sound.bve.BveTrainSoundConfig;
+import mtr.sound.train.JonTrainSound;
+import mtr.sound.train.TrainSoundBase;
+import mtr.sound.train.bve.BveTrainSound;
+import mtr.sound.train.bve.BveTrainSoundConfig;
 import net.minecraft.client.Minecraft;
 import org.apache.commons.lang3.StringUtils;
 

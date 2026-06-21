@@ -1,6 +1,5 @@
 package mtr;
 
-import mtr.mappings.Utilities;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -34,7 +33,7 @@ public interface CreativeModeTabs {
 
 		public Wrapper() {
 			resourceLocation = Identifier.parse("");
-			creativeModeTabSupplier = Utilities::getDefaultTab;
+			creativeModeTabSupplier = net.minecraft.world.item.CreativeModeTabs::getDefaultTab;
 		}
 	}
 }

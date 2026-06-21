@@ -1,7 +1,6 @@
 package cn.zbx1425.mtrsteamloco.network;
 
 import cn.zbx1425.mtrsteamloco.Main;
-import com.mojang.serialization.JsonOps;
 import io.netty.buffer.Unpooled;
 import mtr.RegistryClient;
 import net.minecraft.client.Minecraft;

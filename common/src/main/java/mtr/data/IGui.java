@@ -278,14 +278,11 @@ public interface IGui {
 		LEFT, CENTER, RIGHT;
 
 		public float getOffset(float x, float width) {
-			switch (this) {
-				case CENTER:
-					return x - width / 2;
-				case RIGHT:
-					return x - width;
-				default:
-					return x;
-			}
+            return switch (this) {
+                case CENTER -> x - width / 2;
+                case RIGHT -> x - width;
+                default -> x;
+            };
 		}
 	}
 
@@ -293,14 +290,11 @@ public interface IGui {
 		TOP, CENTER, BOTTOM;
 
 		public float getOffset(float y, float height) {
-			switch (this) {
-				case CENTER:
-					return y - height / 2;
-				case BOTTOM:
-					return y - height;
-				default:
-					return y;
-			}
+            return switch (this) {
+                case CENTER -> y - height / 2;
+                case BOTTOM -> y - height;
+                default -> y;
+            };
 		}
 	}
 }

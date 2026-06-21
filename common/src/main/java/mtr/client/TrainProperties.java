@@ -3,8 +3,8 @@ package mtr.client;
 import mtr.mappings.Text;
 import mtr.render.JonModelTrainRenderer;
 import mtr.render.TrainRendererBase;
-import mtr.sound.JonTrainSound;
-import mtr.sound.TrainSoundBase;
+import mtr.sound.train.JonTrainSound;
+import mtr.sound.train.TrainSoundBase;
 import net.minecraft.network.chat.Component;
 
 public class TrainProperties {

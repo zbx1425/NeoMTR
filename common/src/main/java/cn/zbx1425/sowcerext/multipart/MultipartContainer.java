@@ -1,16 +1,8 @@
 package cn.zbx1425.sowcerext.multipart;
 
-import cn.zbx1425.sowcer.batch.BatchManager;
-import cn.zbx1425.sowcer.batch.EnqueueProp;
-import cn.zbx1425.sowcer.batch.ShaderProp;
-import cn.zbx1425.sowcer.model.VertArrays;
-import cn.zbx1425.sowcer.util.AttrUtil;
-import cn.zbx1425.sowcer.vertex.VertAttrState;
 import cn.zbx1425.sowcerext.model.ModelCluster;
-import cn.zbx1425.sowcerext.model.RawModel;
 import cn.zbx1425.sowcer.math.Matrix4f;
 import cn.zbx1425.sowcerext.reuse.DrawScheduler;
-import net.minecraft.client.renderer.MultiBufferSource;
 
 import java.util.*;
 

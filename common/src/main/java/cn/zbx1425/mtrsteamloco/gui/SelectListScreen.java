@@ -1,11 +1,10 @@
 package cn.zbx1425.mtrsteamloco.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import mtr.client.IDrawing;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.screen.WidgetBetterTextField;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -16,7 +15,7 @@ import net.minecraft.network.chat.Component;
 import java.util.*;
 import java.util.function.Function;
 
-public abstract class SelectListScreen extends ScreenMapper {
+public abstract class SelectListScreen extends MTRScreen {
 
     protected final int SQUARE_SIZE = 20;
     protected final int TEXT_HEIGHT = 8;
@@ -54,9 +53,9 @@ public abstract class SelectListScreen extends ScreenMapper {
         btnKeys.clear();
         scrollList.children.clear();
         int buttonsPlaced = 0;
-        for (int i = 0; i < entries.size(); i++) {
-            String btnKey = entries.get(i).getFirst();
-            String btnText = entries.get(i).getSecond();
+        for (Pair<String, String> entry : entries) {
+            String btnKey = entry.getFirst();
+            String btnText = entry.getSecond();
             if (!textFieldSearch.getValue().isEmpty() && !btnText.contains(textFieldSearch.getValue())) {
                 continue;
             }

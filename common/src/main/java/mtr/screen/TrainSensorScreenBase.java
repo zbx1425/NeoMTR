@@ -7,9 +7,9 @@ import mtr.client.IDrawing;
 import mtr.data.IGui;
 import mtr.data.NameColorDataBase;
 import mtr.data.Route;
-import mtr.mappings.ScreenMapper;
+import mtr.screen.base.MTRScreen;
 import mtr.mappings.Text;
-import mtr.mappings.UtilitiesClient;
+import mtr.util.UtilitiesClient;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiClient;
 import net.minecraft.client.Minecraft;
@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.*;
 
-public abstract class TrainSensorScreenBase extends ScreenMapper implements IGui, IPacket {
+public abstract class TrainSensorScreenBase extends MTRScreen implements IGui, IPacket {
 
 	private boolean stoppedOnly;
 	private boolean movingOnly;
@@ -72,12 +72,10 @@ public abstract class TrainSensorScreenBase extends ScreenMapper implements IGui
 		movingOnlyCheckbox = new WidgetBetterCheckbox(0, 0, 0, SQUARE_SIZE, Text.translatable("gui.mtr.moving_only"), checked -> setChecked(stoppedOnly, checked));
 
 		filterButton = UtilitiesClient.newButton(button -> {
-			if (minecraft != null) {
-				final List<NameColorDataBase> routes = new ArrayList<>(ClientData.ROUTES);
-				Collections.sort(routes);
-				UtilitiesClient.setScreen(minecraft, new DashboardListSelectorScreen(this, routes, filterRouteIds, false, false));
-			}
-		});
+            final List<NameColorDataBase> routes = new ArrayList<>(ClientData.ROUTES);
+            Collections.sort(routes);
+            UtilitiesClient.setScreen(minecraft, new DashboardListSelectorScreen(this, routes, filterRouteIds, false, false));
+        });
 
 		this.hasSpeedCheckboxes = hasSpeedCheckboxes;
 		yStart = (textFieldCount == 0 ? SQUARE_SIZE : SQUARE_SIZE * 3 + TEXT_HEIGHT + TEXT_PADDING * 2 + TEXT_FIELD_PADDING) + (hasSpeedCheckboxes ? 2 * SQUARE_SIZE : 0);
@@ -90,20 +88,20 @@ public abstract class TrainSensorScreenBase extends ScreenMapper implements IGui
 		final int textFieldWidth = textFieldCount == 0 ? 0 : (width - SQUARE_SIZE * 2) / textFieldCount;
 		for (int i = 0; i < textFieldCount; i++) {
 			IDrawing.setPositionAndWidth(textFields[i], SQUARE_SIZE + TEXT_FIELD_PADDING / 2 + textFieldWidth * i, SQUARE_SIZE + TEXT_HEIGHT + TEXT_PADDING + TEXT_FIELD_PADDING / 2, textFieldWidth - TEXT_FIELD_PADDING);
-			addDrawableChild(textFields[i]);
+			addRenderableWidget(textFields[i]);
 		}
 
 		if (hasSpeedCheckboxes) {
 			IDrawing.setPositionAndWidth(stoppedOnlyCheckbox, SQUARE_SIZE, yStart - SQUARE_SIZE * 2, PANEL_WIDTH);
 			IDrawing.setPositionAndWidth(movingOnlyCheckbox, SQUARE_SIZE, yStart - SQUARE_SIZE, PANEL_WIDTH);
-			addDrawableChild(stoppedOnlyCheckbox);
-			addDrawableChild(movingOnlyCheckbox);
+			addRenderableWidget(stoppedOnlyCheckbox);
+			addRenderableWidget(movingOnlyCheckbox);
 			setChecked(stoppedOnly, movingOnly);
 		}
 
 		IDrawing.setPositionAndWidth(filterButton, SQUARE_SIZE, yStart + SQUARE_SIZE * 2, PANEL_WIDTH / 2);
 		filterButton.setMessage(Text.translatable("selectWorld.edit"));
-		addDrawableChild(filterButton);
+		addRenderableWidget(filterButton);
 	}
 
 	@Override
