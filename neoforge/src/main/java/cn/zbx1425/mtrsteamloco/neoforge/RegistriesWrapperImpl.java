@@ -2,10 +2,7 @@ package cn.zbx1425.mtrsteamloco.neoforge;
 
 import cn.zbx1425.mtrsteamloco.Main;
 import cn.zbx1425.mtrsteamloco.RegistriesWrapper;
-import mtr.BrandNewEpicRegistryObject;
-import mtr.CreativeModeTabs;
-import mtr.Registry;
-import mtr.RegistryObject;
+import mtr.*;
 import mtr.item.ItemWithCreativeTabBase;
 import mtr.neoforge.DeferredRegisterHolder;
 import mtr.neoforge.mappings.ForgeUtilities;
@@ -42,10 +39,14 @@ public class RegistriesWrapperImpl implements RegistriesWrapper {
     @Override
     public void registerBlockAndItem(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper tab) {
         block.setResourceKey(ResourceKey.create(Registries.BLOCK, Main.id(path)));
-
         BLOCKS.register(path,id -> block.get());
+
+        final Item.Properties itemProperties = new Item.Properties()
+                .setId(ResourceKey.create(Registries.ITEM, Main.id(path)))
+                .useBlockDescriptionPrefix();
+
         ITEMS.register(path, (id) -> {
-            final BlockItem blockItem = new BlockItem(block.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, id)));
+            final BlockItem blockItem = new BlockItem(block.get(), itemProperties);
             Registry.registerCreativeModeTab(tab.resourceLocation, blockItem);
             return blockItem;
         });
@@ -63,23 +64,23 @@ public class RegistriesWrapperImpl implements RegistriesWrapper {
     }
 
     @Override
-    public void registerBlockEntityType(String id, RegistryObject<? extends BlockEntityType<? extends BlockEntity>> blockEntityType) {
-        BLOCK_ENTITY_TYPES.register(id, blockEntityType::get);
+    public void registerBlockEntityType(String path, RegistryObject<? extends BlockEntityType<? extends BlockEntity>> blockEntityType) {
+        BLOCK_ENTITY_TYPES.register(path, blockEntityType::get);
     }
 
     @Override
-    public void registerEntityType(String id, RegistryObject<? extends EntityType<? extends Entity>> entityType) {
-        ENTITY_TYPES.register(id, entityType::get);
+    public void registerEntityType(String path, RegistryObject<? extends EntityType<? extends Entity>> entityType) {
+        ENTITY_TYPES.register(path, entityType::get);
     }
 
     @Override
-    public void registerSoundEvent(String id, SoundEvent soundEvent) {
-        SOUND_EVENTS.register(id, () -> soundEvent);
+    public void registerSoundEvent(String path, SoundEvent soundEvent) {
+        SOUND_EVENTS.register(path, () -> soundEvent);
     }
 
     @Override
-    public void registerParticleType(String id, ParticleType<?> particleType) {
-        PARTICLE_TYPES.register(id, () -> particleType);
+    public void registerParticleType(String path, ParticleType<?> particleType) {
+        PARTICLE_TYPES.register(path, () -> particleType);
     }
 
     @Override

@@ -5,6 +5,7 @@ import mtr.fabric.CompatPacketRegistry;
 import mtr.item.ItemBlockEnchanted;
 import mtr.item.ItemWithCreativeTabBase;
 import mtr.mappings.BlockEntityMapper;
+import mtr.block.behaviour.BlockItemDecorator;
 import mtr.mappings.FabricRegistryUtilities;
 import mtr.mappings.RegistryUtilities;
 import net.fabricmc.api.ModInitializer;
@@ -12,7 +13,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
@@ -29,7 +29,7 @@ public class MTRFabric implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		MTR.init(MTRFabric::registerItem, MTRFabric::registerBlock, MTRFabric::registerBlock, MTRFabric::registerEnchantedBlock, MTRFabric::registerBlockEntityType, MTRFabric::registerEntityType, MTRFabric::registerSoundEvent, MTRFabric::registerDataComponentType);
+		MTR.init(MTRFabric::registerItem, MTRFabric::registerBlock, MTRFabric::registerBlockItem, MTRFabric::registerEnchantedBlock, MTRFabric::registerBlockEntityType, MTRFabric::registerEntityType, MTRFabric::registerSoundEvent, MTRFabric::registerDataComponentType);
 		Main.init(REGISTRIES);
 		PACKET_REGISTRY.commitCommon();
 	}
@@ -51,16 +51,29 @@ public class MTRFabric implements ModInitializer {
 		Registry.register(RegistryUtilities.registryGetBlock(), MTR.id(path), block.get());
 	}
 
-	private static void registerBlock(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTab) {
+	private static void registerBlockItem(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTab) {
 		registerBlock(path, block);
-		final BlockItem blockItem = new BlockItem(block.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, MTR.id(path))));
+		final Item.Properties itemProperties = new Item.Properties()
+				.setId(ResourceKey.create(Registries.ITEM, MTR.id(path)))
+				.useBlockDescriptionPrefix();
+
+		tryDecorateBlockItem(block.get(), itemProperties);
+
+		final BlockItem blockItem = new BlockItem(block.get(), itemProperties);
 		Registry.register(RegistryUtilities.registryGetItem(), MTR.id(path), blockItem);
 		FabricRegistryUtilities.registerCreativeModeTab(creativeModeTab.get(), blockItem);
 	}
 
 	private static void registerEnchantedBlock(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTab) {
 		registerBlock(path, block);
-		final ItemBlockEnchanted itemBlockEnchanted = new ItemBlockEnchanted(block.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, MTR.id(path))));
+
+		final Item.Properties itemProperties = new Item.Properties()
+				.setId(ResourceKey.create(Registries.ITEM, MTR.id(path)))
+				.useBlockDescriptionPrefix();
+
+		tryDecorateBlockItem(block.get(), itemProperties);
+
+		final ItemBlockEnchanted itemBlockEnchanted = new ItemBlockEnchanted(block.get(), itemProperties);
 		Registry.register(RegistryUtilities.registryGetItem(), MTR.id(path), itemBlockEnchanted);
 		FabricRegistryUtilities.registerCreativeModeTab(creativeModeTab.get(), itemBlockEnchanted);
 	}
@@ -79,5 +92,11 @@ public class MTRFabric implements ModInitializer {
 
 	private static void registerSoundEvent(String path, SoundEvent soundEvent) {
 		Registry.register(RegistryUtilities.registryGetSoundEvent(), MTR.id(path), soundEvent);
+	}
+
+	private static void tryDecorateBlockItem(Block block, Item.Properties prop) {
+		if(block instanceof BlockItemDecorator decorator) {
+			decorator.decorateBlockItem(prop);
+		}
 	}
 }

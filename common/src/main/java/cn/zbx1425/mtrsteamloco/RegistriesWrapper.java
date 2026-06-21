@@ -19,19 +19,19 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public interface RegistriesWrapper {
 
-    void registerBlock(String id, BrandNewEpicRegistryObject<Block> block);
+    void registerBlock(String path, BrandNewEpicRegistryObject<Block> block);
 
-    void registerItem(String id, BrandNewEpicRegistryObject<Item> item);
+    void registerItem(String path, BrandNewEpicRegistryObject<Item> item);
 
-    void registerBlockAndItem(String id, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper tab);
+    void registerBlockAndItem(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper tab);
 
-    void registerBlockEntityType(String id, RegistryObject<? extends BlockEntityType<? extends BlockEntity>> blockEntityType);
+    void registerBlockEntityType(String path, RegistryObject<? extends BlockEntityType<? extends BlockEntity>> blockEntityType);
 
-    void registerEntityType(String id, RegistryObject<? extends EntityType<? extends Entity>> entityType);
+    void registerEntityType(String path, RegistryObject<? extends EntityType<? extends Entity>> entityType);
 
-    void registerSoundEvent(String id, SoundEvent soundEvent);
+    void registerSoundEvent(String path, SoundEvent soundEvent);
 
-    void registerParticleType(String id, ParticleType<?> particleType);
+    void registerParticleType(String path, ParticleType<?> particleType);
 
     SimpleParticleType createParticleType(boolean overrideLimiter);
 

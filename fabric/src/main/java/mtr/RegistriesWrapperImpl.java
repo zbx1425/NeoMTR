@@ -25,25 +25,29 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 public class RegistriesWrapperImpl implements RegistriesWrapper {
 
     @Override
-    public void registerBlock(String id, BrandNewEpicRegistryObject<Block> block) {
-        block.setResourceKey(ResourceKey.create(Registries.BLOCK, Main.id(id)));
-        Registry.register(BuiltInRegistries.BLOCK, Main.id(id), block.get());
+    public void registerBlock(String path, BrandNewEpicRegistryObject<Block> block) {
+        block.setResourceKey(ResourceKey.create(Registries.BLOCK, Main.id(path)));
+        Registry.register(BuiltInRegistries.BLOCK, Main.id(path), block.get());
     }
 
     @Override
-    public void registerBlockAndItem(String id, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper tab) {
-        block.setResourceKey(ResourceKey.create(Registries.BLOCK, Main.id(id)));
+    public void registerBlockAndItem(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper tab) {
+        block.setResourceKey(ResourceKey.create(Registries.BLOCK, Main.id(path)));
+        Registry.register(BuiltInRegistries.BLOCK, Main.id(path), block.get());
 
-        Registry.register(BuiltInRegistries.BLOCK, Main.id(id), block.get());
-        final BlockItem blockItem = new BlockItem(block.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Main.id(id))));
-        Registry.register(RegistryUtilities.registryGetItem(), Main.id(id), blockItem);
+        final Item.Properties itemProperties = new Item.Properties()
+                .setId(ResourceKey.create(Registries.ITEM, Main.id(path)))
+                .useBlockDescriptionPrefix();
+
+        final BlockItem blockItem = new BlockItem(block.get(), itemProperties);
+        Registry.register(RegistryUtilities.registryGetItem(), Main.id(path), blockItem);
         FabricRegistryUtilities.registerCreativeModeTab(tab.get(), blockItem);
     }
 
     @Override
-    public void registerItem(String id, BrandNewEpicRegistryObject<Item> item) {
-        item.setResourceKey(ResourceKey.create(Registries.ITEM, Main.id(id)));
-        Registry.register(RegistryUtilities.registryGetItem(), Main.id(id), item.get());
+    public void registerItem(String path, BrandNewEpicRegistryObject<Item> item) {
+        item.setResourceKey(ResourceKey.create(Registries.ITEM, Main.id(path)));
+        Registry.register(RegistryUtilities.registryGetItem(), Main.id(path), item.get());
 
         if(item.get() instanceof ItemWithCreativeTabBase itemWithCreativeTabBase) {
             FabricRegistryUtilities.registerCreativeModeTab(itemWithCreativeTabBase.creativeModeTab.get(), item.get());
@@ -51,23 +55,23 @@ public class RegistriesWrapperImpl implements RegistriesWrapper {
     }
 
     @Override
-    public void registerBlockEntityType(String id, RegistryObject<? extends BlockEntityType<? extends BlockEntity>> blockEntityType) {
-        Registry.register(RegistryUtilities.registryGetBlockEntityType(), Main.id(id), blockEntityType.get());
+    public void registerBlockEntityType(String path, RegistryObject<? extends BlockEntityType<? extends BlockEntity>> blockEntityType) {
+        Registry.register(RegistryUtilities.registryGetBlockEntityType(), Main.id(path), blockEntityType.get());
     }
 
     @Override
-    public void registerEntityType(String id, RegistryObject<? extends EntityType<? extends Entity>> entityType) {
-        Registry.register(RegistryUtilities.registryGetEntityType(), Main.id(id), entityType.get());
+    public void registerEntityType(String path, RegistryObject<? extends EntityType<? extends Entity>> entityType) {
+        Registry.register(RegistryUtilities.registryGetEntityType(), Main.id(path), entityType.get());
     }
 
     @Override
-    public void registerSoundEvent(String id, SoundEvent soundEvent) {
-        Registry.register(RegistryUtilities.registryGetSoundEvent(), Main.id(id), soundEvent);
+    public void registerSoundEvent(String path, SoundEvent soundEvent) {
+        Registry.register(RegistryUtilities.registryGetSoundEvent(), Main.id(path), soundEvent);
     }
 
     @Override
-    public void registerParticleType(String id, ParticleType<?> particleType) {
-        Registry.register(RegistryUtilities.registryGetParticleType(), Main.id(id), particleType);
+    public void registerParticleType(String path, ParticleType<?> particleType) {
+        Registry.register(RegistryUtilities.registryGetParticleType(), Main.id(path), particleType);
     }
 
     @Override

@@ -3,6 +3,7 @@ package mtr.block;
 import com.mojang.serialization.Codec;
 import mtr.BlockEntityTypes;
 import mtr.MTR;
+import mtr.block.behaviour.BlockItemDecorator;
 import mtr.mappings.*;
 import mtr.packet.PacketTrainDataGuiServer;
 import net.minecraft.core.BlockPos;
@@ -13,6 +14,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.*;
@@ -32,7 +34,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.*;
 
-public class BlockRailwaySign extends BlockDirectionalMapper implements EntityBlockMapper, IBlock {
+public class BlockRailwaySign extends BlockDirectionalMapper implements BlockItemDecorator, EntityBlockMapper, IBlock {
 
 	public final int length;
 	public final boolean isOdd;
@@ -114,10 +116,10 @@ public class BlockRailwaySign extends BlockDirectionalMapper implements EntityBl
 		}
 	}
 
-//	@Override
-//	public String getDescriptionId() {
-//		return "block.mtr.railway_sign";
-//	}
+	@Override
+	public void decorateBlockItem(Item.Properties properties) {
+		properties.overrideDescription("block.mtr.railway_sign");
+	}
 
 //	@Override
 //	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {

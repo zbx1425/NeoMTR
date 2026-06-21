@@ -48,11 +48,7 @@ public class Main {
 
 	public static final BrandNewEpicRegistryObject<Block> BLOCK_EYE_CANDY = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockEyeCandy(BlockBehaviour.Properties.of().setId(resourceKey)));
 	public static final RegistryObject<BlockEntityType<BlockEyeCandy.BlockEntityEyeCandy>>
-			BLOCK_ENTITY_TYPE_EYE_CANDY = new RegistryObject<>(() ->
-			Registry.getBlockEntityType(
-					BlockEyeCandy.BlockEntityEyeCandy::new,
-					BLOCK_EYE_CANDY.get()
-			));
+			BLOCK_ENTITY_TYPE_EYE_CANDY = new RegistryObject<>(() -> Registry.getBlockEntityType(BlockEyeCandy.BlockEntityEyeCandy::new, BLOCK_EYE_CANDY.get()));
 	public static final BrandNewEpicRegistryObject<Block> BLOCK_ONE_WAY_GATE = new BrandNewEpicRegistryObject<>(resourceKey -> new BlockOneWayGate(BlockBehaviour.Properties.of().setId(resourceKey)));
 
 	public static final BrandNewEpicRegistryObject<Item> BRIDGE_CREATOR_1 = new BrandNewEpicRegistryObject<>((resourceKey) -> new ItemBridgeCreator(new Item.Properties().setId(resourceKey), 1));

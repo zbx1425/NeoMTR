@@ -1,28 +1,19 @@
 package mtr.block;
 
-import mtr.mappings.Text;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
+import mtr.block.behaviour.BlockItemDecorator;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.SlabBlock;
 
-import java.util.List;
-
-public class BlockStationColorSlab extends SlabBlock {
+public class BlockStationColorSlab extends SlabBlock implements BlockItemDecorator {
 
 	public BlockStationColorSlab(Properties settings) {
 		super(settings);
 	}
 
-	// MC will determine its own
-//	@Override
-//	public String getDescriptionId() {
-//		return super.getDescriptionId().replace("block.mtr.station_color_", "block.minecraft.");
-//	}
+	@Override
+	public void decorateBlockItem(Item.Properties properties) {
+		properties.overrideDescription(super.getDescriptionId().replace("block.mtr.station_color_", "block.minecraft."));
+	}
 
 //	@Override
 //	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {

@@ -7,6 +7,7 @@ import mtr.client.CustomResources;
 import mtr.item.ItemBlockEnchanted;
 import mtr.item.ItemWithCreativeTabBase;
 import mtr.mappings.BlockEntityMapper;
+import mtr.block.behaviour.BlockItemDecorator;
 import mtr.neoforge.mappings.ForgeUtilities;
 import mtr.render.RenderDrivingOverlay;
 import net.minecraft.client.Minecraft;
@@ -47,7 +48,7 @@ public class MTRForge {
 	public static final CompatPacketRegistry PACKET_REGISTRY = new CompatPacketRegistry();
 
 	static {
-		MTR.init(MTRForge::registerItem, MTRForge::registerBlock, MTRForge::registerBlock, MTRForge::registerEnchantedBlock, MTRForge::registerBlockEntityType, MTRForge::registerEntityType, MTRForge::registerSoundEvent, MTRForge::registerDataComponentType);
+		MTR.init(MTRForge::registerItem, MTRForge::registerBlock, MTRForge::registerBlockItem, MTRForge::registerEnchantedBlock, MTRForge::registerBlockEntityType, MTRForge::registerEntityType, MTRForge::registerSoundEvent, MTRForge::registerDataComponentType);
 		cn.zbx1425.mtrsteamloco.Main.init(registries);
 	}
 
@@ -99,10 +100,16 @@ public class MTRForge {
 		BLOCKS.register(path, block::get);
 	}
 
-	private static void registerBlock(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTabWrapper) {
+	private static void registerBlockItem(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTabWrapper) {
 		registerBlock(path, block);
 		ITEMS.register(path, () -> {
-			final BlockItem blockItem = new BlockItem(block.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, MTR.id(path))));
+			final Item.Properties itemProperties = new Item.Properties()
+					.setId(ResourceKey.create(Registries.ITEM, MTR.id(path)))
+					.useBlockDescriptionPrefix();
+
+			tryDecorateBlockItem(block.get(), itemProperties);
+
+			final BlockItem blockItem = new BlockItem(block.get(), itemProperties);
 			Registry.registerCreativeModeTab(creativeModeTabWrapper.resourceLocation, blockItem);
 			return blockItem;
 		});
@@ -110,8 +117,15 @@ public class MTRForge {
 
 	private static void registerEnchantedBlock(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper creativeModeTab) {
 		registerBlock(path, block);
+
 		ITEMS.register(path, () -> {
-			final ItemBlockEnchanted itemBlockEnchanted = new ItemBlockEnchanted(block.get(), new Item.Properties().setId(ResourceKey.create(Registries.ITEM, MTR.id(path))));
+			final Item.Properties itemProperties = new Item.Properties()
+					.setId(ResourceKey.create(Registries.ITEM, MTR.id(path)))
+					.useBlockDescriptionPrefix();
+
+			tryDecorateBlockItem(block.get(), itemProperties);
+
+			final ItemBlockEnchanted itemBlockEnchanted = new ItemBlockEnchanted(block.get(), itemProperties);
 			Registry.registerCreativeModeTab(creativeModeTab.resourceLocation, itemBlockEnchanted);
 			return itemBlockEnchanted;
 		});
@@ -150,6 +164,12 @@ public class MTRForge {
 		public static void registerPayloadHandlers(final RegisterPayloadHandlersEvent event) {
 			PayloadRegistrar registrar = event.registrar("1");
 			MTRForge.PACKET_REGISTRY.commit(registrar);
+		}
+	}
+
+	private static void tryDecorateBlockItem(Block block, Item.Properties prop) {
+		if(block instanceof BlockItemDecorator decorator) {
+			decorator.decorateBlockItem(prop);
 		}
 	}
 }
