@@ -26,21 +26,21 @@ public class LiftClient extends Lift {
 		super(packet);
 	}
 
-	public void tickClient(Level world, float ticksElapsed) {
-		tick(world, ticksElapsed);
+	public void tickClient(Level world, float deltaTime) {
+		tick(world, deltaTime);
 
 		vehicleRidingClient.begin();
-		if (ticksElapsed > 0) {
+		if (deltaTime > 0) {
 			vehicleRidingClient.movePlayer(uuid -> {
-				vehicleRidingClient.setOffsets(uuid, currentPositionX + liftOffsetX / 2F, currentPositionY + liftOffsetY, currentPositionZ + liftOffsetZ / 2F, getYaw(), 0, liftWidth - 1, liftDepth - 1, frontCanOpen, backCanOpen, false, false, 0, 0, false, doorValue == 0, () -> {
+				vehicleRidingClient.applyClientPosition(uuid, currentPositionX + liftOffsetX / 2F, currentPositionY + liftOffsetY, currentPositionZ + liftOffsetZ / 2F, getYaw(), 0, liftWidth - 1, liftDepth - 1, frontCanOpen, backCanOpen, false, false, 0, 0, false, doorValue == 0, () -> {
 				});
-				vehicleRidingClient.moveSelf(id, uuid, liftWidth - 1, liftDepth - 1, getYaw(), 0, 1, frontCanOpen, backCanOpen, true, ticksElapsed);
+				vehicleRidingClient.moveSelf(id, uuid, liftWidth - 1, liftDepth - 1, getYaw(), 0, 1, frontCanOpen, backCanOpen, true, deltaTime);
 			});
 		}
 		vehicleRidingClient.end();
 	}
 
-	public void render(Level world, RenderLift renderLift, float ticksElapsed) {
+	public void render(Level world, RenderLift renderLift, float deltaTime) {
 		vehicleRidingClient.renderPlayers();
 		final double newX = currentPositionX + liftOffsetX / 2F;
 		final double newY = currentPositionY + liftOffsetY;

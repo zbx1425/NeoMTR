@@ -69,7 +69,7 @@ public class TrainClient extends Train implements IGui {
 
 	@Override
 	protected void simulateCar(
-			Level world, int ridingCar, float ticksElapsed,
+			Level world, int ridingCar, float deltaTime,
 			double carX, double carY, double carZ, float carYaw, float carPitch, float carRoll,
 			double prevCarX, double prevCarY, double prevCarZ, float prevCarYaw, float prevCarPitch, float prevCarRoll,
 			boolean doorLeftOpen, boolean doorRightOpen, double realSpacing
@@ -77,7 +77,7 @@ public class TrainClient extends Train implements IGui {
 	}
 
 	protected void renderCar(
-			Level world, int ridingCar, float ticksElapsed,
+			Level world, int ridingCar, float deltaTime,
 			double carX, double carY, double carZ, float carYaw, float carPitch, float carRoll,
 			double prevCarX, double prevCarY, double prevCarZ, float prevCarYaw, float prevCarPitch, float prevCarRoll,
 			boolean doorLeftOpen, boolean doorRightOpen, double realSpacing
@@ -89,9 +89,9 @@ public class TrainClient extends Train implements IGui {
 		}
 
 		final BlockPos soundPos = RailwayData.newBlockPos(carX, carY, carZ);
-		if (ticksElapsed > 0) trainSound.playAllCars(world, soundPos, ridingCar);
+		if (deltaTime > 0) trainSound.playAllCars(world, soundPos, ridingCar);
 		if (doorLeftOpen || doorRightOpen) {
-			if (ticksElapsed > 0) trainSound.playAllCarsDoorOpening(world, soundPos, ridingCar);
+			if (deltaTime > 0) trainSound.playAllCarsDoorOpening(world, soundPos, ridingCar);
 		}
 
 		final TrainProperties trainProperties = TrainClientRegistry.getTrainProperties(trainId);
@@ -135,7 +135,7 @@ public class TrainClient extends Train implements IGui {
 		}
 	}
 
-	public void renderTrain(Level world, float ticksElapsed) {
+	public void renderTrain(Level world, float deltaTime) {
 		if (world == null) {
 			return;
 		}
@@ -164,7 +164,7 @@ public class TrainClient extends Train implements IGui {
 				final int ridingCar = i;
 				calculateCar(world, keyPointsPositions, i, totalDwellTicks, true, (x, y, z, yaw, pitch, roll, realSpacing, doorLeftOpen, doorRightOpen) -> {
 					renderCar(
-							world, ridingCar, ticksElapsed,
+							world, ridingCar, deltaTime,
 							x, y, z,
 							yaw, pitch, roll,
 							prevX[0], prevY[0], prevZ[0],
@@ -189,7 +189,7 @@ public class TrainClient extends Train implements IGui {
 	}
 
 	@Override
-	protected boolean handlePositions(Level world, Vec3[] positions, float ticksElapsed, boolean isRendering) {
+	protected boolean handlePositions(Level world, Vec3[] positions, float deltaTime, boolean isRendering) {
 		final Minecraft client = Minecraft.getInstance();
 		final LocalPlayer clientPlayer = client.player;
 		if (clientPlayer == null) {
@@ -198,7 +198,7 @@ public class TrainClient extends Train implements IGui {
 
 		vehicleRidingClient.begin();
 
-		if (ticksElapsed > 0) {
+		if (deltaTime > 0) {
 			if (isPlayerRiding(clientPlayer)) {
 				final int headIndex = getIndex(0, spacing, false);
 				final int stopIndex = path.get(headIndex).stopIndex - 1;
@@ -221,7 +221,8 @@ public class TrainClient extends Train implements IGui {
 
 			final TrainProperties trainProperties = TrainClientRegistry.getTrainProperties(trainId);
 			vehicleRidingClient.movePlayer(uuid -> {
-				final CalculateCarCallback calculateCarCallback = (x, y, z, yaw, pitch, roll, realSpacingRender, doorLeftOpenRender, doorRightOpenRender) -> vehicleRidingClient.setOffsets(uuid, x, y, z, yaw, pitch, transportMode.maxLength == 1 ? spacing : realSpacingRender, width, doorLeftOpenRender, doorRightOpenRender, transportMode.hasPitchAscending, transportMode.hasPitchDescending, trainProperties.riderOffset, trainProperties.riderOffsetDismounting, false, doorValue == 0, () -> {
+				final CalculateCarCallback calculateCarCallback = (x, y, z, yaw, pitch, roll, realSpacingRender, doorLeftOpenRender, doorRightOpenRender) ->
+						vehicleRidingClient.applyClientPosition(uuid, x, y, z, yaw, pitch, transportMode.maxLength == 1 ? spacing : realSpacingRender, width, doorLeftOpenRender, doorRightOpenRender, transportMode.hasPitchAscending, transportMode.hasPitchDescending, trainProperties.riderOffset, trainProperties.riderOffsetDismounting, false, doorValue == 0, () -> {
 					final boolean isShifting = clientPlayer.isShiftKeyDown();
 					if (Config.shiftToToggleSitting() && !MTRClient.isVivecraft()) {
 						if (isShifting && !previousShifting) {
@@ -234,7 +235,7 @@ public class TrainClient extends Train implements IGui {
 
 				final int currentRidingCar = Mth.clamp((int) Math.floor(vehicleRidingClient.getPercentageZ(uuid)), 0, trainCars - 1);
 				calculateCar(world, positions, currentRidingCar, 0, isRendering, (x, y, z, yaw, pitch, roll, realSpacingRender, doorLeftOpenRender, doorRightOpenRender) -> {
-					vehicleRidingClient.moveSelf(id, uuid, realSpacingRender, width, yaw, currentRidingCar, trainCars, doorLeftOpenRender, doorRightOpenRender, !trainProperties.hasGangwayConnection, ticksElapsed);
+					vehicleRidingClient.moveSelf(id, uuid, realSpacingRender, width, yaw, currentRidingCar, trainCars, doorLeftOpenRender, doorRightOpenRender, !trainProperties.hasGangwayConnection, deltaTime);
 
 					final int newRidingCar = Mth.clamp((int) Math.floor(vehicleRidingClient.getPercentageZ(uuid)), 0, trainCars - 1);
 					if (currentRidingCar == newRidingCar) {
@@ -340,18 +341,18 @@ public class TrainClient extends Train implements IGui {
 		return Math.asin(value);
 	}
 
-	public void simulateTrain(Level world, float ticksElapsed, SpeedCallback speedCallback, AnnouncementCallback announcementCallback, AnnouncementCallback lightRailAnnouncementCallback) {
+	public void simulateTrain(Level world, float deltaTime, SpeedCallback speedCallback, AnnouncementCallback announcementCallback, AnnouncementCallback lightRailAnnouncementCallback) {
 		trainTranslucentRenders.clear();
 		this.speedCallback = speedCallback;
 		this.announcementCallback = announcementCallback;
 		this.lightRailAnnouncementCallback = lightRailAnnouncementCallback;
-		if (ticksElapsed > 0) {
+		if (deltaTime != 0) {
 			oldSpeed = speed;
 			oldRailProgress = railProgress;
 			oldDoorValue = doorValue;
 		}
 
-		if (ticksElapsed != 0) {
+		if (deltaTime != 0) {
 			final int stopIndex = path.get(getIndex(0, spacing, false)).stopIndex - 1;
 			if (!RailwayData.useRoutesAndStationsFromIndex(stopIndex, routeIds, ClientData.DATA_CACHE, (currentStationIndex, thisRoute1, nextRoute1, thisStation1, nextStation1, lastStation1) -> {
 				this.currentStationIndex = currentStationIndex;
@@ -370,7 +371,7 @@ public class TrainClient extends Train implements IGui {
 			}
 		}
 
-		simulateTrain(world, ticksElapsed, null);
+		simulateTrain(world, deltaTime, null);
 
 		if (depot == null || routeIds.isEmpty()) {
 			final Siding siding = ClientData.DATA_CACHE.sidingIdMap.get(sidingId);
@@ -400,7 +401,7 @@ public class TrainClient extends Train implements IGui {
 			trainSound.stopAll();
 			return;
 		}
-		if (!handlePositions(world, keyPointsPositions, ticksElapsed, true)) {
+		if (!handlePositions(world, keyPointsPositions, deltaTime, true)) {
 			trainSound.stopAll();
 			return;
 		}
@@ -446,7 +447,7 @@ public class TrainClient extends Train implements IGui {
 			}
 		}
 		final BlockPos soundPos = RailwayData.newBlockPos(nearestPoint.x, nearestPoint.y, nearestPoint.z);
-		if (ticksElapsed > 0) trainSound.playNearestCar(world, soundPos, nearestCar);
+		if (deltaTime > 0) trainSound.playNearestCar(world, soundPos, nearestCar);
 	}
 
 	@Override

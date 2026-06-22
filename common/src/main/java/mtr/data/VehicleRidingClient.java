@@ -1,6 +1,7 @@
 package mtr.data;
 
 import io.netty.buffer.Unpooled;
+import mtr.MTR;
 import mtr.MTRClient;
 import mtr.RegistryClient;
 import mtr.client.ClientData;
@@ -11,6 +12,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
@@ -23,10 +25,6 @@ public class VehicleRidingClient {
 	private float clientPrevYaw;
 	private float oldPercentageX;
 	private float oldPercentageZ;
-	private double lastSentX;
-	private double lastSentY;
-	private double lastSentZ;
-	private float lastSentTicks;
 	private int interval;
 	private int previousInterval;
 
@@ -36,7 +34,6 @@ public class VehicleRidingClient {
 	private final Set<UUID> ridingEntities;
 	private final Identifier packetId;
 
-	private static final float VEHICLE_WALKING_SPEED_MULTIPLIER = 0.125F;
 	private static final int VEHICLE_PERCENTAGE_UPDATE_INTERVAL = 20;
 	private static final boolean DEBUG_SKIP_RENDER_TRAIN_AND_PLAYERS = false;
 
@@ -74,7 +71,7 @@ public class VehicleRidingClient {
 		});
 	}
 
-	public void setOffsets(UUID uuid, double x, double y, double z, float yaw, float pitch, double length, int width, boolean doorLeftOpen, boolean doorRightOpen, boolean hasPitchAscending, boolean hasPitchDescending, float riderOffset, float riderOffsetDismounting, boolean shouldSetOffset, boolean shouldSetYaw, Runnable clientPlayerCallback) {
+	public void applyClientPosition(UUID uuid, double vehicleX, double vehicleY, double vehicleZ, float yaw, float pitch, double length, int width, boolean doorLeftOpen, boolean doorRightOpen, boolean hasPitchAscending, boolean hasPitchDescending, float riderOffset, float riderOffsetDismounting, boolean shouldSetOffset, boolean shouldSetYaw, Runnable clientPlayerCallback) {
 		final LocalPlayer clientPlayer = Minecraft.getInstance().player;
 		if (clientPlayer == null) {
 			return;
@@ -83,21 +80,20 @@ public class VehicleRidingClient {
 		final boolean isClientPlayer = uuid.equals(clientPlayer.getUUID());
 		final double percentageX = getValueFromPercentage(riderRatioPos.get(uuid).x, width);
 		final float riderOffsetNew = doorLeftOpen && percentageX < 0 || doorRightOpen && percentageX > 1 ? riderOffsetDismounting : riderOffset;
-		final Vec3 playerOffset = new Vec3(percentageX, riderOffsetNew, getValueFromPercentage(Mth.frac(riderRatioPos.get(uuid).z), length)).xRot((pitch < 0 ? hasPitchAscending : hasPitchDescending) ? pitch : 0).yRot(yaw);
+		final Vec3 offset = new Vec3(percentageX, riderOffsetNew, getValueFromPercentage(Mth.frac(riderRatioPos.get(uuid).z), length)).xRot((pitch < 0 ? hasPitchAscending : hasPitchDescending) ? pitch : 0).yRot(yaw);
 		ClientData.updatePlayerRidingOffset(uuid);
-		riderPositions.put(uuid, playerOffset.add(x, y, z));
+		riderPositions.put(uuid, offset.add(vehicleX, vehicleY, vehicleZ));
 
 		if (isClientPlayer) {
-			final double moveX = x + playerOffset.x;
-			final double moveY = y + playerOffset.y;
-			final double moveZ = z + playerOffset.z;
-			// HACK Vivecraft support removed
+			final double newX = offset.x + vehicleX;
+			final double newY = offset.y + vehicleY;
+			final double newZ = offset.z + vehicleZ;
 
 			clientPlayer.fallDistance = 0;
 			clientPlayer.setDeltaMovement(0, 0, 0);
 			clientPlayer.setSpeed(0);
 			if (MTRClient.getGameTick() > 40) {
-				clientPlayer.absSnapTo(moveX, moveY, moveZ);
+				clientPlayer.absSnapTo(newX, newY, newZ);
 			}
 
 			clientPlayerCallback.run();
@@ -116,15 +112,16 @@ public class VehicleRidingClient {
 		}
 	}
 
-	public void moveSelf(long id, UUID uuid, double length, int width, float yaw, int percentageOffset, int maxPercentage, boolean doorLeftOpen, boolean doorRightOpen, boolean noGangwayConnection, float ticksElapsed) {
-		final float speedMultiplier = ticksElapsed * VEHICLE_WALKING_SPEED_MULTIPLIER;
-		final float newPercentageX;
-		final float newPercentageZ;
+	public void moveSelf(long id, UUID uuid, double length, int width, float yaw, int percentageOffset, int maxPercentage, boolean doorLeftOpen, boolean doorRightOpen, boolean noGangwayConnection, float deltaTime) {
 		final LocalPlayer clientPlayer = Minecraft.getInstance().player;
-
 		if (clientPlayer == null) {
 			return;
 		}
+		final float newPercentageX;
+		final float newPercentageZ;
+
+		float speedMultiplier = clientPlayer.getSpeed() * deltaTime;
+		if(clientPlayer.isSprinting()) speedMultiplier *= 1.3f;
 
 		if (uuid.equals(clientPlayer.getUUID())) {
             final Vec3 movement = new Vec3(Math.abs(clientPlayer.xxa) > 0.5 ? Math.copySign(speedMultiplier, clientPlayer.xxa) : 0, 0, Math.abs(clientPlayer.zza) > 0.5 ? Math.copySign(speedMultiplier, clientPlayer.zza) : 0).yRot((float) -Math.toRadians(clientPlayer.getYRot()) - yaw);
