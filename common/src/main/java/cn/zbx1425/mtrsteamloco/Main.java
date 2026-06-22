@@ -7,7 +7,9 @@ import com.google.gson.JsonParser;
 import mtr.*;
 import mtr.item.ItemBridgeCreator;
 import mtr.item.ItemWithCreativeTabBase;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.Item;
@@ -53,6 +55,8 @@ public class Main {
 	public static final BrandNewEpicRegistryObject<Item> RAIL_EDITOR_GEOMETRY = new BrandNewEpicRegistryObject<>((resourceKey) ->
 		new ItemWithCreativeTabBase(new Item.Properties().setId(resourceKey), CreativeModeTabs.CORE, propModifier -> propModifier.stacksTo(1)));
 
+	public static final RegistryObject<DataComponentType<CompoundTag>> TOOL_TAG = new RegistryObject<>(() -> DataComponentType.<CompoundTag>builder().persistent(CompoundTag.CODEC).build());
+
 	public static final SoundEvent SOUND_EVENT_BELL = SoundEvent.createVariableRangeEvent(Main.id("bell"));
 
 	public static SimpleParticleType PARTICLE_STEAM_SMOKE;
@@ -71,6 +75,7 @@ public class Main {
 			registries.registerItem("rail_editor_visual", RAIL_EDITOR_VISUAL);
 			registries.registerItem("rail_editor_geometry", RAIL_EDITOR_GEOMETRY);
 			registries.registerSoundEvent("bell", SOUND_EVENT_BELL);
+			registries.registerDataComponents("tool_tag", TOOL_TAG);
 			PARTICLE_STEAM_SMOKE = registries.createParticleType(true);
 			registries.registerParticleType("steam_smoke", PARTICLE_STEAM_SMOKE);
 

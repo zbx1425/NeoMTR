@@ -5,7 +5,6 @@ import mtr.block.BlockLiftButtons;
 import mtr.block.BlockLiftPanelBase;
 import mtr.block.BlockLiftTrackFloor;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -22,11 +21,11 @@ public class ItemLiftButtonsLinkModifier extends ItemBlockClickingBase {
 	}
 
 	@Override
-	protected void onStartClick(UseOnContext context, CompoundTag compoundTag) {
+	protected void onStartClick(UseOnContext context) {
 	}
 
 	@Override
-	protected void onEndClick(UseOnContext context, BlockPos posEnd, CompoundTag compoundTag) {
+	protected void onEndClick(UseOnContext context, BlockPos posEnd) {
 		final Level world = context.getLevel();
 		final BlockPos posStart = context.getClickedPos();
 		final Block blockStart = world.getBlockState(posStart).getBlock();

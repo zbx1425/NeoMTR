@@ -933,9 +933,9 @@ public class RailEditorVisualScreen extends SelectListScreen {
         if (Minecraft.getInstance().player == null) return;
         ItemStack toolItem = Minecraft.getInstance().player.getMainHandItem();
         if (!toolItem.is(Main.RAIL_EDITOR_VISUAL.get())) return;
-        CompoundTag tag = toolItem.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        CompoundTag tag = toolItem.getOrDefault(Main.TOOL_TAG.get(), new CompoundTag()).copy();
         writeRepeatersToNbt(tag, getRepeaters());
-        toolItem.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+        toolItem.set(Main.TOOL_TAG.get(), tag);
         PacketUpdateHoldingItem.sendUpdateC2S();
     }
 

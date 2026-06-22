@@ -6,9 +6,11 @@ import mtr.*;
 import mtr.item.ItemWithCreativeTabBase;
 import mtr.neoforge.DeferredRegisterHolder;
 import mtr.neoforge.mappings.ForgeUtilities;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
@@ -22,27 +24,29 @@ import net.neoforged.bus.api.IEventBus;
 
 public class RegistriesWrapperImpl implements RegistriesWrapper {
 
-    private static final DeferredRegisterHolder<Item> ITEMS = new DeferredRegisterHolder<>(Main.MOD_ID, ForgeUtilities.registryGetItem());
-    private static final DeferredRegisterHolder<Block> BLOCKS = new DeferredRegisterHolder<>(Main.MOD_ID, ForgeUtilities.registryGetBlock());
-    private static final DeferredRegisterHolder<BlockEntityType<?>> BLOCK_ENTITY_TYPES = new DeferredRegisterHolder<>(Main.MOD_ID, ForgeUtilities.registryGetBlockEntityType());
-    private static final DeferredRegisterHolder<EntityType<?>> ENTITY_TYPES = new DeferredRegisterHolder<>(Main.MOD_ID, ForgeUtilities.registryGetEntityType());
-    private static final DeferredRegisterHolder<SoundEvent> SOUND_EVENTS = new DeferredRegisterHolder<>(Main.MOD_ID, ForgeUtilities.registryGetSoundEvent());
-    private static final DeferredRegisterHolder<ParticleType<?>> PARTICLE_TYPES = new DeferredRegisterHolder<>(Main.MOD_ID, ForgeUtilities.registryGetParticleType());
+    private static final String MOD_ID = Main.MOD_ID;
 
+    private static final DeferredRegisterHolder<Item> ITEMS = new DeferredRegisterHolder<>(MOD_ID, Registries.ITEM);
+    private static final DeferredRegisterHolder<Block> BLOCKS = new DeferredRegisterHolder<>(MOD_ID, Registries.BLOCK);
+    private static final DeferredRegisterHolder<BlockEntityType<?>> BLOCK_ENTITY_TYPES = new DeferredRegisterHolder<>(MOD_ID, Registries.BLOCK_ENTITY_TYPE);
+    private static final DeferredRegisterHolder<DataComponentType<?>> DATA_COMPONENT_TYPES = new DeferredRegisterHolder<>(MOD_ID, Registries.DATA_COMPONENT_TYPE);
+    private static final DeferredRegisterHolder<EntityType<?>> ENTITY_TYPES = new DeferredRegisterHolder<>(MOD_ID, Registries.ENTITY_TYPE);
+    private static final DeferredRegisterHolder<SoundEvent> SOUND_EVENTS = new DeferredRegisterHolder<>(MOD_ID, Registries.SOUND_EVENT);
+    private static final DeferredRegisterHolder<ParticleType<?>> PARTICLE_TYPES = new DeferredRegisterHolder<>(MOD_ID, Registries.PARTICLE_TYPE);
 
     @Override
     public void registerBlock(String path, BrandNewEpicRegistryObject<Block> block) {
-        block.setResourceKey(ResourceKey.create(Registries.BLOCK, Main.id(path)));
+        block.setResourceKey(ResourceKey.create(Registries.BLOCK, id(path)));
         BLOCKS.register(path,id -> block.get());
     }
 
     @Override
     public void registerBlockAndItem(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper tab) {
-        block.setResourceKey(ResourceKey.create(Registries.BLOCK, Main.id(path)));
+        block.setResourceKey(ResourceKey.create(Registries.BLOCK, id(path)));
         BLOCKS.register(path,id -> block.get());
 
         final Item.Properties itemProperties = new Item.Properties()
-                .setId(ResourceKey.create(Registries.ITEM, Main.id(path)))
+                .setId(ResourceKey.create(Registries.ITEM, id(path)))
                 .useBlockDescriptionPrefix();
 
         ITEMS.register(path, (id) -> {
@@ -54,7 +58,7 @@ public class RegistriesWrapperImpl implements RegistriesWrapper {
 
     @Override
     public void registerItem(String path, BrandNewEpicRegistryObject<Item> item) {
-        item.setResourceKey(ResourceKey.create(Registries.ITEM, Main.id(path)));
+        item.setResourceKey(ResourceKey.create(Registries.ITEM, id(path)));
 
         ITEMS.register(path, (id) -> {
             final ItemWithCreativeTabBase itemObject = (ItemWithCreativeTabBase) item.get();
@@ -66,6 +70,11 @@ public class RegistriesWrapperImpl implements RegistriesWrapper {
     @Override
     public void registerBlockEntityType(String path, RegistryObject<? extends BlockEntityType<? extends BlockEntity>> blockEntityType) {
         BLOCK_ENTITY_TYPES.register(path, blockEntityType::get);
+    }
+
+    @Override
+    public void registerDataComponents(String path, RegistryObject<? extends DataComponentType<?>> dataComponent) {
+        DATA_COMPONENT_TYPES.register(path, dataComponent::get);
     }
 
     @Override
@@ -88,10 +97,15 @@ public class RegistriesWrapperImpl implements RegistriesWrapper {
         return new SimpleParticleType(overrideLimiter);
     }
 
+    private Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
+    }
+
     public void registerAllDeferred(IEventBus eventBus) {
         BLOCKS.register(eventBus);
         ITEMS.register(eventBus);
         BLOCK_ENTITY_TYPES.register(eventBus);
+        DATA_COMPONENT_TYPES.register(eventBus);
         ENTITY_TYPES.register(eventBus);
         SOUND_EVENTS.register(eventBus);
         PARTICLE_TYPES.register(eventBus);

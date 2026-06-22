@@ -3,6 +3,7 @@ package mtr;
 import cn.zbx1425.mtrsteamloco.Main;
 import cn.zbx1425.mtrsteamloco.MainClient;
 import cn.zbx1425.mtrsteamloco.NTEClientCommand;
+import cn.zbx1425.mtrsteamloco.gui.DebugHud;
 import cn.zbx1425.mtrsteamloco.gui.ScriptDebugOverlay;
 import cn.zbx1425.mtrsteamloco.render.train.SteamSmokeParticle;
 import cn.zbx1425.sowcerext.model.integration.BufferSourceProxy;
@@ -21,6 +22,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.debug.DebugScreenEntries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -56,6 +58,8 @@ public class MTRFabricClient implements ClientModInitializer, ICustomResources {
 		HudElementRegistry.addFirst(MTR.id("driving_hud"), (guiGraphics, tickDelta) -> RenderDrivingOverlay.render(guiGraphics));
 		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new CustomResourcesWrapper());
 		MTRFabric.PACKET_REGISTRY.commitClient();
+
+		DebugScreenEntries.register(Main.id("renderer_info"), new DebugHud());
 
 		ParticleProviderRegistry.getInstance().register(Main.PARTICLE_STEAM_SMOKE, SteamSmokeParticle.Provider::new);
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {

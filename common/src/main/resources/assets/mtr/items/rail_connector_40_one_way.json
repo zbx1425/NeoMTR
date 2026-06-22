@@ -2,7 +2,7 @@
   "model": {
     "type": "minecraft:condition",
     "property": "minecraft:has_component",
-    "component": "mtr:selected",
+    "component": "mtr:start_pos",
     "on_true": {
       "type": "minecraft:model",
       "model": "mtr:item/rail_connector_40_one_way_selected"

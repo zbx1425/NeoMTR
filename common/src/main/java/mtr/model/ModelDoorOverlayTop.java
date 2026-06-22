@@ -5,9 +5,13 @@ import mtr.mappings.ModelDataWrapper;
 import mtr.mappings.ModelMapper;
 import mtr.render.MoreRenderLayers;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.resources.Identifier;
+
+import java.util.List;
+import java.util.Map;
 
 public class ModelDoorOverlayTop extends EntityModel<EntityRenderState> {
 
@@ -18,10 +22,7 @@ public class ModelDoorOverlayTop extends EntityModel<EntityRenderState> {
 	private static final Identifier TEXTURE_ID = Identifier.parse("mtr:textures/block/sign/door_overlay_sp1900_top.png");
 
 	public ModelDoorOverlayTop() {
-		// TODO: Check if this works
-		final ModelDataWrapper dummyRoot = new ModelDataWrapper();
-		dummyRoot.setModelPart(16, 16);
-        super(dummyRoot.modelPart);
+		super(new ModelPart(List.of(), Map.of()));
         final int textureWidth = 24;
 		final int textureHeight = 3;
 

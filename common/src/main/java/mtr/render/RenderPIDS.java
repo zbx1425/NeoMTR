@@ -417,12 +417,6 @@ public class RenderPIDS<T extends BlockEntityMapper> extends BlockEntityRenderer
 									}
 								}
 								submitNodeCollector.submitText(poseStack, 0, 0, arrivalText.getVisualOrderText(), false, Font.DisplayMode.NORMAL, 0xF000F0, textColor, 0, 0);
-//								textRenderer.drawInBatch(arrivalText, 0, 0, textColor, false, poseStack.last().pose(), vertexConsumers, Font.DisplayMode.NORMAL, 0, 0xF000F0);
-//							RenderSystem.disableDepthTest();
-//							((MultiBufferSource.BufferSource) vertexConsumers).endBatch();
-//							RenderSystem.enableDepthTest();
-								// TODO: Why does this render twice?
-//								textRenderer.drawInBatch(arrivalText, 0, 0, textColor, false, poseStack.last().pose(), vertexConsumers, Font.DisplayMode.NORMAL, 0, 0xF000F0);
 								matrixStackHolder.pop();
 							}
 						}

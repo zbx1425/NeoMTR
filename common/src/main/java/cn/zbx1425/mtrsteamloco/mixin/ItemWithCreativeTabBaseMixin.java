@@ -40,7 +40,7 @@ public abstract class ItemWithCreativeTabBaseMixin extends Item {
                 } else {
                     if (level.isClientSide()) {
                         RailEditorVisualScreen.acquirePickInfoWhenUse();
-                        CompoundTag toolTag = context.getPlayer().getMainHandItem().getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+                        CompoundTag toolTag = context.getItemInHand().getOrDefault(Main.TOOL_TAG.get(), new CompoundTag()).copy();
                         RailEditorVisualScreen.batchApplyBrushTemplate(toolTag);
                     } else {
                         return super.useOn(context);
@@ -69,7 +69,7 @@ public abstract class ItemWithCreativeTabBaseMixin extends Item {
                 } else {
                     if (level.isClientSide()) {
                         RailEditorGeometryScreen.acquirePickInfoWhenUse();
-                        CompoundTag toolTag = context.getPlayer().getMainHandItem().getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+                        CompoundTag toolTag = context.getPlayer().getMainHandItem().getOrDefault(Main.TOOL_TAG.get(), new CompoundTag()).copy();
                         RailEditorGeometryScreen.batchApply(toolTag);
                     } else {
                         return super.useOn(context);

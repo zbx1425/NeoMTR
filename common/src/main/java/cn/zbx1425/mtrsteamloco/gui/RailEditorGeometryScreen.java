@@ -521,16 +521,16 @@ public class RailEditorGeometryScreen extends MTRScreen {
         if (Minecraft.getInstance().player == null) return null;
         ItemStack toolItem = Minecraft.getInstance().player.getMainHandItem();
         if (!toolItem.is(Main.RAIL_EDITOR_GEOMETRY.get())) return null;
-        return toolItem.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        return toolItem.getOrDefault(Main.TOOL_TAG.get(), new CompoundTag()).copy();
     }
 
     private void updateToolTag(java.util.function.Consumer<CompoundTag> modifier) {
         if (Minecraft.getInstance().player == null) return;
         ItemStack toolItem = Minecraft.getInstance().player.getMainHandItem();
         if (!toolItem.is(Main.RAIL_EDITOR_GEOMETRY.get())) return;
-        CompoundTag tag = toolItem.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        CompoundTag tag = toolItem.getOrDefault(Main.TOOL_TAG.get(), new CompoundTag()).copy();
         modifier.accept(tag);
-        toolItem.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+        toolItem.set(Main.TOOL_TAG.get(), tag);
         PacketUpdateHoldingItem.sendUpdateC2S();
     }
 

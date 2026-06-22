@@ -32,7 +32,7 @@ public abstract class ModelTrainBase extends EntityModel<EntityRenderState> impl
 	private final List<ScrollingText> tempScrollingTexts = new ArrayList<>();
 
 	public ModelTrainBase(DoorAnimationType doorAnimationType, boolean renderDoorOverlay) {
-        super(new ModelPart(List.of(), Map.of())); // TODO: Figure out how would this work
+        super(new ModelPart(List.of(), Map.of()));
 		this.doorAnimationType = doorAnimationType;
 		this.renderDoorOverlay = renderDoorOverlay;
 	}

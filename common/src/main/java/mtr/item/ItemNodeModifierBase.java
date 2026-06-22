@@ -1,6 +1,7 @@
 package mtr.item;
 
 import mtr.CreativeModeTabs;
+import mtr.DataComponentTypes;
 import mtr.block.BlockFreeNode;
 import mtr.block.BlockNode;
 import mtr.data.RailAngle;
@@ -10,15 +11,12 @@ import mtr.data.TransportMode;
 import mtr.mappings.Text;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -36,9 +34,6 @@ public abstract class ItemNodeModifierBase extends ItemBlockClickingBase {
 	public final boolean forContinuousMovementNode;
 	public final boolean forAirplaneNode;
 	protected final boolean isConnector;
-
-	public static final String TAG_POS = "start_pos";
-	private static final String TAG_TRANSPORT_MODE = "transport_mode";
 
 	private static final ThreadLocal<Map<BlockPos, Float>> FREE_NODE_PENDING_RAW_ANGLES = ThreadLocal.withInitial(HashMap::new);
 
@@ -77,21 +72,19 @@ public abstract class ItemNodeModifierBase extends ItemBlockClickingBase {
 
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag tooltipFlag) {
-		final CustomData customData = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-		final CompoundTag compoundTag = customData.copyTag();
-		final long posLong = compoundTag.getLongOr(TAG_POS, 0);
-		if (posLong != 0) {
-			tooltipAdder.accept(Text.translatable("tooltip.mtr.selected_block", BlockPos.of(posLong).toShortString()).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)));
+		final BlockPos selectedPos = stack.get(DataComponentTypes.START_POS.get());
+		if (selectedPos != null) {
+			tooltipAdder.accept(Text.translatable("tooltip.mtr.selected_block", selectedPos.toShortString()).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)));
 		}
 	}
 
 	@Override
-	protected void onStartClick(UseOnContext context, CompoundTag compoundTag) {
-		compoundTag.putString(TAG_TRANSPORT_MODE, BlockFreeNode.getEffectiveTransportMode(context.getLevel(), context.getClickedPos()).toString());
+	protected void onStartClick(UseOnContext context) {
+		context.getItemInHand().set(DataComponentTypes.TRANSPORT_TYPE.get(), BlockFreeNode.getEffectiveTransportMode(context.getLevel(), context.getClickedPos()));
 	}
 
 	@Override
-	protected void onEndClick(UseOnContext context, BlockPos posEnd, CompoundTag compoundTag) {
+	protected void onEndClick(UseOnContext context, BlockPos posEnd) {
 		final Level world = context.getLevel();
 		final RailwayData railwayData = RailwayData.getInstance(world);
 		final BlockPos posStart = context.getClickedPos();
@@ -104,7 +97,7 @@ public abstract class ItemNodeModifierBase extends ItemBlockClickingBase {
 
 		try {
 			if (railwayData != null && stateEnd.getBlock() instanceof BlockNode && blockStart instanceof BlockNode
-					&& transportModeStart.toString().equals(compoundTag.getStringOr(TAG_TRANSPORT_MODE, "TRAIN"))
+					&& transportModeStart.equals(context.getItemInHand().getOrDefault(DataComponentTypes.TRANSPORT_TYPE.get(), TransportMode.TRAIN))
 					&& transportModeStart == transportModeEnd) {
 				final Player player = context.getPlayer();
 
@@ -166,7 +159,7 @@ public abstract class ItemNodeModifierBase extends ItemBlockClickingBase {
 			}
 		} finally {
 			clearQueuedFreeNodeAngles();
-			compoundTag.remove(TAG_TRANSPORT_MODE);
+			context.getItemInHand().remove(DataComponentTypes.TRANSPORT_TYPE.get());
 		}
 	}
 

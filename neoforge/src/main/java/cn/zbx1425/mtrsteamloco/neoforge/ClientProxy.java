@@ -3,6 +3,7 @@ package cn.zbx1425.mtrsteamloco.neoforge;
 import cn.zbx1425.mtrsteamloco.Main;
 import cn.zbx1425.mtrsteamloco.MainClient;
 import cn.zbx1425.mtrsteamloco.NTEClientCommand;
+import cn.zbx1425.mtrsteamloco.gui.DebugHud;
 import cn.zbx1425.mtrsteamloco.gui.ScriptDebugOverlay;
 import cn.zbx1425.mtrsteamloco.render.train.SteamSmokeParticle;
 import mtr.screen.ConfigScreen;
@@ -11,6 +12,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
+import net.neoforged.neoforge.client.event.RegisterDebugEntriesEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -43,21 +45,14 @@ public class ClientProxy {
             event.registerAbove(VanillaGuiLayers.SCOREBOARD_SIDEBAR, Main.id("script_debug_overlay"),
                     (guiGraphics, tickDelta) -> ScriptDebugOverlay.render(guiGraphics));
         }
+
+        @SubscribeEvent
+        public static void onDebugOverlay(RegisterDebugEntriesEvent event) {
+            event.register(Main.id("renderer_info"), new DebugHud());
+        }
     }
 
     public static class ForgeEventBusListener {
-
-        // TODO: IIRC you may now register it manually in vanilla?
-//        @SubscribeEvent
-//        public static void onDebugOverlay(CustomizeGuiOverlayEvent.DebugText event) {
-//            if (Minecraft.getInstance().options.renderDebug) {
-//                event.getLeft().add(
-//                        "[NTE] Calls: " + MainClient.drawContext.drawCallCount
-//                                + ", Batches: " + MainClient.drawContext.batchCount
-//                                + ", Faces: " + (MainClient.drawContext.singleFaceCount + MainClient.drawContext.instancedFaceCount)
-//                );
-//            }
-//        }
 
         @SubscribeEvent
         public static void onRegisterClientCommands(RegisterClientCommandsEvent event) {

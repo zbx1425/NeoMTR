@@ -5,9 +5,13 @@ import mtr.mappings.ModelDataWrapper;
 import mtr.mappings.ModelMapper;
 import mtr.render.MoreRenderLayers;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.resources.Identifier;
+
+import java.util.List;
+import java.util.Map;
 
 public class ModelCableCarGrip extends EntityModel<EntityRenderState> {
 
@@ -15,10 +19,7 @@ public class ModelCableCarGrip extends EntityModel<EntityRenderState> {
 	private final Identifier texture = Identifier.parse("mtr:textures/entity/cable_car_grip.png");
 
 	public ModelCableCarGrip() {
-		// TODO: Check if this will work
-		ModelDataWrapper dummyRoot = new ModelDataWrapper();
-		dummyRoot.setModelPart(16, 16);
-        super(dummyRoot.modelPart);
+		super(new ModelPart(List.of(), Map.of()));
         final int textureWidth = 48;
 		final int textureHeight = 48;
 

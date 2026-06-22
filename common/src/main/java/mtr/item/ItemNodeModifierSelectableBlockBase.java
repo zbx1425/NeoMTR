@@ -1,5 +1,6 @@
 package mtr.item;
 
+import mtr.DataComponentTypes;
 import mtr.Registry;
 import mtr.block.BlockNode;
 import mtr.data.RailAngle;
@@ -9,8 +10,6 @@ import mtr.mappings.Text;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.InteractionResult;
@@ -18,7 +17,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -34,8 +32,6 @@ public abstract class ItemNodeModifierSelectableBlockBase extends ItemNodeModifi
 	private final int height;
 	private final int width;
 	private final int radius;
-
-	private static final String TAG_BLOCK_ID = "block_id";
 
 	public ItemNodeModifierSelectableBlockBase(Item.Properties properties, boolean canSaveBlock, int height, int width) {
 		super(properties, true, false, false, true);
@@ -60,10 +56,7 @@ public abstract class ItemNodeModifierSelectableBlockBase extends ItemNodeModifi
 						newState = state;
 					}
 					player.sendOverlayMessage(Text.translatable("tooltip.mtr.selected_material", Text.translatable(newState.getBlock().getDescriptionId())));
-					final CustomData customData = context.getItemInHand().getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-					final CompoundTag compoundTag = customData.copyTag();
-					compoundTag.putInt(TAG_BLOCK_ID, Block.getId(newState));
-					context.getItemInHand().set(DataComponents.CUSTOM_DATA, CustomData.of(compoundTag));
+					context.getItemInHand().set(DataComponentTypes.SELECTED_BLOCK.get(), Block.getId(newState));
 					return InteractionResult.SUCCESS;
 				}
 			}
@@ -103,10 +96,8 @@ public abstract class ItemNodeModifierSelectableBlockBase extends ItemNodeModifi
 	}
 
 	protected BlockState getSavedState(ItemStack stack) {
-		final CustomData customData = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-		final CompoundTag tag = customData.copyTag();
-		if (tag.contains(TAG_BLOCK_ID)) {
-			return Block.stateById(tag.getIntOr(TAG_BLOCK_ID, 0));
+		if (stack.has(DataComponentTypes.SELECTED_BLOCK.get())) {
+			return Block.stateById(stack.get(DataComponentTypes.SELECTED_BLOCK.get()));
 		} else {
 			return Blocks.AIR.defaultBlockState();
 		}

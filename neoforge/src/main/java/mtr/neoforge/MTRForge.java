@@ -43,13 +43,14 @@ public class MTRForge {
 	private static final DeferredRegisterHolder<EntityType<?>> ENTITY_TYPES = new DeferredRegisterHolder<>(MTR.MOD_ID, ForgeUtilities.registryGetEntityType());
 	private static final DeferredRegisterHolder<SoundEvent> SOUND_EVENTS = new DeferredRegisterHolder<>(MTR.MOD_ID, ForgeUtilities.registryGetSoundEvent());
 	private static final DeferredRegisterHolder<CreativeModeTab> CREATIVE_MODE_TABS = new DeferredRegisterHolder<>(MTR.MOD_ID, Registries.CREATIVE_MODE_TAB);
-	private static final RegistriesWrapperImpl registries = new RegistriesWrapperImpl();
+
+	private static final RegistriesWrapperImpl REGISTRY_NTE = new RegistriesWrapperImpl();
 
 	public static final CompatPacketRegistry PACKET_REGISTRY = new CompatPacketRegistry();
 
 	static {
 		MTR.init(MTRForge::registerItem, MTRForge::registerBlock, MTRForge::registerBlockItem, MTRForge::registerEnchantedBlock, MTRForge::registerBlockEntityType, MTRForge::registerEntityType, MTRForge::registerSoundEvent, MTRForge::registerDataComponentType);
-		cn.zbx1425.mtrsteamloco.Main.init(registries);
+		cn.zbx1425.mtrsteamloco.Main.init(REGISTRY_NTE);
 	}
 
 	public MTRForge(IEventBus eventBus) {
@@ -59,7 +60,7 @@ public class MTRForge {
 		ENTITY_TYPES.register(eventBus);
 		DATA_COMPONENT_TYPES.register(eventBus);
 		SOUND_EVENTS.register(eventBus);
-		registries.registerAllDeferred(eventBus);
+		REGISTRY_NTE.registerAllDeferred(eventBus);
 
 		ForgeUtilities.registerCreativeModeTabsToDeferredRegistry(CREATIVE_MODE_TABS);
 		CREATIVE_MODE_TABS.register(eventBus);

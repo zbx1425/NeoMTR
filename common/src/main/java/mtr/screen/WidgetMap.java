@@ -184,7 +184,6 @@ public class WidgetMap implements Renderable, NarratableEntry, GuiEventListener,
 				if (canDrawAreaText(station)) {
 					final BlockPos pos = station.getCenter();
 					final String stationString = String.format("%s|(%s)", station.name, Text.translatable("gui.mtr.zone_number", station.zone).getString());
-					// TODO:
 					drawFromWorldCoords(pos.getX(), pos.getZ(), (x1, y1) -> IDrawing.drawStringWithFont(new MatrixStackWrapper.Matrix3x2f(guiGraphics.pose()), textRenderer, immediate, stationString, x + x1.floatValue(), y + y1.floatValue(), MAX_LIGHT_GLOWING,
 					new IDrawing.TextDrawingCallback.GUI(guiGraphics)));
 				}
@@ -193,7 +192,6 @@ public class WidgetMap implements Renderable, NarratableEntry, GuiEventListener,
 			for (final Depot depot : ClientData.DEPOTS) {
 				if (canDrawAreaText(depot)) {
 					final BlockPos pos = depot.getCenter();
-					// TODO:
 					drawFromWorldCoords(pos.getX(), pos.getZ(), (x1, y1) -> IDrawing.drawStringWithFont(new MatrixStackWrapper.Matrix3x2f(guiGraphics.pose()), textRenderer, immediate, depot.name, x + x1.floatValue(), y + y1.floatValue(), MAX_LIGHT_GLOWING,
 					new IDrawing.TextDrawingCallback.GUI(guiGraphics)));
 				}

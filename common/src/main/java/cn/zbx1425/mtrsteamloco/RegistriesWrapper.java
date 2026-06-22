@@ -3,6 +3,7 @@ package cn.zbx1425.mtrsteamloco;
 import mtr.BrandNewEpicRegistryObject;
 import mtr.CreativeModeTabs;
 import mtr.RegistryObject;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.sounds.SoundEvent;
@@ -22,6 +23,8 @@ public interface RegistriesWrapper {
     void registerBlockAndItem(String path, BrandNewEpicRegistryObject<Block> block, CreativeModeTabs.Wrapper tab);
 
     void registerBlockEntityType(String path, RegistryObject<? extends BlockEntityType<? extends BlockEntity>> blockEntityType);
+
+    void registerDataComponents(String path, RegistryObject<? extends DataComponentType<?>> dataComponent);
 
     void registerEntityType(String path, RegistryObject<? extends EntityType<? extends Entity>> entityType);
 

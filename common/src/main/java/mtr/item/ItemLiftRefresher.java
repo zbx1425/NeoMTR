@@ -40,14 +40,14 @@ public class ItemLiftRefresher extends ItemWithCreativeTabBase {
 		}
 	}
 
-	public static void refreshLift(Level world, BlockPos clickedPos, int offsetX, int offsetZ, int width, int depth, boolean isDoubleSided, Direction forceFacing) {
-		refreshLift(world, clickedPos, null, offsetX, offsetZ, width, depth, isDoubleSided, forceFacing);
+	public static void refreshLift(Level level, BlockPos clickedPos, int offsetX, int offsetZ, int width, int depth, boolean isDoubleSided, Direction forceFacing) {
+		refreshLift(level, clickedPos, null, offsetX, offsetZ, width, depth, isDoubleSided, forceFacing);
 	}
 
-	private static InteractionResult refreshLift(Level world, BlockPos clickedPos, Player player, int offsetX, int offsetZ, int width, int depth, boolean isDoubleSided, Direction forceFacing) {
-		final RailwayData railwayData = RailwayData.getInstance(world);
+	private static InteractionResult refreshLift(Level level, BlockPos clickedPos, Player player, int offsetX, int offsetZ, int width, int depth, boolean isDoubleSided, Direction forceFacing) {
+		final RailwayData railwayData = RailwayData.getInstance(level);
 
-		if (world.getBlockState(clickedPos).getBlock() instanceof BlockLiftTrack && railwayData != null) {
+		if (level.getBlockState(clickedPos).getBlock() instanceof BlockLiftTrack && railwayData != null) {
 			final List<BlockPos> floors = new ArrayList<>();
 			final Set<LiftServer> liftsToModify = new HashSet<>();
 			int i = 0;
@@ -55,11 +55,11 @@ public class ItemLiftRefresher extends ItemWithCreativeTabBase {
 			BlockPos firstFloor = null;
 			Direction facing = null;
 
-			railwayData.lifts.removeIf(lift -> lift.isInvalidLift(world));
+			railwayData.lifts.removeIf(lift -> lift.isInvalidLift(level));
 
 			while (true) {
 				final BlockPos checkPos = clickedPos.below(i);
-				final Block checkBlock = world.getBlockState(checkPos).getBlock();
+				final Block checkBlock = level.getBlockState(checkPos).getBlock();
 
 				if (!(checkBlock instanceof BlockLiftTrack)) {
 					if (scanForFloors) {
@@ -70,12 +70,12 @@ public class ItemLiftRefresher extends ItemWithCreativeTabBase {
 				}
 
 				if (scanForFloors && checkBlock instanceof BlockLiftTrackFloor) {
-					final BlockEntity blockEntity = world.getBlockEntity(checkPos);
+					final BlockEntity blockEntity = level.getBlockEntity(checkPos);
 					if (blockEntity instanceof BlockLiftTrackFloor.TileEntityLiftTrackFloor) {
 						floors.add(checkPos);
 						if (firstFloor == null || facing == null) {
 							firstFloor = checkPos;
-							facing = IBlock.getStatePropertySafe(world, checkPos, HorizontalDirectionalBlock.FACING);
+							facing = IBlock.getStatePropertySafe(level, checkPos, HorizontalDirectionalBlock.FACING);
 						}
 					}
 					railwayData.lifts.forEach(lift -> {
@@ -115,7 +115,7 @@ public class ItemLiftRefresher extends ItemWithCreativeTabBase {
 				if (player != null) {
 					PacketTrainDataGuiServer.openLiftCustomizationScreenS2C((ServerPlayer) player, liftId);
 				}
-				result = InteractionResult.SUCCESS;
+				result = InteractionResult.SUCCESS_SERVER;
 			}
 
 			railwayData.dataCache.sync();

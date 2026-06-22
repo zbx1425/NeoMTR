@@ -47,7 +47,9 @@ public class MTR implements IPacket {
 			BiConsumer<String, SoundEvent> registerSoundEvent,
 			BiConsumer<String, RegistryObject<? extends DataComponentType<?>>> registerDataComponentType
 	) {
-		registerDataComponentType.accept("selected", DataComponentTypes.RAIL_MODIFIER_SELECTED);
+		registerDataComponentType.accept("transport_type", DataComponentTypes.TRANSPORT_TYPE);
+		registerDataComponentType.accept("start_pos", DataComponentTypes.START_POS);
+		registerDataComponentType.accept("material", DataComponentTypes.SELECTED_BLOCK);
 
 		registerItem.accept("brush", Items.BRUSH);
 		registerItem.accept("escalator", Items.ESCALATOR);

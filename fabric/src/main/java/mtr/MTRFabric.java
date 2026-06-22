@@ -24,12 +24,12 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 public class MTRFabric implements ModInitializer {
 
 	public static CompatPacketRegistry PACKET_REGISTRY = new CompatPacketRegistry();
-	private final RegistriesWrapperImpl REGISTRIES = new RegistriesWrapperImpl();
+	private final RegistriesWrapperImpl REGISTRY_NTE = new RegistriesWrapperImpl();
 
 	@Override
 	public void onInitialize() {
 		MTR.init(MTRFabric::registerItem, MTRFabric::registerBlock, MTRFabric::registerBlockItem, MTRFabric::registerEnchantedBlock, MTRFabric::registerBlockEntityType, MTRFabric::registerEntityType, MTRFabric::registerSoundEvent, MTRFabric::registerDataComponentType);
-		Main.init(REGISTRIES);
+		Main.init(REGISTRY_NTE);
 		PACKET_REGISTRY.commitCommon();
 	}
 

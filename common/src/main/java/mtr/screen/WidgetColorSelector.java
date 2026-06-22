@@ -41,12 +41,6 @@ public class WidgetColorSelector extends Button implements IGui {
 		this.callback = callback;
 	}
 
-	// TODO temporary code for backwards compatibility
-	@Deprecated
-	public WidgetColorSelector(MTRScreen screen, Runnable callback) {
-		this(screen, true, callback);
-	}
-
 	@Override
 	public void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
 		if (visible) {
