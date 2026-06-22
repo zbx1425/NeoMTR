@@ -22,7 +22,7 @@ public class PathData extends SerializedDataBase {
 	public final int stopIndex;
 
 	public final BlockPos startingPos;
-	private final BlockPos endingPos;
+	public final BlockPos endingPos;
 
 	private static final String KEY_RAIL = "rail";
 	private static final String KEY_SAVED_RAIL_BASE_ID = "saved_rail_base_id";

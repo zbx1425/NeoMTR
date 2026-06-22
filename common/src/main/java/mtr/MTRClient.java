@@ -8,6 +8,8 @@ import mtr.client.IDrawing;
 import mtr.data.*;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiClient;
+import com.lx862.tprobec.packet.PacketTProbeClient;
+import com.lx862.tprobec.packet.TProbePackets;
 import mtr.render.*;
 import mtr.servlet.Webserver;
 import mtr.sound.train.LoopingSoundInstance;
@@ -206,6 +208,9 @@ public class MTRClient implements IPacket {
 		RegistryClient.registerNetworkReceiver(PACKET_OPEN_LIFT_TRACK_FLOOR_SCREEN, packet -> PacketTrainDataGuiClient.openLiftTrackFloorS2C(Minecraft.getInstance(), packet));
 		RegistryClient.registerNetworkReceiver(PACKET_OPEN_LIFT_CUSTOMIZATION_SCREEN, packet -> PacketTrainDataGuiClient.openLiftCustomizationS2C(Minecraft.getInstance(), packet));
 
+		RegistryClient.registerNetworkReceiver(TProbePackets.PACKET_REQUEST_PATH, packet -> PacketTProbeClient.receivePathData(Minecraft.getInstance(), packet));
+		RegistryClient.registerNetworkReceiver(TProbePackets.PACKET_REQUEST_VEHICLES, packet -> PacketTProbeClient.receiveVehicles(Minecraft.getInstance(), packet));
+
 		RegistryClient.registerKeyBinding(KeyMappings.LIFT_MENU);
 
 		if (!Keys.LIFTS_ONLY) {
@@ -255,18 +260,19 @@ public class MTRClient implements IPacket {
 
 			if (!Keys.LIFTS_ONLY) {
 				final Minecraft minecraft = Minecraft.getInstance();
-				if (!minecraft.hasSingleplayerServer()) {
+//				if (!minecraft.hasSingleplayerServer()) {
 					Webserver.callback = minecraft::execute;
 					Webserver.getWorlds = () -> minecraft.level == null ? new ArrayList<>() : Collections.singletonList(minecraft.level);
 					Webserver.getRoutes = railwayData -> ClientData.ROUTES;
 					Webserver.getDataCache = railwayData -> ClientData.DATA_CACHE;
-					Webserver.start(Minecraft.getInstance().gameDirectory.toPath().resolve("config").resolve("mtr_webserver_port.txt"));
-				}
+					// TODO: Maybe change the client port to 8889?
+					Webserver.start(8888, Minecraft.getInstance().gameDirectory.toPath().resolve("config").resolve("mtr_webserver_port.txt"));
+//				}
 			}
 		});
 
 		if (!Keys.LIFTS_ONLY) {
-			Webserver.init();
+			Webserver.init(true);
 			Registry.registerPlayerQuitEvent(player -> Webserver.stop());
 
 			BlockTactileMap.TileEntityTactileMap.updateSoundSource = TACTILE_MAP_SOUND_INSTANCE::setPos;

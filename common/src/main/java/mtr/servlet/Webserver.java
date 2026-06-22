@@ -4,6 +4,7 @@ import mtr.MTR;
 import mtr.data.DataCache;
 import mtr.data.RailwayData;
 import mtr.data.Route;
+import com.lx862.tprobec.servlet.DepotServletHandler;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import org.eclipse.jetty.server.Connector;
@@ -33,7 +34,7 @@ public abstract class Webserver {
 	private static Server webServer;
 	private static ServerConnector serverConnector;
 
-	public static void init() {
+	public static void init(boolean isClientSide) {
 		webServer = new Server(new QueuedThreadPool(100, 10, 120));
 		serverConnector = new ServerConnector(webServer);
 		webServer.setConnectors(new Connector[]{serverConnector});
@@ -56,10 +57,15 @@ public abstract class Webserver {
 		context.addServlet(ArrivalsServletHandler.class, "/arrivals");
 		context.addServlet(DelaysServletHandler.class, "/delays");
 		context.addServlet(RouteFinderServletHandler.class, "/route");
+
+		// TProbe
+		if(isClientSide) {
+			context.addServlet(DepotServletHandler.class, "/tprobe/depots/*");
+		}
 	}
 
-	public static void start(Path path) {
-		int port = 8888;
+	public static void start(int defaultPort, Path path) {
+		int port = defaultPort;
 		try {
 			port = Mth.clamp(Integer.parseInt(String.join("", Files.readAllLines(path)).replaceAll("\\D", "")), 1025, 65535);
 		} catch (Exception ignored) {
@@ -73,7 +79,7 @@ public abstract class Webserver {
 		try {
 			webServer.start();
 		} catch (Exception e) {
-			e.printStackTrace();
+			MTR.LOGGER.error("Error starting webserver!", e);
 		}
 	}
 
@@ -81,7 +87,7 @@ public abstract class Webserver {
 		try {
 			webServer.stop();
 		} catch (Exception e) {
-			e.printStackTrace();
+			MTR.LOGGER.error("Error stopping webserver!", e);
 		}
 	}
 }

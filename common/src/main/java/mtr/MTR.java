@@ -7,6 +7,8 @@ import mtr.data.Station;
 import mtr.mappings.BlockEntityMapper;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiServer;
+import com.lx862.tprobec.packet.PacketTProbeServer;
+import com.lx862.tprobec.packet.TProbePackets;
 import mtr.servlet.Webserver;
 import mtr.sound.SoundEvents;
 import net.minecraft.core.component.DataComponentType;
@@ -453,6 +455,9 @@ public class MTR implements IPacket {
 		Registry.registerNetworkReceiver(PACKET_PRESS_LIFT_BUTTON, PacketTrainDataGuiServer::receivePressLiftButtonC2S);
 		Registry.registerNetworkReceiver(PACKET_PROPAGATE_REPEATER_OFFSET, PacketTrainDataGuiServer::receivePropagateC2S);
 
+		Registry.registerNetworkReceiver(TProbePackets.PACKET_REQUEST_PATH, PacketTProbeServer::handlePathRequestC2S);
+		Registry.registerNetworkReceiver(TProbePackets.PACKET_REQUEST_VEHICLES, PacketTProbeServer::handleVehicleRequestC2S);
+
 		Registry.registerNetworkPacket(PACKET_VERSION_CHECK);
 		Registry.registerNetworkPacket(PACKET_CHUNK_S2C);
 		Registry.registerNetworkPacket(PACKET_OPEN_DASHBOARD_SCREEN);
@@ -498,6 +503,10 @@ public class MTR implements IPacket {
 		Registry.registerNetworkPacket(PACKET_PROPAGATE_REPEATER_OFFSET);
 		Registry.registerNetworkPacket(PACKET_PROPAGATE_REPEATER_RESULT);
 
+		// TProbe
+		Registry.registerNetworkPacket(TProbePackets.PACKET_REQUEST_PATH);
+		Registry.registerNetworkPacket(TProbePackets.PACKET_REQUEST_VEHICLES);
+
 		Registry.registerTickEvent(minecraftServer -> {
 			minecraftServer.getAllLevels().forEach(serverWorld -> {
 				final RailwayData railwayData = RailwayData.getInstance(serverWorld);
@@ -528,7 +537,7 @@ public class MTR implements IPacket {
 		});
 
 		if (!Keys.LIFTS_ONLY) {
-			Webserver.init();
+//			Webserver.init(false);
 			Registry.registerServerStartingEvent(minecraftServer -> {
 				Webserver.callback = minecraftServer::execute;
 				Webserver.getWorlds = () -> {
@@ -538,7 +547,7 @@ public class MTR implements IPacket {
 				};
 				Webserver.getRoutes = railwayData -> railwayData == null ? new HashSet<>() : railwayData.routes;
 				Webserver.getDataCache = railwayData -> railwayData == null ? null : railwayData.dataCache;
-				Webserver.start(minecraftServer.getServerDirectory().resolve("config").resolve("mtr_webserver_port.txt"));
+//				Webserver.start(minecraftServer.getServerDirectory().resolve("config").resolve("mtr_webserver_port.txt"));
 			});
 			Registry.registerServerStoppingEvent(minecraftServer -> Webserver.stop());
 		}

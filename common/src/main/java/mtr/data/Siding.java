@@ -428,6 +428,18 @@ public class Siding extends SavedRailBase implements IPacket, IReducedSaveData {
 		trains.clear();
 	}
 
+	public List<PathData> getPathData() {
+		return new ArrayList<>(this.path);
+	}
+
+	public List<Double> getDistances() {
+		return new ArrayList<>(this.distances);
+	}
+
+	public List<TrainServer> getTrains() {
+		return new ArrayList<>(this.trains);
+	}
+
 	private void setTrainDetails() {
 		for (final TrainType trainType : TrainType.values()) {
 			if (TrainType.getTransportMode(trainType.baseTrainType) == transportMode && isValidVehicle(TrainType.getSpacing(trainType.baseTrainType))) {

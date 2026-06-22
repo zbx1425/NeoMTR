@@ -304,7 +304,8 @@ public class RenderTrains implements IGui {
 
 		matrices.popPose();
 
-		if (lastSimulatedTick != MTRClient.getGameTick()) {
+		// TODO: If paused, these code won't be called
+//		if (lastSimulatedTick != MTRClient.getGameTick()) {
 			for (int i = 0; i < TOTAL_RENDER_STAGES; i++) {
 				for (int j = 0; j < QueuedRenderLayer.values().length; j++) {
 					CURRENT_RENDERS.get(i).get(j).clear();
@@ -312,7 +313,7 @@ public class RenderTrains implements IGui {
 					RENDERS.get(i).get(j).clear();
 				}
 			}
-		}
+//		}
 
 		for (int i = 0; i < TOTAL_RENDER_STAGES; i++) {
 			for (int j = 0; j < QueuedRenderLayer.values().length; j++) {
