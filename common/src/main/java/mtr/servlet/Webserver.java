@@ -20,6 +20,8 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.jspecify.annotations.Nullable;
 
+import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,13 +42,20 @@ public abstract class Webserver {
 		webServer.setConnectors(new Connector[]{serverConnector});
 		final ServletContextHandler context = new ServletContextHandler();
 		webServer.setHandler(context);
-		final URL url = MTR.class.getResource("/assets/mtr/website/");
+
+		// Note: Due to unknown reasons (Likely some java security policy?), getResource on a directory would return null on NF 26.1
+		// So we must get the URL from a file first, then resolve the parent dir
+		final URL url = MTR.class.getResource("/assets/mtr/website/index.html");
 		if (url != null) {
 			try {
-				context.setBaseResource(Resource.newResource(url.toURI()));
+				final URI websiteDirectory = new URI(url.toString().replace("/index.html", ""));
+				context.setBaseResource(Resource.newResource(websiteDirectory));
+				FrontendServlet.probeSiteFile();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		} else {
+			throw new IllegalStateException("MTR Webserver Setup: No website found!");
 		}
 		final ServletHolder servletHolder = new ServletHolder("default", DefaultServlet.class);
 		servletHolder.setInitParameter("dirAllowed", "true");
@@ -59,6 +68,7 @@ public abstract class Webserver {
 		context.addServlet(RouteFinderServletHandler.class, "/route");
 
 		// TProbe
+		context.addServlet(FrontendServlet.class, "/tviewer");
 		context.addServlet(FrontendServlet.class, "/tviewer/*");
 		context.addServlet(DepotServletHandler.class, "/api/tprobe/depots/*");
 	}
