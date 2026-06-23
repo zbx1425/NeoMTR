@@ -59,8 +59,8 @@ public abstract class Webserver {
 		context.addServlet(RouteFinderServletHandler.class, "/route");
 
 		// TProbe
-		context.addServlet(FrontendServlet.class, "/mtrtv/*");
-		context.addServlet(DepotServletHandler.class, "/tprobe/depots/*");
+		context.addServlet(FrontendServlet.class, "/tviewer/*");
+		context.addServlet(DepotServletHandler.class, "/api/tprobe/depots/*");
 	}
 
 	public static void start(Path path) {

@@ -576,7 +576,7 @@ public class MTR implements IPacket {
 						return railwayData == null ? null : railwayData.dataCache;
 					}
 				});
-				Webserver.start(minecraftServer.getServerDirectory().resolve("config").resolve("mtr_webserver_port.txt"));
+//				Webserver.start(minecraftServer.getServerDirectory().resolve("config").resolve("mtr_webserver_port.txt"));
 				TProbe3KillSwitch.checkIfEnabled(minecraftServer.getServerDirectory().resolve("config"));
 			});
 			Registry.registerServerStoppingEvent(minecraftServer -> Webserver.stop());

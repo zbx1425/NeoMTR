@@ -11,7 +11,7 @@ public class FrontendServlet extends DefaultServlet {
 
     @Override
     public org.eclipse.jetty.util.resource.Resource getResource(String pathInContext) {
-        String relPath = pathInContext.replace("/mtrtv", "");
+        String relPath = pathInContext.replace("/tviewer", ""); // TODO: Better way to strip
         String jarPath = BASE_RESOURCE + relPath;
 
         try {
