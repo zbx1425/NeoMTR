@@ -9,7 +9,7 @@ public class TProbeHelper {
         respObject.addProperty("currentTime", System.currentTimeMillis());
         respObject.addProperty("text", textResponse);
         respObject.addProperty("version", 1);
-        respObject.add("data", data);
+        if(data != null) respObject.add("data", data);
         return respObject;
     }
 }

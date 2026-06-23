@@ -19,7 +19,7 @@ public class ResponseCache {
 
     record RequestPath(String path, String requestKey) {}
 
-    public record TProbeDataResponse(boolean dataExists, long responseTime, Object data) {
+    public record TProbeDataResponse(boolean packetSuccess, long responseTime, Object data) {
         boolean expired() {
             return System.currentTimeMillis() - responseTime > TTL;
         }

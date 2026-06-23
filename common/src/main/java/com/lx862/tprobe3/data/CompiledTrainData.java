@@ -3,7 +3,7 @@ package com.lx862.tprobe3.data;
 import mtr.data.TransportMode;
 import net.minecraft.network.FriendlyByteBuf;
 
-public record CompiledTrainData(long sidingId, long id, TransportMode transportMode, double speed, double railProgress, double elapsedDwellTime, int nextStopIndex, boolean reversed) {
+public record CompiledTrainData(long sidingId, long id, TransportMode transportMode, double speed, double railProgress, double elapsedDwellTime, int nextStopIndex, boolean reversed, int departureIndex) {
     public CompiledTrainData(FriendlyByteBuf packet) {
         long sidingId = packet.readLong();
         long id = packet.readLong();
@@ -13,7 +13,8 @@ public record CompiledTrainData(long sidingId, long id, TransportMode transportM
         double elapsedDwellTime = packet.readDouble();
         int nextStopIndex = packet.readInt();
         boolean reversed = packet.readBoolean();
-        this(sidingId, id, transportMode, speed, railProgress, elapsedDwellTime, nextStopIndex, reversed);
+        int departureIndex = packet.readInt();
+        this(sidingId, id, transportMode, speed, railProgress, elapsedDwellTime, nextStopIndex, reversed, departureIndex);
     }
 
     public void write(FriendlyByteBuf packet) {
@@ -25,5 +26,6 @@ public record CompiledTrainData(long sidingId, long id, TransportMode transportM
         packet.writeDouble(elapsedDwellTime);
         packet.writeInt(nextStopIndex);
         packet.writeBoolean(reversed);
+        packet.writeInt(departureIndex);
     }
 }

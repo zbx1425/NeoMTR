@@ -1,8 +1,11 @@
 package com.lx862.tprobe3.packet;
 
+import com.lx862.tprobe3.config.TProbe3KillSwitch;
+import com.lx862.tprobe3.data.DepotPathData;
 import io.netty.buffer.Unpooled;
 import mtr.Registry;
 import mtr.data.Depot;
+import mtr.data.RailType;
 import mtr.data.RailwayData;
 import mtr.data.Siding;
 import com.lx862.tprobe3.data.PathDataWithDistance;
@@ -14,14 +17,30 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 public class PacketTProbeDataSender {
-    public static void handlePathRequestC2S(MinecraftServer minecraftServer, ServerPlayer player, FriendlyByteBuf packet) {
-        final UUID responseUuid = packet.readUUID();
-        final long depotId = packet.readLong();
+
+    public static void handle(MinecraftServer minecraftServer, Identifier identifier, ServerPlayer player, FriendlyByteBuf recvPacket, DataHandler dataHandler) {
+        final UUID responseUuid = recvPacket.readUUID();
+        if(TProbe3KillSwitch.activated()) {
+            minecraftServer.execute(() -> {
+                final FriendlyByteBuf packet = new FriendlyByteBuf(Unpooled.buffer());
+                packet.writeBoolean(false);
+                packet.writeUUID(responseUuid);
+                sendToRequester(player, identifier, packet);
+            });
+            return;
+        }
+        dataHandler.handle(minecraftServer, identifier, player, recvPacket, responseUuid);
+    }
+
+    public static void handlePathRequestC2S(MinecraftServer minecraftServer, Identifier identifier, ServerPlayer player, FriendlyByteBuf recvPacket, UUID responseUuid) {
+        final long depotId = recvPacket.readLong();
         minecraftServer.execute(() -> {
+            final FriendlyByteBuf packet = newPacket(responseUuid);
             final RailwayData railwayData = RailwayData.getInstance(minecraftServer.overworld()); // TODO: Multi-DIM handling?
             final List<Siding> sidings = new ArrayList<>();
             railwayData.sidings.forEach(siding -> {
@@ -30,32 +49,88 @@ public class PacketTProbeDataSender {
                 sidings.add(siding);
             });
 
-            // TODO: Split it into MTR 4-alike format
-            final List<PathData> mainPath = sidings.isEmpty() ? List.of() : sidings.getFirst().getPathData();
-            final List<Double> distances = sidings.isEmpty() ? List.of() : sidings.getFirst().getDistances();
+            final List<PathDataWithDistance> mainPath = new ArrayList<>();
+            packet.writeLong(depotId);
+            packet.writeInt(sidings.size());
 
-            final FriendlyByteBuf newPacket = new FriendlyByteBuf(Unpooled.buffer());
-            newPacket.writeUUID(responseUuid);
-            newPacket.writeLong(depotId);
-            newPacket.writeInt(mainPath.size());
+            for(int i = 0; i < sidings.size(); i++) {
+                Siding siding = sidings.get(i);
+                final List<PathData> fullSidingPath = siding.getPathData();
+                final List<Double> sdDistances = siding.getDistances();
+                final boolean shouldAppendMainPath = i == 0;
 
-            for(int i = 0; i < mainPath.size(); i++) {
-                PathData pathData = mainPath.get(i);
-                double distance = distances.get(i);
-                new PathDataWithDistance(pathData, distance).write(newPacket);
+                int mainPathBegin = -1;
+                int mainPathEnd = -1;
+
+                final DepotPathData.SidingPathData sidingPath = new DepotPathData.SidingPathData(siding.id);
+                final List<PathDataWithDistance> pathSidingToMainRoute = sidingPath.pathSidingToMainRoute();
+                final List<PathDataWithDistance> pathMainRouteToSiding = sidingPath.pathMainRouteToSiding();
+
+                // SDG To Main Route Pass
+                for(int j = 0; j < fullSidingPath.size(); j++) {
+                    PathData pathData = fullSidingPath.get(j);
+                    double distance = sdDistances.get(j);
+
+                    // Note: This differs slightly from MTR 4 tprobe, where the first platform is included in SdgToMainRoute
+                    if(isStoppingPlatform(pathData)) {
+                        mainPathBegin = j;
+                        break;
+                    }
+                    pathSidingToMainRoute.add(new PathDataWithDistance(pathData, distance));
+                }
+
+                // Main Route to SDG Pass
+                for(int j = fullSidingPath.size()-1; j > 0; j--) {
+                    PathData pathData = fullSidingPath.get(j);
+                    double distance = sdDistances.get(j);
+                    if(isStoppingPlatform(pathData)) {
+                        mainPathEnd = j+1;
+                        break;
+                    }
+                    pathMainRouteToSiding.add(new PathDataWithDistance(pathData, distance));
+                }
+                Collections.reverse(pathMainRouteToSiding);
+
+                // Main Path pass
+                if(shouldAppendMainPath && mainPathBegin != -1 && mainPathEnd != -1) {
+                    double baseDistance = pathSidingToMainRoute.isEmpty() ? 0 : pathSidingToMainRoute.getLast().distance();
+                    for(int j = mainPathBegin; j < mainPathEnd; j++) {
+                        PathData pathData = fullSidingPath.get(j);
+                        double distance = sdDistances.get(j) - baseDistance;
+                        mainPath.add(new PathDataWithDistance(pathData, distance));
+                    }
+                }
+
+                packet.writeLong(siding.id);
+                packet.writeInt(pathSidingToMainRoute.size());
+                pathSidingToMainRoute.forEach(p -> p.write(packet));
+                packet.writeInt(pathMainRouteToSiding.size());
+
+                double newReturnDistance = mainPath.getLast().distance();
+                for(PathDataWithDistance p : pathMainRouteToSiding) {
+                    newReturnDistance += p.distance();
+                    PathDataWithDistance withNewDistance = new PathDataWithDistance(p.pathData(), newReturnDistance);
+                    withNewDistance.write(packet);
+                }
             }
 
-            sendToPlayer(player, TProbePackets.PACKET_REQUEST_PATH, newPacket);
+            packet.writeInt(mainPath.size());
+            mainPath.forEach(p -> p.write(packet));
+
+            sendToRequester(player, identifier, packet);
         });
     }
 
-    public static void handleVehicleRequestC2S(MinecraftServer minecraftServer, ServerPlayer player, FriendlyByteBuf packet) {
-        final UUID responseUuid = packet.readUUID();
-        final int sidingIdSize = packet.readInt();
+    private static boolean isStoppingPlatform(PathData pathData) {
+        return pathData.dwellTime > 0 && pathData.rail.railType == RailType.PLATFORM;
+    }
+
+    public static void handleVehicleRequestC2S(MinecraftServer minecraftServer, Identifier identifier, ServerPlayer player, FriendlyByteBuf recvPacket, UUID responseUuid) {
+        final int sidingIdSize = recvPacket.readInt();
         final List<Long> sidingIds = new ArrayList<>();
 
         for(int i = 0; i < sidingIdSize; i++) {
-            sidingIds.add(packet.readLong());
+            sidingIds.add(recvPacket.readLong());
         }
 
         minecraftServer.execute(() -> {
@@ -64,26 +139,28 @@ public class PacketTProbeDataSender {
             railwayData.sidings.forEach(siding -> {
                 if(sidingIds.contains(siding.id)) {
                     siding.getTrains().forEach(train -> {
+                        int stopIndex = train.getNextStopIndex();
+                        // TODO: Try make departure index work in MTR 3
+                        int depIndex = train.isOnRoute() || train.isManualAllowed ? -1 : 0;
                         trainList.add(
-                                new CompiledTrainData(train.sidingId, train.id, train.transportMode, train.getSpeed(), train.getRailProgress(), train.getElapsedDwellTicks(), train.getNextStopIndex(), train.isReversed())
+                                new CompiledTrainData(train.sidingId, train.id, train.transportMode, train.getSpeed(), train.getRailProgress(), train.getElapsedDwellTicks(), stopIndex, train.isReversed(), depIndex)
                         );
                     });
                 }
             });
 
-            final FriendlyByteBuf newPacket = new FriendlyByteBuf(Unpooled.buffer());
-            newPacket.writeUUID(responseUuid);
+            final FriendlyByteBuf newPacket = newPacket(responseUuid);
             newPacket.writeInt(trainList.size());
 
             for(CompiledTrainData compiledTrainData : trainList) {
                 compiledTrainData.write(newPacket);
             }
 
-            sendToPlayer(player, TProbePackets.PACKET_REQUEST_VEHICLES, newPacket);
+            sendToRequester(player, identifier, newPacket);
         });
     }
 
-    private static void sendToPlayer(ServerPlayer player, Identifier identifier, FriendlyByteBuf packet) {
+    private static void sendToRequester(ServerPlayer player, Identifier identifier, FriendlyByteBuf packet) {
         if(player == null) { // Bound for server itself
             if(identifier.equals(TProbePackets.PACKET_REQUEST_PATH)) {
                 PacketTProbeRequester.receivePathData(packet);
@@ -95,5 +172,17 @@ public class PacketTProbeDataSender {
         } else {
             Registry.sendToPlayer(player, identifier, packet);
         }
+    }
+
+    private static FriendlyByteBuf newPacket(UUID responseUuid) {
+        final FriendlyByteBuf packet = new FriendlyByteBuf(Unpooled.buffer());
+        packet.writeBoolean(true); // Request Success Flag
+        packet.writeUUID(responseUuid);
+        return packet;
+    }
+
+    @FunctionalInterface
+    public interface DataHandler {
+        void handle(MinecraftServer minecraftServer, Identifier identifier, ServerPlayer player, FriendlyByteBuf recvPacket, UUID responseUuid);
     }
 }

@@ -1,5 +1,6 @@
 package mtr;
 
+import com.lx862.tprobe3.config.TProbe3KillSwitch;
 import mtr.data.*;
 import mtr.mappings.BlockEntityMapper;
 import mtr.packet.IPacket;
@@ -456,8 +457,8 @@ public class MTR implements IPacket {
 		Registry.registerNetworkReceiver(PACKET_PRESS_LIFT_BUTTON, PacketTrainDataGuiServer::receivePressLiftButtonC2S);
 		Registry.registerNetworkReceiver(PACKET_PROPAGATE_REPEATER_OFFSET, PacketTrainDataGuiServer::receivePropagateC2S);
 
-		Registry.registerNetworkReceiver(TProbePackets.PACKET_REQUEST_PATH, PacketTProbeDataSender::handlePathRequestC2S);
-		Registry.registerNetworkReceiver(TProbePackets.PACKET_REQUEST_VEHICLES, PacketTProbeDataSender::handleVehicleRequestC2S);
+		Registry.registerNetworkReceiver(TProbePackets.PACKET_REQUEST_PATH, (mcServer, player, packet) -> PacketTProbeDataSender.handle(mcServer, TProbePackets.PACKET_REQUEST_PATH, player, packet, PacketTProbeDataSender::handlePathRequestC2S));
+		Registry.registerNetworkReceiver(TProbePackets.PACKET_REQUEST_VEHICLES, (mcServer, player, packet) -> PacketTProbeDataSender.handle(mcServer, TProbePackets.PACKET_REQUEST_VEHICLES, player, packet, PacketTProbeDataSender::handleVehicleRequestC2S));
 
 		Registry.registerNetworkPacket(PACKET_VERSION_CHECK);
 		Registry.registerNetworkPacket(PACKET_CHUNK_S2C);
@@ -576,6 +577,7 @@ public class MTR implements IPacket {
 					}
 				});
 				Webserver.start(minecraftServer.getServerDirectory().resolve("config").resolve("mtr_webserver_port.txt"));
+				TProbe3KillSwitch.checkIfEnabled(minecraftServer.getServerDirectory().resolve("config"));
 			});
 			Registry.registerServerStoppingEvent(minecraftServer -> Webserver.stop());
 		}
