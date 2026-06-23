@@ -262,7 +262,7 @@ public class MTRClient implements IPacket {
 
 			if (!Keys.LIFTS_ONLY) {
 				final Minecraft minecraft = Minecraft.getInstance();
-//				if (!minecraft.hasSingleplayerServer()) {
+				if (!minecraft.hasSingleplayerServer()) {
 					Webserver.setMinecraftCallback(new Webserver.MinecraftCallback() {
 						@Override
 						public void runOnMainThread(Runnable runnable) {
@@ -295,7 +295,7 @@ public class MTRClient implements IPacket {
 						}
 					});
 					Webserver.start(Minecraft.getInstance().gameDirectory.toPath().resolve("config").resolve("mtr_webserver_port.txt"));
-//				}
+				}
 			}
 		});
 

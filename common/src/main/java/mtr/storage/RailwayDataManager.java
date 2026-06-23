@@ -29,6 +29,10 @@ public class RailwayDataManager {
         nbtRailwaySavedData.setDirty();
     }
 
+    public static void reset() {
+        railwayData.clear();
+    }
+
     private static Identifier dimensionId(Level level) {
         return level.dimension().identifier();
     }

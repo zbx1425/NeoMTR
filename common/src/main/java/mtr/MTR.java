@@ -9,6 +9,7 @@ import com.lx862.tprobe3.packet.PacketTProbeDataSender;
 import com.lx862.tprobe3.packet.TProbePackets;
 import mtr.servlet.Webserver;
 import mtr.sound.SoundEvents;
+import mtr.storage.RailwayDataManager;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
@@ -541,6 +542,8 @@ public class MTR implements IPacket {
 		if (!Keys.LIFTS_ONLY) {
 			Webserver.init();
 			Registry.registerServerStartingEvent(minecraftServer -> {
+				// TODO: Do this in ServerStopped event?
+				RailwayDataManager.reset();
 				Webserver.setMinecraftCallback(new Webserver.MinecraftCallback() {
 					@Override
 					public void runOnMainThread(Runnable runnable) {
@@ -576,7 +579,7 @@ public class MTR implements IPacket {
 						return railwayData == null ? null : railwayData.dataCache;
 					}
 				});
-//				Webserver.start(minecraftServer.getServerDirectory().resolve("config").resolve("mtr_webserver_port.txt"));
+				Webserver.start(minecraftServer.getServerDirectory().resolve("config").resolve("mtr_webserver_port.txt"));
 				TProbe3KillSwitch.checkIfEnabled(minecraftServer.getServerDirectory().resolve("config"));
 			});
 			Registry.registerServerStoppingEvent(minecraftServer -> Webserver.stop());
