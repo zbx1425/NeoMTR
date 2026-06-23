@@ -24,7 +24,7 @@ public class RouteFinderServletHandler extends HttpServlet {
 		final AsyncContext asyncContext = request.startAsync();
 		asyncContext.setTimeout(-1);
 
-		Webserver.callback.accept(() -> {
+		Webserver.minecraftCallback.runOnMainThread(() -> {
 			final List<String> errors = new ArrayList<>();
 			final String parameterStartPlayer = request.getParameter("startPlayer");
 			final String parameterEndPlayer = request.getParameter("endPlayer");
@@ -102,7 +102,7 @@ public class RouteFinderServletHandler extends HttpServlet {
 		if (parameterDimension == null) {
 			errors.add("The 'dimension' parameter must be defined.");
 		} else {
-			final List<Level> worlds = Webserver.getWorlds.get();
+			final List<Level> worlds = Webserver.minecraftCallback.getLevels();
 			try {
 				return worlds.get(Integer.parseInt(parameterDimension));
 			} catch (Exception ignored) {

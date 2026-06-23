@@ -2,6 +2,7 @@ package mtr.servlet;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import mtr.data.DataCache;
 import mtr.data.RailwayData;
 import mtr.data.Route;
 import mtr.data.Station;
@@ -17,50 +18,46 @@ public class InfoServletHandler extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 		final AsyncContext asyncContext = request.startAsync();
 
-		Webserver.callback.accept(() -> {
+		Webserver.minecraftCallback.runOnMainThread(() -> {
 			final JsonArray dataArray = new JsonArray();
+			final JsonArray playersArray = new JsonArray();
 
-			Webserver.getWorlds.get().forEach(world -> {
-				final RailwayData railwayData = RailwayData.getInstance(world);
-				final JsonArray playersArray = new JsonArray();
+			Webserver.minecraftCallback.getLevelPlayers().forEach(player -> {
+				final RailwayData railwayData = RailwayData.getInstance(player.level());
+				final DataCache dataCache = Webserver.minecraftCallback.getDataCache(railwayData);
 
-				if (railwayData != null) {
-					world.players().forEach(player -> {
-						final JsonObject dataObject = new JsonObject();
-						dataObject.addProperty("player", player.getName().getString());
+				final JsonObject dataObject = new JsonObject();
+				dataObject.addProperty("player", player.getName().getString());
 
-						final String routeName;
-						final String routeNumber;
-						final String destination;
-						final String circular;
-						final int color;
-						final Route route = railwayData.railwayDataCoolDownModule.getRidingRoute(player);
-						if (route == null) {
-							routeName = "";
-							routeNumber = "";
-							destination = "";
-							circular = "";
-							color = 0;
-						} else {
-							routeName = route.name;
-							routeNumber = route.isLightRailRoute ? route.lightRailRouteNumber : "";
-							final Station station = railwayData.dataCache.platformIdToStation.get(route.getLastPlatformId());
-							destination = station == null ? "" : station.name;
-							circular = route.circularState == Route.CircularState.NONE ? "" : route.circularState == Route.CircularState.CLOCKWISE ? "cw" : "ccw";
-							color = route.color;
-						}
-						dataObject.addProperty("name", routeName);
-						dataObject.addProperty("number", routeNumber);
-						dataObject.addProperty("destination", destination);
-						dataObject.addProperty("circular", circular);
-						dataObject.addProperty("color", color);
-
-						playersArray.add(dataObject);
-					});
+				final String routeName;
+				final String routeNumber;
+				final String destination;
+				final String circular;
+				final int color;
+				final Route route = railwayData == null ? null : railwayData.railwayDataCoolDownModule.getRidingRoute(player);
+				if (route == null) {
+					routeName = "";
+					routeNumber = "";
+					destination = "";
+					circular = "";
+					color = 0;
+				} else {
+					routeName = route.name;
+					routeNumber = route.isLightRailRoute ? route.lightRailRouteNumber : "";
+					final Station station = dataCache.platformIdToStation.get(route.getLastPlatformId());
+					destination = station == null ? "" : station.name;
+					circular = route.circularState == Route.CircularState.NONE ? "" : route.circularState == Route.CircularState.CLOCKWISE ? "cw" : "ccw";
+					color = route.color;
 				}
+				dataObject.addProperty("name", routeName);
+				dataObject.addProperty("number", routeNumber);
+				dataObject.addProperty("destination", destination);
+				dataObject.addProperty("circular", circular);
+				dataObject.addProperty("color", color);
 
-				dataArray.add(playersArray);
+				playersArray.add(dataObject);
 			});
+			dataArray.add(playersArray);
 
 			IServletHandler.sendResponse(response, asyncContext, dataArray.toString());
 		});

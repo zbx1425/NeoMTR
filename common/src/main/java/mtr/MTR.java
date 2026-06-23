@@ -1,31 +1,32 @@
 package mtr;
 
-import mtr.data.Depot;
-import mtr.data.RailwayData;
-import mtr.data.Route;
-import mtr.data.Station;
+import mtr.data.*;
 import mtr.mappings.BlockEntityMapper;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiServer;
-import com.lx862.tprobec.packet.PacketTProbeServer;
-import com.lx862.tprobec.packet.TProbePackets;
+import com.lx862.tprobe3.packet.PacketTProbeDataSender;
+import com.lx862.tprobe3.packet.TProbePackets;
 import mtr.servlet.Webserver;
 import mtr.sound.SoundEvents;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 public class MTR implements IPacket {
@@ -455,8 +456,8 @@ public class MTR implements IPacket {
 		Registry.registerNetworkReceiver(PACKET_PRESS_LIFT_BUTTON, PacketTrainDataGuiServer::receivePressLiftButtonC2S);
 		Registry.registerNetworkReceiver(PACKET_PROPAGATE_REPEATER_OFFSET, PacketTrainDataGuiServer::receivePropagateC2S);
 
-		Registry.registerNetworkReceiver(TProbePackets.PACKET_REQUEST_PATH, PacketTProbeServer::handlePathRequestC2S);
-		Registry.registerNetworkReceiver(TProbePackets.PACKET_REQUEST_VEHICLES, PacketTProbeServer::handleVehicleRequestC2S);
+		Registry.registerNetworkReceiver(TProbePackets.PACKET_REQUEST_PATH, PacketTProbeDataSender::handlePathRequestC2S);
+		Registry.registerNetworkReceiver(TProbePackets.PACKET_REQUEST_VEHICLES, PacketTProbeDataSender::handleVehicleRequestC2S);
 
 		Registry.registerNetworkPacket(PACKET_VERSION_CHECK);
 		Registry.registerNetworkPacket(PACKET_CHUNK_S2C);
@@ -537,17 +538,44 @@ public class MTR implements IPacket {
 		});
 
 		if (!Keys.LIFTS_ONLY) {
-//			Webserver.init(false);
+			Webserver.init();
 			Registry.registerServerStartingEvent(minecraftServer -> {
-				Webserver.callback = minecraftServer::execute;
-				Webserver.getWorlds = () -> {
-					final List<Level> worlds = new ArrayList<>();
-					minecraftServer.getAllLevels().forEach(worlds::add);
-					return worlds;
-				};
-				Webserver.getRoutes = railwayData -> railwayData == null ? new HashSet<>() : railwayData.routes;
-				Webserver.getDataCache = railwayData -> railwayData == null ? null : railwayData.dataCache;
-//				Webserver.start(minecraftServer.getServerDirectory().resolve("config").resolve("mtr_webserver_port.txt"));
+				Webserver.setMinecraftCallback(new Webserver.MinecraftCallback() {
+					@Override
+					public void runOnMainThread(Runnable runnable) {
+						minecraftServer.execute(runnable);
+					}
+
+					@Override
+					public @Nullable MinecraftServer getServer() {
+						return minecraftServer;
+					}
+
+					@Override
+					public List<Level> getLevels() {
+						final List<Level> worlds = new ArrayList<>();
+						minecraftServer.getAllLevels().forEach(worlds::add);
+						return worlds;
+					}
+
+					@Override
+					public List<Player> getLevelPlayers() {
+						final List<Player> players = new ArrayList<>();
+						getLevels().forEach(level -> players.addAll(level.players()));
+						return players;
+					}
+
+					@Override
+					public Set<Route> getRoutes(RailwayData railwayData) {
+						return railwayData == null ? new HashSet<>() : railwayData.routes;
+					}
+
+					@Override
+					public DataCache getDataCache(RailwayData railwayData) {
+						return railwayData == null ? null : railwayData.dataCache;
+					}
+				});
+				Webserver.start(minecraftServer.getServerDirectory().resolve("config").resolve("mtr_webserver_port.txt"));
 			});
 			Registry.registerServerStoppingEvent(minecraftServer -> Webserver.stop());
 		}

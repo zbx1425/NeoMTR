@@ -1,6 +1,7 @@
 package mtr;
 
 import cn.zbx1425.mtrsteamloco.gui.RailEditorVisualScreen;
+import com.lx862.tprobe3.packet.PacketTProbeRequester;
 import mtr.block.*;
 import mtr.client.ClientData;
 import mtr.client.Config;
@@ -8,17 +9,18 @@ import mtr.client.IDrawing;
 import mtr.data.*;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiClient;
-import com.lx862.tprobec.packet.PacketTProbeClient;
-import com.lx862.tprobec.packet.TProbePackets;
+import com.lx862.tprobe3.packet.TProbePackets;
 import mtr.render.*;
 import mtr.servlet.Webserver;
 import mtr.sound.train.LoopingSoundInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Locale;
+import java.util.*;
 
 public class MTRClient implements IPacket {
 
@@ -208,8 +210,8 @@ public class MTRClient implements IPacket {
 		RegistryClient.registerNetworkReceiver(PACKET_OPEN_LIFT_TRACK_FLOOR_SCREEN, packet -> PacketTrainDataGuiClient.openLiftTrackFloorS2C(Minecraft.getInstance(), packet));
 		RegistryClient.registerNetworkReceiver(PACKET_OPEN_LIFT_CUSTOMIZATION_SCREEN, packet -> PacketTrainDataGuiClient.openLiftCustomizationS2C(Minecraft.getInstance(), packet));
 
-		RegistryClient.registerNetworkReceiver(TProbePackets.PACKET_REQUEST_PATH, packet -> PacketTProbeClient.receivePathData(Minecraft.getInstance(), packet));
-		RegistryClient.registerNetworkReceiver(TProbePackets.PACKET_REQUEST_VEHICLES, packet -> PacketTProbeClient.receiveVehicles(Minecraft.getInstance(), packet));
+		RegistryClient.registerNetworkReceiver(TProbePackets.PACKET_REQUEST_PATH, packet -> PacketTProbeRequester.receivePathData(packet));
+		RegistryClient.registerNetworkReceiver(TProbePackets.PACKET_REQUEST_VEHICLES, packet -> PacketTProbeRequester.receiveVehicles(packet));
 
 		RegistryClient.registerKeyBinding(KeyMappings.LIFT_MENU);
 
@@ -260,19 +262,45 @@ public class MTRClient implements IPacket {
 
 			if (!Keys.LIFTS_ONLY) {
 				final Minecraft minecraft = Minecraft.getInstance();
-//				if (!minecraft.hasSingleplayerServer()) {
-					Webserver.callback = minecraft::execute;
-					Webserver.getWorlds = () -> minecraft.level == null ? new ArrayList<>() : Collections.singletonList(minecraft.level);
-					Webserver.getRoutes = railwayData -> ClientData.ROUTES;
-					Webserver.getDataCache = railwayData -> ClientData.DATA_CACHE;
-					// TODO: Maybe change the client port to 8889?
-					Webserver.start(8888, Minecraft.getInstance().gameDirectory.toPath().resolve("config").resolve("mtr_webserver_port.txt"));
-//				}
+				if (!minecraft.hasSingleplayerServer()) {
+					Webserver.setMinecraftCallback(new Webserver.MinecraftCallback() {
+						@Override
+						public void runOnMainThread(Runnable runnable) {
+							minecraft.execute(runnable);
+						}
+
+						@Override
+						public @Nullable MinecraftServer getServer() {
+							return null;
+						}
+
+						@Override
+						public List<Level> getLevels() {
+							return minecraft.level == null ? new ArrayList<>() : Collections.singletonList(minecraft.level);
+						}
+
+						@Override
+						public List<Player> getLevelPlayers() {
+							return List.of(minecraft.player);
+						}
+
+						@Override
+						public Set<Route> getRoutes(RailwayData railwayData) {
+							return ClientData.ROUTES;
+						}
+
+						@Override
+						public DataCache getDataCache(RailwayData railwayData) {
+							return ClientData.DATA_CACHE;
+						}
+					});
+					Webserver.start(Minecraft.getInstance().gameDirectory.toPath().resolve("config").resolve("mtr_webserver_port.txt"));
+				}
 			}
 		});
 
 		if (!Keys.LIFTS_ONLY) {
-			Webserver.init(true);
+			Webserver.init();
 			Registry.registerPlayerQuitEvent(player -> Webserver.stop());
 
 			BlockTactileMap.TileEntityTactileMap.updateSoundSource = TACTILE_MAP_SOUND_INSTANCE::setPos;

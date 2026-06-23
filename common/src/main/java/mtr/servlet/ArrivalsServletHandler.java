@@ -29,11 +29,11 @@ public class ArrivalsServletHandler extends HttpServlet {
 		final long stationIdFinal = stationId;
 		final long worldIndexFinal = worldIndex;
 
-		Webserver.callback.accept(() -> {
+		Webserver.minecraftCallback.runOnMainThread(() -> {
 			final JsonArray dataArray = new JsonArray();
 
 			final int[] worldIndexCounter = {0};
-			Webserver.getWorlds.get().forEach(world -> {
+			Webserver.minecraftCallback.getLevels().forEach(world -> {
 				if (worldIndexCounter[0] == worldIndexFinal) {
 					final RailwayData railwayData = RailwayData.getInstance(world);
 

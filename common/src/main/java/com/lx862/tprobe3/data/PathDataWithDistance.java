@@ -1,4 +1,4 @@
-package com.lx862.tprobec.data;
+package com.lx862.tprobe3.data;
 
 import mtr.path.PathData;
 import net.minecraft.network.FriendlyByteBuf;

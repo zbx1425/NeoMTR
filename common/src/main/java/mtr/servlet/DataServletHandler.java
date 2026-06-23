@@ -19,10 +19,10 @@ public class DataServletHandler extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 		final AsyncContext asyncContext = request.startAsync();
 
-		Webserver.callback.accept(() -> {
+		Webserver.minecraftCallback.runOnMainThread(() -> {
 			final JsonArray dataArray = new JsonArray();
 
-			Webserver.getWorlds.get().forEach(world -> {
+			Webserver.minecraftCallback.getLevels().forEach(world -> {
 				final RailwayData railwayData = RailwayData.getInstance(world);
 				final JsonArray routesArray = new JsonArray();
 				final JsonObject stationPositionsObject = new JsonObject();
@@ -30,10 +30,10 @@ public class DataServletHandler extends HttpServlet {
 				final JsonArray typesObject = new JsonArray();
 				final Set<String> types = new HashSet<>();
 
-				final DataCache dataCache = Webserver.getDataCache.apply(railwayData);
+				final DataCache dataCache = Webserver.minecraftCallback.getDataCache(railwayData);
 
 				if (dataCache != null) {
-					Webserver.getRoutes.apply(railwayData).forEach(route -> {
+					Webserver.minecraftCallback.getRoutes(railwayData).forEach(route -> {
 						if (route.isHidden) {
 							return;
 						}

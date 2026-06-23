@@ -18,10 +18,10 @@ public class DelaysServletHandler extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 		final AsyncContext asyncContext = request.startAsync();
 
-		Webserver.callback.accept(() -> {
+		Webserver.minecraftCallback.runOnMainThread(() -> {
 			final JsonArray dataArray = new JsonArray();
 
-			Webserver.getWorlds.get().forEach(world -> {
+			Webserver.minecraftCallback.getLevels().forEach(world -> {
 				final RailwayData railwayData = RailwayData.getInstance(world);
 				final JsonArray delayArray = new JsonArray();
 

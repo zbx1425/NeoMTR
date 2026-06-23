@@ -1,11 +1,11 @@
-package com.lx862.tprobec.servlet;
+package com.lx862.tprobe3.servlet;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import mtr.data.*;
-import com.lx862.tprobec.data.PathDataWithDistance;
-import com.lx862.tprobec.packet.PacketTProbeClient;
-import com.lx862.tprobec.data.CompiledTrainData;
+import com.lx862.tprobe3.data.PathDataWithDistance;
+import com.lx862.tprobe3.packet.PacketTProbeRequester;
+import com.lx862.tprobe3.data.CompiledTrainData;
 import mtr.servlet.IServletHandler;
 import mtr.servlet.Webserver;
 import net.minecraft.core.BlockPos;
@@ -49,13 +49,13 @@ public class DepotServletHandler extends HttpServlet {
         final AsyncContext asyncContext = request.isAsyncStarted() ? request.getAsyncContext() : request.startAsync();
         final long depotId = Long.parseLong(depotIdStr);
 
-        Webserver.callback.accept(() -> {
+        Webserver.minecraftCallback.runOnMainThread(() -> {
             boolean[] depotFound = new boolean[]{false};
             final JsonObject data = new JsonObject();
 
-            Webserver.getWorlds.get().forEach(world -> {
+            Webserver.minecraftCallback.getLevels().forEach(world -> {
                 final RailwayData railwayData = RailwayData.getInstance(world);
-                final DataCache dataCache = Webserver.getDataCache.apply(railwayData);
+                final DataCache dataCache = Webserver.minecraftCallback.getDataCache(railwayData);
                 final Depot depot = dataCache.depotIdMap.get(depotId);
                 if(depot != null) {
                     depotFound[0] = true;
@@ -82,7 +82,7 @@ public class DepotServletHandler extends HttpServlet {
                     });
 
                     final JsonArray mainPath = new JsonArray();
-                    PacketTProbeClient.requestPathData(depotId, (callback) -> {
+                    PacketTProbeRequester.requestPathData(depotId, (callback) -> {
                         List<PathDataWithDistance> pathData = (List<PathDataWithDistance>)callback.data();
                         pathData.forEach(p -> {
                             JsonObject pathDataObject = new JsonObject();
@@ -107,7 +107,7 @@ public class DepotServletHandler extends HttpServlet {
                         data.add("sidings", sidingArray);
                         JsonObject respObject = TProbeHelper.getTProbeResponse(200, "OK", data);
                         IServletHandler.sendResponse(response, asyncContext, respObject.toString());
-                    });
+                    }, Webserver.minecraftCallback.getServer());
                 }
             });
 
@@ -121,13 +121,13 @@ public class DepotServletHandler extends HttpServlet {
         final AsyncContext asyncContext = request.isAsyncStarted() ? request.getAsyncContext() : request.startAsync();
         final long depotId = Long.parseLong(depotIdStr);
 
-        Webserver.callback.accept(() -> {
+        Webserver.minecraftCallback.runOnMainThread(() -> {
             boolean[] found = new boolean[]{false};
             final JsonObject data = new JsonObject();
 
-            Webserver.getWorlds.get().forEach(world -> {
+            Webserver.minecraftCallback.getLevels().forEach(world -> {
                 final RailwayData railwayData = RailwayData.getInstance(world);
-                final DataCache dataCache = Webserver.getDataCache.apply(railwayData);
+                final DataCache dataCache = Webserver.minecraftCallback.getDataCache(railwayData);
                 final Depot depot = dataCache.depotIdMap.get(depotId);
                 if(depot != null) {
                     found[0] = true;
@@ -144,7 +144,7 @@ public class DepotServletHandler extends HttpServlet {
                         }
                     });
 
-                    PacketTProbeClient.requestVehicles(new ArrayList<>(sidingsData.keySet()), (callback) -> {
+                    PacketTProbeRequester.requestVehicles(new ArrayList<>(sidingsData.keySet()), (callback) -> {
                         List<CompiledTrainData> pathData = (List<CompiledTrainData>)callback.data();
                         pathData.forEach(v -> {
                             JsonObject vehicleObject = new JsonObject();
@@ -170,7 +170,7 @@ public class DepotServletHandler extends HttpServlet {
                         data.add("sidings", sidingArray);
                         JsonObject respObject = TProbeHelper.getTProbeResponse(200, "OK", data);
                         IServletHandler.sendResponse(response, asyncContext, respObject.toString());
-                    });
+                    }, Webserver.minecraftCallback.getServer());
                 }
             });
 
@@ -229,7 +229,7 @@ public class DepotServletHandler extends HttpServlet {
     private void handleSkillIssue(HttpServletRequest request, HttpServletResponse response) {
         final AsyncContext asyncContext = request.isAsyncStarted() ? request.getAsyncContext() : request.startAsync();
 
-        Webserver.callback.accept(() -> {
+        Webserver.minecraftCallback.runOnMainThread(() -> {
             final JsonObject data = new JsonObject();
             data.addProperty("code", 404);
 
@@ -241,13 +241,13 @@ public class DepotServletHandler extends HttpServlet {
     private void handleDepotListing(HttpServletRequest request, HttpServletResponse response) {
         final AsyncContext asyncContext = request.isAsyncStarted() ? request.getAsyncContext() : request.startAsync();
 
-        Webserver.callback.accept(() -> {
+        Webserver.minecraftCallback.runOnMainThread(() -> {
             final JsonObject data = new JsonObject();
             final JsonArray depots = new JsonArray();
 
-            Webserver.getWorlds.get().forEach(world -> {
+            Webserver.minecraftCallback.getLevels().forEach(world -> {
                 final RailwayData railwayData = RailwayData.getInstance(world);
-                final DataCache dataCache = Webserver.getDataCache.apply(railwayData);
+                final DataCache dataCache = Webserver.minecraftCallback.getDataCache(railwayData);
 
                 if(dataCache != null) {
                     dataCache.depotIdMap.values().forEach(dp -> {

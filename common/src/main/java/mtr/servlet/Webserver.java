@@ -1,11 +1,14 @@
 package mtr.servlet;
 
+import com.lx862.tprobe3.servlet.FrontendServlet;
 import mtr.MTR;
 import mtr.data.DataCache;
 import mtr.data.RailwayData;
 import mtr.data.Route;
-import com.lx862.tprobec.servlet.DepotServletHandler;
+import com.lx862.tprobe3.servlet.DepotServletHandler;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
@@ -15,26 +18,23 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public abstract class Webserver {
-
-	public static Consumer<Runnable> callback = Runnable::run;
-	public static Supplier<List<Level>> getWorlds = ArrayList::new;
-	public static Function<RailwayData, Set<Route>> getRoutes = railwayData -> new HashSet<>();
-	public static Function<RailwayData, DataCache> getDataCache = railwayData -> null;
-
 	private static Server webServer;
 	private static ServerConnector serverConnector;
+	public static MinecraftCallback minecraftCallback;
 
-	public static void init(boolean isClientSide) {
+	public static void setMinecraftCallback(MinecraftCallback callback) {
+		minecraftCallback = callback;
+	}
+
+	public static void init() {
 		webServer = new Server(new QueuedThreadPool(100, 10, 120));
 		serverConnector = new ServerConnector(webServer);
 		webServer.setConnectors(new Connector[]{serverConnector});
@@ -59,13 +59,14 @@ public abstract class Webserver {
 		context.addServlet(RouteFinderServletHandler.class, "/route");
 
 		// TProbe
-		if(isClientSide) {
-			context.addServlet(DepotServletHandler.class, "/tprobe/depots/*");
-		}
+		context.addServlet(FrontendServlet.class, "/mtrtv/*");
+		context.addServlet(DepotServletHandler.class, "/tprobe/depots/*");
 	}
 
-	public static void start(int defaultPort, Path path) {
-		int port = defaultPort;
+	public static void start(Path path) {
+		if(minecraftCallback == null) throw new IllegalStateException("Minecraft callback not configured!");
+
+		int port = 8888;
 		try {
 			port = Mth.clamp(Integer.parseInt(String.join("", Files.readAllLines(path)).replaceAll("\\D", "")), 1025, 65535);
 		} catch (Exception ignored) {
@@ -89,5 +90,14 @@ public abstract class Webserver {
 		} catch (Exception e) {
 			MTR.LOGGER.error("Error stopping webserver!", e);
 		}
+	}
+
+	public interface MinecraftCallback {
+		void runOnMainThread(Runnable runnable);
+		@Nullable MinecraftServer getServer();
+		List<Level> getLevels();
+		List<Player> getLevelPlayers();
+		Set<Route> getRoutes(RailwayData railwayData);
+		DataCache getDataCache(RailwayData railwayData);
 	}
 }
