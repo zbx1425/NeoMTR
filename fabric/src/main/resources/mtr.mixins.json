@@ -9,6 +9,7 @@
   ],
   "client": [
     "EntityMixin",
+    "EntityRendererMixin",
     "MinecraftMixin"
   ],
   "server": [],
