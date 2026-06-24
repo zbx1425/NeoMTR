@@ -185,7 +185,7 @@ public class RailRenderDispatcher {
         railChunkList.sort(Comparator.comparingDouble(chunk -> chunk.getCameraDistManhattanXZ(cameraBlockPos)));
 
         int buffersRebuilt = 0;
-        Frustum cullingFrustum = ((LevelRendererAccessor)Minecraft.getInstance().levelRenderer).getCullingFrustum();
+        Frustum cullingFrustum = Minecraft.getInstance().gameRenderer.getMainCamera().getCullFrustum(); // TODO: getCapturedFrustum?
         ShaderProp shaderProp = new ShaderProp().setViewMatrix(viewMatrix);
 
         int maxRailDistance = MTRClient.isReplayMod() ? 64 * 16 : (UtilitiesClient.getRenderDistance() + 1) * 16;

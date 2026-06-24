@@ -28,7 +28,8 @@
 	},
 	"accessWidener": "mtrsteamloco.accesswidener",
 	"mixins": [
-		"mtr.mixins.json"
+		"mtr.mixins.json",
+		"mtrsteamloco.mixins.json"
 	],
 	"depends": {
 		"fabric-api": "*",

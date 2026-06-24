@@ -1,5 +1,6 @@
 package mtr.item;
 
+import cn.zbx1425.mtrsteamloco.data.RailExtraSupplier;
 import mtr.block.BlockNode;
 import mtr.data.*;
 import mtr.mappings.Text;
@@ -87,8 +88,8 @@ public class ItemRailModifier extends ItemNodeModifierBase {
 			final boolean isValid = rail1.isValid() && rail2.isValid();
 
 			if (goodRadius && isValid && isValidContinuousMovement) {
-//				((RailExtraSupplier)rail1).setIsSecondaryDir(true);
-//				((RailExtraSupplier)rail2).setIsSecondaryDir(false);
+				((RailExtraSupplier)rail1).setIsSecondaryDir(true);
+				((RailExtraSupplier)rail2).setIsSecondaryDir(false);
 				ItemNodeModifierBase.applyQueuedFreeNodeAngles(world);
 				railwayData.addRail(player, transportMode, posStart, posEnd, rail1, false);
 				final long newId = railwayData.addRail(player, transportMode, posEnd, posStart, rail2, true);

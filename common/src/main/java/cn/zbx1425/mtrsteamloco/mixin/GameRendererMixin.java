@@ -16,23 +16,23 @@ public class GameRendererMixin {
 
     @Shadow @Final Minecraft minecraft;
     @Unique private Boolean hideGuiOptionCache = null;
-
-    @Inject(method = "getProjectionMatrix", at = @At("TAIL"), cancellable = true)
-    void getProjectionMatrixTail(double fov, CallbackInfoReturnable<org.joml.Matrix4f> cir) {
-        if (RailRenderDispatcher.isPreviewingModel) {
-            org.joml.Matrix4f result = new org.joml.Matrix4f();
-            result.translation(0.5f, 0f, 0f);
-            result.scale(0.8f, 0.8f, 1f);
-            result.mul(cir.getReturnValue());
-
-            cir.setReturnValue(result);
-        }
-        if (RailRenderDispatcher.isPreviewingModel && hideGuiOptionCache == null) {
-            hideGuiOptionCache = minecraft.options.hideGui;
-            minecraft.options.hideGui = true;
-        } else if (!RailRenderDispatcher.isPreviewingModel && hideGuiOptionCache != null) {
-            minecraft.options.hideGui = hideGuiOptionCache;
-            hideGuiOptionCache = null;
-        }
-    }
+//
+//    @Inject(method = "getProjectionMatrix", at = @At("TAIL"), cancellable = true)
+//    void getProjectionMatrixTail(double fov, CallbackInfoReturnable<org.joml.Matrix4f> cir) {
+//        if (RailRenderDispatcher.isPreviewingModel) {
+//            org.joml.Matrix4f result = new org.joml.Matrix4f();
+//            result.translation(0.5f, 0f, 0f);
+//            result.scale(0.8f, 0.8f, 1f);
+//            result.mul(cir.getReturnValue());
+//
+//            cir.setReturnValue(result);
+//        }
+//        if (RailRenderDispatcher.isPreviewingModel && hideGuiOptionCache == null) {
+//            hideGuiOptionCache = minecraft.options.hideGui;
+//            minecraft.options.hideGui = true;
+//        } else if (!RailRenderDispatcher.isPreviewingModel && hideGuiOptionCache != null) {
+//            minecraft.options.hideGui = hideGuiOptionCache;
+//            hideGuiOptionCache = null;
+//        }
+//    }
 }

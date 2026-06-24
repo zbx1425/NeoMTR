@@ -4,9 +4,8 @@ import cn.zbx1425.mtrsteamloco.Main;
 import cn.zbx1425.mtrsteamloco.data.RailExtraSupplier;
 import cn.zbx1425.mtrsteamloco.data.RailModelRepeater;
 import io.netty.buffer.Unpooled;
-import mtr.data.MessagePackHelper;
-import mtr.data.Rail;
-import mtr.data.RailType;
+import mtr.data.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 import org.msgpack.core.MessagePacker;
@@ -15,6 +14,7 @@ import org.msgpack.value.Value;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -26,7 +26,8 @@ import java.util.*;
 @Mixin(value = Rail.class, priority = 1425)
 public abstract class RailMixin implements RailExtraSupplier {
 
-    private List<RailModelRepeater> repeaters = new ArrayList<>(Collections.singletonList(new RailModelRepeater()));
+    @Unique
+    private List<RailModelRepeater> mtrnte$repeaters = new ArrayList<>(Collections.singletonList(new RailModelRepeater()));
     private float verticalCurveRadius = 0f;
     private boolean isSecondaryDir = false;
 
@@ -58,12 +59,13 @@ public abstract class RailMixin implements RailExtraSupplier {
 
     @Override
     public List<RailModelRepeater> getRepeaters() {
-        return repeaters;
+        return mtrnte$repeaters;
     }
 
     @Override
     public void setRepeaters(List<RailModelRepeater> repeaters) {
-        this.repeaters = new ArrayList<>(repeaters);
+        if(repeaters == null) throw new IllegalStateException("Cannot be null!");
+        this.mtrnte$repeaters = new ArrayList<>(repeaters);
         dataBytes = null;
     }
 
@@ -75,13 +77,13 @@ public abstract class RailMixin implements RailExtraSupplier {
 
         if (map.containsKey("repeaters")) {
             ArrayValue arr = map.get("repeaters").asArrayValue();
-            repeaters = new ArrayList<>(arr.size());
+            mtrnte$repeaters = new ArrayList<>(arr.size());
             for (Value v : arr) {
-                repeaters.add(RailModelRepeater.fromMessagePack(v.asMapValue()));
+                mtrnte$repeaters.add(RailModelRepeater.fromMessagePack(v.asMapValue()));
             }
         } else {
             String legacyModelKey = messagePackHelper.getString("model_key", "");
-            repeaters = new ArrayList<>(Collections.singletonList(new RailModelRepeater(legacyModelKey, false)));
+            mtrnte$repeaters = new ArrayList<>(Collections.singletonList(new RailModelRepeater(legacyModelKey, false)));
         }
     }
 
@@ -89,15 +91,15 @@ public abstract class RailMixin implements RailExtraSupplier {
     private void toMessagePack(MessagePacker messagePacker, CallbackInfo ci) throws IOException {
         messagePacker.packString("vertical_curve_radius").packFloat(verticalCurveRadius);
 
-        if (repeaters.size() == 1 && repeaters.getFirst().isLegacyCompatible()) {
-            messagePacker.packString("model_key").packString(repeaters.getFirst().getPrimaryModelTypeKey());
+        if (mtrnte$repeaters.size() == 1 && mtrnte$repeaters.getFirst().isLegacyCompatible()) {
+            messagePacker.packString("model_key").packString(mtrnte$repeaters.getFirst().getPrimaryModelTypeKey());
             messagePacker.packString("is_secondary_dir").packBoolean(isSecondaryDir);
         } else {
-            messagePacker.packString("model_key").packString(repeaters.isEmpty()
-                ? "null" : repeaters.getFirst().getPrimaryModelTypeKey());
+            messagePacker.packString("model_key").packString(mtrnte$repeaters.isEmpty()
+                ? "null" : mtrnte$repeaters.getFirst().getPrimaryModelTypeKey());
             messagePacker.packString("is_secondary_dir").packBoolean(isSecondaryDir);
-            messagePacker.packString("repeaters").packArrayHeader(repeaters.size());
-            for (RailModelRepeater repeater : repeaters) {
+            messagePacker.packString("repeaters").packArrayHeader(mtrnte$repeaters.size());
+            for (RailModelRepeater repeater : mtrnte$repeaters) {
                 repeater.toMessagePack(messagePacker);
             }
         }
@@ -105,7 +107,7 @@ public abstract class RailMixin implements RailExtraSupplier {
 
     @Inject(method = "messagePackLength", at = @At("TAIL"), cancellable = true, remap = false)
     private void messagePackLength(CallbackInfoReturnable<Integer> cir) {
-        if (repeaters.size() == 1 && repeaters.getFirst().isLegacyCompatible()) {
+        if (mtrnte$repeaters.size() == 1 && mtrnte$repeaters.getFirst().isLegacyCompatible()) {
             cir.setReturnValue(cir.getReturnValue() + 3);
         } else {
             cir.setReturnValue(cir.getReturnValue() + 4);
@@ -118,19 +120,22 @@ public abstract class RailMixin implements RailExtraSupplier {
         verticalCurveRadius = packet.readFloat();
         isSecondaryDir = packet.readBoolean();
         int count = packet.readVarInt();
-        repeaters = new ArrayList<>(count);
+        mtrnte$repeaters = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            repeaters.add(RailModelRepeater.readPacket(packet));
+            mtrnte$repeaters.add(RailModelRepeater.readPacket(packet));
         }
     }
 
     @Inject(method = "writePacket", at = @At("TAIL"))
     private void toPacket(FriendlyByteBuf packet, CallbackInfo ci) {
         if (!Main.enableRegistry) return;
+        if(mtrnte$repeaters == null) { // TODO: This shouldn't be null...
+            mtrnte$repeaters = new ArrayList<>(Collections.singletonList(new RailModelRepeater()));
+        }
         packet.writeFloat(verticalCurveRadius);
         packet.writeBoolean(isSecondaryDir);
-        packet.writeVarInt(repeaters.size());
-        for (RailModelRepeater repeater : repeaters) {
+        packet.writeVarInt(mtrnte$repeaters.size());
+        for (RailModelRepeater repeater : mtrnte$repeaters) {
             repeater.writePacket(packet);
         }
     }
@@ -147,7 +152,7 @@ public abstract class RailMixin implements RailExtraSupplier {
 //        }
 //    }
 
-    @Shadow(remap = false) @Final private int yStart, yEnd;
+    @Shadow @Final private int yStart, yEnd;
 
     private float vTheta;
 

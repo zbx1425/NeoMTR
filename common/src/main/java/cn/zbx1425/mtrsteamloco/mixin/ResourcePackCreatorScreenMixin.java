@@ -22,9 +22,9 @@ public class ResourcePackCreatorScreenMixin {
     private static void render(PoseStack matrices, CallbackInfo ci) {
         if (guiCounter == 0) return;
 
-        final MultiBufferSource.BufferSource immediate = Minecraft.getInstance().renderBuffers().bufferSource();
-        final BufferSourceProxy immediateProxy = new BufferSourceProxy(immediate);
-        MainClient.drawScheduler.commit(immediateProxy, MainClient.drawContext);
-        immediateProxy.commit();
+//        final MultiBufferSource.BufferSource immediate = Minecraft.getInstance().renderBuffers().bufferSource();
+//        final BufferSourceProxy immediateProxy = new BufferSourceProxy(immediate);
+//        MainClient.drawScheduler.commit(immediateProxy, MainClient.drawContext);
+//        immediateProxy.commit();
     }
 }

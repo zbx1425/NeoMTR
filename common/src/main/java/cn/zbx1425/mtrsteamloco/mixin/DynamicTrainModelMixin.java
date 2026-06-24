@@ -15,6 +15,6 @@ public class DynamicTrainModelMixin {
 
     @Inject(method = "<init>", at = @At("TAIL"), remap = false)
     private void ctor(JsonObject model, JsonObject properties, DoorAnimationType doorAnimationType, CallbackInfo ci) {
-        DynamicTrainModelLoader.loadInto(model, (DynamicTrainModel)(Object)this);
+//        DynamicTrainModelLoader.loadInto(model, (DynamicTrainModel)(Object)this);
     }
 }
