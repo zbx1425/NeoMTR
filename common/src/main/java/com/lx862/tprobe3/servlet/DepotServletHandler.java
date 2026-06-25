@@ -7,7 +7,6 @@ import mtr.data.*;
 import com.lx862.tprobe3.data.PathDataWithDistance;
 import com.lx862.tprobe3.packet.PacketTProbeRequester;
 import com.lx862.tprobe3.data.CompiledTrainData;
-import mtr.path.PathData;
 import mtr.servlet.IServletHandler;
 import mtr.servlet.Webserver;
 import net.minecraft.core.BlockPos;
@@ -198,8 +197,8 @@ public class DepotServletHandler extends HttpServlet {
         pathDataObject.add("endPosition", serialize(p.pathData().endingPos));
         pathDataObject.addProperty("startAngle", p.pathData().rail.facingStart.angleDegrees);
         pathDataObject.addProperty("endAngle", p.pathData().rail.facingEnd.angleDegrees);
-        pathDataObject.addProperty("shape", "QUADRATIC");
-        pathDataObject.addProperty("verticalRadius", 0.0);
+        pathDataObject.addProperty("shape", p.verticalRadius() > 0 ? "TWO_RADII" : "QUADRATIC");
+        pathDataObject.addProperty("verticalRadius", p.verticalRadius());
         pathDataObject.addProperty("speedLimit", p.pathData().rail.railType.speedLimit);
         return pathDataObject;
     }

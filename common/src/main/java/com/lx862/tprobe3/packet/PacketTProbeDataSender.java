@@ -109,7 +109,7 @@ public class PacketTProbeDataSender {
                 double newReturnDistance = mainPath.getLast().distance();
                 for(PathDataWithDistance p : pathMainRouteToSiding) {
                     newReturnDistance += p.distance();
-                    PathDataWithDistance withNewDistance = new PathDataWithDistance(p.pathData(), newReturnDistance);
+                    PathDataWithDistance withNewDistance = new PathDataWithDistance(p.pathData(), newReturnDistance, p.verticalRadius());
                     withNewDistance.write(packet);
                 }
             }
