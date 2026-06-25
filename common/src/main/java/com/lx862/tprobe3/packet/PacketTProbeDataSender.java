@@ -71,12 +71,12 @@ public class PacketTProbeDataSender {
                     PathData pathData = fullSidingPath.get(j);
                     double distance = sdDistances.get(j);
 
-                    // Note: This differs slightly from MTR 4 tprobe, where the first platform is included in SdgToMainRoute
+                    // Note: In MTR 4, the first platform is included in pathSdgToMainRoute.
+                    pathSidingToMainRoute.add(new PathDataWithDistance(pathData, distance));
                     if(isStoppingPlatform(pathData)) {
                         mainPathBegin = j;
                         break;
                     }
-                    pathSidingToMainRoute.add(new PathDataWithDistance(pathData, distance));
                 }
 
                 // Main Route to SDG Pass
