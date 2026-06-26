@@ -326,10 +326,6 @@ public class TrainServer extends Train {
 		}
 	}
 
-	public int getNextStopIndex() {
-		return this.nextStoppingIndex;
-	}
-
 	public void deployTrain() {
 		canDeploy = true;
 	}

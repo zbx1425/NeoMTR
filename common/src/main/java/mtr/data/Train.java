@@ -395,6 +395,10 @@ public abstract class Train extends NameColorDataBase implements IPacket {
 		return ridingEntities.contains(player.getUUID());
 	}
 
+	public int getNextStopIndex() {
+		return nextStoppingIndex;
+	}
+
 	public final float getSpeed() {
 		return speed;
 	}

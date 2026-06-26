@@ -256,7 +256,6 @@ public class TrainVirtualDrive extends TrainClient {
                 PacketVirtualDrive.sendVirtualDriveC2S(true);
                 train.vehicleRidingClient.stopRiding(player.getUUID());
                 RenderTrains.scheduleBeforeNextSimulation(() -> {
-                    MTR.LOGGER.info("ADD");
                     ClientData.TRAINS.add(activeTrain);
                 });
                 return true;

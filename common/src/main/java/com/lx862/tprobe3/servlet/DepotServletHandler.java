@@ -1,15 +1,15 @@
 package com.lx862.tprobe3.servlet;
 
+import cn.zbx1425.mtrsteamloco.game.TrainVirtualDrive;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.lx862.tprobe3.data.DepotPathData;
+import mtr.client.ClientData;
 import mtr.data.*;
-import com.lx862.tprobe3.data.PathDataWithDistance;
 import com.lx862.tprobe3.packet.PacketTProbeRequester;
 import com.lx862.tprobe3.data.CompiledTrainData;
 import mtr.servlet.IServletHandler;
 import mtr.servlet.Webserver;
-import net.minecraft.core.BlockPos;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServlet;
@@ -66,7 +66,7 @@ public class DepotServletHandler extends HttpServlet {
                     JsonArray routes = new JsonArray();
                     depot.routeIds.forEach(e -> {
                         Route route = dataCache.routeIdMap.get(e);
-                        routes.add(serialize(route, dataCache));
+                        routes.add(JsonDataSerializer.serialize(route, dataCache));
                     });
                     data.add("routes", routes);
 
@@ -79,18 +79,18 @@ public class DepotServletHandler extends HttpServlet {
                         }
 
                         DepotPathData pathData = (DepotPathData)callback.data();
-                        pathData.mainPath().forEach(p -> mainPath.add(serialize(p)));
+                        pathData.mainPath().forEach(p -> mainPath.add(JsonDataSerializer.serialize(p)));
                         data.add("path", mainPath);
 
                         JsonArray sidingArray = new JsonArray();
                         for(DepotPathData.SidingPathData sidingData : pathData.sidings()) {
                             Siding siding = dataCache.sidingIdMap.get(sidingData.sidingId());
-                            JsonObject sidingObject = serialize(siding);
+                            JsonObject sidingObject = JsonDataSerializer.serialize(siding);
 
                             JsonArray pathSidingToMainRoute = new JsonArray();
-                            sidingData.pathSidingToMainRoute().forEach(p -> pathSidingToMainRoute.add(serialize(p)));
+                            sidingData.pathSidingToMainRoute().forEach(p -> pathSidingToMainRoute.add(JsonDataSerializer.serialize(p)));
                             JsonArray pathMainRouteToSiding = new JsonArray();
-                            sidingData.pathMainRouteToSiding().forEach(p -> pathMainRouteToSiding.add(serialize(p)));
+                            sidingData.pathMainRouteToSiding().forEach(p -> pathMainRouteToSiding.add(JsonDataSerializer.serialize(p)));
 
                             sidingObject.add("pathSidingToMainRoute", pathSidingToMainRoute);
                             sidingObject.add("pathMainRouteToSiding", pathMainRouteToSiding);
@@ -131,7 +131,7 @@ public class DepotServletHandler extends HttpServlet {
 
                     dataCache.sidingIdMap.values().forEach(siding -> {
                         if(dataCache.sidingIdToDepot.get(siding.id).id == depotId) {
-                            JsonObject sidingObject = serialize(siding);
+                            JsonObject sidingObject = JsonDataSerializer.serialize(siding);
                             sidingObject.add("vehicles", new JsonArray());
                             sidingsData.put(siding.id, sidingObject);
                         }
@@ -144,27 +144,24 @@ public class DepotServletHandler extends HttpServlet {
                             return;
                         }
                         // "Trust me bro"
-                        List<CompiledTrainData> pathData = (List<CompiledTrainData>)callback.data();
-                        pathData.forEach(vehicle -> {
-                            JsonObject vehicleObject = new JsonObject();
-                            vehicleObject.addProperty("id", String.valueOf(vehicle.id()));
-                            vehicleObject.addProperty("transportMode", vehicle.transportMode().toString());
-                            vehicleObject.addProperty("name", "");
-                            vehicleObject.addProperty("color", 0);
-                            vehicleObject.addProperty("speed", (vehicle.speed() * 20) / 1000);
-                            vehicleObject.addProperty("railProgress", vehicle.railProgress());
-                            vehicleObject.addProperty("nextStoppingIndexAto", vehicle.nextStopIndex());
-                            vehicleObject.addProperty("nextStoppingIndexManual", vehicle.nextStopIndex());
-                            vehicleObject.addProperty("reversed", vehicle.reversed());
-                            vehicleObject.addProperty("elapsedDwellTime", (vehicle.elapsedDwellTime() / 20) * 1000);
-                            vehicleObject.addProperty("departureIndex", vehicle.departureIndex());
-                            vehicleObject.addProperty("sidingDepartureTime", -1);
-
-                            sidingsData.get(vehicle.sidingId()).getAsJsonArray("vehicles").add(vehicleObject);
+                        List<CompiledTrainData> trainData = (List<CompiledTrainData>)callback.data();
+                        trainData.forEach(vehicle -> {
+                            sidingsData.get(vehicle.sidingId()).getAsJsonArray("vehicles").add(JsonDataSerializer.serialize(vehicle));
                         });
 
+                        // NeoMTR: Add Virtual Driving train on the map
+                        for(TrainClient trainClient : ClientData.TRAINS) {
+                            if(trainClient instanceof TrainVirtualDrive trainVirtualDrive) {
+                                CompiledTrainData compiledTrainData = CompiledTrainData.fromTrainClient(trainVirtualDrive);
+
+                                JsonObject jo = new JsonObject();
+                                jo.add("vehicles", new JsonArray());
+                                sidingsData.getOrDefault(trainClient.sidingId, jo).getAsJsonArray("vehicles").add(JsonDataSerializer.serialize(compiledTrainData));
+                            }
+                        }
+
                         JsonArray sidingArray = new JsonArray();
-                        sidingsData.values().forEach(e -> sidingArray.add(e));
+                        sidingsData.values().forEach(sidingArray::add);
 
                         data.add("sidings", sidingArray);
                         JsonObject respObject = TProbeHelper.getTProbeResponse(200, "OK", data);
@@ -177,76 +174,6 @@ public class DepotServletHandler extends HttpServlet {
                 handleSkillIssue(request, response);
             }
         });
-    }
-
-    private static JsonObject serialize(PathDataWithDistance p) {
-        JsonObject pathDataObject = new JsonObject();
-        boolean isStop = p.pathData().dwellTime > 0;
-        if(isStop) {
-            pathDataObject.addProperty("savedRailBaseId", String.valueOf(p.pathData().savedRailBaseId));
-            pathDataObject.addProperty("dwellTime", (p.pathData().dwellTime / 2) * 1000);
-        }
-
-        int stopIndex = p.pathData().stopIndex - 1; // MTR 4 starts at -1
-        if(stopIndex != -1 && !isStop) stopIndex++;
-
-        pathDataObject.addProperty("stopIndex", stopIndex);
-        pathDataObject.addProperty("startDistance", p.distance() - p.pathData().rail.getLength());
-        pathDataObject.addProperty("endDistance", p.distance());
-        pathDataObject.add("startPosition", serialize(p.pathData().startingPos));
-        pathDataObject.add("endPosition", serialize(p.pathData().endingPos));
-        pathDataObject.addProperty("startAngle", p.pathData().rail.facingStart.angleDegrees);
-        pathDataObject.addProperty("endAngle", p.pathData().rail.facingEnd.angleDegrees);
-        pathDataObject.addProperty("shape", p.verticalRadius() > 0 ? "TWO_RADII" : "QUADRATIC");
-        pathDataObject.addProperty("verticalRadius", p.verticalRadius());
-        pathDataObject.addProperty("speedLimit", p.pathData().rail.railType.speedLimit);
-        return pathDataObject;
-    }
-
-    private static JsonObject serialize(BlockPos pos) {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("x", pos.getX());
-        jsonObject.addProperty("y", pos.getY());
-        jsonObject.addProperty("z", pos.getZ());
-        return jsonObject;
-    }
-
-    private static JsonObject serialize(Route route, DataCache dataCache) {
-        JsonObject jsonObject = serialize(route);
-        jsonObject.addProperty("routeType", route.routeType.toString());
-        jsonObject.addProperty("routeNumber", route.lightRailRouteNumber);
-        jsonObject.addProperty("hidden", route.isHidden);
-        jsonObject.addProperty("circularState", route.circularState.toString());
-
-        JsonArray routePlatforms = new JsonArray();
-
-        route.platformIds.forEach(routePlatform -> {
-            Station station = dataCache.platformIdToStation.get(routePlatform.platformId);
-            JsonObject routePlatformObj = new JsonObject();
-            routePlatformObj.addProperty("platformId", String.valueOf(routePlatform.platformId));
-            routePlatformObj.addProperty("customDestination", routePlatform.customDestination.get(MultipartName.Usage.GENERIC));
-
-            if(station != null) {
-                JsonObject stationObject = serialize(station);
-                stationObject.addProperty("zone1", station.zone);
-                stationObject.addProperty("zone2", 0);
-                stationObject.addProperty("zone3", 0);
-                stationObject.add("exits", new JsonArray());
-                routePlatformObj.add("station", stationObject);
-            }
-            routePlatforms.add(routePlatformObj);
-        });
-        jsonObject.add("routePlatformData", routePlatforms);
-        return jsonObject;
-    }
-
-    private static JsonObject serialize(NameColorDataBase nameColorDataBase) {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("id", String.valueOf(nameColorDataBase.id));
-        jsonObject.addProperty("name", nameColorDataBase.name);
-        jsonObject.addProperty("color", nameColorDataBase.color);
-        jsonObject.addProperty("transportMode", nameColorDataBase.transportMode.toString());
-        return jsonObject;
     }
 
     private void handleSkillIssue(HttpServletRequest request, HttpServletResponse response) {

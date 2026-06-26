@@ -2,6 +2,7 @@ package mtr.servlet;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.lx862.tprobe3.servlet.JsonDataSerializer;
 import mtr.data.DataCache;
 import mtr.data.RailwayData;
 import mtr.data.Route;
@@ -28,6 +29,7 @@ public class InfoServletHandler extends HttpServlet {
 
 				final JsonObject dataObject = new JsonObject();
 				dataObject.addProperty("player", player.getName().getString());
+				dataObject.add("_playerPos", JsonDataSerializer.serialize(player.blockPosition()));
 
 				final String routeName;
 				final String routeNumber;
