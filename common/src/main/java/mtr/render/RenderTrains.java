@@ -69,6 +69,8 @@ public class RenderTrains implements IGui {
 	private static final Identifier LIFT_TEXTURE = Identifier.parse("mtr:textures/entity/lift_1.png");
 	private static final Identifier ARROW_TEXTURE = Identifier.parse("mtr:textures/block/sign/lift_arrow.png");
 
+	private static final List<Runnable> queuedTasks = new ArrayList<>();
+
 	static {
 		for (int i = 0; i < TOTAL_RENDER_STAGES; i++) {
 			final int renderStageCount = QueuedRenderLayer.values().length;
@@ -93,6 +95,9 @@ public class RenderTrains implements IGui {
 		final float lastFrameDuration = MTRClient.getLastFrameDuration();
 		newLastFrameDuration = client.isPaused() || lastSimulatedTick == MTRClient.getGameTick() ? 0 : lastFrameDuration;
 		final boolean useAnnouncements = Config.useTTSAnnouncements() || Config.showAnnouncementMessages();
+
+		queuedTasks.forEach(Runnable::run);
+		queuedTasks.clear();
 
 		ClientData.TRAINS.forEach(train -> train.simulateTrain(world, newLastFrameDuration, (speed, stopIndex, routeIds) -> {
 			final Route thisRoute = train.getThisRoute();
@@ -192,26 +197,9 @@ public class RenderTrains implements IGui {
 		}
 
 		final int renderDistanceChunks = UtilitiesClient.getRenderDistance();
-//		final float lastFrameDuration = MTRClient.getLastFrameDuration();
-
-//		if (Config.useDynamicFPS()) {
-//			if (lastFrameDuration > 0.5) {
-//				maxTrainRenderDistance = Math.max(maxTrainRenderDistance - (maxTrainRenderDistance - DETAIL_RADIUS) / 2, DETAIL_RADIUS);
-//			} else if (lastFrameDuration < 0.4) {
-//				maxTrainRenderDistance = Math.min(maxTrainRenderDistance + 1, renderDistanceChunks * (Config.trainRenderDistanceRatio() + 1));
-//			}
-//		} else {
 		maxTrainRenderDistance = renderDistanceChunks * (Config.trainRenderDistanceRatio() + 1);
-//		}
 
-//		if (!backupRendering) {
-//			matrices.popPose();
-//			matrices.pushPose();
-//			final Vec3 cameraPosition = client.gameRenderer.getMainCamera().getPosition();
-//			matrices.translate(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
-//		}
 		matrices.pushPose();
-
 		TrainRendererBase.setupStaticInfo(matrices, vertexConsumers, tickDelta);
 		TrainRendererBase.setBatch(false);
 		ClientData.TRAINS.forEach(train -> train.renderTrain(world, newLastFrameDuration));
@@ -411,6 +399,10 @@ public class RenderTrains implements IGui {
 			map.put(resourceLocation, new HashSet<>());
 		}
 		map.get(resourceLocation).add(callback);
+	}
+
+	public static void scheduleBeforeNextSimulation(Runnable task) {
+		queuedTasks.add(task);
 	}
 
 	public static String getInterchangeRouteNames(Station station, Route thisRoute, Route nextRoute) {

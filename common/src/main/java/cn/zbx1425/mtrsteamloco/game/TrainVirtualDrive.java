@@ -3,11 +3,13 @@ package cn.zbx1425.mtrsteamloco.game;
 import cn.zbx1425.mtrsteamloco.network.PacketVirtualDrive;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
+import mtr.MTR;
 import mtr.client.ClientData;
 import mtr.data.RailwayDataCoolDownModule;
 import mtr.data.TrainClient;
 import mtr.mappings.Text;
 import mtr.path.PathData;
+import mtr.render.RenderTrains;
 import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -70,8 +72,7 @@ public class TrainVirtualDrive extends TrainClient {
         manualNotch = 114514; // Magic number to bypass base class manual driving logic
         nextStoppingIndex = path.size() - 1;
         super.simulateTrain(world, ticksElapsed, speedCallback, announcementCallback, lightRailAnnouncementCallback);
-        if (!isOnRoute
-            || ClientData.getShiftHoldingTicks() >= RailwayDataCoolDownModule.SHIFT_ACTIVATE_TICKS) {
+        if (!isOnRoute || ClientData.getShiftHoldingTicks() >= RailwayDataCoolDownModule.SHIFT_ACTIVATE_TICKS) {
             stopDriving();
             return;
         }
@@ -254,7 +255,8 @@ public class TrainVirtualDrive extends TrainClient {
                 );
                 PacketVirtualDrive.sendVirtualDriveC2S(true);
                 train.vehicleRidingClient.stopRiding(player.getUUID());
-                Minecraft.getInstance().execute(() -> {
+                RenderTrains.scheduleBeforeNextSimulation(() -> {
+                    MTR.LOGGER.info("ADD");
                     ClientData.TRAINS.add(activeTrain);
                 });
                 return true;
@@ -267,7 +269,9 @@ public class TrainVirtualDrive extends TrainClient {
         if (activeTrain != null) {
             PacketVirtualDrive.sendVirtualDriveC2S(false);
             activeTrain.isRemoved = true;
-            Minecraft.getInstance().execute(() -> {
+
+            // This can be called in simulateTrain, which is on the same thread as Render Thread, we must explicitly defer it to the next simulation tick.
+            RenderTrains.scheduleBeforeNextSimulation(() -> {
                 ClientData.TRAINS.remove(activeTrain);
                 activeTrain = null;
             });
