@@ -41,6 +41,7 @@ public class VirtualDriveOverlay {
         final int GAUGE_SIZE = 96;
         final int REAL_GAUGE_SIZE = (guiGraphics.guiWidth() - PADDING * 2) / 5;
         Font font = Minecraft.getInstance().font;
+        final int guiScale = Minecraft.getInstance().options.guiScale().get();
 
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(0, guiGraphics.guiHeight());
@@ -108,11 +109,10 @@ public class VirtualDriveOverlay {
         final int GAUGE_MAX_SPEED = 100;
         // Speed needle
         guiGraphics.pose().pushMatrix();
-        // TODO:
-//        guiGraphics.pose().rotateAround(
-//                Axis.ZP.rotationDegrees(-140 + Mth.clamp(Math.round(delayedTrainSpeed * 3.6f * 20 * 4) / 4f, 0, GAUGE_MAX_SPEED) / GAUGE_MAX_SPEED * 280),
-//                PADDING + GAUGE_SIZE / 4f + GAUGE_SIZE / 2f, -GAUGE_SIZE / 2f - PADDING, 0
-//        );
+        guiGraphics.pose().rotateAbout(
+                (float)Math.toRadians(-140 + Mth.clamp(Math.round(delayedTrainSpeed * 3.6f * 20 * 4) / 4f, 0, GAUGE_MAX_SPEED) / GAUGE_MAX_SPEED * 280),
+                PADDING + GAUGE_SIZE / 4f + GAUGE_SIZE / 2f, -GAUGE_SIZE / 2f - PADDING
+        );
         int needleXOff = PADDING + GAUGE_SIZE / 4 + (GAUGE_SIZE * 3 / 8);
         blit(hmiTex, guiGraphics, bufferBuilder,
                 needleXOff, -GAUGE_SIZE - PADDING,
@@ -122,11 +122,10 @@ public class VirtualDriveOverlay {
         if (!train.atpCutout) {
             // Yellow ATP Speed needle
             guiGraphics.pose().pushMatrix();
-            // TODO:
-//            guiGraphics.pose().rotateAround(
-//                    Axis.ZP.rotationDegrees(-140 + Mth.clamp(Math.round(train.atpYellowSpeed * 3.6f * 20 * 3) / 3f, 0, GAUGE_MAX_SPEED) / GAUGE_MAX_SPEED * 280),
-//                    PADDING + GAUGE_SIZE / 4f + GAUGE_SIZE / 2f, -GAUGE_SIZE / 2f - PADDING, 0
-//            );
+            guiGraphics.pose().rotateAbout(
+                    (float)Math.toRadians(-140 + Mth.clamp(Math.round(train.atpYellowSpeed * 3.6f * 20 * 3) / 3f, 0, GAUGE_MAX_SPEED) / GAUGE_MAX_SPEED * 280),
+                    PADDING + GAUGE_SIZE / 4f + GAUGE_SIZE / 2f, -GAUGE_SIZE / 2f - PADDING
+            );
             blit(hmiTex, guiGraphics, bufferBuilder,
                     needleXOff, -GAUGE_SIZE - PADDING,
                     GAUGE_SIZE / 4, GAUGE_SIZE,
@@ -134,11 +133,10 @@ public class VirtualDriveOverlay {
             guiGraphics.pose().popMatrix();
             // Red ATP Speed needle
             guiGraphics.pose().pushMatrix();
-            // TODO:
-//            guiGraphics.pose().rotateAround(
-//                    Axis.ZP.rotationDegrees(-140 + Mth.clamp(Math.round(train.atpRedSpeed * 3.6f * 20 * 3) / 3f, 0, GAUGE_MAX_SPEED) / GAUGE_MAX_SPEED * 280),
-//                    PADDING + GAUGE_SIZE / 4f + GAUGE_SIZE / 2f, -GAUGE_SIZE / 2f - PADDING, 0
-//            );
+            guiGraphics.pose().rotateAbout(
+                    (float)Math.toRadians(-140 + Mth.clamp(Math.round(train.atpRedSpeed * 3.6f * 20 * 3) / 3f, 0, GAUGE_MAX_SPEED) / GAUGE_MAX_SPEED * 280),
+                    PADDING + GAUGE_SIZE / 4f + GAUGE_SIZE / 2f, -GAUGE_SIZE / 2f - PADDING
+            );
             blit(hmiTex, guiGraphics, bufferBuilder,
                     needleXOff, -GAUGE_SIZE - PADDING,
                     GAUGE_SIZE / 4, GAUGE_SIZE,
@@ -169,9 +167,6 @@ public class VirtualDriveOverlay {
             blit(hmiTex, guiGraphics, bufferBuilder, 0, 64, 64, 64, 0.5f, 0.625f, 0.125f, 0.125f, 0xffffffff);
         }
         guiGraphics.pose().popMatrix();
-
-//        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
-//        RenderSystem.disableBlend();
 
         // Speed Text
         guiGraphics.pose().pushMatrix();
@@ -286,27 +281,11 @@ public class VirtualDriveOverlay {
     }
 
     private static void blit(Identifier id, GuiGraphicsExtractor guiGraphics, BufferBuilder bufferBuilder, int x1, int y1, int width, int height, float minU, float minV, float deltaU, float deltaV, int color) {
-//        Matrix4f matrix4f = guiGraphics.pose().last().pose();
-//        bufferBuilder.addVertex(matrix4f, (float)x1, (float)y1, (float) 0).setUv(minU, minV).setColor(color);
-//        bufferBuilder.addVertex(matrix4f, (float)x1, (float)(y1 + height), (float) 0).setUv(minU, minV + deltaV).setColor(color);
-//        bufferBuilder.addVertex(matrix4f, (float)(x1 + width), (float)(y1 + height), (float) 0).setUv(minU + deltaU, minV + deltaV).setColor(color);
-//        bufferBuilder.addVertex(matrix4f, (float)(x1 + width), (float)y1, (float) 0).setUv(minU + deltaU, minV).setColor(color);
-
-        // TODO:
-        guiGraphics.blit(id, x1, y1, x1+width, y1+height, minU, minV, minU + deltaU, minV + deltaV);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, id, x1, y1, (int)(minU*512), (int)(minV*512), width, height, (int)(deltaU*512), (int)(deltaV*512), 512, 512, color);
     }
 
     private static void fill(Identifier id, GuiGraphicsExtractor guiGraphics, float minX, float minY, float maxX, float maxY, int color) {
-//        VertexConsumer vertexConsumer = guiGraphics.bufferSource().getBuffer(RenderType.gui());
-
-        // TODO:
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, id, (int)minX, (int)minY, 0, 0, (int)maxX, (int)maxY, (int)maxX, (int)maxY);
-
-//        vertexConsumer.addVertexWith2DPose(guiGraphics.pose(), minX, minY).setColor(color);
-//        vertexConsumer.addVertexWith2DPose(guiGraphics.pose(), minX, maxY).setColor(color);
-//        vertexConsumer.addVertexWith2DPose(guiGraphics.pose(), maxX, maxY).setColor(color);
-//        vertexConsumer.addVertexWith2DPose(guiGraphics.pose(), maxX, minY).setColor(color);
-//        guiGraphics.flush();
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, id, (int)minX, (int)minY, 0, 0, (int)maxX, (int)maxY, (int)maxX, (int)maxY, color);
     }
 
     private static final float KEY_DELAY_BEFORE_REPEAT = 6f;
