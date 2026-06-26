@@ -39,13 +39,9 @@ public class VirtualDriveOverlay {
 
         final int PADDING = 24;
         final int GAUGE_SIZE = 96;
-        final int REAL_GAUGE_SIZE = (guiGraphics.guiWidth() - PADDING * 2) / 5;
         Font font = Minecraft.getInstance().font;
-        final int guiScale = Minecraft.getInstance().options.guiScale().get();
-
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(0, guiGraphics.guiHeight());
-        guiGraphics.pose().scale(REAL_GAUGE_SIZE * 1f / GAUGE_SIZE, REAL_GAUGE_SIZE * 1f / GAUGE_SIZE);
 
         final LocalPlayer player = Minecraft.getInstance().player;
         final int currentRidingCar = Mth.clamp(
@@ -53,6 +49,7 @@ public class VirtualDriveOverlay {
                 0, train.trainCars - 1);
         if (currentRidingCar != (train.isReversed() ? train.trainCars - 1 : 0)) {
             guiGraphics.text(font, Text.translatable("gui.mtrsteamloco.drive.not_in_cab"), PADDING, -PADDING - 10, 0xFFFFA500);
+            guiGraphics.pose().popMatrix();
             return;
         }
 
@@ -86,22 +83,21 @@ public class VirtualDriveOverlay {
 
         // HMI painting
         Identifier hmiTex = Main.id("textures/gui/drive_hmi.png");
-        BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
         // Gauge back
-        blit(hmiTex, guiGraphics, bufferBuilder,
+        blit(hmiTex, guiGraphics,
                 PADDING + 1, -GAUGE_SIZE - PADDING + 1,
                 GAUGE_SIZE / 4, GAUGE_SIZE,
                 0.125f, 0.5f, 0.125f, 0.5f, 0x88222222);
-        blit(hmiTex, guiGraphics, bufferBuilder,
+        blit(hmiTex, guiGraphics,
                 PADDING, -GAUGE_SIZE - PADDING,
                 GAUGE_SIZE / 4, GAUGE_SIZE,
                 0.125f, 0.5f, 0.125f, 0.5f, 0xFFFFFFFF);
-        blit(hmiTex, guiGraphics, bufferBuilder,
+        blit(hmiTex, guiGraphics,
                 PADDING + GAUGE_SIZE / 4, -GAUGE_SIZE - PADDING,
                 GAUGE_SIZE, GAUGE_SIZE,
                 0f, 0f, 0.5f, 0.5f, 0xFF222222);
-        blit(hmiTex, guiGraphics, bufferBuilder,
+        blit(hmiTex, guiGraphics,
                 PADDING + GAUGE_SIZE / 4, -GAUGE_SIZE - PADDING,
                 GAUGE_SIZE, GAUGE_SIZE,
                 0.5f, 0f, 0.5f, 0.5f, 0xffffffff);
@@ -114,7 +110,7 @@ public class VirtualDriveOverlay {
                 PADDING + GAUGE_SIZE / 4f + GAUGE_SIZE / 2f, -GAUGE_SIZE / 2f - PADDING
         );
         int needleXOff = PADDING + GAUGE_SIZE / 4 + (GAUGE_SIZE * 3 / 8);
-        blit(hmiTex, guiGraphics, bufferBuilder,
+        blit(hmiTex, guiGraphics,
                 needleXOff, -GAUGE_SIZE - PADDING,
                 GAUGE_SIZE / 4, GAUGE_SIZE,
                 0f, 0.5f, 0.125f, 0.5f, 0xffffffff);
@@ -126,7 +122,7 @@ public class VirtualDriveOverlay {
                     (float)Math.toRadians(-140 + Mth.clamp(Math.round(train.atpYellowSpeed * 3.6f * 20 * 3) / 3f, 0, GAUGE_MAX_SPEED) / GAUGE_MAX_SPEED * 280),
                     PADDING + GAUGE_SIZE / 4f + GAUGE_SIZE / 2f, -GAUGE_SIZE / 2f - PADDING
             );
-            blit(hmiTex, guiGraphics, bufferBuilder,
+            blit(hmiTex, guiGraphics,
                     needleXOff, -GAUGE_SIZE - PADDING,
                     GAUGE_SIZE / 4, GAUGE_SIZE,
                     0.375f, 0.5f, 0.125f, 0.5f, 0xffffffff);
@@ -137,7 +133,7 @@ public class VirtualDriveOverlay {
                     (float)Math.toRadians(-140 + Mth.clamp(Math.round(train.atpRedSpeed * 3.6f * 20 * 3) / 3f, 0, GAUGE_MAX_SPEED) / GAUGE_MAX_SPEED * 280),
                     PADDING + GAUGE_SIZE / 4f + GAUGE_SIZE / 2f, -GAUGE_SIZE / 2f - PADDING
             );
-            blit(hmiTex, guiGraphics, bufferBuilder,
+            blit(hmiTex, guiGraphics,
                     needleXOff, -GAUGE_SIZE - PADDING,
                     GAUGE_SIZE / 4, GAUGE_SIZE,
                     0.25f, 0.5f, 0.125f, 0.5f, 0xffffffff);
@@ -151,20 +147,20 @@ public class VirtualDriveOverlay {
         guiGraphics.pose().scale(infoIconScale, infoIconScale);
         // Stop accuracy
         if (platformDistance < train.spacing * train.trainCars + 10) {
-            blit(hmiTex, guiGraphics, bufferBuilder, 2, 2, 64, 64, 0.5f, 0.5f, 0.125f, 0.125f, 0x88222222);
+            blit(hmiTex, guiGraphics, 2, 2, 64, 64, 0.5f, 0.5f, 0.125f, 0.125f, 0x88222222);
             if (Math.abs(platformDistance) < 1) {
-               blit(hmiTex, guiGraphics, bufferBuilder, 0, 0, 64, 64, 0.5f, 0.5f, 0.125f, 0.125f, 0xffffffff);
+               blit(hmiTex, guiGraphics, 0, 0, 64, 64, 0.5f, 0.5f, 0.125f, 0.125f, 0xffffffff);
            } else {
-               blit(hmiTex, guiGraphics, bufferBuilder, 0, 0, 64, 64, 0.625f, 0.5f, 0.125f, 0.125f, 0xffffffff);
+               blit(hmiTex, guiGraphics, 0, 0, 64, 64, 0.625f, 0.5f, 0.125f, 0.125f, 0xffffffff);
            }
         }
         // Emergency states
         if (train.atpEmergencyBrake) {
-            blit(hmiTex, guiGraphics, bufferBuilder, 2, 64 + 2, 64, 64, 0.625f, 0.625f, 0.125f, 0.125f, 0x88222222);
-            blit(hmiTex, guiGraphics, bufferBuilder, 0, 64, 64, 64, 0.625f, 0.625f, 0.125f, 0.125f, 0xffffffff);
+            blit(hmiTex, guiGraphics, 2, 64 + 2, 64, 64, 0.625f, 0.625f, 0.125f, 0.125f, 0x88222222);
+            blit(hmiTex, guiGraphics, 0, 64, 64, 64, 0.625f, 0.625f, 0.125f, 0.125f, 0xffffffff);
         } else if (train.getDoorValue() > 0) {
-            blit(hmiTex, guiGraphics, bufferBuilder, 2, 64 + 2, 64, 64, 0.5f, 0.625f, 0.125f, 0.125f, 0x88222222);
-            blit(hmiTex, guiGraphics, bufferBuilder, 0, 64, 64, 64, 0.5f, 0.625f, 0.125f, 0.125f, 0xffffffff);
+            blit(hmiTex, guiGraphics, 2, 64 + 2, 64, 64, 0.5f, 0.625f, 0.125f, 0.125f, 0x88222222);
+            blit(hmiTex, guiGraphics, 0, 64, 64, 64, 0.5f, 0.625f, 0.125f, 0.125f, 0xffffffff);
         }
         guiGraphics.pose().popMatrix();
 
@@ -216,8 +212,8 @@ public class VirtualDriveOverlay {
                         targetColor = 0xFFFFA500;
                     }
                 }
-                fill(hmiTex, guiGraphics, x1 + 1,  y1 + 1,  x2 + 1,  y2 + 1, 0x88222222);
-                fill(hmiTex, guiGraphics, x1, y1, x2, y2, targetColor);
+                fill(guiGraphics, x1 + 1,  y1 + 1,  x2 + 1,  y2 + 1, 0x88222222);
+                fill(guiGraphics, x1, y1, x2, y2, targetColor);
             }
         }
 
@@ -280,12 +276,12 @@ public class VirtualDriveOverlay {
         guiGraphics.pose().popMatrix();
     }
 
-    private static void blit(Identifier id, GuiGraphicsExtractor guiGraphics, BufferBuilder bufferBuilder, int x1, int y1, int width, int height, float minU, float minV, float deltaU, float deltaV, int color) {
+    private static void blit(Identifier id, GuiGraphicsExtractor guiGraphics, int x1, int y1, int width, int height, float minU, float minV, float deltaU, float deltaV, int color) {
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, id, x1, y1, (int)(minU*512), (int)(minV*512), width, height, (int)(deltaU*512), (int)(deltaV*512), 512, 512, color);
     }
 
-    private static void fill(Identifier id, GuiGraphicsExtractor guiGraphics, float minX, float minY, float maxX, float maxY, int color) {
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, id, (int)minX, (int)minY, 0, 0, (int)maxX, (int)maxY, (int)maxX, (int)maxY, color);
+    private static void fill(GuiGraphicsExtractor guiGraphics, float minX, float minY, float maxX, float maxY, int color) {
+        guiGraphics.fill((int)minX, (int)minY, (int)maxX, (int)maxY, color);
     }
 
     private static final float KEY_DELAY_BEFORE_REPEAT = 6f;
