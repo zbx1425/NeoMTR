@@ -49,8 +49,8 @@ public class RegistryClientImpl {
 		RegistryUtilitiesClient.registerPlayerJoinEvent(consumer);
 	}
 
-	public static void registerTickEvent(Consumer<Minecraft> consumer) {
-		RegistryUtilitiesClient.registerClientTickEvent(consumer);
+	public static void registerPostTickEvent(Consumer<Minecraft> consumer) {
+		RegistryUtilitiesClient.registerClientPostTickEvent(consumer);
 	}
 
 	public static void sendToServer(Identifier id, FriendlyByteBuf packet) {
@@ -90,8 +90,8 @@ public class RegistryClientImpl {
 			ClientLifecycleEvent.CLIENT_STOPPING.register(consumer::accept);
 		}
 
-		static void registerClientTickEvent(Consumer<Minecraft> consumer) {
-			ClientTickEvent.CLIENT_PRE.register(consumer::accept);
+		static void registerClientPostTickEvent(Consumer<Minecraft> consumer) {
+			ClientTickEvent.CLIENT_POST.register(consumer::accept);
 		}
 	}
 }

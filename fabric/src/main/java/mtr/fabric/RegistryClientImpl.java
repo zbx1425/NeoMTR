@@ -66,8 +66,8 @@ public class RegistryClientImpl {
 		});
 	}
 
-	public static void registerTickEvent(Consumer<Minecraft> consumer) {
-		ClientTickEvents.START_CLIENT_TICK.register(consumer::accept);
+	public static void registerPostTickEvent(Consumer<Minecraft> consumer) {
+		ClientTickEvents.END_CLIENT_TICK.register(consumer::accept);
 	}
 
 	public static void sendToServer(Identifier id, FriendlyByteBuf packet) {

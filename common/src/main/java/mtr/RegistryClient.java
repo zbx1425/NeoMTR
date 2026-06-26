@@ -4,6 +4,7 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import mtr.mappings.BlockEntityMapper;
 import mtr.mappings.BlockEntityRendererMapper;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
@@ -36,6 +37,11 @@ public class RegistryClient {
 
 	@ExpectPlatform
 	public static void registerNetworkReceiver(Identifier resourceLocation, Consumer<FriendlyByteBuf> consumer) {
+		throw new AssertionError();
+	}
+
+	@ExpectPlatform
+	public static void registerPostTickEvent(Consumer<Minecraft> consumer) {
 		throw new AssertionError();
 	}
 

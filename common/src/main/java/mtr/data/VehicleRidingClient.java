@@ -1,10 +1,10 @@
 package mtr.data;
 
 import io.netty.buffer.Unpooled;
-import mtr.MTR;
 import mtr.MTRClient;
 import mtr.RegistryClient;
 import mtr.client.ClientData;
+import mtr.client.ViewBobbingHelper;
 import mtr.util.Utilities;
 import mtr.render.TrainRendererBase;
 import net.minecraft.client.Minecraft;
@@ -12,7 +12,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
@@ -112,6 +111,9 @@ public class VehicleRidingClient {
 		}
 	}
 
+	private float lastFramePercentageX;
+	private float lastFramePercentageZ;
+
 	public void moveSelf(long id, UUID uuid, double length, int width, float yaw, int percentageOffset, int maxPercentage, boolean doorLeftOpen, boolean doorRightOpen, boolean noGangwayConnection, float deltaTime) {
 		final LocalPlayer clientPlayer = Minecraft.getInstance().player;
 		if (clientPlayer == null) {
@@ -129,6 +131,12 @@ public class VehicleRidingClient {
 			final float tempPercentageZ = riderRatioPos.get(uuid).z + (length == 0 ? 0 : (float) movement.z / (float) length);
 			newPercentageX = Mth.clamp(tempPercentageX, doorLeftOpen ? -3 : 0, doorRightOpen ? 4 : 1);
 			newPercentageZ = Mth.clamp(tempPercentageZ, (noGangwayConnection ? percentageOffset + 0.05F : 0) + 0.01F, (noGangwayConnection ? percentageOffset + 0.95F : maxPercentage) - 0.01F);
+
+			final Vec3 finalDeltaMovement = new Vec3((newPercentageX - lastFramePercentageX) * width, 0, (newPercentageZ - lastFramePercentageZ) * length);
+			ViewBobbingHelper.addMovement(finalDeltaMovement);
+
+			lastFramePercentageX = newPercentageX;
+			lastFramePercentageZ = newPercentageZ;
 
 			if (previousInterval != interval && (newPercentageX != oldPercentageX || newPercentageZ != oldPercentageZ)) {
 				final FriendlyByteBuf packet = new FriendlyByteBuf(Unpooled.buffer());
