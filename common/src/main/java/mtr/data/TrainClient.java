@@ -259,8 +259,9 @@ public class TrainClient extends Train implements IGui {
 
 	@Override
 	protected void calculateCar(Level world, Vec3[] positions, int index, int dwellTicks, boolean isRendering, CalculateCarCallback calculateCarCallback) {
-		final Vec3 pos1 = positions[index * 2];
-		final Vec3 pos2 = positions[index * 2 + 1];
+		// TODO: is positions == null proper fix?
+		final Vec3 pos1 = positions == null ? null : positions[index * 2];
+		final Vec3 pos2 = positions == null ? null : positions[index * 2 + 1];
 
 		if (pos1 != null && pos2 != null) {
 			double centerOffset = index * spacing + spacing / 2.0;
