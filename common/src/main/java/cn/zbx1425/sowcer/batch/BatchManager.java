@@ -15,58 +15,58 @@ public class BatchManager {
     public HashMap<BatchTuple, Queue<RenderCall>> batches = new HashMap<>();
 
     public void enqueue(VertArrays model, EnqueueProp enqueueProp, ShaderProp shaderProp) {
-        for (VertArray vertArray : model.meshList) {
-            enqueue(vertArray, enqueueProp, shaderProp);
-        }
+//        for (VertArray vertArray : model.meshList) {
+//            enqueue(vertArray, enqueueProp, shaderProp);
+//        }
     }
 
     public void enqueue(VertArray vertArray, EnqueueProp enqueueProp, ShaderProp shaderProp) {
-        Queue<RenderCall> queue = batches.computeIfAbsent(
-                new BatchTuple(vertArray.materialProp, shaderProp),
-                (key) -> new LinkedList<>()
-        );
-        queue.add(new RenderCall(vertArray, enqueueProp));
+//        Queue<RenderCall> queue = batches.computeIfAbsent(
+//                new BatchTuple(vertArray.materialProp, shaderProp),
+//                (key) -> new LinkedList<>()
+//        );
+//        queue.add(new RenderCall(vertArray, enqueueProp));
     }
 
     public void drawAll(ShaderManager shaderManager, DrawContext drawContext) {
-        drawContext.recordBatches(batches.size());
-
-        pushDebugGroup("SOWCER");
-        // shaderManager.unbindShader();
-
-        for (Map.Entry<BatchTuple, Queue<RenderCall>> entry : batches.entrySet()) {
-            if (entry.getKey().materialProp.translucent || entry.getKey().materialProp.cutoutHack) continue;
-            drawBatch(shaderManager, entry, drawContext);
-        }
-
-        for (Map.Entry<BatchTuple, Queue<RenderCall>> entry : batches.entrySet()) {
-            if (!entry.getKey().materialProp.cutoutHack) continue;
-            drawBatch(shaderManager, entry, drawContext);
-        }
-
-        for (Map.Entry<BatchTuple, Queue<RenderCall>> entry : batches.entrySet()) {
-            if (!entry.getKey().materialProp.translucent) continue;
-            drawBatch(shaderManager, entry, drawContext);
-        }
-
-        popDebugGroup();
-
-        batches.clear();
+//        drawContext.recordBatches(batches.size());
+//
+//        pushDebugGroup("SOWCER");
+//        // shaderManager.unbindShader();
+//
+//        for (Map.Entry<BatchTuple, Queue<RenderCall>> entry : batches.entrySet()) {
+//            if (entry.getKey().materialProp.translucent || entry.getKey().materialProp.cutoutHack) continue;
+//            drawBatch(shaderManager, entry, drawContext);
+//        }
+//
+//        for (Map.Entry<BatchTuple, Queue<RenderCall>> entry : batches.entrySet()) {
+//            if (!entry.getKey().materialProp.cutoutHack) continue;
+//            drawBatch(shaderManager, entry, drawContext);
+//        }
+//
+//        for (Map.Entry<BatchTuple, Queue<RenderCall>> entry : batches.entrySet()) {
+//            if (!entry.getKey().materialProp.translucent) continue;
+//            drawBatch(shaderManager, entry, drawContext);
+//        }
+//
+//        popDebugGroup();
+//
+//        batches.clear();
     }
 
     private void drawBatch(ShaderManager shaderManager, Map.Entry<BatchTuple, Queue<RenderCall>> entry, DrawContext drawContext) {
-        MaterialProp materialProp = entry.getKey().materialProp;
-        ShaderProp shaderProp = entry.getKey().shaderProp;
-        pushDebugGroup(materialProp.toString());
-        shaderManager.setupShaderBatchState(materialProp, shaderProp);
-        Queue<RenderCall> queue = entry.getValue();
-        while (!queue.isEmpty()) {
-            RenderCall renderCall = queue.poll();
-            renderCall.draw(shaderProp);
-            drawContext.recordDrawCall(renderCall);
-        }
-        shaderManager.cleanupShaderBatchState(materialProp, shaderProp);
-        popDebugGroup();
+//        MaterialProp materialProp = entry.getKey().materialProp;
+//        ShaderProp shaderProp = entry.getKey().shaderProp;
+//        pushDebugGroup(materialProp.toString());
+//        shaderManager.setupShaderBatchState(materialProp, shaderProp);
+//        Queue<RenderCall> queue = entry.getValue();
+//        while (!queue.isEmpty()) {
+//            RenderCall renderCall = queue.poll();
+//            renderCall.draw(shaderProp);
+//            drawContext.recordDrawCall(renderCall);
+//        }
+//        shaderManager.cleanupShaderBatchState(materialProp, shaderProp);
+//        popDebugGroup();
     }
 
     private static class BatchTuple {

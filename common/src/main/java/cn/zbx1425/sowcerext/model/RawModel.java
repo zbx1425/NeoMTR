@@ -2,12 +2,14 @@ package cn.zbx1425.sowcerext.model;
 
 import cn.zbx1425.sowcer.batch.MaterialProp;
 import cn.zbx1425.sowcer.model.Model;
+import cn.zbx1425.sowcer.util.AttrUtil;
 import cn.zbx1425.sowcer.util.DrawContext;
 import cn.zbx1425.sowcer.vertex.VertAttrMapping;
 import cn.zbx1425.sowcer.math.Matrix4f;
 import cn.zbx1425.sowcer.math.Vector3f;
 import cn.zbx1425.sowcer.vertex.VertAttrType;
 import cn.zbx1425.sowcerext.model.integration.BufferSourceProxy;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
 
 import java.io.DataInputStream;
@@ -182,30 +184,29 @@ public class RawModel {
     }
 
     public void writeBlazeBuffer(BufferSourceProxy vertexConsumers, Matrix4f matrix, int light, DrawContext drawContext) {
-        // TODO
         if (meshList.isEmpty()) return;
-//        for (Map.Entry<MaterialProp, RawMesh> entry : meshList.entrySet()) {
-//            RenderType renderType = entry.getKey().getBlazeRenderType();
-//            int resultColor = entry.getKey().attrState.color != null ? entry.getKey().attrState.color : 0xFFFFFFFF;
-//            int resultLight = entry.getKey().attrState.lightmapUV != null ? entry.getKey().attrState.lightmapUV : light;
-//
-//            /*
-//            if (Objects.equals(entry.getKey().shaderName, "rendertype_entity_translucent_cull") && (resultColor & 0xFF) != 0xFF) {
-//                // TEMP WORKAROUND: Depth sorting breaks
-//                // ... I totally forgot what I thought about at 7/29, what leaded to "Depth sorting breaks"?
-//                continue;
-//            }
-//            */
-//
-//            Matrix4f resultMatrix = matrix;
-//            if (entry.getKey().billboard) {
-//                resultMatrix = matrix.copy();
-//                AttrUtil.zeroRotation(resultMatrix);
-//            }
-//
-//            entry.getValue().writeBlazeBuffer(vertexConsumers.getBuffer(renderType, entry.getKey().translucent),
-//                    resultMatrix, resultColor, resultLight, drawContext);
-//        }
+        for (Map.Entry<MaterialProp, RawMesh> entry : meshList.entrySet()) {
+            RenderType renderType = entry.getKey().getBlazeRenderType();
+            int resultColor = entry.getKey().attrState.color != null ? entry.getKey().attrState.color : 0xFFFFFFFF;
+            int resultLight = entry.getKey().attrState.lightmapUV != null ? entry.getKey().attrState.lightmapUV : light;
+
+            /*
+            if (Objects.equals(entry.getKey().shaderName, "rendertype_entity_translucent_cull") && (resultColor & 0xFF) != 0xFF) {
+                // TEMP WORKAROUND: Depth sorting breaks
+                // ... I totally forgot what I thought about at 7/29, what leaded to "Depth sorting breaks"?
+                continue;
+            }
+            */
+
+            Matrix4f resultMatrix = matrix;
+            if (entry.getKey().billboard) {
+                resultMatrix = matrix.copy();
+                AttrUtil.zeroRotation(resultMatrix);
+            }
+
+            entry.getValue().writeBlazeBuffer(vertexConsumers.getBuffer(renderType, entry.getKey().translucent),
+                    resultMatrix, resultColor, resultLight, drawContext);
+        }
     }
 
     public RawModel copy() {

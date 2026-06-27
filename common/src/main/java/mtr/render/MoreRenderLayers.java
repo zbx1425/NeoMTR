@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public class MoreRenderLayers {
 
-	private static final Function<Identifier, RenderType> ENTITY_TRANSLUCENT_CULL = Util.memoize((texture) -> {
+	public static final Function<Identifier, RenderType> ENTITY_TRANSLUCENT_CULL = Util.memoize((texture) -> {
 		RenderSetup state = RenderSetup.builder(RenderPipelines.ENTITY_TRANSLUCENT_CULL)
 				.withTexture("Sampler0", texture)
 				.useLightmap()

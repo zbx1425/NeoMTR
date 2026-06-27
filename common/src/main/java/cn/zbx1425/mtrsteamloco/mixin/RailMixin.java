@@ -129,7 +129,7 @@ public abstract class RailMixin implements RailExtraSupplier {
     @Inject(method = "writePacket", at = @At("TAIL"))
     private void toPacket(FriendlyByteBuf packet, CallbackInfo ci) {
         if (!Main.enableRegistry) return;
-        if(mtrnte$repeaters == null) { // TODO: This shouldn't be null...
+        if(mtrnte$repeaters == null) { // FIXME: This shouldn't be null...
             mtrnte$repeaters = new ArrayList<>(Collections.singletonList(new RailModelRepeater()));
         }
         packet.writeFloat(verticalCurveRadius);

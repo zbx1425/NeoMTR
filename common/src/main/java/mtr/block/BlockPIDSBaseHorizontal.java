@@ -83,6 +83,7 @@ public abstract class BlockPIDSBaseHorizontal extends BlockDirectionalMapper imp
 		}
 	}
 
+// FIXME
 //	@Override
 //	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		// TODO Make it work (1.21.1 checks BlockEntityType at given BlockPos)

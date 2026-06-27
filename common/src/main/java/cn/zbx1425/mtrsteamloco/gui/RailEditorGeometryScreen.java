@@ -632,7 +632,7 @@ public class RailEditorGeometryScreen extends MTRScreen {
     private static void drawLine(GuiGraphicsExtractor guiGraphics, int cx, int cy, float angleDeg, int rStart, int rEnd, int thickness, int color) {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(cx, cy);
-        // TODO: Check if this is correct
+        // FIXME: Check if this is correct
         guiGraphics.pose().rotate(angleDeg);
 //        guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(angleDeg));
         guiGraphics.fill(rStart, -thickness / 2, rEnd, -thickness / 2 + thickness, color);
@@ -647,8 +647,8 @@ public class RailEditorGeometryScreen extends MTRScreen {
         float angleDeg = (float) Math.toDegrees(Math.atan2(dy, dx));
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(x1, y1);
+        // FIXME: Check if this is correct
         guiGraphics.pose().rotate(angleDeg);
-        // TODO: Check if this is correct
 //        guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(angleDeg));
         guiGraphics.fill(0, -thickness / 2, (int) Math.ceil(len), -thickness / 2 + thickness, color);
         guiGraphics.pose().popMatrix();

@@ -393,10 +393,6 @@ public class RenderPIDS<T extends BlockEntityMapper> extends BlockEntityRenderer
 							}
 
 							submitNodeCollector.submitText(poseStack, 0, 0, Text.literal(destinationString).getVisualOrderText(), false, Font.DisplayMode.NORMAL, 0xF000F0, seconds > 0 ? textColor : firstTrainColor, 0, 0);
-
-							// TODO: Why does this render twice?
-//							textRenderer.drawInBatch(destinationString, 0, 0, seconds > 0 ? textColor : firstTrainColor, false, poseStack.last().pose(), vertexConsumers, Font.DisplayMode.NORMAL, 0, 0xF000F0);
-//							textRenderer.drawInBatch(destinationString, 0, 0, seconds > 0 ? textColor : firstTrainColor, false, poseStack.last().pose(), vertexConsumers, Font.DisplayMode.NORMAL, 0, 0xF000F0);
 							matrixStackHolder.pop();
 
 							// Render arrival time
@@ -424,7 +420,6 @@ public class RenderPIDS<T extends BlockEntityMapper> extends BlockEntityRenderer
 					}
 				}
 			} catch (Exception e) {
-				// TODO: Hard Fail?
 				e.printStackTrace();
 			}
 

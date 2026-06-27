@@ -1,5 +1,7 @@
 package cn.zbx1425.mtrsteamloco;
 
+import cn.zbx1425.mtrsteamloco.data.EyeCandyRegistry;
+import cn.zbx1425.mtrsteamloco.data.RailModelRegistry;
 import cn.zbx1425.mtrsteamloco.data.ScriptedCustomTrains;
 import cn.zbx1425.mtrsteamloco.mixin.TrainClientAccessor;
 import cn.zbx1425.mtrsteamloco.render.scripting.AbstractScriptContext;
@@ -40,12 +42,10 @@ public class CustomResources {
     }
 
     public static void init(ResourceManager resourceManager) {
-        if(true) return; // TODO: Rendering WIP
-
         Main.LOGGER.info("MTR-NTE has started loading custom resources.");
 
-//        EyeCandyRegistry.reload(resourceManager);
-//        RailModelRegistry.reload(resourceManager);
+        EyeCandyRegistry.reload(resourceManager);
+        RailModelRegistry.reload(resourceManager);
 
         ScriptHolder.resetRunner();
         ScriptResourceUtil.init(resourceManager);

@@ -13,7 +13,7 @@ public class MinecraftMixin {
 
     @Inject(method = "renderFrame", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GameRenderer;render(Lnet/minecraft/client/DeltaTracker;Z)V"))
     void renderFramePre(CallbackInfo ci) {
-        MTRClient.incrementGameTick();
+        MTRClient.onNewRenderFrame();
         RenderTrains.simulate();
     }
 }

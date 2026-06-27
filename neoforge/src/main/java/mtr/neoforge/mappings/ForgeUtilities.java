@@ -149,7 +149,7 @@ public class ForgeUtilities {
 
 		@SubscribeEvent
 		public static void onRenderFrame(RenderFrameEvent.Post event) {
-			mtr.MTRClient.incrementGameTick();
+			mtr.MTRClient.onNewRenderFrame();
 			mtr.render.RenderTrains.simulate();
 		}
 	}

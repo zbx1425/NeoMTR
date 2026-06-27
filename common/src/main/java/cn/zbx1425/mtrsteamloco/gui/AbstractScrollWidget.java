@@ -105,7 +105,7 @@ public abstract class AbstractScrollWidget extends AbstractWidget {
         int y1 = Math.max(this.getY(), (int)this.offset * (this.height - h) / this.getMaxOffset() + this.getY());
         int y2 = y1 + h;
 
-        // TODO:
+        // FIXME:
 //        RenderSystem.setShader(GameRenderer::getPositionColorShader);
 //        MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
 //        Tesselator tesselator = Tesselator.getInstance();

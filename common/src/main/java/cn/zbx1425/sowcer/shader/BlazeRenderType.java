@@ -1,6 +1,8 @@
 package cn.zbx1425.sowcer.shader;
 
+import mtr.render.MoreRenderLayers;
 import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -27,16 +29,16 @@ public class BlazeRenderType {
 
     public static RenderType entityCutout(Identifier resourceLocation) {
 //        return ENTITY_CUTOUT.apply(resourceLocation);
-        throw new NotImplementedException();
+        return RenderTypes.entityCutout(resourceLocation);
     }
 
     public static RenderType entityTranslucentCull(Identifier resourceLocation) {
 //        return ENTITY_TRANSLUCENT_CULL.apply(resourceLocation);
-        throw new NotImplementedException();
+        return MoreRenderLayers.ENTITY_TRANSLUCENT_CULL.apply(resourceLocation);
     }
 
     public static RenderType beaconBeam(Identifier resourceLocation, boolean bl) {
 //        return BEACON_BEAM.apply(resourceLocation, bl);
-        throw new NotImplementedException();
+        return RenderTypes.beaconBeam(resourceLocation, bl);
     }
 }

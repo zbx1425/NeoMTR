@@ -45,7 +45,7 @@ public class RenderTrains implements IGui {
 	public static int maxTrainRenderDistance;
 	public static ResourcePackCreatorProperties creatorProperties = new ResourcePackCreatorProperties();
 
-	private static double lastSimulatedTick;
+	private static long lastFrameCounter;
 	private static float newLastFrameDuration;
 
 	private static int prevPlatformCount;
@@ -90,16 +90,16 @@ public class RenderTrains implements IGui {
 	public static void simulate() {
 		final Minecraft client = Minecraft.getInstance();
 		final LocalPlayer player = client.player;
-		final Level world = client.level;
-		if (world == null) return;
+		final Level level = client.level;
+		if (level == null) return;
 		final float lastFrameDuration = MTRClient.getLastFrameDuration();
-		newLastFrameDuration = client.isPaused() || lastSimulatedTick == MTRClient.getGameTick() ? 0 : lastFrameDuration;
+		newLastFrameDuration = lastFrameCounter == MTRClient.getGameTick() ? 0 : lastFrameDuration;
 		final boolean useAnnouncements = Config.useTTSAnnouncements() || Config.showAnnouncementMessages();
 
 		queuedTasks.forEach(Runnable::run);
 		queuedTasks.clear();
 
-		ClientData.TRAINS.forEach(train -> train.simulateTrain(world, newLastFrameDuration, (speed, stopIndex, routeIds) -> {
+		ClientData.TRAINS.forEach(train -> train.simulateTrain(level, newLastFrameDuration, (speed, stopIndex, routeIds) -> {
 			final Route thisRoute = train.getThisRoute();
 			final Station thisStation = train.getThisStation();
 			final Station nextStation = train.getNextStation();
@@ -183,10 +183,10 @@ public class RenderTrains implements IGui {
 			}
 		}));
 
-		ClientData.LIFTS.forEach(lift -> lift.tickClient(world, newLastFrameDuration));
+		ClientData.LIFTS.forEach(lift -> lift.tickClient(level, newLastFrameDuration));
 	}
 
-	public static void render(float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers) {
+	public static void render(float tickDelta, PoseStack poseStack, MultiBufferSource vertexConsumers) {
 		final Minecraft client = Minecraft.getInstance();
 
 		final LocalPlayer player = client.player;
@@ -199,8 +199,8 @@ public class RenderTrains implements IGui {
 		final int renderDistanceChunks = UtilitiesClient.getRenderDistance();
 		maxTrainRenderDistance = renderDistanceChunks * (Config.trainRenderDistanceRatio() + 1);
 
-		matrices.pushPose();
-		TrainRendererBase.setupStaticInfo(matrices, vertexConsumers, tickDelta);
+		poseStack.pushPose();
+		TrainRendererBase.setupStaticInfo(poseStack, vertexConsumers, tickDelta);
 		TrainRendererBase.setBatch(false);
 		ClientData.TRAINS.forEach(train -> train.renderTrain(world, newLastFrameDuration));
 		if (!Config.hideTranslucentParts()) {
@@ -214,21 +214,21 @@ public class RenderTrains implements IGui {
 				return;
 			}
 
-			matrices.translate(x, y, z);
-			UtilitiesClient.rotateXDegrees(matrices, 180);
-			UtilitiesClient.rotateYDegrees(matrices, 180 + lift.facing.toYRot());
+			poseStack.translate(x, y, z);
+			UtilitiesClient.rotateXDegrees(poseStack, 180);
+			UtilitiesClient.rotateYDegrees(poseStack, 180 + lift.facing.toYRot());
 			final int light = LightCoordsUtil.pack(world.getBrightness(LightLayer.BLOCK, posAverage), world.getBrightness(LightLayer.SKY, posAverage));
-			lift.getModel().render(matrices, vertexConsumers, lift, LIFT_TEXTURE, light, frontDoorValue, backDoorValue, false, 0, 1, false, true, false, false, false);
+			lift.getModel().render(poseStack, vertexConsumers, lift, LIFT_TEXTURE, light, frontDoorValue, backDoorValue, false, 0, 1, false, true, false, false, false);
 
 			for (int i = 0; i < (lift.isDoubleSided ? 2 : 1); i++) {
-				UtilitiesClient.rotateYDegrees(matrices, 180);
-				matrices.pushPose();
-				matrices.translate(0.875F, -1.5, lift.liftDepth / 2F - 0.25 - SMALL_OFFSET);
-				renderLiftDisplay(matrices, (renderType, callback) -> callback.accept(matrices.last(), vertexConsumers.getBuffer(renderType)), posAverage, ClientData.DATA_CACHE.requestLiftFloorText(lift.getCurrentFloorBlockPos())[0], lift.getLiftDirection(), 0.1875F, 0.3125F);
-				matrices.popPose();
+				UtilitiesClient.rotateYDegrees(poseStack, 180);
+				poseStack.pushPose();
+				poseStack.translate(0.875F, -1.5, lift.liftDepth / 2F - 0.25 - SMALL_OFFSET);
+				renderLiftDisplay(poseStack, (renderType, callback) -> callback.accept(poseStack.last(), vertexConsumers.getBuffer(renderType)), posAverage, ClientData.DATA_CACHE.requestLiftFloorText(lift.getCurrentFloorBlockPos())[0], lift.getLiftDirection(), 0.1875F, 0.3125F);
+				poseStack.popPose();
 			}
 
-			matrices.popPose();
+			poseStack.popPose();
 		}, newLastFrameDuration));
 
 		final boolean renderColors = isHoldingRailRelated(player);
@@ -252,13 +252,13 @@ public class RenderTrains implements IGui {
 				case TRAIN:
 					renderRailStandard(world, rail, 0.0625F + SMALL_OFFSET, renderColors, 1);
 					if (renderColors) {
-						renderSignalsStandard(world, matrices, vertexConsumers, rail, startPos, endPos);
+						renderSignalsStandard(world, poseStack, vertexConsumers, rail, startPos, endPos);
 					}
 					break;
 				case BOAT:
 					if (renderColors) {
 						renderRailStandard(world, rail, 0.0625F + SMALL_OFFSET, true, 0.5F);
-						renderSignalsStandard(world, matrices, vertexConsumers, rail, startPos, endPos);
+						renderSignalsStandard(world, poseStack, vertexConsumers, rail, startPos, endPos);
 					}
 					break;
 				case CABLE_CAR:
@@ -274,7 +274,7 @@ public class RenderTrains implements IGui {
 							final int r = renderColors ? (rail.railType.color >> 16) & 0xFF : 0;
 							final int g = renderColors ? (rail.railType.color >> 8) & 0xFF : 0;
 							final int b = renderColors ? rail.railType.color & 0xFF : 0;
-							IDrawing.drawLine((renderType, callback) -> callback.accept(matrices.last(), vertexConsumers.getBuffer(renderType)), (float) x1, (float) y1 + 0.5F, (float) z1, (float) x3, (float) y2 + 0.5F, (float) z3, r, g, b);
+							IDrawing.drawLine((renderType, callback) -> callback.accept(poseStack.last(), vertexConsumers.getBuffer(renderType)), (float) x1, (float) y1 + 0.5F, (float) z1, (float) x3, (float) y2 + 0.5F, (float) z3, r, g, b);
 						}, 0, 0);
 					}
 
@@ -282,7 +282,7 @@ public class RenderTrains implements IGui {
 				case AIRPLANE:
 					if (renderColors) {
 						renderRailStandard(world, rail, 0.0625F + SMALL_OFFSET, true, 1);
-						renderSignalsStandard(world, matrices, vertexConsumers, rail, startPos, endPos);
+						renderSignalsStandard(world, poseStack, vertexConsumers, rail, startPos, endPos);
 					} else {
 						renderRailStandard(world, rail, 0.0625F + SMALL_OFFSET, false, 0.25F, "textures/block/iron_block.png", 0.25F, 0, 0.75F, 1);
 					}
@@ -290,10 +290,8 @@ public class RenderTrains implements IGui {
 			}
 		}));
 
-		matrices.popPose();
-
-		// TODO: If paused, these code won't be called
-//		if (lastSimulatedTick != MTRClient.getGameTick()) {
+		poseStack.popPose();
+		if (lastFrameCounter != MTRClient.getFrame()) { // Don't clear if still in the same frame, there might be other passes
 			for (int i = 0; i < TOTAL_RENDER_STAGES; i++) {
 				for (int j = 0; j < QueuedRenderLayer.values().length; j++) {
 					CURRENT_RENDERS.get(i).get(j).clear();
@@ -301,7 +299,7 @@ public class RenderTrains implements IGui {
 					RENDERS.get(i).get(j).clear();
 				}
 			}
-//		}
+		}
 
 		for (int i = 0; i < TOTAL_RENDER_STAGES; i++) {
 			for (int j = 0; j < QueuedRenderLayer.values().length; j++) {
@@ -323,7 +321,7 @@ public class RenderTrains implements IGui {
 							break;
 					}
 					final VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderType);
-					value.forEach(renderer -> renderer.accept(matrices, vertexConsumer));
+					value.forEach(renderer -> renderer.accept(poseStack, vertexConsumer));
 				});
 			}
 		}
@@ -334,7 +332,7 @@ public class RenderTrains implements IGui {
 		prevPlatformCount = ClientData.PLATFORMS.size();
 		prevSidingCount = ClientData.SIDINGS.size();
 		ClientData.DATA_CACHE.clearDataIfNeeded();
-		lastSimulatedTick = MTRClient.getGameTick();
+		lastFrameCounter = MTRClient.getFrame();
 	}
 
 	public static boolean shouldNotRender(BlockPos pos, int maxDistance, Direction facing) {
@@ -386,11 +384,6 @@ public class RenderTrains implements IGui {
 		} else {
 			return true;
 		}
-	}
-
-	@Deprecated // TODO remove later
-	public static void scheduleRender(Identifier resourceLocation, boolean priority, Function<Identifier, RenderType> getVertexConsumer, BiConsumer<PoseStack, VertexConsumer> callback) {
-		scheduleRender(resourceLocation, priority, QueuedRenderLayer.EXTERIOR, callback);
 	}
 
 	public static void scheduleRender(Identifier resourceLocation, boolean priority, QueuedRenderLayer queuedRenderLayer, BiConsumer<PoseStack, VertexConsumer> callback) {

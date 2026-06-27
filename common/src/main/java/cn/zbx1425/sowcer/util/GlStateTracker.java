@@ -2,6 +2,7 @@ package cn.zbx1425.sowcer.util;
 
 //import com.mojang.blaze3d.shaders.ProgramManager;
 //import net.minecraft.client.renderer.ShaderInstance;
+import com.mojang.blaze3d.opengl.GlStateManager;
 import org.lwjgl.opengl.GL33;
 
 public class GlStateTracker {
@@ -36,8 +37,8 @@ public class GlStateTracker {
 //        RenderSystem.setShader(() -> currentShaderInstance);
 
         // Obtain original state from RenderSystem?
-//        RenderSystem.enableCull();
-//        RenderSystem.depthMask(true);
+        GlStateManager._enableCull();
+        GlStateManager._depthMask(true);
 
         isStateProtected = false;
     }

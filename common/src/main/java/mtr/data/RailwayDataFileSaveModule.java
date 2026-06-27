@@ -116,7 +116,7 @@ public class RailwayDataFileSaveModule extends RailwayDataModuleBase {
 	}
 
 	public void autoSave() {
-		// TODO: This shouldn't work, but that's what we had?
+		// FIXME: This shouldn't work, but that's what we had?
 //		if (!dataLoaded) {
 //			dataLoaded = true;
 			canAutoSave = true;
