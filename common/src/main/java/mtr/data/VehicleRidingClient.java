@@ -4,7 +4,7 @@ import io.netty.buffer.Unpooled;
 import mtr.MTRClient;
 import mtr.RegistryClient;
 import mtr.client.ClientData;
-import mtr.client.ViewBobbingHelper;
+import mtr.client.VehiclePlayerMovementTracker;
 import mtr.util.Utilities;
 import mtr.render.TrainRendererBase;
 import net.minecraft.client.Minecraft;
@@ -111,8 +111,7 @@ public class VehicleRidingClient {
 		}
 	}
 
-	private float lastFramePercentageX;
-	private float lastFramePercentageZ;
+	private final Map<UUID, Vec3> oldRiderPercentage = new HashMap<>();
 
 	public void moveSelf(long id, UUID uuid, double length, int width, float yaw, int percentageOffset, int maxPercentage, boolean doorLeftOpen, boolean doorRightOpen, boolean noGangwayConnection, float deltaTime) {
 		final LocalPlayer clientPlayer = Minecraft.getInstance().player;
@@ -132,11 +131,10 @@ public class VehicleRidingClient {
 			newPercentageX = Mth.clamp(tempPercentageX, doorLeftOpen ? -3 : 0, doorRightOpen ? 4 : 1);
 			newPercentageZ = Mth.clamp(tempPercentageZ, (noGangwayConnection ? percentageOffset + 0.05F : 0) + 0.01F, (noGangwayConnection ? percentageOffset + 0.95F : maxPercentage) - 0.01F);
 
-			final Vec3 finalDeltaMovement = new Vec3((newPercentageX - lastFramePercentageX) * width, 0, (newPercentageZ - lastFramePercentageZ) * length);
-			ViewBobbingHelper.addMovement(finalDeltaMovement);
-
-			lastFramePercentageX = newPercentageX;
-			lastFramePercentageZ = newPercentageZ;
+			final Vec3 oldPos = oldRiderPercentage.computeIfAbsent(uuid, k -> new Vec3(newPercentageX, 0, newPercentageZ));
+			oldRiderPercentage.put(uuid, new Vec3(newPercentageX, 0, newPercentageZ));
+			final Vec3 finalDeltaMovement = new Vec3((newPercentageX - oldPos.x()) * width, 0, (newPercentageZ - oldPos.z()) * length);
+			VehiclePlayerMovementTracker.addMovement(uuid, finalDeltaMovement);
 
 			if (previousInterval != interval && (newPercentageX != oldPercentageX || newPercentageZ != oldPercentageZ)) {
 				final FriendlyByteBuf packet = new FriendlyByteBuf(Unpooled.buffer());
@@ -159,6 +157,10 @@ public class VehicleRidingClient {
 				newPercentageX = riderRatioPos.get(uuid).x + (float) (distanceX / manhattanDistance * speedMultiplier / width);
 				newPercentageZ = riderRatioPos.get(uuid).z + (float) (length == 0 ? 0 : distanceZ / manhattanDistance * speedMultiplier / length);
 			}
+			final Vec3 oldPos = oldRiderPercentage.computeIfAbsent(uuid, k -> new Vec3(newPercentageX, 0, newPercentageZ));
+			oldRiderPercentage.put(uuid, new Vec3(newPercentageX, 0, newPercentageZ));
+			final Vec3 finalDeltaMovement = new Vec3((newPercentageX - oldPos.x()) * width, 0, (newPercentageZ - oldPos.z()) * length);
+			VehiclePlayerMovementTracker.addMovement(uuid, finalDeltaMovement);
 		}
 
 		riderRatioPos.get(uuid).set(newPercentageX, 0, newPercentageZ);

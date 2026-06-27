@@ -5,6 +5,7 @@ import mtr.MTRClient;
 import mtr.client.Config;
 import mtr.client.TrainClientRegistry;
 import mtr.client.TrainProperties;
+import mtr.client.VehiclePlayerMovementTracker;
 import mtr.data.RailwayData;
 import mtr.data.TrainClient;
 import mtr.util.UtilitiesClient;
@@ -12,8 +13,14 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.feature.ItemFeatureRenderer;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.feature.ModelPartFeatureRenderer;
+import net.minecraft.client.renderer.feature.NameTagFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -26,13 +33,17 @@ public abstract class TrainRendererBase {
 	protected static Camera camera;
 	protected static Level world;
 	protected static float lastFrameDuration;
+	protected static float lastFramePartialTick;
 	protected static PoseStack matrices;
 	protected static MultiBufferSource vertexConsumers;
 
+	/* 26.1 Custom submission system */
+	private static final SubmitNodeStorage submitNodeStorage = new SubmitNodeStorage();
+	private static final CameraRenderState cameraRenderState = new CameraRenderState();
 	protected static boolean isTranslucentBatch;
 
 	private static EntityRenderDispatcher entityRenderDispatcher;
-	private static LocalPlayer player;
+	private static LocalPlayer clientPlayer;
 
 	public abstract TrainRendererBase createTrainInstance(TrainClient train);
 
@@ -47,33 +58,40 @@ public abstract class TrainRendererBase {
 		if (posAverage == null) {
 			return;
 		}
-		matrices.translate(0, RenderTrains.PLAYER_RENDER_OFFSET, 0);
+
 		final Player renderPlayer = world.getPlayerByUUID(playerId);
-		if (renderPlayer != null && (!playerId.equals(player.getUUID()) || camera.isDetached())) {
-			// TODO: Render the player
-			EntityRenderState playerRenderState = entityRenderDispatcher.extractEntity(renderPlayer, 0);
-			// Maybe this can stop the player from appearing moving and cape from flapping
-//			playerRenderState.walkDistO = renderPlayer.walkDist;
-//			playerRenderState.xCloak = renderPlayer.xCloakO = renderPlayer.xo;
-//			playerRenderState.yCloak = renderPlayer.yCloakO = renderPlayer.yo;
-//			playerRenderState.zCloak = renderPlayer.zCloakO = renderPlayer.zo;
+		if (renderPlayer != null && (!playerId.equals(clientPlayer.getUUID()) || camera.isDetached())) {
+			float speed = (float)Math.min(VehiclePlayerMovementTracker.getDeltaMovementLastTick(playerId).length() * 4f, 1.0F);
+			// TODO: Walk animation
+			//			if(VehiclePlayerMovementTracker.oneTickElapsed()) renderPlayer.walkAnimation.update(speed, 0.6F, renderPlayer.isBaby() ? 3.0F : 0.75F);
 
-			renderPlayer.walkAnimation.setSpeed(0);
+			renderPlayer.walkAnimation.stop();
+			if(Minecraft.getInstance().isPaused()) {
+			}
 
-//			SubmitNodeStorage submitNodeStorage = new SubmitNodeStorage();
-//
-//			CameraRenderState cameraRenderState = new CameraRenderState();
-//			Minecraft.getInstance().gameRenderer.getMainCamera().extractRenderState(cameraRenderState, 0);
-//
-//			entityRenderDispatcher.submit(playerRenderState, cameraRenderState, playerPositionOffset.x, playerPositionOffset.y, playerPositionOffset.z, matrices, submitNodeStorage);
-//
-//			ModelFeatureRenderer modelFeatureRenderer = new ModelFeatureRenderer();
-//			submitNodeStorage.getSubmitsPerOrder().forEach((order, submitNodeCollection) -> {
-//				modelFeatureRenderer.renderSolid(submitNodeCollection);
-//				submitNodeCollection.getModelPartSubmits()
-//			});
+			AvatarRenderState playerRenderState = (AvatarRenderState)entityRenderDispatcher.extractEntity(renderPlayer, lastFramePartialTick);
 
+			// HACK: The renderer is invoked in RenderLevelStageEvent, which is beyond the extraction phase (for now, too much work to move)
+			// So we create our own submission system for entityRenderDispatcher, then immediately invoke it
+			Minecraft.getInstance().gameRenderer.getMainCamera().extractRenderState(cameraRenderState, lastFramePartialTick);
 
+			entityRenderDispatcher.submit(playerRenderState, cameraRenderState, playerPositionOffset.x, playerPositionOffset.y-RenderTrains.PLAYER_RENDER_OFFSET, playerPositionOffset.z, matrices, submitNodeStorage);
+
+			ModelFeatureRenderer modelFeatureRenderer = new ModelFeatureRenderer();
+			ModelPartFeatureRenderer modelPartFeatureRenderer = new ModelPartFeatureRenderer();
+			ItemFeatureRenderer itemRenderer = new ItemFeatureRenderer();
+			NameTagFeatureRenderer nameTagFeatureRenderer = new NameTagFeatureRenderer();
+			submitNodeStorage.getSubmitsPerOrder().forEach((i, collection) -> {
+				modelFeatureRenderer.renderSolid(collection, Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().renderBuffers().outlineBufferSource(), Minecraft.getInstance().renderBuffers().crumblingBufferSource());
+				modelFeatureRenderer.renderTranslucent(collection, Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().renderBuffers().outlineBufferSource(), Minecraft.getInstance().renderBuffers().crumblingBufferSource());
+				modelPartFeatureRenderer.renderSolid(collection, Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().renderBuffers().outlineBufferSource(), Minecraft.getInstance().renderBuffers().crumblingBufferSource());
+				modelPartFeatureRenderer.renderTranslucent(collection, Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().renderBuffers().outlineBufferSource(), Minecraft.getInstance().renderBuffers().crumblingBufferSource());
+				itemRenderer.renderSolid(collection, Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().renderBuffers().outlineBufferSource());
+				itemRenderer.renderTranslucent(collection, Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().renderBuffers().outlineBufferSource());
+				nameTagFeatureRenderer.renderTranslucent(collection, Minecraft.getInstance().renderBuffers().bufferSource(), Minecraft.getInstance().font);
+			});
+			submitNodeStorage.endFrame();
+			submitNodeStorage.clear();
 		}
 		matrices.popPose();
 	}
@@ -83,8 +101,10 @@ public abstract class TrainRendererBase {
 		camera = client.gameRenderer.getMainCamera();
 		entityRenderDispatcher = client.getEntityRenderDispatcher();
 		world = client.level;
-		player = client.player;
+		clientPlayer = client.player;
 		lastFrameDuration = MTRClient.getLastFrameDuration();
+		lastFramePartialTick = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+		if(Minecraft.getInstance().isPaused()) lastFramePartialTick = 0;
 		TrainRendererBase.matrices = matrices;
 		TrainRendererBase.vertexConsumers = vertexConsumers;
 	}

@@ -147,7 +147,6 @@ public class ForgeUtilities {
 			MainClient.drawContext.resetFrameProfiler();
 		}
 
-		// TODO: This was Pre-render before, see if there's side effect introduced...
 		@SubscribeEvent
 		public static void onRenderFrame(RenderFrameEvent.Post event) {
 			mtr.MTRClient.incrementGameTick();

@@ -6,7 +6,7 @@ import mtr.block.*;
 import mtr.client.ClientData;
 import mtr.client.Config;
 import mtr.client.IDrawing;
-import mtr.client.ViewBobbingHelper;
+import mtr.client.VehiclePlayerMovementTracker;
 import mtr.data.*;
 import mtr.packet.IPacket;
 import mtr.packet.PacketTrainDataGuiClient;
@@ -234,7 +234,7 @@ public class MTRClient implements IPacket {
 		Patreon.getPatreonList(Config.PATREON_LIST);
 		Config.refreshProperties();
 
-		RegistryClient.registerPostTickEvent(mc -> ViewBobbingHelper.tick());
+		RegistryClient.registerPostTickEvent(mc -> VehiclePlayerMovementTracker.tick());
 
 		RegistryClient.registerPlayerJoinEvent(player -> {
 			Config.refreshProperties();

@@ -1,7 +1,7 @@
 package mtr.mixin;
 
 import mtr.client.ClientData;
-import mtr.client.ViewBobbingHelper;
+import mtr.client.VehiclePlayerMovementTracker;
 import net.minecraft.client.entity.ClientAvatarState;
 import net.minecraft.client.player.AbstractClientPlayer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,13 +21,14 @@ public abstract class AbstractClientPlayerMixin {
     public void mtr$updateBobFromTrainMovement(CallbackInfo ci) {
         UUID uuid = ((AbstractClientPlayer)(Object)this).getUUID();
         if(ClientData.isRiding(uuid)) {
-            avatarState().updateBob(ViewBobbingHelper.getBobbingFactor());
+            avatarState().updateBob(VehiclePlayerMovementTracker.getBobbingFactor(uuid));
             ci.cancel();
         }
     }
 
     @Inject(method = "addWalkedDistance", at = @At("TAIL"))
     public void mtr$addTrainMovementDistance(float distance, CallbackInfo ci) {
-        avatarState().addWalkDistance(ViewBobbingHelper.getBobDistance());
+        UUID uuid = ((AbstractClientPlayer)(Object)this).getUUID();
+        avatarState().addWalkDistance(VehiclePlayerMovementTracker.getBobDistance(uuid));
     }
 }
