@@ -76,6 +76,8 @@ shadowJar {
 	archiveClassifier = "dev-shadow"
 	relocate "javax.servlet", "mtr.libraries.javax.servlet"
 	relocate "org.eclipse", "mtr.libraries.org.eclipse"
+
+	mergeServiceFiles()
 }
 
 static boolean matchInnerClass(String path, String... names) {
