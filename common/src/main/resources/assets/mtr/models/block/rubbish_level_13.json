@@ -1,6 +1,7 @@
 {
 	"parent": "block/block",
 	"textures": {
+		"particle": "mtr:block/rubbish",
 		"main": "mtr:block/rubbish"
 	},
 	"elements": [

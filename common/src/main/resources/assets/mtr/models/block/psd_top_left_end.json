@@ -1,6 +1,7 @@
 {
 	"parent": "block/block",
 	"textures": {
+		"particle": "mtr:block/psd_top",
 		"main": "mtr:block/psd_top",
 		"light": "mtr:block/light_off"
 	},

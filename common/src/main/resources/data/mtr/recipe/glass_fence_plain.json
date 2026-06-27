@@ -1,24 +1,14 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"ingredients": [
-		{
-			"item": "minecraft:glass_pane"
-		},
-		{
-			"item": "minecraft:glass_pane"
-		},
-		{
-			"item": "minecraft:glass_pane"
-		},
-		{
-			"item": "minecraft:glass_pane"
-		},
-		{
-			"item": "minecraft:iron_bars"
-		}
-	],
-	"result": {
-		"count": 4,
-		"id": "mtr:glass_fence_plain"
-	}
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:glass_pane",
+    "minecraft:glass_pane",
+    "minecraft:glass_pane",
+    "minecraft:glass_pane",
+    "minecraft:iron_bars"
+  ],
+  "result": {
+    "count": 4,
+    "id": "mtr:glass_fence_plain"
+  }
 }

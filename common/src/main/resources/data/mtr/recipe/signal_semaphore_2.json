@@ -1,33 +1,17 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"ingredients": [
-		{
-			"item": "mtr:signal_pole"
-		},
-		{
-			"tag": "c:wood_sticks"
-		},
-		{
-			"tag": "c:green_dyes"
-		},
-		{
-			"tag": "c:green_dyes"
-		},
-		{
-			"tag": "c:red_dyes"
-		},
-		{
-			"tag": "c:red_dyes"
-		},
-		{
-			"tag": "c:redstone_dusts"
-		},
-		{
-			"tag": "c:glowstone_dusts"
-		}
-	],
-	"result": {
-		"count": 2,
-		"id": "mtr:signal_semaphore_2"
-	}
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "mtr:signal_pole",
+    "#c:wood_sticks",
+    "#c:green_dyes",
+    "#c:green_dyes",
+    "#c:red_dyes",
+    "#c:red_dyes",
+    "minecraft:redstone",
+    "minecraft:glowstone_dust"
+  ],
+  "result": {
+    "count": 2,
+    "id": "mtr:signal_semaphore_2"
+  }
 }

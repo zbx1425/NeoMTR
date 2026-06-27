@@ -1,20 +1,16 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"BBB",
-		"BDB",
-		"BBB"
-	],
-	"key": {
-		"B": {
-			"item": "minecraft:smooth_stone"
-		},
-		"D": {
-			"tag": "c:dyes"
-		}
-	},
-	"result": {
-		"count": 8,
-		"id": "mtr:station_color_smooth_stone"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB",
+    "BDB",
+    "BBB"
+  ],
+  "key": {
+    "B": "minecraft:smooth_stone",
+    "D": "#minecraft:dyes"
+  },
+  "result": {
+    "count": 8,
+    "id": "mtr:station_color_smooth_stone"
+  }
 }

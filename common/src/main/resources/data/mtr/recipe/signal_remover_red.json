@@ -1,17 +1,11 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"ingredients": [
-		{
-			"tag": "minecraft:rails"
-		},
-		{
-			"tag": "c:red_dyes"
-		},
-		{
-			"item": "minecraft:lava_bucket"
-		}
-	],
-	"result": {
-		"id": "mtr:signal_remover_red"
-	}
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "#minecraft:rails",
+    "#c:red_dyes",
+    "minecraft:lava_bucket"
+  ],
+  "result": {
+    "id": "mtr:signal_remover_red"
+  }
 }

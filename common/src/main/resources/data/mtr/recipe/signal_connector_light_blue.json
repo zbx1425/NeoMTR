@@ -1,17 +1,11 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"ingredients": [
-		{
-			"tag": "minecraft:rails"
-		},
-		{
-			"tag": "c:light_blue_dyes"
-		},
-		{
-			"tag": "c:redstone_dusts"
-		}
-	],
-	"result": {
-		"id": "mtr:signal_connector_light_blue"
-	}
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "#minecraft:rails",
+    "#c:light_blue_dyes",
+    "minecraft:redstone"
+  ],
+  "result": {
+    "id": "mtr:signal_connector_light_blue"
+  }
 }

@@ -1,17 +1,11 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"ingredients": [
-		{
-			"tag": "c:iron_ingots"
-		},
-		{
-			"tag": "c:iron_nuggets"
-		},
-		{
-			"item": "minecraft:chain"
-		}
-	],
-	"result": {
-		"id": "mtr:driver_key"
-	}
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:iron_ingot",
+    "#c:iron_nuggets",
+    "#minecraft:chains"
+  ],
+  "result": {
+    "id": "mtr:driver_key"
+  }
 }

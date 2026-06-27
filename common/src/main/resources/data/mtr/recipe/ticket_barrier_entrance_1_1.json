@@ -1,22 +1,16 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"RG",
-		"BB"
-	],
-	"key": {
-		"R": {
-			"tag": "c:redstone_dusts"
-		},
-		"G": {
-			"tag": "c:glowstone_dusts"
-		},
-		"B": {
-			"tag": "c:iron_blocks"
-		}
-	},
-	"result": {
-		"count": 32,
-		"id": "mtr:ticket_barrier_entrance_1"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RG",
+    "BB"
+  ],
+  "key": {
+    "R": "minecraft:redstone",
+    "G": "minecraft:glowstone_dust",
+    "B": "#c:iron_blocks"
+  },
+  "result": {
+    "count": 32,
+    "id": "mtr:ticket_barrier_entrance_1"
+  }
 }

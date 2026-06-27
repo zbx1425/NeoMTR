@@ -1,11 +1,9 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"ingredients": [
-		{
-			"item": "mtr:station_name_wall_black"
-		}
-	],
-	"result": {
-		"id": "mtr:station_name_wall"
-	}
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "mtr:station_name_wall_black"
+  ],
+  "result": {
+    "id": "mtr:station_name_wall"
+  }
 }

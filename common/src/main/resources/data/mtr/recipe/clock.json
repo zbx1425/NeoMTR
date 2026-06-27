@@ -1,22 +1,16 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"NIN",
-		"ICI",
-		"NIN"
-	],
-	"key": {
-		"I": {
-			"tag": "c:iron_ingots"
-		},
-		"N": {
-			"tag": "c:iron_nuggets"
-		},
-		"C": {
-			"item": "minecraft:clock"
-		}
-	},
-	"result": {
-		"id": "mtr:clock"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NIN",
+    "ICI",
+    "NIN"
+  ],
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "N": "#c:iron_nuggets",
+    "C": "minecraft:clock"
+  },
+  "result": {
+    "id": "mtr:clock"
+  }
 }

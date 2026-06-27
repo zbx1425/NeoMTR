@@ -1,22 +1,16 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"BRB",
-		"BIB",
-		" R "
-	],
-	"key": {
-		"R": {
-			"tag": "minecraft:rails"
-		},
-		"I": {
-			"tag": "c:iron_ingots"
-		},
-		"B": {
-			"item": "minecraft:obsidian"
-		}
-	},
-	"result": {
-		"id": "mtr:rail_connector_120_one_way"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BRB",
+    "BIB",
+    " R "
+  ],
+  "key": {
+    "R": "#minecraft:rails",
+    "I": "minecraft:iron_ingot",
+    "B": "minecraft:obsidian"
+  },
+  "result": {
+    "id": "mtr:rail_connector_120_one_way"
+  }
 }

@@ -1,22 +1,16 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"BRB",
-		"BIB",
-		"BRB"
-	],
-	"key": {
-		"R": {
-			"tag": "minecraft:rails"
-		},
-		"I": {
-			"tag": "c:iron_ingots"
-		},
-		"B": {
-			"item": "minecraft:emerald_block"
-		}
-	},
-	"result": {
-		"id": "mtr:rail_connector_60"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BRB",
+    "BIB",
+    "BRB"
+  ],
+  "key": {
+    "R": "#minecraft:rails",
+    "I": "minecraft:iron_ingot",
+    "B": "minecraft:emerald_block"
+  },
+  "result": {
+    "id": "mtr:rail_connector_60"
+  }
 }

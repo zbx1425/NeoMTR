@@ -1,20 +1,16 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"BBB",
-		"BDB",
-		"BBB"
-	],
-	"key": {
-		"B": {
-			"item": "minecraft:polished_diorite"
-		},
-		"D": {
-			"tag": "c:dyes"
-		}
-	},
-	"result": {
-		"count": 8,
-		"id": "mtr:station_color_polished_diorite"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB",
+    "BDB",
+    "BBB"
+  ],
+  "key": {
+    "B": "minecraft:polished_diorite",
+    "D": "#minecraft:dyes"
+  },
+  "result": {
+    "count": 8,
+    "id": "mtr:station_color_polished_diorite"
+  }
 }

@@ -1,15 +1,11 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"ingredients": [
-		{
-			"item": "mtr:station_name_wall"
-		},
-		{
-			"item": "mtr:logo"
-		}
-	],
-	"result": {
-		"count": 2,
-		"id": "mtr:station_name_entrance"
-	}
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "mtr:station_name_wall",
+    "mtr:logo"
+  ],
+  "result": {
+    "count": 2,
+    "id": "mtr:station_name_entrance"
+  }
 }

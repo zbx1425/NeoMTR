@@ -1,19 +1,15 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"I",
-		"L",
-		"I"
-	],
-	"key": {
-		"L": {
-			"item": "minecraft:lava_bucket"
-		},
-		"I": {
-			"item": "minecraft:iron_bars"
-		}
-	},
-	"result": {
-		"id": "mtr:lift_buttons_link_remover"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "I",
+    "L",
+    "I"
+  ],
+  "key": {
+    "L": "minecraft:lava_bucket",
+    "I": "minecraft:iron_bars"
+  },
+  "result": {
+    "id": "mtr:lift_buttons_link_remover"
+  }
 }

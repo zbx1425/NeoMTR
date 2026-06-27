@@ -1,15 +1,13 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"BBB"
-	],
-	"key": {
-		"B": {
-			"item": "mtr:marble_blue"
-		}
-	},
-	"result": {
-		"count": 6,
-		"id": "mtr:marble_blue_slab"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB"
+  ],
+  "key": {
+    "B": "mtr:marble_blue"
+  },
+  "result": {
+    "count": 6,
+    "id": "mtr:marble_blue_slab"
+  }
 }

@@ -1,23 +1,17 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		" I ",
-		"RIG",
-		"III"
-	],
-	"key": {
-		"I": {
-			"tag": "c:iron_ingots"
-		},
-		"G": {
-			"tag": "c:glowstone_dusts"
-		},
-		"R": {
-			"tag": "c:redstone_dusts"
-		}
-	},
-	"result": {
-		"count": 32,
-		"id": "mtr:ticket_processor"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " I ",
+    "RIG",
+    "III"
+  ],
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "G": "minecraft:glowstone_dust",
+    "R": "minecraft:redstone"
+  },
+  "result": {
+    "count": 32,
+    "id": "mtr:ticket_processor"
+  }
 }

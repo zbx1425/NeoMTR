@@ -1,22 +1,16 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"BRB",
-		"BIB",
-		"BRB"
-	],
-	"key": {
-		"R": {
-			"tag": "minecraft:rails"
-		},
-		"I": {
-			"tag": "c:iron_ingots"
-		},
-		"B": {
-			"tag": "c:gold_blocks"
-		}
-	},
-	"result": {
-		"id": "mtr:rail_connector_siding"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BRB",
+    "BIB",
+    "BRB"
+  ],
+  "key": {
+    "R": "#minecraft:rails",
+    "I": "minecraft:iron_ingot",
+    "B": "#c:gold_blocks"
+  },
+  "result": {
+    "id": "mtr:rail_connector_siding"
+  }
 }

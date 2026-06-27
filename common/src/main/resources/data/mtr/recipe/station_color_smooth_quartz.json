@@ -1,20 +1,16 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"BBB",
-		"BDB",
-		"BBB"
-	],
-	"key": {
-		"B": {
-			"item": "minecraft:smooth_quartz"
-		},
-		"D": {
-			"tag": "c:dyes"
-		}
-	},
-	"result": {
-		"count": 8,
-		"id": "mtr:station_color_smooth_quartz"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB",
+    "BDB",
+    "BBB"
+  ],
+  "key": {
+    "B": "minecraft:smooth_quartz",
+    "D": "#minecraft:dyes"
+  },
+  "result": {
+    "count": 8,
+    "id": "mtr:station_color_smooth_quartz"
+  }
 }

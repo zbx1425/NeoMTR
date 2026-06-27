@@ -1,17 +1,11 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"ingredients": [
-		{
-			"item": "mtr:railway_sign_6_even"
-		},
-		{
-			"tag": "c:iron_ingots"
-		},
-		{
-			"tag": "minecraft:signs"
-		}
-	],
-	"result": {
-		"id": "mtr:railway_sign_7_even"
-	}
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "mtr:railway_sign_6_even",
+    "minecraft:iron_ingot",
+    "#minecraft:signs"
+  ],
+  "result": {
+    "id": "mtr:railway_sign_7_even"
+  }
 }

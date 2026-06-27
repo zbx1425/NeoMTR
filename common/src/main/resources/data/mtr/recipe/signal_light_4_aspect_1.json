@@ -1,30 +1,16 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"ingredients": [
-		{
-			"item": "minecraft:blackstone"
-		},
-		{
-			"tag": "c:yellow_dyes"
-		},
-		{
-			"tag": "c:green_dyes"
-		},
-		{
-			"tag": "c:yellow_dyes"
-		},
-		{
-			"tag": "c:red_dyes"
-		},
-		{
-			"tag": "c:redstone_dusts"
-		},
-		{
-			"tag": "c:glowstone_dusts"
-		}
-	],
-	"result": {
-		"count": 2,
-		"id": "mtr:signal_light_4_aspect_1"
-	}
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:blackstone",
+    "#c:yellow_dyes",
+    "#c:green_dyes",
+    "#c:yellow_dyes",
+    "#c:red_dyes",
+    "minecraft:redstone",
+    "minecraft:glowstone_dust"
+  ],
+  "result": {
+    "count": 2,
+    "id": "mtr:signal_light_4_aspect_1"
+  }
 }

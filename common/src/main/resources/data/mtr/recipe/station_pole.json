@@ -1,20 +1,16 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"BBB",
-		"BDB",
-		"BBB"
-	],
-	"key": {
-		"B": {
-			"tag": "minecraft:fences"
-		},
-		"D": {
-			"tag": "c:dyes"
-		}
-	},
-	"result": {
-		"count": 8,
-		"id": "mtr:station_pole"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB",
+    "BDB",
+    "BBB"
+  ],
+  "key": {
+    "B": "#minecraft:fences",
+    "D": "#minecraft:dyes"
+  },
+  "result": {
+    "count": 8,
+    "id": "mtr:station_pole"
+  }
 }

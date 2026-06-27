@@ -1,33 +1,17 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"ingredients": [
-		{
-			"item": "minecraft:stone_bricks"
-		},
-		{
-			"item": "minecraft:stone_bricks"
-		},
-		{
-			"item": "minecraft:stone_bricks"
-		},
-		{
-			"item": "minecraft:stone_bricks"
-		},
-		{
-			"item": "minecraft:stone_bricks"
-		},
-		{
-			"tag": "c:white_dyes"
-		},
-		{
-			"tag": "c:yellow_dyes"
-		},
-		{
-			"tag": "c:black_dyes"
-		}
-	],
-	"result": {
-		"count": 6,
-		"id": "mtr:platform_uk_1_indented"
-	}
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:stone_bricks",
+    "minecraft:stone_bricks",
+    "minecraft:stone_bricks",
+    "minecraft:stone_bricks",
+    "minecraft:stone_bricks",
+    "#c:white_dyes",
+    "#c:yellow_dyes",
+    "#c:black_dyes"
+  ],
+  "result": {
+    "count": 6,
+    "id": "mtr:platform_uk_1_indented"
+  }
 }

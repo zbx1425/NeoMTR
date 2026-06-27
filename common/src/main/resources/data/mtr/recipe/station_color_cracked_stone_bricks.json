@@ -1,20 +1,16 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"BBB",
-		"BDB",
-		"BBB"
-	],
-	"key": {
-		"B": {
-			"item": "minecraft:cracked_stone_bricks"
-		},
-		"D": {
-			"tag": "c:dyes"
-		}
-	},
-	"result": {
-		"count": 8,
-		"id": "mtr:station_color_cracked_stone_bricks"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB",
+    "BDB",
+    "BBB"
+  ],
+  "key": {
+    "B": "minecraft:cracked_stone_bricks",
+    "D": "#minecraft:dyes"
+  },
+  "result": {
+    "count": 8,
+    "id": "mtr:station_color_cracked_stone_bricks"
+  }
 }

@@ -1,15 +1,13 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"BBB"
-	],
-	"key": {
-		"B": {
-			"item": "mtr:metal"
-		}
-	},
-	"result": {
-		"count": 6,
-		"id": "mtr:metal_slab"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB"
+  ],
+  "key": {
+    "B": "mtr:metal"
+  },
+  "result": {
+    "count": 6,
+    "id": "mtr:metal_slab"
+  }
 }

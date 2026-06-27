@@ -1,11 +1,9 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"ingredients": [
-		{
-			"item": "mtr:arrival_projector_1_medium"
-		}
-	],
-	"result": {
-		"id": "mtr:arrival_projector_1_large"
-	}
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "mtr:arrival_projector_1_medium"
+  ],
+  "result": {
+    "id": "mtr:arrival_projector_1_large"
+  }
 }

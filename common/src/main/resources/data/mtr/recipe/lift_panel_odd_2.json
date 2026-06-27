@@ -1,12 +1,10 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"ingredients": [
-		{
-			"item": "mtr:lift_panel_odd_1"
-		}
-	],
-	"result": {
-		"count": 2,
-		"id": "mtr:lift_panel_odd_2"
-	}
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "mtr:lift_panel_odd_1"
+  ],
+  "result": {
+    "count": 2,
+    "id": "mtr:lift_panel_odd_2"
+  }
 }

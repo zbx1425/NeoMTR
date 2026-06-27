@@ -1,22 +1,16 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"BRB",
-		"BIB",
-		"BRB"
-	],
-	"key": {
-		"R": {
-			"tag": "minecraft:rails"
-		},
-		"I": {
-			"tag": "c:iron_ingots"
-		},
-		"B": {
-			"tag": "c:lapis_blocks"
-		}
-	},
-	"result": {
-		"id": "mtr:rail_connector_turn_back"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BRB",
+    "BIB",
+    "BRB"
+  ],
+  "key": {
+    "R": "#minecraft:rails",
+    "I": "minecraft:iron_ingot",
+    "B": "#c:lapis_blocks"
+  },
+  "result": {
+    "id": "mtr:rail_connector_turn_back"
+  }
 }

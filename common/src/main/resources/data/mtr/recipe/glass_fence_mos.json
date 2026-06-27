@@ -1,27 +1,15 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"ingredients": [
-		{
-			"item": "minecraft:purple_stained_glass_pane"
-		},
-		{
-			"item": "minecraft:purple_stained_glass_pane"
-		},
-		{
-			"item": "minecraft:purple_stained_glass_pane"
-		},
-		{
-			"item": "minecraft:purple_stained_glass_pane"
-		},
-		{
-			"item": "minecraft:purple_stained_glass_pane"
-		},
-		{
-			"item": "minecraft:iron_bars"
-		}
-	],
-	"result": {
-		"count": 4,
-		"id": "mtr:glass_fence_mos"
-	}
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:purple_stained_glass_pane",
+    "minecraft:purple_stained_glass_pane",
+    "minecraft:purple_stained_glass_pane",
+    "minecraft:purple_stained_glass_pane",
+    "minecraft:purple_stained_glass_pane",
+    "minecraft:iron_bars"
+  ],
+  "result": {
+    "count": 4,
+    "id": "mtr:glass_fence_mos"
+  }
 }

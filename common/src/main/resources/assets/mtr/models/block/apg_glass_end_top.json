@@ -1,5 +1,6 @@
 {
 	"textures": {
+		"particle": "mtr:block/apg_glass_single_top",
 		"fronttop": "mtr:block/apg_glass_single_top",
 		"sidetop": "mtr:block/psd_side_light"
 	},

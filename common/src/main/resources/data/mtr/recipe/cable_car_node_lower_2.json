@@ -1,11 +1,9 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"ingredients": [
-		{
-			"item": "mtr:cable_car_node_station"
-		}
-	],
-	"result": {
-		"id": "mtr:cable_car_node_lower"
-	}
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "mtr:cable_car_node_station"
+  ],
+  "result": {
+    "id": "mtr:cable_car_node_lower"
+  }
 }

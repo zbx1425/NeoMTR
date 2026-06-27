@@ -1,5 +1,6 @@
 {
 	"textures": {
+		"particle": "mtr:block/platform_arrow",
 		"arrow": "mtr:block/platform_arrow"
 	},
 	"elements": [

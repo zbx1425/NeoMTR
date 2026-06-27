@@ -1,22 +1,16 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"BRB",
-		"BIB",
-		"BRB"
-	],
-	"key": {
-		"R": {
-			"tag": "minecraft:rails"
-		},
-		"I": {
-			"tag": "c:iron_ingots"
-		},
-		"B": {
-			"tag": "c:redstone_blocks"
-		}
-	},
-	"result": {
-		"id": "mtr:rail_connector_platform"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BRB",
+    "BIB",
+    "BRB"
+  ],
+  "key": {
+    "R": "#minecraft:rails",
+    "I": "minecraft:iron_ingot",
+    "B": "minecraft:redstone_block"
+  },
+  "result": {
+    "id": "mtr:rail_connector_platform"
+  }
 }

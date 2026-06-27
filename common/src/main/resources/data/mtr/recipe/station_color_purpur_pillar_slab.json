@@ -1,15 +1,13 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"BBB"
-	],
-	"key": {
-		"B": {
-			"item": "mtr:station_color_purpur_pillar"
-		}
-	},
-	"result": {
-		"count": 6,
-		"id": "mtr:station_color_purpur_pillar_slab"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB"
+  ],
+  "key": {
+    "B": "mtr:station_color_purpur_pillar"
+  },
+  "result": {
+    "count": 6,
+    "id": "mtr:station_color_purpur_pillar_slab"
+  }
 }

@@ -243,7 +243,7 @@ public class RailwayDataFileSaveModule extends RailwayDataModuleBase {
 									MTR.LOGGER.error("", e);
 								}
 							} catch (Exception e) {
-								MTR.LOGGER.error("", e);
+								MTR.LOGGER.error("Error reading file " + idFile, e);
 							}
 						} catch (Exception e) {
 							MTR.LOGGER.error("", e);

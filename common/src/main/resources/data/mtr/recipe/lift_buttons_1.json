@@ -1,19 +1,15 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"IBI",
-		"IBI"
-	],
-	"key": {
-		"I": {
-			"tag": "c:iron_ingots"
-		},
-		"B": {
-			"item": "minecraft:stone_button"
-		}
-	},
-	"result": {
-		"count": 8,
-		"id": "mtr:lift_buttons_1"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IBI",
+    "IBI"
+  ],
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "B": "minecraft:stone_button"
+  },
+  "result": {
+    "count": 8,
+    "id": "mtr:lift_buttons_1"
+  }
 }

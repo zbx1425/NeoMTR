@@ -1,25 +1,17 @@
 {
-	"type": "minecraft:crafting_shaped",
-	"pattern": [
-		"III",
-		"RGL",
-		"III"
-	],
-	"key": {
-		"I": {
-			"tag": "c:iron_ingots"
-		},
-		"R": {
-			"tag": "c:redstone_dusts"
-		},
-		"G": {
-			"item": "minecraft:glass_pane"
-		},
-		"L": {
-			"tag": "c:glowstone_dusts"
-		}
-	},
-	"result": {
-		"id": "mtr:dashboard"
-	}
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "III",
+    "RGL",
+    "III"
+  ],
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "R": "minecraft:redstone",
+    "G": "minecraft:glass_pane",
+    "L": "minecraft:glowstone_dust"
+  },
+  "result": {
+    "id": "mtr:dashboard"
+  }
 }
