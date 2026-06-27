@@ -17,10 +17,6 @@ import java.util.function.Function;
 
 public interface Utilities {
 
-	static void incrementYaw(Entity entity, float yaw) {
-		entity.setYRot(entity.getYRot() + yaw);
-	}
-
 	static boolean isHolding(Player player, Function<Item, Boolean> predicate) {
 		return player != null && player.isHolding(itemStack -> predicate.apply(itemStack.getItem()));
 	}

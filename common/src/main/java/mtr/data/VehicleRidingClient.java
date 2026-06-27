@@ -104,9 +104,10 @@ public class VehicleRidingClient {
 				} else if (angleDifference < -180) {
 					angleDifference += 360;
 				}
-				Utilities.incrementYaw(clientPlayer, angleDifference);
+				clientPlayer.setYRot(clientPlayer.getYRot() + angleDifference);
 			}
 
+			// TODO: clientPrevYaw is 0 initially. If boarding from driver key, this will snap the player's rotation to not where they were.
 			clientPrevYaw = yaw;
 		}
 	}

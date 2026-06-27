@@ -6,7 +6,7 @@ import org.lwjgl.glfw.GLFW;
 
 public interface KeyMappings {
 	
-	static KeyMapping.Category MTR_CATEGORY = KeyMapping.Category.register(MTR.id("category.mtr.keybinding"));
+	KeyMapping.Category MTR_CATEGORY = KeyMapping.Category.register(MTR.id("keybinding"));
 
 	KeyMapping LIFT_MENU = new KeyMapping("key.mtr.lift_menu", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Z, MTR_CATEGORY);
 	KeyMapping TRAIN_ACCELERATE = new KeyMapping("key.mtr.train_accelerate", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UP, MTR_CATEGORY);
