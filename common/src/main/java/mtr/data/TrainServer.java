@@ -12,8 +12,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.msgpack.core.MessagePacker;
 import org.msgpack.value.Value;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -30,7 +32,11 @@ public class TrainServer extends Train {
 	private long lastSimulateTrainMillis = 0;
 	private float realTicksElapsed = 1;
 
+	private int departureIndex = -1;
+
 	private final List<Siding.TimeSegment> timeSegments;
+
+	private static final String KEY_DEPARTURE_INDEX = "departure_index";
 
 	private static final int TRAIN_UPDATE_DISTANCE = 128;
 	private static final int TICKS_TO_SEND_RAIL_PROGRESS = 40;
@@ -38,6 +44,7 @@ public class TrainServer extends Train {
 	public TrainServer(long id, long sidingId, float railLength, String trainId, String baseTrainType, int trainCars, List<PathData> path, List<Double> distances, int repeatIndex1, int repeatIndex2, float accelerationConstant, List<Siding.TimeSegment> timeSegments, boolean isManual, int maxManualSpeed, int manualToAutomaticTime) {
 		super(id, sidingId, railLength, trainId, baseTrainType, trainCars, path, distances, repeatIndex1, repeatIndex2, accelerationConstant, isManual, maxManualSpeed, manualToAutomaticTime);
 		this.timeSegments = timeSegments;
+		this.departureIndex = -1;
 	}
 
 	public TrainServer(
@@ -47,6 +54,8 @@ public class TrainServer extends Train {
 			Map<String, Value> map
 	) {
 		super(sidingId, railLength, path, distances, repeatIndex1, repeatIndex2, accelerationConstant, isManual, maxManualSpeed, manualToAutomaticTime, map);
+		final MessagePackHelper messagePackHelper = new MessagePackHelper(map);
+		this.departureIndex = messagePackHelper.getInt(KEY_DEPARTURE_INDEX, -1);
 		this.timeSegments = timeSegments;
 	}
 
@@ -59,6 +68,12 @@ public class TrainServer extends Train {
 	) {
 		super(sidingId, railLength, path, distances, repeatIndex1, repeatIndex2, accelerationConstant, isManual, maxManualSpeed, manualToAutomaticTime, compoundTag);
 		this.timeSegments = timeSegments;
+	}
+
+	@Override
+	public void toMessagePack(MessagePacker messagePacker) throws IOException {
+		super.toMessagePack(messagePacker);
+		messagePacker.packString(KEY_DEPARTURE_INDEX).packInt(this.departureIndex);
 	}
 
 	@Override
@@ -221,6 +236,8 @@ public class TrainServer extends Train {
 
 		simulateTrain(world, ticksElapsed, depot);
 
+		if(!isOnRoute) departureIndex = -1;
+
 		final int nextDepartureTicks = isOnRoute ? 0 : depot.getNextDepartureMillis();
 		final long currentMillis = System.currentTimeMillis() - (long) (elapsedDwellTicks * Depot.MILLIS_PER_TICK) + (long) Math.max(0, nextDepartureTicks);
 
@@ -326,8 +343,13 @@ public class TrainServer extends Train {
 		}
 	}
 
-	public void deployTrain() {
+	public void deployTrain(int departureIndex) {
 		canDeploy = true;
+		this.departureIndex = departureIndex;
+	}
+
+	public int getDepartureIndex() {
+		return this.departureIndex;
 	}
 
 	private int getNextStoppingIndex() {

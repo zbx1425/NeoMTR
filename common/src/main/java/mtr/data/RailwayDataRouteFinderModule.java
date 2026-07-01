@@ -197,7 +197,7 @@ public class RailwayDataRouteFinderModule extends RailwayDataModuleBase {
 						for (final Map.Entry<Long, Integer> durationInfoEntry : connectionDetails.durationInfo.entrySet()) {
 							final Depot depot = railwayData.dataCache.routeIdToOneDepot.get(durationInfoEntry.getKey());
 							if (depot != null) {
-								final int delay = depot.getMillisUntilDeploy(1, -lastDeparture * Depot.MILLIS_PER_TICK - 100) / Depot.MILLIS_PER_TICK;
+								final int delay = depot.getMillisUntilDeploy(1, -lastDeparture * Depot.MILLIS_PER_TICK - 100).getFirst() / Depot.MILLIS_PER_TICK;
 								final int newDuration = durationInfoEntry.getValue() + delay;
 								if (delay >= 0 && newDuration < duration) {
 									duration = newDuration;

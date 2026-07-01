@@ -139,11 +139,9 @@ public class PacketTProbeDataSender {
             railwayData.sidings.forEach(siding -> {
                 if(sidingIds.contains(siding.id)) {
                     siding.getTrains().forEach(train -> {
-                        int stopIndex = train.getNextStopIndex();
-                        // TODO: Try make departure index work in MTR 3
-                        int depIndex = train.isOnRoute() || train.isManualAllowed ? -1 : 0;
+                        final int stopIndex = train.getNextStopIndex();
                         trainList.add(
-                            new CompiledTrainData(train.sidingId, train.id, train.transportMode, train.getSpeed(), train.getRailProgress(), train.getElapsedDwellTicks(), stopIndex, train.isReversed(), depIndex, false)
+                            new CompiledTrainData(train.sidingId, train.id, train.transportMode, train.getSpeed(), train.getRailProgress(), train.getElapsedDwellTicks(), stopIndex, train.isReversed(), train.getDepartureIndex(), false)
                         );
                     });
                 }

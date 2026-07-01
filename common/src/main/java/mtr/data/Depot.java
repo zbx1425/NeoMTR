@@ -1,5 +1,6 @@
 package mtr.data;
 
+import com.mojang.datafixers.util.Pair;
 import io.netty.buffer.Unpooled;
 import mtr.MTR;
 import mtr.packet.PacketTrainDataGuiServer;
@@ -320,7 +321,9 @@ public class Depot extends AreaBase implements IReducedSaveData {
 			generateTempDepartures(world);
 		}
 
-		if (!deployableSidings.isEmpty() && getMillisUntilDeploy(1) == 0) {
+		var nextDeparture = getMillisUntilDeploy(1, 0);
+
+		if (!deployableSidings.isEmpty() && nextDeparture.getSecond() == 0) {
 			final List<Siding> sidingsInDepot = railwayData.sidings.stream().filter(siding -> {
 				final BlockPos sidingPos = siding.getMidPos();
 				return siding.isTransportMode(transportMode) && inArea(sidingPos.getX(), sidingPos.getZ());
@@ -335,7 +338,7 @@ public class Depot extends AreaBase implements IReducedSaveData {
 					if (deployIndex >= sidingsInDepotSize) {
 						deployIndex = 0;
 					}
-					train.deployTrain();
+					train.deployTrain(nextDeparture.getFirst());
 					break;
 				}
 			}
@@ -352,10 +355,10 @@ public class Depot extends AreaBase implements IReducedSaveData {
 	}
 
 	public int getMillisUntilDeploy(int offset) {
-		return getMillisUntilDeploy(offset, 0);
+		return getMillisUntilDeploy(offset, 0).getFirst();
 	}
 
-	public int getMillisUntilDeploy(int offset, int currentTimeOffset) {
+	public Pair<Integer, Integer> getMillisUntilDeploy(int offset, int currentTimeOffset) {
 		final long millis = (System.currentTimeMillis() + currentTimeOffset) % MILLISECONDS_PER_DAY;
 		for (int i = 0; i < tempDepartures.size(); i++) {
 			final long thisDeparture = tempDepartures.get(i);
@@ -364,14 +367,14 @@ public class Depot extends AreaBase implements IReducedSaveData {
 			if (newMillis > thisDeparture && newMillis <= nextDeparture) {
 				if (offset > 1) {
 					if (offset <= tempDepartures.size()) {
-						return (int) (wrapTime(tempDepartures.get((i + offset) % tempDepartures.size()), millis) - millis);
+						return new Pair<>(i+offset, (int) (wrapTime(tempDepartures.get((i + offset) % tempDepartures.size()), millis) - millis));
 					}
 				} else {
-					return wrapTime(lastDeployedMillis + currentTimeOffset, newMillis) - MILLISECONDS_PER_DAY >= thisDeparture ? (int) (nextDeparture - newMillis) : 0;
+					return new Pair<>(i, wrapTime(lastDeployedMillis + currentTimeOffset, newMillis) - MILLISECONDS_PER_DAY >= thisDeparture ? (int) (nextDeparture - newMillis) : 0);
 				}
 			}
 		}
-		return -1;
+		return new Pair<>(-1, -1);
 	}
 
 	public void generateTempDepartures(Level world) {
