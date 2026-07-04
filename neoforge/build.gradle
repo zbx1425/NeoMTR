@@ -52,11 +52,14 @@ processResources {
 }
 
 shadowJar {
+	configurations = [project.configurations.shadowCommon]
+	archiveBaseName = "NeoMTR"
+	archiveClassifier = null
+
 	exclude "fabric.mod.json"
 	exclude "*.bmp"
 
 	relocate 'de.javagl', 'vendor.cn.zbx1425.sowcerext.de.javagl'
-
 
 	from project.configurations.clothConfigJar.files.collect {
 		return zipTree(it).matching { filter ->
@@ -71,8 +74,6 @@ shadowJar {
 
 	relocate "me.shedaniel", "cn.zbx1425.mtrsteamloco.vendor.me.shedaniel"
 
-	configurations = [project.configurations.shadowCommon]
-	archiveClassifier = "dev-shadow"
 	relocate "javax.servlet", "mtr.libraries.javax.servlet"
 	relocate "org.eclipse", "mtr.libraries.org.eclipse"
 }
@@ -82,9 +83,8 @@ static boolean matchInnerClass(String path, String... names) {
 }
 
 jar {
-//	input.set shadowJar.archiveFile
-	dependsOn shadowJar
-	archiveClassifier = null
+	archiveBaseName = "NeoMTR"
+	archiveClassifier = "dev"
 }
 
 components.java {
