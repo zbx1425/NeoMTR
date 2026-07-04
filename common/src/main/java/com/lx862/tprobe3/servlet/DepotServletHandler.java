@@ -143,22 +143,17 @@ public class DepotServletHandler extends HttpServlet {
                             IServletHandler.sendResponse(response, asyncContext, respObject.toString());
                             return;
                         }
-                        // "Trust me bro"
+
                         List<CompiledTrainData> trainData = (List<CompiledTrainData>)callback.data();
                         trainData.forEach(vehicle -> {
                             sidingsData.get(vehicle.sidingId()).getAsJsonArray("vehicles").add(JsonDataSerializer.serialize(vehicle));
                         });
 
-                        // NeoMTR: Add Virtual Driving train on the map
-                        for(TrainClient trainClient : ClientData.TRAINS) {
-                            if(trainClient instanceof TrainVirtualDrive trainVirtualDrive) {
-                                CompiledTrainData compiledTrainData = CompiledTrainData.fromTrainClient(trainVirtualDrive);
-
-                                JsonObject jo = new JsonObject();
-                                jo.add("vehicles", new JsonArray());
-                                sidingsData.getOrDefault(trainClient.sidingId, jo).getAsJsonArray("vehicles").add(JsonDataSerializer.serialize(compiledTrainData));
-                            }
-                        }
+                        Webserver.minecraftCallback.getExtraTrains().forEach(extraTrain -> {
+                            JsonObject jsonObject = new JsonObject();
+                            jsonObject.add("vehicles", new JsonArray());
+                            sidingsData.getOrDefault(extraTrain.sidingId(), jsonObject).getAsJsonArray("vehicles").add(JsonDataSerializer.serialize(extraTrain));
+                        });
 
                         JsonArray sidingArray = new JsonArray();
                         sidingsData.values().forEach(sidingArray::add);

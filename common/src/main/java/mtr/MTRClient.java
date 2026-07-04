@@ -1,6 +1,8 @@
 package mtr;
 
+import cn.zbx1425.mtrsteamloco.game.TrainVirtualDrive;
 import cn.zbx1425.mtrsteamloco.gui.RailEditorVisualScreen;
+import com.lx862.tprobe3.data.CompiledTrainData;
 import com.lx862.tprobe3.packet.PacketTProbeRequester;
 import mtr.block.*;
 import mtr.client.ClientData;
@@ -296,6 +298,18 @@ public class MTRClient implements IPacket {
 						@Override
 						public DataCache getDataCache(RailwayData railwayData) {
 							return ClientData.DATA_CACHE;
+						}
+
+						@Override
+						public List<CompiledTrainData> getExtraTrains() {
+							// NeoMTR: Add Virtual Driving train on the map
+							for(TrainClient trainClient : ClientData.TRAINS) {
+								if(trainClient instanceof TrainVirtualDrive trainVirtualDrive) {
+									CompiledTrainData compiledTrainData = CompiledTrainData.fromTrainClient(trainVirtualDrive);
+									return List.of(compiledTrainData);
+								}
+							}
+							return List.of();
 						}
 					});
 					Webserver.start(Minecraft.getInstance().gameDirectory.toPath().resolve("config").resolve("mtr_webserver_port.txt"));

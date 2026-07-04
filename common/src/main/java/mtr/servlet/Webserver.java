@@ -1,5 +1,6 @@
 package mtr.servlet;
 
+import com.lx862.tprobe3.data.CompiledTrainData;
 import com.lx862.tprobe3.servlet.FrontendServlet;
 import mtr.MTR;
 import mtr.data.DataCache;
@@ -108,5 +109,6 @@ public abstract class Webserver {
 		List<Player> getLevelPlayers();
 		Set<Route> getRoutes(RailwayData railwayData);
 		DataCache getDataCache(RailwayData railwayData);
+		List<CompiledTrainData> getExtraTrains(); // Used for client-side VD, need a client proxy to do so
 	}
 }

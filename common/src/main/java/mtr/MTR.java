@@ -1,6 +1,7 @@
 package mtr;
 
 import com.lx862.tprobe3.config.TProbe3KillSwitch;
+import com.lx862.tprobe3.data.CompiledTrainData;
 import mtr.data.*;
 import mtr.mappings.BlockEntityMapper;
 import mtr.packet.IPacket;
@@ -577,6 +578,11 @@ public class MTR implements IPacket {
 					@Override
 					public DataCache getDataCache(RailwayData railwayData) {
 						return railwayData == null ? null : railwayData.dataCache;
+					}
+
+					@Override
+					public List<CompiledTrainData> getExtraTrains() {
+						return List.of();
 					}
 				});
 				Webserver.start(minecraftServer.getServerDirectory().resolve("config").resolve("mtr_webserver_port.txt"));
