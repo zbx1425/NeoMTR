@@ -3,6 +3,7 @@ package com.lx862.tprobe3.packet;
 import com.lx862.tprobe3.config.TProbe3KillSwitch;
 import com.lx862.tprobe3.data.DepotPathData;
 import io.netty.buffer.Unpooled;
+import mtr.MTR;
 import mtr.Registry;
 import mtr.data.Depot;
 import mtr.data.RailType;
@@ -34,7 +35,12 @@ public class PacketTProbeDataSender {
             });
             return;
         }
-        dataHandler.handle(minecraftServer, identifier, player, recvPacket, responseUuid);
+
+        try {
+            dataHandler.handle(minecraftServer, identifier, player, recvPacket, responseUuid);
+        } catch (Exception e) {
+            MTR.LOGGER.error("Failed to handle TProbe Request Packet!", e);
+        }
     }
 
     public static void handlePathRequestC2S(MinecraftServer minecraftServer, Identifier identifier, ServerPlayer player, FriendlyByteBuf recvPacket, UUID responseUuid) {
