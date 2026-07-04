@@ -29,18 +29,19 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class RegistryClientImpl {
 
-	public static <T extends BlockEntityMapper, S extends BlockEntityRenderState> void registerTileEntityRenderer(BlockEntityType<T> type, Function<BlockEntityRenderDispatcher, BlockEntityRendererMapper<T, S>> function) {
-		FabricRegistryUtilities.registerTileEntityRenderer(type, function);
+	public static <T extends BlockEntityMapper, S extends BlockEntityRenderState> void registerTileEntityRenderer(Supplier<BlockEntityType<T>> type, Function<BlockEntityRenderDispatcher, BlockEntityRendererMapper<T, S>> function) {
+		FabricRegistryUtilities.registerTileEntityRenderer(type.get(), function);
 	}
 
 	public static void registerKeyBinding(KeyMapping keyMapping) {
 		KeyMappingHelper.registerKeyMapping(keyMapping);
 	}
 
-	public static void registerBlockColors(Block block) {
+	public static void registerBlockColors(Supplier<Block> block) {
 		BlockColorRegistry.register(List.of(new BlockTintSource() {
 			@Override
 			public int color(BlockState state) {
@@ -51,7 +52,7 @@ public class RegistryClientImpl {
 			public int colorInWorld(final BlockState state, final BlockAndTintGetter level, final BlockPos pos) {
 				return MTRClient.getStationColor(pos);
 			}
-		}), block);
+		}), block.get());
 	}
 
 	public static void registerNetworkReceiver(Identifier resourceLocation, Consumer<FriendlyByteBuf> consumer) {

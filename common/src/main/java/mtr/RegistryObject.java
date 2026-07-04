@@ -2,9 +2,9 @@ package mtr;
 
 import java.util.function.Supplier;
 
-public class RegistryObject<T> {
+public class RegistryObject<T> implements Supplier<T> {
 
-	private T object;
+	protected T object;
 	private final Supplier<T> supplier;
 
 	public RegistryObject(Supplier<T> supplier) {

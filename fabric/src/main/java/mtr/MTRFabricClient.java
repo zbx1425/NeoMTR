@@ -66,6 +66,9 @@ public class MTRFabricClient implements ClientModInitializer, ICustomResources {
 			NTEClientCommand.register(dispatcher, ClientCommands::literal);
 		});
 		HudElementRegistry.addLast(MTR.id("js_debug_hud"), (guiGraphics, tickDelta) -> ScriptDebugOverlay.render(guiGraphics));
+
+		MTRClient.onClientSetup();
+		MainClient.onClientSetup();
 	}
 
 	private static class CustomResourcesWrapper implements SimpleSynchronousResourceReloadListener {

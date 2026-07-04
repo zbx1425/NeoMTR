@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import mtr.MTR;
 import mtr.Patreon;
+import mtr.RegistryObject;
 import mtr.data.RailwayData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
@@ -33,7 +34,8 @@ public class Config {
 	public static final int TRACK_OFFSET_COUNT = 32;
 	public static final int DYNAMIC_RESOLUTION_COUNT = 8;
 	public static final int TRAIN_RENDER_DISTANCE_RATIO_COUNT = 16;
-	private static final Path CONFIG_FILE_PATH = Minecraft.getInstance().gameDirectory.toPath().resolve("config").resolve("mtr.json");
+	private static final RegistryObject<Path> CONFIG_FILE_PATH = new RegistryObject<>(() ->
+		Minecraft.getInstance().gameDirectory.toPath().resolve("config").resolve("mtr.json"));
 	private static final String USE_MTR_FONT_KEY = "use_mtr_font";
 	private static final String SHOW_ANNOUNCEMENT_MESSAGES = "show_announcement_messages";
 	private static final String HIDE_SPECIAL_RAIL_COLORS = "hide_special_rail_colors";
@@ -156,7 +158,7 @@ public class Config {
 		MTR.LOGGER.info("[NeoMTR] Reading config file...");
 
 		try {
-			final JsonObject jsonConfig = JsonParser.parseString(String.join("", Files.readAllLines(CONFIG_FILE_PATH))).getAsJsonObject();
+			final JsonObject jsonConfig = JsonParser.parseString(String.join("", Files.readAllLines(CONFIG_FILE_PATH.get()))).getAsJsonObject();
 			try {
 				useMTRFont = jsonConfig.get(USE_MTR_FONT_KEY).getAsBoolean();
 			} catch (Exception ignored) {
@@ -220,7 +222,7 @@ public class Config {
 		jsonConfig.addProperty(TRAIN_RENDER_DISTANCE_RATIO, trainRenderDistanceRatio);
 
 		try {
-			Files.write(CONFIG_FILE_PATH, Collections.singleton(RailwayData.prettyPrint(jsonConfig)));
+			Files.write(CONFIG_FILE_PATH.get(), Collections.singleton(RailwayData.prettyPrint(jsonConfig)));
 			MTR.LOGGER.info("[NeoMTR] Config file saved to disk");
 		} catch (Exception e) {
 			MTR.LOGGER.error("[NeoMTR] Failed to save config file!", e);

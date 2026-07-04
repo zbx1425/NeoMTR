@@ -84,7 +84,7 @@ public final class ClientData {
 		}
 	}
 
-	public static void writeRails(Minecraft client, FriendlyByteBuf packet) {
+	public static void writeRails(FriendlyByteBuf packet) {
 		final Map<BlockPos, Map<BlockPos, Rail>> railsTemp = new HashMap<>();
 
 		final int railsCount = packet.readInt();
@@ -98,17 +98,17 @@ public final class ClientData {
 			railsTemp.put(startPos, railMap);
 		}
 
-		client.execute(() -> clearAndAddAll(RAILS, railsTemp));
+		Minecraft.getInstance().execute(() -> clearAndAddAll(RAILS, railsTemp));
 	}
 
-	public static void updateTrains(Minecraft client, FriendlyByteBuf packet) {
+	public static void updateTrains(FriendlyByteBuf packet) {
 		final Set<TrainClient> trainsToUpdate = new HashSet<>();
 
 		while (packet.isReadable()) {
 			trainsToUpdate.add(new TrainClient(packet));
 		}
 
-		client.execute(() -> trainsToUpdate.forEach(newTrain -> {
+		Minecraft.getInstance().execute(() -> trainsToUpdate.forEach(newTrain -> {
 			final TrainClient existingTrain = getTrainById(newTrain.id);
 			if (existingTrain == null) {
 				TRAINS.add(newTrain);
@@ -118,7 +118,7 @@ public final class ClientData {
 		}));
 	}
 
-	public static void deleteTrains(Minecraft client, FriendlyByteBuf packet) {
+	public static void deleteTrains(FriendlyByteBuf packet) {
 		final Set<Long> trainIdsToKeep = new HashSet<>();
 
 		final int trainsCount = packet.readInt();
@@ -126,7 +126,7 @@ public final class ClientData {
 			trainIdsToKeep.add(packet.readLong());
 		}
 
-		client.execute(() -> {
+		Minecraft.getInstance().execute(() -> {
 			TRAINS.forEach(trainClient -> {
 				if (!trainIdsToKeep.contains(trainClient.id) && trainClient != TrainVirtualDrive.activeTrain) {
 					trainClient.isRemoved = true;
@@ -136,14 +136,14 @@ public final class ClientData {
 		});
 	}
 
-	public static void updateLifts(Minecraft client, FriendlyByteBuf packet) {
+	public static void updateLifts(FriendlyByteBuf packet) {
 		final Set<LiftClient> liftsToUpdate = new HashSet<>();
 
 		while (packet.isReadable()) {
 			liftsToUpdate.add(new LiftClient(packet));
 		}
 
-		client.execute(() -> liftsToUpdate.forEach(newLift -> {
+		Minecraft.getInstance().execute(() -> liftsToUpdate.forEach(newLift -> {
 			final LiftClient existingLift = DATA_CACHE.liftsClientIdMap.get(newLift.id);
 			if (existingLift == null) {
 				LIFTS.add(newLift);
@@ -154,7 +154,7 @@ public final class ClientData {
 		}));
 	}
 
-	public static void deleteLifts(Minecraft client, FriendlyByteBuf packet) {
+	public static void deleteLifts(FriendlyByteBuf packet) {
 		final Set<Long> liftIdsToKeep = new HashSet<>();
 
 		final int liftsCount = packet.readInt();
@@ -162,7 +162,7 @@ public final class ClientData {
 			liftIdsToKeep.add(packet.readLong());
 		}
 
-		client.execute(() -> {
+		Minecraft.getInstance().execute(() -> {
 			final Set<LiftClient> liftsToRemove = new HashSet<>();
 			LIFTS.forEach(lift -> {
 				if (!liftIdsToKeep.contains(lift.id)) {
@@ -174,47 +174,47 @@ public final class ClientData {
 		});
 	}
 
-	public static void updateTrainPassengers(Minecraft client, FriendlyByteBuf packet) {
+	public static void updateTrainPassengers(FriendlyByteBuf packet) {
 		final TrainClient train = getTrainById(packet.readLong());
 		final float percentageX = packet.readFloat();
 		final float percentageZ = packet.readFloat();
 		final UUID uuid = packet.readUUID();
 		if (train != null) {
-			client.execute(() -> train.startRidingClient(uuid, percentageX, percentageZ));
+			Minecraft.getInstance().execute(() -> train.startRidingClient(uuid, percentageX, percentageZ));
 		}
 	}
 
-	public static void updateTrainPassengerPosition(Minecraft client, FriendlyByteBuf packet) {
+	public static void updateTrainPassengerPosition(FriendlyByteBuf packet) {
 		final TrainClient train = getTrainById(packet.readLong());
 		final float percentageX = packet.readFloat();
 		final float percentageZ = packet.readFloat();
 		final UUID uuid = packet.readUUID();
 		if (train != null) {
-			client.execute(() -> train.updateRiderPercentages(uuid, percentageX, percentageZ));
+			Minecraft.getInstance().execute(() -> train.updateRiderPercentages(uuid, percentageX, percentageZ));
 		}
 	}
 
-	public static void updateLiftPassengers(Minecraft client, FriendlyByteBuf packet) {
+	public static void updateLiftPassengers(FriendlyByteBuf packet) {
 		final LiftClient lift = DATA_CACHE.liftsClientIdMap.get(packet.readLong());
 		final float percentageX = packet.readFloat();
 		final float percentageZ = packet.readFloat();
 		final UUID uuid = packet.readUUID();
 		if (lift != null) {
-			client.execute(() -> lift.startRidingClient(uuid, percentageX, percentageZ));
+			Minecraft.getInstance().execute(() -> lift.startRidingClient(uuid, percentageX, percentageZ));
 		}
 	}
 
-	public static void updateLiftPassengerPosition(Minecraft client, FriendlyByteBuf packet) {
+	public static void updateLiftPassengerPosition(FriendlyByteBuf packet) {
 		final LiftClient lift = DATA_CACHE.liftsClientIdMap.get(packet.readLong());
 		final float percentageX = packet.readFloat();
 		final float percentageZ = packet.readFloat();
 		final UUID uuid = packet.readUUID();
 		if (lift != null) {
-			client.execute(() -> lift.updateRiderPercentages(uuid, percentageX, percentageZ));
+			Minecraft.getInstance().execute(() -> lift.updateRiderPercentages(uuid, percentageX, percentageZ));
 		}
 	}
 
-	public static void updateRailActions(Minecraft client, FriendlyByteBuf packet) {
+	public static void updateRailActions(FriendlyByteBuf packet) {
 		final List<DataConverter> railActions = new ArrayList<>();
 		final int actionCount = packet.readInt();
 		for (int i = 0; i < actionCount; i++) {
@@ -226,13 +226,13 @@ public final class ClientData {
 			final int color = packet.readInt();
 			railActions.add(new DataConverter(id, name, color));
 		}
-		client.execute(() -> {
+		Minecraft.getInstance().execute(() -> {
 			RAIL_ACTIONS.clear();
 			RAIL_ACTIONS.addAll(railActions);
 		});
 	}
 
-	public static void updateSchedule(Minecraft client, FriendlyByteBuf packet) {
+	public static void updateSchedule(FriendlyByteBuf packet) {
 		final Map<Long, Set<ScheduleEntry>> tempSchedulesForPlatform = new HashMap<>();
 		final int platformCount = packet.readInt();
 		for (int i = 0; i < platformCount; i++) {
@@ -258,7 +258,7 @@ public final class ClientData {
 			occupiedRails.put(packet.readUUID(), packet.readBoolean());
 		}
 
-		client.execute(() -> {
+		Minecraft.getInstance().execute(() -> {
 			clearAndAddAll(SCHEDULES_FOR_PLATFORM, tempSchedulesForPlatform);
 			SIGNAL_BLOCKS.writeSignalBlockStatus(signalBlockStatus);
 			OCCUPIED_RAILS.clear();

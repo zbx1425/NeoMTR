@@ -3,7 +3,6 @@ package mtr.neoforge.mappings;
 import cn.zbx1425.mtrsteamloco.MainClient;
 import cn.zbx1425.sowcerext.model.integration.BufferSourceProxy;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import mtr.neoforge.DeferredRegisterHolder;
 import mtr.render.RenderTrains;
 import mtr.screen.ResourcePackCreatorScreen;
@@ -46,15 +45,7 @@ public class ForgeUtilities {
 	private static final List<Identifier> CREATIVE_TAB_ORDER = new ArrayList<>();
 	private static final Map<Identifier, CreativeModeTabWrapper> CREATIVE_TABS = new HashMap<>();
 	private static final Set<EntityRendererPair<?>> ENTITY_RENDERER_PAIRS = new HashSet<>();
-//
-//	public static void registerModEventBus(String modId, IEventBus eventBus) {
-//		EventBuses.registerModEventBus(modId, eventBus);
-//	}
-
-	public static void registerKeyBinding(KeyMapping keyMapping) {
-		KeyMappingRegistry.register(keyMapping);
-	}
-
+	
 	public static Supplier<CreativeModeTab> createCreativeModeTab(Identifier resourceLocation, Supplier<ItemStack> iconSupplier, String translationKey) {
 		if (!CREATIVE_TAB_ORDER.contains(resourceLocation)) {
 			CREATIVE_TAB_ORDER.add(resourceLocation);

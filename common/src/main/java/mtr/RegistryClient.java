@@ -16,11 +16,12 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class RegistryClient {
 
 	@ExpectPlatform
-	public static <T extends BlockEntityMapper, S extends BlockEntityRenderState> void registerTileEntityRenderer(BlockEntityType<T> type, Function<BlockEntityRenderDispatcher, BlockEntityRendererMapper<T, S>> function) {
+	public static <T extends BlockEntityMapper, S extends BlockEntityRenderState> void registerTileEntityRenderer(Supplier<BlockEntityType<T>> type, Function<BlockEntityRenderDispatcher, BlockEntityRendererMapper<T, S>> function) {
 		throw new AssertionError();
 	}
 
@@ -30,7 +31,7 @@ public class RegistryClient {
 	}
 
 	@ExpectPlatform
-	public static void registerBlockColors(Block block) {
+	public static void registerBlockColors(Supplier<Block> block) {
 		throw new AssertionError();
 	}
 
