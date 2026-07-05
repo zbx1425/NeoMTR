@@ -25,13 +25,10 @@ public class MainClient {
 	public static DrawContext drawContext = new DrawContext();
 
 	public static void init() {
-		ClientConfig.load();
-		ShadersModHandler.init();
-
 		mtr.client.CustomResources.registerReloadListener(CustomResources::init);
 
 		if (Main.enableRegistry) {
-			RegistryClient.registerTileEntityRenderer(Main.BLOCK_ENTITY_TYPE_EYE_CANDY.get(), BlockEntityEyeCandyRenderer::new);
+			RegistryClient.registerTileEntityRenderer(Main.BLOCK_ENTITY_TYPE_EYE_CANDY, BlockEntityEyeCandyRenderer::new);
 
 			RegistryClient.registerNetworkReceiver(PacketVersionCheck.PACKET_VERSION_CHECK, PacketVersionCheck::receiveVersionCheckS2C);
 			RegistryClient.registerNetworkReceiver(PacketScreen.PACKET_SHOW_SCREEN, PacketScreen::receiveScreenS2C);
@@ -45,6 +42,11 @@ public class MainClient {
 			VirtualDriveClientData.drivingPlayers.clear();
 			TrainVirtualDrive.activeTrain = null;
 		});
+	}
+
+	public static void onClientSetup() {
+		ClientConfig.load();
+		ShadersModHandler.init();
 	}
 
 }

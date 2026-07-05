@@ -17,13 +17,6 @@ versionRange = "[26.1,26.1.2]"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.mtr]]
-modId = "architectury"
-mandatory = true
-versionRange = "[1.26.37,)"
-ordering = "AFTER"
-side = "BOTH"
-
 [[mixins]]
 config = "mtr.mixins.json"
 

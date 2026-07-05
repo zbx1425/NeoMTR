@@ -6,6 +6,7 @@ import cn.zbx1425.mtrsteamloco.NTEClientCommand;
 import cn.zbx1425.mtrsteamloco.gui.DebugHud;
 import cn.zbx1425.mtrsteamloco.gui.ScriptDebugOverlay;
 import cn.zbx1425.mtrsteamloco.render.train.SteamSmokeParticle;
+import mtr.MTRClient;
 import mtr.screen.ConfigScreen;
 import net.minecraft.commands.Commands;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -32,7 +33,8 @@ public class ClientProxy {
 
         @SubscribeEvent
         public static void onClientSetupEvent(FMLClientSetupEvent event) {
-            MainClient.init();
+            MTRClient.onClientSetup();
+            MainClient.onClientSetup();
         }
 
         @SubscribeEvent

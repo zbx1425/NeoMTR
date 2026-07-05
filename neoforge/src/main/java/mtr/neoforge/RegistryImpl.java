@@ -1,18 +1,12 @@
 package mtr.neoforge;
 
-import com.mojang.brigadier.CommandDispatcher;
-import dev.architectury.event.events.common.CommandRegistrationEvent;
-import dev.architectury.event.events.common.LifecycleEvent;
-import dev.architectury.event.events.common.PlayerEvent;
-import dev.architectury.event.events.common.TickEvent;
-import dev.architectury.platform.Platform;
-import dev.architectury.utils.Env;
 import mtr.neoforge.mappings.ForgeUtilities;
 import mtr.mappings.BlockEntityMapper;
 import mtr.mappings.NetworkUtilities;
 import mtr.util.Utilities;
 import mtr.mixin.PlayerTeleportationStateAccessor;
-import net.minecraft.commands.CommandSourceStack;
+import mtr.util.event.Event;
+import mtr.util.event.EventFactory;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
@@ -23,6 +17,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -34,7 +35,7 @@ public class RegistryImpl {
 	}
 
 	public static boolean isClientEnvironment() {
-		return Platform.getEnvironment() == Env.CLIENT;
+		return FMLEnvironment.getDist().isClient();
 	}
 
 	public static <T extends BlockEntityMapper> BlockEntityType<T> getBlockEntityType(Utilities.TileEntitySupplier<T> supplier, Block block) {
@@ -60,25 +61,29 @@ public class RegistryImpl {
 		MTRForge.PACKET_REGISTRY.registerNetworkReceiverC2S(resourceLocation, packetCallback);
 	}
 
+	private static final Event<Consumer<ServerPlayer>> PLAYER_JOIN_EVENT = EventFactory.createLoop();
 	public static void registerPlayerJoinEvent(Consumer<ServerPlayer> consumer) {
-		RegistryUtilities.registerPlayerJoinEvent(consumer);
-		RegistryUtilities.registerPlayerChangeDimensionEvent(consumer);
+		PLAYER_JOIN_EVENT.register(consumer);
 	}
 
+	private static final Event<Consumer<ServerPlayer>> PLAYER_LEAVE_EVENT = EventFactory.createLoop();
 	public static void registerPlayerQuitEvent(Consumer<ServerPlayer> consumer) {
-		RegistryUtilities.registerPlayerQuitEvent(consumer);
+		PLAYER_LEAVE_EVENT.register(consumer);
 	}
 
+	private static final Event<Consumer<MinecraftServer>> SERVER_STARTING_EVENT = EventFactory.createLoop();
 	public static void registerServerStartingEvent(Consumer<MinecraftServer> consumer) {
-		RegistryUtilities.registerServerStartingEvent(consumer);
+		SERVER_STARTING_EVENT.register(consumer);
 	}
 
+	private static final Event<Consumer<MinecraftServer>> SERVER_STOPPING_EVENT = EventFactory.createLoop();
 	public static void registerServerStoppingEvent(Consumer<MinecraftServer> consumer) {
-		RegistryUtilities.registerServerStoppingEvent(consumer);
+		SERVER_STOPPING_EVENT.register(consumer);
 	}
 
+	private static final Event<Consumer<MinecraftServer>> SERVER_TICK_EVENT = EventFactory.createLoop();
 	public static void registerTickEvent(Consumer<MinecraftServer> consumer) {
-		RegistryUtilities.registerTickEvent(consumer);
+		SERVER_TICK_EVENT.register(consumer);
 	}
 
 	public static void sendToPlayer(ServerPlayer player, Identifier id, FriendlyByteBuf packet) {
@@ -90,36 +95,41 @@ public class RegistryImpl {
 		((PlayerTeleportationStateAccessor) player).setInTeleportationState(isRiding);
 	}
 
+	public static class ServerForgeEventBusListener {
 
-	public interface RegistryUtilities {
-
-		static void registerCommand(Consumer<CommandDispatcher<CommandSourceStack>> callback) {
-			CommandRegistrationEvent.EVENT.register((dispatcher, dedicated, commandSelection) -> callback.accept(dispatcher));
+		@SubscribeEvent
+		public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+			if (event.getEntity().level().isClientSide()) return;
+			PLAYER_JOIN_EVENT.invoker().accept((ServerPlayer) event.getEntity());
 		}
 
-		static void registerPlayerJoinEvent(Consumer<ServerPlayer> consumer) {
-			PlayerEvent.PLAYER_JOIN.register(consumer::accept);
+		@SubscribeEvent
+		public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+			if (event.getEntity().level().isClientSide()) return;
+			PLAYER_JOIN_EVENT.invoker().accept((ServerPlayer) event.getEntity());
 		}
 
-		static void registerPlayerQuitEvent(Consumer<ServerPlayer> consumer) {
-			PlayerEvent.PLAYER_QUIT.register(consumer::accept);
+		@SubscribeEvent
+		public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+			if (event.getEntity().level().isClientSide()) return;
+			PLAYER_LEAVE_EVENT.invoker().accept((ServerPlayer) event.getEntity());
 		}
 
-		static void registerPlayerChangeDimensionEvent(Consumer<ServerPlayer> consumer) {
-			PlayerEvent.CHANGE_DIMENSION.register(((player, oldWorld, newWorld) -> consumer.accept(player)));
+		@SubscribeEvent
+		public static void onServerStarting(ServerStartingEvent event) {
+			SERVER_STARTING_EVENT.invoker().accept(event.getServer());
 		}
 
-		static void registerServerStartingEvent(Consumer<MinecraftServer> consumer) {
-			LifecycleEvent.SERVER_STARTING.register(consumer::accept);
+		@SubscribeEvent
+		public static void onServerStopping(ServerStoppingEvent event) {
+			SERVER_STOPPING_EVENT.invoker().accept(event.getServer());
 		}
 
-		static void registerServerStoppingEvent(Consumer<MinecraftServer> consumer) {
-			LifecycleEvent.SERVER_STOPPING.register(consumer::accept);
-		}
-
-		static void registerTickEvent(Consumer<MinecraftServer> consumer) {
-			TickEvent.SERVER_PRE.register(consumer::accept);
+		@SubscribeEvent
+		public static void onServerTick(ServerTickEvent.Pre event) {
+			SERVER_TICK_EVENT.invoker().accept(event.getServer());
 		}
 	}
+
 }
 

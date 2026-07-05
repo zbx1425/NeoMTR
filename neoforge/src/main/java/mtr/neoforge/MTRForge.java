@@ -67,12 +67,19 @@ public class MTRForge {
 
 		eventBus.register(MTRModEventBus.class);
 		eventBus.register(ForgeUtilities.RegisterCreativeTabs.class);
+		NeoForge.EVENT_BUS.register(RegistryImpl.ServerForgeEventBusListener.class);
+
 		if (FMLEnvironment.getDist().isClient()) {
+			MTRClient.init();
+			cn.zbx1425.mtrsteamloco.MainClient.init();
+
 			ForgeUtilities.renderGameOverlayAction((guiGraphics) -> {
 				RenderDrivingOverlay.render((GuiGraphicsExtractor) guiGraphics);
 			});
 			NeoForge.EVENT_BUS.register(ForgeUtilities.Events.class);
 			eventBus.register(ForgeUtilities.ClientsideEvents.class);
+			NeoForge.EVENT_BUS.register(RegistryClientImpl.ClientForgeEventBusListener.class);
+			eventBus.register(RegistryClientImpl.ClientModEventBusListener.class);
 
 			// NTE
 			NeoForge.EVENT_BUS.register(ClientProxy.ForgeEventBusListener.class);
@@ -152,7 +159,6 @@ public class MTRForge {
 
 		@SubscribeEvent
 		public static void onClientSetupEvent(FMLClientSetupEvent event) {
-			MTRClient.init();
 			ForgeUtilities.registerTextureStitchEvent(textureAtlas -> {
 				if (((TextureAtlas) textureAtlas).location().getPath().equals("textures/atlas/blocks.png")) {
 					CustomResources.reload(Minecraft.getInstance().getResourceManager());
