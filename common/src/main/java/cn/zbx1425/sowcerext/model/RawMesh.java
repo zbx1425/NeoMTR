@@ -1,17 +1,20 @@
 package cn.zbx1425.sowcerext.model;
 
+import cn.zbx1425.sowcer.batch.BatchType;
 import cn.zbx1425.sowcer.batch.MaterialProp;
 import cn.zbx1425.sowcer.model.Mesh;
 import cn.zbx1425.sowcer.object.IndexBuf;
 import cn.zbx1425.sowcer.object.VertBuf;
 import cn.zbx1425.sowcer.util.OffHeapAllocator;
 import cn.zbx1425.sowcer.util.DrawContext;
-import cn.zbx1425.sowcer.vertex.VertAttrMapping;
-import cn.zbx1425.sowcer.vertex.VertAttrType;
+// import cn.zbx1425.sowcer.vertex.VertAttrMapping;
+// import cn.zbx1425.sowcer.vertex.VertAttrType;
 import cn.zbx1425.sowcerext.model.integration.FaceList;
 import cn.zbx1425.sowcer.math.Matrix4f;
 import cn.zbx1425.sowcer.math.Vector3f;
-import org.lwjgl.opengl.GL11;
+import com.mojang.blaze3d.vertex.*;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+// import org.lwjgl.opengl.GL11;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -174,10 +177,10 @@ public class RawMesh {
         vertices = newVertices;
     }
 
-    public void upload(Mesh mesh, VertAttrMapping mapping) {
+    public void upload(Mesh mesh, /*VertAttrMapping*/ BatchType mapping) {
         distinct();
 
-        ByteBuffer vertBuf = OffHeapAllocator.allocate(vertices.size() * mapping.strideVertex);
+        /*ByteBuffer vertBuf = OffHeapAllocator.allocate(vertices.size() * mapping.strideVertex);
         for (int i = 0; i < vertices.size(); ++i) {
             if (mapping.sources.get(VertAttrType.POSITION).inVertBuf()) {
                 Vector3f pos = vertices.get(i).position;
@@ -205,9 +208,42 @@ public class RawMesh {
                 vertBuf.put((byte) (mojNormal.x() * 0x7F)).put((byte) (mojNormal.y() * 0x7F)).put((byte) (mojNormal.z() * 0x7F));
             }
             for (int k = 0; k < mapping.paddingVertex; k++) vertBuf.put((byte)0);
+        }*/
+
+        ByteBufferBuilder byteBufferBuilder = new ByteBufferBuilder(vertices.size() * mapping.getFormat().getVertexSize());
+
+        BufferBuilder bufferBuilder = new BufferBuilder(
+                byteBufferBuilder,
+                VertexFormat.Mode.TRIANGLES,
+                mapping.getFormat()
+        );
+
+        for (int i = 0; i < vertices.size(); ++i) {
+            Vertex vertex = vertices.get(i);
+
+            bufferBuilder.addVertex(
+                    vertex.position.x(),
+                    vertex.position.y(),
+                    vertex.position.z(),
+                    vertex.color,
+                    vertex.u,
+                    vertex.v,
+                    OverlayTexture.NO_OVERLAY,
+                    vertex.light,
+                    vertex.normal.x(),
+                    vertex.normal.y(),
+                    vertex.normal.z()
+            );
         }
-        mesh.vertBuf.upload(vertBuf, VertBuf.USAGE_STATIC_DRAW);
-        OffHeapAllocator.free(vertBuf);
+
+        MeshData meshData = bufferBuilder.build();
+
+        if (meshData != null) {
+            mesh.vertBuf.upload(meshData.vertexBuffer(), VertBuf.USAGE_VBO);
+            meshData.close();
+        }
+
+        byteBufferBuilder.close();
 
         ByteBuffer indexBuf = OffHeapAllocator.allocate(faces.size() * 3 * 4);
         for (Face face : faces) {
@@ -215,23 +251,23 @@ public class RawMesh {
                 indexBuf.putInt(face.vertices[j]);
             }
         }
-        mesh.indexBuf.upload(indexBuf, VertBuf.USAGE_STATIC_DRAW);
+        mesh.indexBuf.upload(indexBuf.flip(), VertBuf.USAGE_IBO);
         mesh.indexBuf.setFaceCount(faces.size());
         OffHeapAllocator.free(indexBuf);
 
     }
 
-    public Mesh upload(VertAttrMapping mapping) {
+    public Mesh upload(/*VertAttrMapping*/ BatchType mapping) {
         validateVertIndex();
         VertBuf vertBufObj = new VertBuf();
-        IndexBuf indexBufObj = new IndexBuf(faces.size(), GL11.GL_UNSIGNED_INT);
+        IndexBuf indexBufObj = new IndexBuf(faces.size(), /*GL11.GL_UNSIGNED_INT*/ VertexFormat.IndexType.INT);
         Mesh target = new Mesh(vertBufObj, indexBufObj, materialProp);
         upload(target, mapping);
         return target;
     }
 
-    private static int getVertBufPos(VertAttrMapping mapping, int vertId, VertAttrType type) {
-        return mapping.strideVertex * vertId + mapping.pointers.get(type);
+    private static int getVertBufPos(/*VertAttrMapping*/ BatchType mapping, int vertId, /*VertAttrType*/ VertexFormatElement type) {
+        return /*mapping.strideVertex*/ mapping.getFormat().getVertexSize() * vertId + /*mapping.pointers.get(type)*/ mapping.getFormat().getOffset(type);
     }
 
     private static boolean vecIsZero(Vector3f vec) {
@@ -330,8 +366,10 @@ public class RawMesh {
         materialProp.translucent = false;
         materialProp.writeDepthBuf = true;
         materialProp.cutoutHack = false;
-        materialProp.attrState = materialProp.attrState.copy();
-        materialProp.attrState.lightmapUV = null;
+        materialProp.hackGlState = materialProp.hackGlState.copy();
+        materialProp.hackGlState.lightmap = null;
+        // materialProp.attrState = materialProp.attrState.copy();
+        // materialProp.attrState.lightmapUV = null;
         switch (type) {
             case "exterior":
                 materialProp.shaderName = "rendertype_entity_cutout";
@@ -342,12 +380,13 @@ public class RawMesh {
                 break;
             case "interior":
                 materialProp.shaderName = "rendertype_entity_cutout";
-                materialProp.attrState.setLightmapUV(15 << 4 | 15 << 20);
+                materialProp.hackGlState.setLightmap(15 << 4 | 15 << 20);
+                //materialProp.attrState.setLightmapUV(15 << 4 | 15 << 20);
                 break;
             case "interiortranslucent":
                 materialProp.shaderName = "rendertype_entity_translucent_cull";
-                materialProp.translucent = true;
-                materialProp.attrState.setLightmapUV(15 << 4 | 15 << 20);
+                materialProp.hackGlState.setLightmap(15 << 4 | 15 << 20);
+                //materialProp.attrState.setLightmapUV(15 << 4 | 15 << 20);
                 break;
             case "light":
                 materialProp.shaderName = "rendertype_beacon_beam";

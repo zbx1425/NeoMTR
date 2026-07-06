@@ -1,9 +1,10 @@
 package cn.zbx1425.sowcerext.reuse;
 
+import cn.zbx1425.sowcer.batch.BatchType;
 import cn.zbx1425.sowcer.model.Model;
-import cn.zbx1425.sowcer.vertex.VertAttrMapping;
-import cn.zbx1425.sowcer.vertex.VertAttrSrc;
-import cn.zbx1425.sowcer.vertex.VertAttrType;
+// import cn.zbx1425.sowcer.vertex.VertAttrMapping;
+// import cn.zbx1425.sowcer.vertex.VertAttrSrc;
+// import cn.zbx1425.sowcer.vertex.VertAttrType;
 import cn.zbx1425.sowcerext.model.ModelCluster;
 import cn.zbx1425.sowcerext.model.RawModel;
 import cn.zbx1425.sowcerext.model.loader.CsvModelLoader;
@@ -26,7 +27,7 @@ public class ModelManager {
 
     public int vaoCount, vboCount;
 
-    public static final VertAttrMapping DEFAULT_MAPPING = new VertAttrMapping.Builder()
+    /*public static final VertAttrMapping DEFAULT_MAPPING = new VertAttrMapping.Builder()
             .set(VertAttrType.POSITION, VertAttrSrc.VERTEX_BUF)
             .set(VertAttrType.COLOR, VertAttrSrc.GLOBAL)
             .set(VertAttrType.UV_TEXTURE, VertAttrSrc.VERTEX_BUF)
@@ -34,7 +35,7 @@ public class ModelManager {
             .set(VertAttrType.UV_LIGHTMAP, VertAttrSrc.GLOBAL)
             .set(VertAttrType.NORMAL, VertAttrSrc.VERTEX_BUF)
             .set(VertAttrType.MATRIX_MODEL, VertAttrSrc.GLOBAL)
-            .build();
+            .build();*/
 
     public void clear() {
         vaoCount = 0;
@@ -112,13 +113,13 @@ public class ModelManager {
 
     public Model uploadModel(RawModel rawModel) {
         if (rawModel.sourceLocation == null) {
-            Model result = rawModel.upload(DEFAULT_MAPPING);
+            Model result = rawModel.upload(/*DEFAULT_MAPPING*/ BatchType.REGULAR);
             vboCount += result.meshList.size();
             uploadedModels.put(Identifier.parse("sowcerext-anonymous:model/" + UUID.randomUUID()), result);
             return result;
         } else {
             if (uploadedModels.containsKey(rawModel.sourceLocation)) return uploadedModels.get(rawModel.sourceLocation);
-            Model result = rawModel.upload(DEFAULT_MAPPING);
+            Model result = rawModel.upload(/*DEFAULT_MAPPING*/ BatchType.REGULAR);
             vboCount += result.meshList.size();
             uploadedModels.put(rawModel.sourceLocation, result);
             return result;
@@ -127,13 +128,13 @@ public class ModelManager {
 
     public ModelCluster uploadVertArrays(RawModel rawModel) {
         if (rawModel.sourceLocation == null) {
-            ModelCluster result = new ModelCluster(rawModel, DEFAULT_MAPPING, this);
+            ModelCluster result = new ModelCluster(rawModel, /*DEFAULT_MAPPING*/ BatchType.REGULAR, this);
             vaoCount += result.uploadedOpaqueParts == null ? 0 : result.uploadedOpaqueParts.meshList.size();
             uploadedVertArrays.put(Identifier.parse("sowcerext-anonymous:vertarrays/" + UUID.randomUUID()), result);
             return result;
         } else {
             if (uploadedVertArrays.containsKey(rawModel.sourceLocation)) return uploadedVertArrays.get(rawModel.sourceLocation);
-            ModelCluster result = new ModelCluster(rawModel, DEFAULT_MAPPING, this);
+            ModelCluster result = new ModelCluster(rawModel, /*DEFAULT_MAPPING*/ BatchType.REGULAR, this);
             vaoCount += result.uploadedOpaqueParts == null ? 0 : result.uploadedOpaqueParts.meshList.size();
             uploadedVertArrays.put(rawModel.sourceLocation, result);
             return result;

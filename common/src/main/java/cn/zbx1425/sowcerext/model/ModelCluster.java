@@ -1,13 +1,15 @@
 package cn.zbx1425.sowcerext.model;
 
 import cn.zbx1425.sowcer.batch.BatchManager;
+import cn.zbx1425.sowcer.batch.BatchType;
 import cn.zbx1425.sowcer.batch.EnqueueProp;
 import cn.zbx1425.sowcer.batch.ShaderProp;
 import cn.zbx1425.sowcer.model.VertArrays;
 import cn.zbx1425.sowcer.util.AttrUtil;
 import cn.zbx1425.sowcer.util.DrawContext;
-import cn.zbx1425.sowcer.vertex.VertAttrMapping;
-import cn.zbx1425.sowcer.vertex.VertAttrState;
+// import cn.zbx1425.sowcer.vertex.VertAttrMapping;
+import cn.zbx1425.sowcer.vertex.HackGlState;
+// import cn.zbx1425.sowcer.vertex.VertAttrState;
 import cn.zbx1425.sowcer.math.Matrix4f;
 import cn.zbx1425.sowcerext.model.integration.BufferSourceProxy;
 import cn.zbx1425.sowcerext.reuse.ModelManager;
@@ -22,7 +24,7 @@ public class ModelCluster implements Closeable {
     public final VertArrays uploadedTranslucentParts;
     public final RawModel translucentParts;
 
-    public ModelCluster(RawModel source, VertAttrMapping mapping, ModelManager modelManager) {
+    public ModelCluster(RawModel source, /*VertAttrMapping*/ BatchType mapping, ModelManager modelManager) {
         this.translucentParts = new RawModel();
         this.opaqueParts = new RawModel();
         for (RawMesh mesh : source.meshList.values()) {
@@ -38,7 +40,7 @@ public class ModelCluster implements Closeable {
                 modelManager.uploadModel(translucentParts), mapping, null);
     }
 
-    public ModelCluster(RawModel source, VertAttrMapping mapping) {
+    public ModelCluster(RawModel source, /*VertAttrMapping*/ BatchType mapping) {
         // Untracked variant
         this.translucentParts = new RawModel();
         this.opaqueParts = new RawModel();
@@ -66,11 +68,12 @@ public class ModelCluster implements Closeable {
         // KHRDebug.glDebugMessageInsert(KHRDebug.GL_DEBUG_SOURCE_APPLICATION, KHRDebug.GL_DEBUG_TYPE_MARKER,
         //        0, KHRDebug.GL_DEBUG_SEVERITY_NOTIFICATION, "RenderOptimized " + (source.sourceLocation == null ? "unknown" : source.sourceLocation.toString()));
         int shaderLightmapUV = AttrUtil.exchangeLightmapUVBits(light);
-        batchManager.enqueue(uploadedOpaqueParts, new EnqueueProp(
+        /*batchManager.enqueue(uploadedOpaqueParts, new EnqueueProp(
                 new VertAttrState()
                         .setColor(255, 255, 255, 255).setOverlayUVNoOverlay()
                         .setLightmapUV(shaderLightmapUV).setModelMatrix(pose)
-        ), ShaderProp.DEFAULT);
+        ), ShaderProp.DEFAULT);*/
+        batchManager.enqueue(uploadedOpaqueParts, new EnqueueProp(new HackGlState().setColor(255, 255, 255, 255).setLightmap(shaderLightmapUV)), new ShaderProp().setViewMatrix(pose));
     }
 
     public void enqueueOpaqueBlaze(BufferSourceProxy vertexConsumers, Matrix4f pose, int light, DrawContext drawContext) {
@@ -79,11 +82,12 @@ public class ModelCluster implements Closeable {
 
     public void enqueueTranslucentGl(BatchManager batchManager, Matrix4f matrix4f, int light, DrawContext drawContext) {
         int shaderLightmapUV = AttrUtil.exchangeLightmapUVBits(light);
-        batchManager.enqueue(uploadedTranslucentParts, new EnqueueProp(
+        /*batchManager.enqueue(uploadedTranslucentParts, new EnqueueProp(
                 new VertAttrState()
                         .setColor(255, 255, 255, 255).setOverlayUVNoOverlay()
                         .setLightmapUV(shaderLightmapUV).setModelMatrix(matrix4f)
-        ), ShaderProp.DEFAULT);
+        ), ShaderProp.DEFAULT);*/
+        batchManager.enqueue(uploadedTranslucentParts, new EnqueueProp(new HackGlState().setColor(255, 255, 255, 255).setLightmap(shaderLightmapUV)), new ShaderProp().setViewMatrix(matrix4f));
     }
 
     public void enqueueTranslucentBlaze(BufferSourceProxy vertexConsumers, Matrix4f pose, int light, DrawContext drawContext) {

@@ -3,7 +3,7 @@ package cn.zbx1425.mtrsteamloco.data;
 import cn.zbx1425.mtrsteamloco.MainClient;
 import cn.zbx1425.sowcer.math.Vector3f;
 import cn.zbx1425.sowcer.model.Model;
-import cn.zbx1425.sowcer.vertex.VertAttrType;
+// import cn.zbx1425.sowcer.vertex.VertAttrType;
 import cn.zbx1425.sowcerext.model.RawMesh;
 import cn.zbx1425.sowcerext.model.RawModel;
 import cn.zbx1425.sowcerext.model.Vertex;
@@ -66,7 +66,7 @@ public class RailModelProperties {
         float globalYMin = 0f, globalYMax = 0f;
 
         for (RawModel rm : rawModels) {
-            rm.clearAttrState(VertAttrType.COLOR);
+            // rm.clearAttrState(VertAttrType.COLOR);
             rm.applyRotation(new Vector3f(0.577f, 0.577f, 0.577f), (float) Math.toRadians(1));
             this.rawModels.add(rm);
             this.uploadedModels.add(MainClient.modelManager.uploadModel(rm));

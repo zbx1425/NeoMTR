@@ -70,10 +70,10 @@ public class CsvModelLoader {
                         Integer[] setColorParams = parseParams(tokens, new Integer[]{0, 0, 0, 255}, Integer::parseInt);
                         if (tokens[0].equals("setcolorall")) {
                             for (RawMesh mesh : builtMeshList) {
-                                mesh.materialProp.attrState.setColor(setColorParams[0], setColorParams[1], setColorParams[2], setColorParams[3]);
+                                mesh.materialProp./*attrState*/hackGlState.setColor(setColorParams[0], setColorParams[1], setColorParams[2], setColorParams[3]);
                             }
                         }
-                        buildingMesh.materialProp.attrState.setColor(setColorParams[0], setColorParams[1], setColorParams[2], setColorParams[3]);
+                        buildingMesh.materialProp./*attrState*/hackGlState.setColor(setColorParams[0], setColorParams[1], setColorParams[2], setColorParams[3]);
                         break;
                     case "loadtexture":
                         if (tokens.length < 2) throw new IllegalArgumentException("Invalid LoadTexture command.");

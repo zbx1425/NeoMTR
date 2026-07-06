@@ -41,4 +41,8 @@ public class BlazeRenderType {
 //        return BEACON_BEAM.apply(resourceLocation, bl);
         return RenderTypes.beaconBeam(resourceLocation, bl);
     }
+
+    public static RenderType entityTranslucentEmissive(Identifier resourceLocation) {
+        return RenderTypes.entityTranslucentEmissive(resourceLocation);
+    }
 }

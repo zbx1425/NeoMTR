@@ -43,23 +43,23 @@ public class RenderTrainsMixin {
         Matrix4f viewMatrix = new Matrix4f(matrices.last().pose());
         MainClient.railRenderDispatcher.prepareDraw();
         if (ClientConfig.getRailRenderLevel() >= 2) {
-//            GlStateTracker.capture();
-//            MainClient.railRenderDispatcher.drawRails(Minecraft.getInstance().level, MainClient.drawScheduler.batchManager, viewMatrix);
-//            MainClient.drawScheduler.commitRaw(MainClient.drawContext);
+            GlStateTracker.capture();
+            MainClient.railRenderDispatcher.drawRails(Minecraft.getInstance().level, MainClient.drawScheduler.batchManager, viewMatrix);
+            MainClient.drawScheduler.commitRaw(MainClient.drawContext);
 
-//            GlStateTracker.restore();
+            GlStateTracker.restore();
             if (Minecraft.getInstance().debugEntries.isCurrentlyEnabled(DebugScreenEntries.ENTITY_HITBOXES) && !Minecraft.getInstance().showOnlyReducedInfo()) {
-//                MainClient.railRenderDispatcher.drawBoundingBoxes(matrices, vertexConsumers.getBuffer(RenderTypes.lines()));
+                MainClient.railRenderDispatcher.drawBoundingBoxes(matrices, vertexConsumers.getBuffer(RenderTypes.lines()));
             }
 
-//            MainClient.railRenderDispatcher.drawRailNodes(Minecraft.getInstance().level, MainClient.drawScheduler, viewMatrix);
+            MainClient.railRenderDispatcher.drawRailNodes(Minecraft.getInstance().level, MainClient.drawScheduler, viewMatrix);
         }
 
         MainClient.drawContext.drawWithBlaze = !ClientConfig.useRenderOptimization();
         MainClient.drawContext.sortTranslucentFaces = ClientConfig.translucentSort;
         BufferSourceProxy vertexConsumersProxy = new BufferSourceProxy(vertexConsumers);
-//        MainClient.drawScheduler.commit(vertexConsumersProxy, MainClient.drawContext);
-//        vertexConsumersProxy.commit();
+        MainClient.drawScheduler.commit(vertexConsumersProxy, MainClient.drawContext);
+        vertexConsumersProxy.commit();
 
         if (Minecraft.getInstance().player != null && RailRenderDispatcher.isHoldingRailRelated) {
             RailPicker.pick();
@@ -74,14 +74,14 @@ public class RenderTrainsMixin {
     @Inject(at = @At("HEAD"), cancellable = true,
             method = "renderRailStandard(Lnet/minecraft/world/level/Level;Lmtr/data/Rail;FZFLjava/lang/String;FFFF)V")
     private static void renderRailStandard(Level world, Rail rail, float yOffset, boolean renderColors, float railWidth, String texture, float u1, float v1, float u2, float v2, CallbackInfo ci) {
-//        if (ClientConfig.getRailRenderLevel() == 0) {
-//            ci.cancel();
-//            return;
-//        }
-//        if (ClientConfig.getRailRenderLevel() >= 2) {
-//            boolean railAccepted = MainClient.railRenderDispatcher.registerRail(rail);
-//            if (railAccepted) ci.cancel();
-//        }
+        if (ClientConfig.getRailRenderLevel() == 0) {
+            ci.cancel();
+            return;
+        }
+        if (ClientConfig.getRailRenderLevel() >= 2) {
+            boolean railAccepted = MainClient.railRenderDispatcher.registerRail(rail);
+            if (railAccepted) ci.cancel();
+        }
     }
 
 }

@@ -21,7 +21,7 @@ public class DrawScheduler {
     private final List<ClusterDrawCall> drawCalls = new LinkedList<>();
 
     public void reloadShaders(ResourceManager resourceManager) throws IOException {
-        shaderManager.reloadShaders(resourceManager);
+        // shaderManager.reloadShaders(resourceManager);
     }
 
     public void enqueue(ModelCluster model, Matrix4f pose, int light) {
