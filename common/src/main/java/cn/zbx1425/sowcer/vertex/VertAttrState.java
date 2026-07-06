@@ -1,6 +1,6 @@
 package cn.zbx1425.sowcer.vertex;
 
-import cn.zbx1425.mtrsteamloco.render.ShadersModHandler;
+/*import cn.zbx1425.mtrsteamloco.render.ShadersModHandler;
 import cn.zbx1425.sowcer.ContextCapability;
 import cn.zbx1425.sowcer.batch.ShaderProp;
 import cn.zbx1425.sowcer.util.AttrUtil;
@@ -215,4 +215,4 @@ public class VertAttrState {
         clone.matrixModel = this.matrixModel == null ? null : this.matrixModel.copy();
         return clone;
     }
-}
+}*/

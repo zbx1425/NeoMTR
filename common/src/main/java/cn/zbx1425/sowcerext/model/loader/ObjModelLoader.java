@@ -86,14 +86,14 @@ public class ObjModelLoader {
                         materialProp.texture = ResourceUtil.resolveRelativePath(objLocation, objMaterial.getMapKd(), ".png");
                     }
                     FloatTuple color = objMaterial.getKd();
-                    materialProp.attrState.setColor((int)(color.getX() * 255), (int)(color.getY() * 255), (int)(color.getZ() * 255), (int)(objMaterial.getD() * 255));
+                    materialProp./*attrState*/hackGlState.setColor((int)(color.getX() * 255), (int)(color.getY() * 255), (int)(color.getZ() * 255), (int)(objMaterial.getD() * 255));
                 }
             } else if (objLocation != null) {
                 materialProp.texture = materialGroupName.equals("_") ? null : ResourceUtil.resolveRelativePath(objLocation, materialGroupName, ".png");
-                materialProp.attrState.setColor(255, 255, 255, 255);
+                materialProp./*attrState*/hackGlState.setColor(255, 255, 255, 255);
             } else {
                 materialProp.texture = null;
-                materialProp.attrState.setColor(255, 255, 255, 255);
+                materialProp./*attrState*/hackGlState.setColor(255, 255, 255, 255);
             }
 
             Obj renderObjMesh = ObjUtils.convertToRenderable(entry.getValue());
@@ -182,10 +182,10 @@ public class ObjModelLoader {
                     String renderType;
                     switch (matEntry.getKey().shaderName) {
                         case "rendertype_entity_cutout" ->
-                                renderType = matEntry.getKey().attrState.lightmapUV != null
+                                renderType = matEntry.getKey()./*attrState.lightmapUV*/hackGlState.lightmap != null
                                         ? "interior" : "exterior";
                         case "rendertype_entity_translucent_cull" ->
-                                renderType = matEntry.getKey().attrState.lightmapUV != null
+                                renderType = matEntry.getKey()./*attrState.lightmapUV*/hackGlState.lightmap != null
                                         ? "interiortranslucent" : "exteriortranslucent";
                         case "rendertype_beacon_beam" ->
                                 renderType = matEntry.getKey().translucent

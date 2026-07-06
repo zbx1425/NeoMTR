@@ -1,12 +1,16 @@
 package cn.zbx1425.sowcer.batch;
 
 import cn.zbx1425.sowcer.shader.BlazeRenderType;
-import cn.zbx1425.sowcer.vertex.VertAttrState;
+//import cn.zbx1425.sowcer.vertex.VertAttrState;
+import cn.zbx1425.sowcer.vertex.HackGlState;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 //import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderPass;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.Identifier;
 
 import java.io.DataInputStream;
@@ -24,7 +28,8 @@ public class MaterialProp {
     public Identifier texture;
 
     /** The vertex attribute values to use for those specified with VertAttrSrc MATERIAL. */
-    public VertAttrState attrState = new VertAttrState();
+    // public VertAttrState attrState = new VertAttrState();
+    public HackGlState hackGlState = new HackGlState();
 
     /** If blending should be set up. True for entity_translucent_* and beacon_beam when translucent is true. */
     public boolean translucent = false;
@@ -54,8 +59,10 @@ public class MaterialProp {
         JsonObject mtlObj = (JsonObject)new JsonParser().parse(content);
         this.shaderName = mtlObj.get("shaderName").getAsString();
         this.texture = mtlObj.get("texture").isJsonNull() ? null : Identifier.parse(mtlObj.get("texture").getAsString());
-        this.attrState.color = mtlObj.get("color").isJsonNull() ? null : mtlObj.get("color").getAsInt();
-        this.attrState.lightmapUV = mtlObj.get("lightmapUV").isJsonNull() ? null : mtlObj.get("lightmapUV").getAsInt();
+        // this.attrState.color = mtlObj.get("color").isJsonNull() ? null : mtlObj.get("color").getAsInt();
+        // this.attrState.lightmapUV = mtlObj.get("lightmapUV").isJsonNull() ? null : mtlObj.get("lightmapUV").getAsInt();
+        this.hackGlState.color = mtlObj.get("color").isJsonNull() ? null : mtlObj.get("color").getAsInt();
+        this.hackGlState.lightmap = mtlObj.get("lightmapUV").isJsonNull() ? null : mtlObj.get("lightmapUV").getAsInt();
         this.translucent = mtlObj.has("translucent") && mtlObj.get("translucent").getAsBoolean();
         this.writeDepthBuf = mtlObj.has("writeDepthBuf") && mtlObj.get("writeDepthBuf").getAsBoolean();
         this.billboard = mtlObj.has("billboard") && mtlObj.get("billboard").getAsBoolean();
@@ -64,30 +71,34 @@ public class MaterialProp {
 
     public static final Identifier WHITE_TEXTURE_LOCATION = Identifier.parse("minecraft:textures/misc/white.png");
 
-    public void setupCompositeState() {
+    public AbstractTexture getTexture() {
+        return Minecraft.getInstance().getTextureManager().getTexture(texture == null ? WHITE_TEXTURE_LOCATION : texture);
+    }
+
+    /*public void setupCompositeState() {
         if (texture != null) {
-            // TextureManager textureManager = Minecraft.getInstance().getTextureManager();
-            // textureManager.getTexture(texture).setFilter(false, false);
-//            RenderSystem.setShaderTexture(0, texture);
+            TextureManager textureManager = Minecraft.getInstance().getTextureManager();
+            textureManager.getTexture(texture).setFilter(false, false);
+            RenderSystem.setShaderTexture(0, texture);
         } else {
-//            RenderSystem.setShaderTexture(0, WHITE_TEXTURE_LOCATION);
+            RenderSystem.setShaderTexture(0, WHITE_TEXTURE_LOCATION);
         }
 
         // HACK: To make cutout transparency on beacon_beam work
         if (translucent || cutoutHack) {
-//            RenderSystem.enableBlend(); // TransparentState
-//            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-//                    GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            RenderSystem.enableBlend(); // TransparentState
+            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                    GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         } else {
-//            RenderSystem.disableBlend();
+            RenderSystem.disableBlend();
         }
-//        RenderSystem.enableDepthTest(); // DepthTestState
-//        RenderSystem.depthFunc(GL33.GL_LEQUAL);
-//        RenderSystem.enableCull();
-//        Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer(); // LightmapState
-//        Minecraft.getInstance().gameRenderer.overlayTexture().setupOverlayColor(); // OverlayState
-//        RenderSystem.depthMask(writeDepthBuf); // WriteMaskState
-    }
+        RenderSystem.enableDepthTest(); // DepthTestState
+        RenderSystem.depthFunc(GL33.GL_LEQUAL);
+        RenderSystem.enableCull();
+        Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer(); // LightmapState
+        Minecraft.getInstance().gameRenderer.overlayTexture().setupOverlayColor(); // OverlayState
+        RenderSystem.depthMask(writeDepthBuf); // WriteMaskState
+    }*/
 
     public RenderType getBlazeRenderType() {
         RenderType result;
@@ -95,7 +106,7 @@ public class MaterialProp {
         result = switch (shaderName) {
             case "rendertype_entity_cutout" -> BlazeRenderType.entityCutout(textureToUse);
             case "rendertype_entity_translucent_cull" -> BlazeRenderType.entityTranslucentCull(textureToUse);
-            case "rendertype_beacon_beam" -> BlazeRenderType.beaconBeam(textureToUse, translucent);
+            case "rendertype_beacon_beam" -> /*BlazeRenderType.beaconBeam(textureToUse, translucent)*/ BlazeRenderType.entityTranslucentEmissive(textureToUse);
             default -> BlazeRenderType.entityCutout(textureToUse);
         };
         return result;
@@ -110,7 +121,8 @@ public class MaterialProp {
     public void copyFrom(MaterialProp other) {
         this.shaderName = other.shaderName;
         this.texture = other.texture;
-        this.attrState = other.attrState.copy();
+        // this.attrState = other.attrState.copy();
+        this.hackGlState = other.hackGlState;
         this.translucent = other.translucent;
         this.writeDepthBuf = other.writeDepthBuf;
         this.billboard = other.billboard;
@@ -127,15 +139,19 @@ public class MaterialProp {
         } else {
             mtlObj.addProperty("texture", texture.toString());
         }
-        if (this.attrState.color == null) {
+        // if (this.attrState.color == null) {
+        if (this.hackGlState.color == null) {
             mtlObj.add("color", new JsonNull());
         } else {
-            mtlObj.addProperty("color", this.attrState.color);
+            // mtlObj.addProperty("color", this.attrState.color);
+            mtlObj.addProperty("color", this.hackGlState.color);
         }
-        if (this.attrState.lightmapUV == null) {
+        // if (this.attrState.lightmapUV == null) {
+        if (this.hackGlState.lightmap == null) {
             mtlObj.add("lightmapUV", new JsonNull());
         } else {
-            mtlObj.addProperty("lightmapUV", this.attrState.lightmapUV);
+            //mtlObj.addProperty("lightmapUV", this.attrState.lightmapUV);
+            mtlObj.addProperty("lightmapUV", this.hackGlState.lightmap);
         }
         mtlObj.addProperty("translucent", this.translucent);
         mtlObj.addProperty("writeDepthBuf", this.writeDepthBuf);
@@ -162,12 +178,12 @@ public class MaterialProp {
                 && billboard == that.billboard && cutoutHack == that.cutoutHack
                 && sheetElementsU == that.sheetElementsU && sheetElementsV == that.sheetElementsV
                 && Objects.equals(shaderName, that.shaderName) && Objects.equals(texture, that.texture)
-                && Objects.equals(attrState, that.attrState);
+                && Objects.equals(/*attrState*/hackGlState, that./*attrState*/hackGlState);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(shaderName, texture, attrState, translucent, writeDepthBuf, billboard,
+        return Objects.hash(shaderName, texture, /*attrState*/hackGlState, translucent, writeDepthBuf, billboard,
                 cutoutHack, sheetElementsU, sheetElementsV);
     }
 }

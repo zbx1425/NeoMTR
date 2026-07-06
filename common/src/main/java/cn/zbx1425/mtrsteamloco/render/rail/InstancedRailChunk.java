@@ -2,6 +2,7 @@ package cn.zbx1425.mtrsteamloco.render.rail;
 
 import cn.zbx1425.mtrsteamloco.render.ByteBufferOutputStream;
 import cn.zbx1425.sowcer.batch.BatchManager;
+import cn.zbx1425.sowcer.batch.BatchType;
 import cn.zbx1425.sowcer.batch.EnqueueProp;
 import cn.zbx1425.sowcer.batch.ShaderProp;
 import cn.zbx1425.sowcer.math.Matrix4f;
@@ -11,10 +12,11 @@ import cn.zbx1425.sowcer.model.VertArrays;
 import cn.zbx1425.sowcer.object.InstanceBuf;
 import cn.zbx1425.sowcer.object.VertBuf;
 import cn.zbx1425.sowcer.util.OffHeapAllocator;
-import cn.zbx1425.sowcer.vertex.VertAttrMapping;
-import cn.zbx1425.sowcer.vertex.VertAttrSrc;
-import cn.zbx1425.sowcer.vertex.VertAttrState;
-import cn.zbx1425.sowcer.vertex.VertAttrType;
+// import cn.zbx1425.sowcer.vertex.VertAttrMapping;
+// import cn.zbx1425.sowcer.vertex.VertAttrSrc;
+// import cn.zbx1425.sowcer.vertex.VertAttrState;
+// import cn.zbx1425.sowcer.vertex.VertAttrType;
+import cn.zbx1425.sowcer.vertex.HackGlState;
 import com.google.common.io.LittleEndianDataOutputStream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.LightCoordsUtil;
@@ -34,7 +36,7 @@ public class InstancedRailChunk extends RailChunkBase {
     private final InstanceBuf instanceBuf;
     private final VertArrays vertArrays;
 
-    private static final VertAttrMapping RAIL_MAPPING = new VertAttrMapping.Builder()
+    /*private static final VertAttrMapping RAIL_MAPPING = new VertAttrMapping.Builder()
             .set(VertAttrType.POSITION, VertAttrSrc.VERTEX_BUF)
             .set(VertAttrType.COLOR, VertAttrSrc.INSTANCE_BUF_OR_GLOBAL)
             .set(VertAttrType.UV_TEXTURE, VertAttrSrc.VERTEX_BUF)
@@ -42,14 +44,14 @@ public class InstancedRailChunk extends RailChunkBase {
             .set(VertAttrType.UV_LIGHTMAP, VertAttrSrc.INSTANCE_BUF_OR_GLOBAL)
             .set(VertAttrType.NORMAL, VertAttrSrc.VERTEX_BUF)
             .set(VertAttrType.MATRIX_MODEL, VertAttrSrc.INSTANCE_BUF)
-            .build();
+            .build();*/
 
     public InstancedRailChunk(Long chunkId, ModelRef modelRef) {
         super(chunkId, modelRef);
         Model railModel = modelRef.getModel();
         if (railModel != null) {
             instanceBuf = new InstanceBuf(0);
-            vertArrays = VertArrays.createAll(railModel, RAIL_MAPPING, instanceBuf);
+            vertArrays = VertArrays.createAll(railModel, /*RAIL_MAPPING*/ BatchType.INSTANCED, instanceBuf);
         } else {
             instanceBuf = null;
             vertArrays = null;
@@ -71,7 +73,7 @@ public class InstancedRailChunk extends RailChunkBase {
         }
         float yMin = 256, yMax = -64;
 
-        ByteBuffer byteBuf = OffHeapAllocator.allocate(instanceCount * RAIL_MAPPING.strideInstance);
+        ByteBuffer byteBuf = OffHeapAllocator.allocate(instanceCount * /*RAIL_MAPPING.strideInstance*/ 72);
         ByteBufferOutputStream byteArrayOutputStream = new ByteBufferOutputStream(byteBuf, false);
         LittleEndianDataOutputStream oStream = new LittleEndianDataOutputStream(byteArrayOutputStream);
 
@@ -93,7 +95,7 @@ public class InstancedRailChunk extends RailChunkBase {
         }
 
         instanceBuf.size = instanceCount;
-        instanceBuf.upload(byteBuf, VertBuf.USAGE_DYNAMIC_DRAW);
+        instanceBuf.upload(byteBuf.flip(), /*VertBuf.USAGE_DYNAMIC_DRAW*/VertBuf.USAGE_INSTANCE);
         OffHeapAllocator.free(byteBuf);
 
         if (yMin > yMax) yMin = yMax;
@@ -117,7 +119,7 @@ public class InstancedRailChunk extends RailChunkBase {
             pieceMat.store(matFloatBuf);
             oStream.write(lookAtBytes);
 
-            for (int k = 0; k < RAIL_MAPPING.paddingInstance; k++) oStream.writeByte(0);
+            // for (int k = 0; k < RAIL_MAPPING.paddingInstance; k++) oStream.writeByte(0);
         } catch (IOException ignored) {
         }
         return yMin;
@@ -128,7 +130,7 @@ public class InstancedRailChunk extends RailChunkBase {
         if (vertArrays == null) return;
 
         if (instanceBuf.size < 1) return;
-        VertAttrState attrState = new VertAttrState().setOverlayUVNoOverlay();
+        /*VertAttrState*/ HackGlState attrState = new /*VertAttrState().setOverlayUVNoOverlay()*/HackGlState();
         if (!RailRenderDispatcher.isHoldingMtrRailRelated) attrState.setColor(-1);
         batchManager.enqueue(vertArrays, new EnqueueProp(attrState), shaderProp);
     }

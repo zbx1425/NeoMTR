@@ -1,8 +1,9 @@
 package cn.zbx1425.sowcer.model;
 
+import cn.zbx1425.sowcer.batch.BatchType;
 import cn.zbx1425.sowcer.object.InstanceBuf;
 import cn.zbx1425.sowcer.object.VertArray;
-import cn.zbx1425.sowcer.vertex.VertAttrMapping;
+// import cn.zbx1425.sowcer.vertex.VertAttrMapping;
 import net.minecraft.resources.Identifier;
 
 import java.io.Closeable;
@@ -12,7 +13,7 @@ public class VertArrays implements Closeable {
 
     public final ArrayList<VertArray> meshList = new ArrayList<>();
 
-    public static VertArrays createAll(Model model, VertAttrMapping mapping, InstanceBuf instanceBuf) {
+    public static VertArrays createAll(Model model, /*VertAttrMapping*/ BatchType mapping, InstanceBuf instanceBuf) {
         VertArrays result = new VertArrays();
         for (Mesh mesh : model.meshList) {
             VertArray meshVertArray = new VertArray();

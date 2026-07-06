@@ -3,16 +3,18 @@ package cn.zbx1425.mtrsteamloco.render.rail;
 import cn.zbx1425.mtrsteamloco.data.RailModelProperties;
 import cn.zbx1425.mtrsteamloco.data.RailModelRegistry;
 import cn.zbx1425.sowcer.batch.BatchManager;
+import cn.zbx1425.sowcer.batch.BatchType;
 import cn.zbx1425.sowcer.batch.EnqueueProp;
 import cn.zbx1425.sowcer.batch.ShaderProp;
 import cn.zbx1425.sowcer.math.Matrix4f;
 import cn.zbx1425.sowcer.math.Vector3f;
 import cn.zbx1425.sowcer.model.Model;
 import cn.zbx1425.sowcer.model.VertArrays;
-import cn.zbx1425.sowcer.vertex.VertAttrMapping;
-import cn.zbx1425.sowcer.vertex.VertAttrSrc;
-import cn.zbx1425.sowcer.vertex.VertAttrState;
-import cn.zbx1425.sowcer.vertex.VertAttrType;
+// import cn.zbx1425.sowcer.vertex.VertAttrMapping;
+// import cn.zbx1425.sowcer.vertex.VertAttrSrc;
+// import cn.zbx1425.sowcer.vertex.VertAttrState;
+// import cn.zbx1425.sowcer.vertex.VertAttrType;
+import cn.zbx1425.sowcer.vertex.HackGlState;
 import cn.zbx1425.sowcerext.model.RawModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.LightCoordsUtil;
@@ -30,7 +32,7 @@ public class MeshBuildingRailChunk extends RailChunkBase {
     private Model uploadedCombinedModel;
     private VertArrays vertArrays;
 
-    private static final VertAttrMapping RAIL_MAPPING = new VertAttrMapping.Builder()
+    /*private static final VertAttrMapping RAIL_MAPPING = new VertAttrMapping.Builder()
             .set(VertAttrType.POSITION, VertAttrSrc.VERTEX_BUF)
             .set(VertAttrType.COLOR, VertAttrSrc.VERTEX_BUF_OR_GLOBAL)
             .set(VertAttrType.UV_TEXTURE, VertAttrSrc.VERTEX_BUF)
@@ -38,7 +40,7 @@ public class MeshBuildingRailChunk extends RailChunkBase {
             .set(VertAttrType.UV_LIGHTMAP, VertAttrSrc.VERTEX_BUF_OR_GLOBAL)
             .set(VertAttrType.NORMAL, VertAttrSrc.VERTEX_BUF)
             .set(VertAttrType.MATRIX_MODEL, VertAttrSrc.GLOBAL)
-            .build();
+            .build();*/
 
     protected MeshBuildingRailChunk(Long chunkId, ModelRef modelRef) {
         super(chunkId, modelRef);
@@ -85,8 +87,8 @@ public class MeshBuildingRailChunk extends RailChunkBase {
 
         if (vertArrays != null) vertArrays.close();
         if (uploadedCombinedModel != null) uploadedCombinedModel.close();
-        uploadedCombinedModel = combinedModel.upload(RAIL_MAPPING);
-        vertArrays = VertArrays.createAll(uploadedCombinedModel, RAIL_MAPPING, null);
+        uploadedCombinedModel = combinedModel.upload(BatchType.REGULAR);
+        vertArrays = VertArrays.createAll(uploadedCombinedModel, BatchType.REGULAR, null);
 
         if (yMin > yMax) yMin = yMax;
         setBoundingBox(yMin, yMax);
@@ -97,9 +99,9 @@ public class MeshBuildingRailChunk extends RailChunkBase {
         if (railModel == null) return;
 
         if (vertArrays == null) return;
-        VertAttrState attrState = new VertAttrState().setModelMatrix(shaderProp.viewMatrix).setOverlayUVNoOverlay();
+        /*VertAttrState*/ HackGlState attrState = new /*VertAttrState().setModelMatrix(shaderProp.viewMatrix).setOverlayUVNoOverlay()*/ HackGlState();
         if (!RailRenderDispatcher.isHoldingMtrRailRelated) attrState.setColor(-1);
-        batchManager.enqueue(vertArrays, new EnqueueProp(attrState), ShaderProp.DEFAULT);
+        batchManager.enqueue(vertArrays, new EnqueueProp(attrState), /*ShaderProp.DEFAULT*/ shaderProp);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package cn.zbx1425.mtrsteamloco.render.scripting.util;
 
+import cn.zbx1425.sowcer.batch.BatchType;
 import cn.zbx1425.sowcer.util.GlStateTracker;
 import cn.zbx1425.sowcerext.model.ModelCluster;
 import cn.zbx1425.sowcerext.model.RawModel;
@@ -17,7 +18,7 @@ public class DynamicModelHolder {
             boolean needProtection = !GlStateTracker.isStateProtected;
             if (needProtection) GlStateTracker.capture();
             ModelCluster lastUploadedModel = uploadedModel;
-            uploadedModel = new ModelCluster(finalRawModel, ModelManager.DEFAULT_MAPPING);
+            uploadedModel = new ModelCluster(finalRawModel, BatchType.REGULAR);
             if (lastUploadedModel != null) lastUploadedModel.close();
             if (needProtection) GlStateTracker.restore();
         });

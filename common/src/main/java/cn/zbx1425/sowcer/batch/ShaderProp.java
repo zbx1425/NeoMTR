@@ -18,7 +18,7 @@ public class ShaderProp {
 
     // Actual view matrix fetched from RenderSystem
     // Temporary value set during rendering
-    public Matrix4f renderSystemViewMatrix = null;
+    // public Matrix4f renderSystemViewMatrix = null;
 
     public static ShaderProp DEFAULT = new ShaderProp();
 

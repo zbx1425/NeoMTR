@@ -1,6 +1,6 @@
 package cn.zbx1425.sowcer.vertex;
 
-import cn.zbx1425.sowcer.object.InstanceBuf;
+/*import cn.zbx1425.sowcer.object.InstanceBuf;
 import cn.zbx1425.sowcer.object.VertBuf;
 import org.lwjgl.opengl.GL33;
 
@@ -103,4 +103,4 @@ public class VertAttrMapping {
             return new VertAttrMapping(sources);
         }
     }
-}
+}*/

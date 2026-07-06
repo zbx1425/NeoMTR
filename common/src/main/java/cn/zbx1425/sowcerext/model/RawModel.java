@@ -1,13 +1,14 @@
 package cn.zbx1425.sowcerext.model;
 
+import cn.zbx1425.sowcer.batch.BatchType;
 import cn.zbx1425.sowcer.batch.MaterialProp;
 import cn.zbx1425.sowcer.model.Model;
 import cn.zbx1425.sowcer.util.AttrUtil;
 import cn.zbx1425.sowcer.util.DrawContext;
-import cn.zbx1425.sowcer.vertex.VertAttrMapping;
+// import cn.zbx1425.sowcer.vertex.VertAttrMapping;
 import cn.zbx1425.sowcer.math.Matrix4f;
 import cn.zbx1425.sowcer.math.Vector3f;
-import cn.zbx1425.sowcer.vertex.VertAttrType;
+// import cn.zbx1425.sowcer.vertex.VertAttrType;
 import cn.zbx1425.sowcerext.model.integration.BufferSourceProxy;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
@@ -37,7 +38,7 @@ public class RawModel {
         }
     }
 
-    public Model upload(VertAttrMapping mapping) {
+    public Model upload(/*VertAttrMapping*/ BatchType mapping) {
         Model model = new Model();
         for (RawMesh mesh : meshList.values()) {
             if (mesh.faces.isEmpty()) continue;
@@ -177,18 +178,20 @@ public class RawModel {
         }
     }
 
-    public void clearAttrState(VertAttrType attrType) {
+    /*public void clearAttrState(VertAttrType attrType) {
         for (Map.Entry<MaterialProp, RawMesh> entry : meshList.entrySet()) {
             entry.getKey().attrState.clearAttr(attrType);
         }
-    }
+    }*/
 
     public void writeBlazeBuffer(BufferSourceProxy vertexConsumers, Matrix4f matrix, int light, DrawContext drawContext) {
         if (meshList.isEmpty()) return;
         for (Map.Entry<MaterialProp, RawMesh> entry : meshList.entrySet()) {
             RenderType renderType = entry.getKey().getBlazeRenderType();
-            int resultColor = entry.getKey().attrState.color != null ? entry.getKey().attrState.color : 0xFFFFFFFF;
-            int resultLight = entry.getKey().attrState.lightmapUV != null ? entry.getKey().attrState.lightmapUV : light;
+            // int resultColor = entry.getKey().attrState.color != null ? entry.getKey().attrState.color : 0xFFFFFFFF;
+            // int resultLight = entry.getKey().attrState.lightmapUV != null ? entry.getKey().attrState.lightmapUV : light;
+            int resultColor = entry.getKey().hackGlState.color != null ? entry.getKey().hackGlState.color : 0xFFFFFFFF;
+            int resultLight = entry.getKey().hackGlState.lightmap != null ? entry.getKey().hackGlState.lightmap : light;
 
             /*
             if (Objects.equals(entry.getKey().shaderName, "rendertype_entity_translucent_cull") && (resultColor & 0xFF) != 0xFF) {

@@ -6,16 +6,14 @@ import cn.zbx1425.mtrsteamloco.NTEClientCommand;
 import cn.zbx1425.mtrsteamloco.gui.DebugHud;
 import cn.zbx1425.mtrsteamloco.gui.ScriptDebugOverlay;
 import cn.zbx1425.mtrsteamloco.render.train.SteamSmokeParticle;
+import cn.zbx1425.sowcer.shader.ShaderManager;
 import mtr.MTRClient;
 import mtr.screen.ConfigScreen;
 import net.minecraft.commands.Commands;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
-import net.neoforged.neoforge.client.event.RegisterDebugEntriesEvent;
-import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
-import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
@@ -51,6 +49,11 @@ public class ClientProxy {
         @SubscribeEvent
         public static void onDebugOverlay(RegisterDebugEntriesEvent event) {
             event.register(Main.id("renderer_info"), new DebugHud());
+        }
+
+        @SubscribeEvent
+        public static void onRegisterRenderPipelines(RegisterRenderPipelinesEvent event) {
+            ShaderManager.registerPipelines(event::registerPipeline);
         }
     }
 

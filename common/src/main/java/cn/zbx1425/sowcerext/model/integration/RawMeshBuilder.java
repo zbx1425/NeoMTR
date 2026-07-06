@@ -21,7 +21,7 @@ public class RawMeshBuilder {
         this.mesh = new RawMesh(new MaterialProp());
         mesh.setRenderType(renderType);
         mesh.materialProp.texture = texture;
-        mesh.materialProp.attrState.setColor(255, 255, 255, 255);
+        // mesh.materialProp.attrState.setColor(255, 255, 255, 255);
     }
 
     public RawMesh getMesh() {
@@ -66,12 +66,13 @@ public class RawMeshBuilder {
     }
 
     public RawMeshBuilder color(int r, int g, int b, int a) {
-        mesh.materialProp.attrState.setColor(r, g, b, a);
+        mesh.materialProp./*attrState*/hackGlState.setColor(r, g, b, a);
         return this;
     }
 
     public RawMeshBuilder lightMapUV(short u, short v) {
-        mesh.materialProp.attrState.setLightmapUV(u, v);
+        // mesh.materialProp.attrState.setLightmapUV(u, v);
+        mesh.materialProp.hackGlState.setLightmapUV(u, v);
         return this;
     }
 
