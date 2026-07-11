@@ -49,6 +49,8 @@ public class RailRenderDispatcher {
     public static boolean isHoldingRailRelated = false;
     public static boolean isPreviewingModel = false;
 
+    private static boolean prevIsHoldingMtrRailRelated = false;
+
     private BlockPos[] findRailPositions(Rail rail) {
         for (Map.Entry<BlockPos, Map<BlockPos, Rail>> outer : ClientData.RAILS.entrySet()) {
             for (Map.Entry<BlockPos, Rail> inner : outer.getValue().entrySet()) {
@@ -165,6 +167,15 @@ public class RailRenderDispatcher {
             isHoldingRailEditorGeometry = false;
             isHoldingNteRailRelated = false;
             isHoldingRailRelated = false;
+        }
+
+        if (isHoldingMtrRailRelated != prevIsHoldingMtrRailRelated) {
+            for (HashMap<Long, RailChunkBase> chunkMap : railChunkMap.values()) {
+                for (RailChunkBase chunk : chunkMap.values()) {
+                    if (chunk instanceof InstancedRailChunk) chunk.isDirty = true;
+                }
+            }
+            prevIsHoldingMtrRailRelated = isHoldingMtrRailRelated;
         }
     }
 

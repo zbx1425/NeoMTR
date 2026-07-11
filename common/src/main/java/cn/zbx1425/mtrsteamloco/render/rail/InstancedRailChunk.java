@@ -104,8 +104,9 @@ public class InstancedRailChunk extends RailChunkBase {
 
     private float writeInstance(LittleEndianDataOutputStream oStream, Matrix4f pieceMat,
                                 int color, Level world, float yMin) {
+        int effectiveColor = RailRenderDispatcher.isHoldingMtrRailRelated ? color : 0xFFFFFFFF;
         try {
-            oStream.writeInt(color);
+            oStream.writeInt(effectiveColor);
 
             final Vector3f lightPos = pieceMat.getTranslationPart();
             yMin = Math.min(yMin, lightPos.y());
