@@ -3,6 +3,10 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 loom {
 	accessWidenerPath = project(":common").loom.accessWidenerPath
+
+	neoForge {
+		convertAccessWideners(tasks.named('shadowJar', Jar), "mtrsteamloco.accesswidener")
+	}
 }
 
 architectury {
@@ -80,13 +84,10 @@ shadowJar {
 	mergeServiceFiles()
 }
 
+assemble.dependsOn shadowJar
+
 static boolean matchInnerClass(String path, String... names) {
 	names.any { name -> path.startsWith(name) }
-}
-
-jar {
-	archiveBaseName = "NeoMTR"
-	archiveClassifier = "dev"
 }
 
 components.java {
