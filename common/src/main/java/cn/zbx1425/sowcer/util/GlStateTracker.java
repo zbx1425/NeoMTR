@@ -30,15 +30,15 @@ public class GlStateTracker {
 
     public static void restore() {
         if (!isStateProtected) throw new IllegalStateException("GlStateTracker: Not captured");
-        GL33.glBindVertexArray(vertArrayBinding);
-        GL33.glBindBuffer(GL33.GL_ARRAY_BUFFER, arrayBufBinding);
-        GL33.glBindBuffer(GL33.GL_ELEMENT_ARRAY_BUFFER, elementBufBinding);
+//        GL33.glBindVertexArray(vertArrayBinding);
+//        GL33.glBindBuffer(GL33.GL_ARRAY_BUFFER, arrayBufBinding);
+//        GL33.glBindBuffer(GL33.GL_ELEMENT_ARRAY_BUFFER, elementBufBinding);
 
 //        RenderSystem.setShader(() -> currentShaderInstance);
 
         // Obtain original state from RenderSystem?
-        GlStateManager._enableCull();
-        GlStateManager._depthMask(true);
+//        GlStateManager._enableCull();
+//        GlStateManager._depthMask(true);
 
         isStateProtected = false;
     }

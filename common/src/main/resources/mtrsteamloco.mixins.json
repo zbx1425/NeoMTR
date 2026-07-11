@@ -10,6 +10,7 @@
     "DynamicImageAccessor",
     "DynamicTrainModelMixin",
     "GameRendererMixin",
+    "GlCommandEncoderMixin",
     "GLFWMixin",
     "JonModelTrainRendererMixin",
     "KeyboardHandlerMixin",

@@ -4,6 +4,7 @@ import cn.zbx1425.sowcer.model.VertArrays;
 import cn.zbx1425.sowcer.object.VertArray;
 import cn.zbx1425.sowcer.shader.ShaderManager;
 import cn.zbx1425.sowcer.util.DrawContext;
+import cn.zbx1425.sowcer.vertex.HackGlState;
 import com.mojang.blaze3d.systems.RenderPass;
 #if DEBUG
 import org.lwjgl.opengl.KHRDebug;
@@ -110,11 +111,8 @@ public class BatchManager {
         }
 
         public void draw(/*ShaderProp shaderProp*/ RenderPass renderPass) {
-            // vertArray.bind();
-            // if (enqueueProp.attrState != null) enqueueProp.attrState.applyGlobal(shaderProp);
-            // if (vertArray.materialProp.attrState != null) vertArray.materialProp.attrState.applyGlobal(shaderProp);
-            // vertArray.mapping.applyToggleableAttr(enqueueProp.attrState, vertArray.materialProp.attrState);
-            vertArray.draw(renderPass);
+            HackGlState effective = HackGlState.merge(enqueueProp.hackGlState, vertArray.materialProp.hackGlState);
+            vertArray.draw(renderPass, effective);
         }
     }
 

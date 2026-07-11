@@ -5,6 +5,7 @@ import cn.zbx1425.sowcer.batch.MaterialProp;
 import cn.zbx1425.sowcer.model.Mesh;
 // import cn.zbx1425.sowcer.util.GlStateTracker;
 // import cn.zbx1425.sowcer.vertex.VertAttrMapping;
+import cn.zbx1425.sowcer.vertex.HackGlState;
 import com.mojang.blaze3d.systems.RenderPass;
 // import com.mojang.blaze3d.systems.RenderSystem;
 // import net.minecraft.client.Minecraft;
@@ -69,8 +70,14 @@ public class VertArray implements Closeable {
     }*/
 
     public void draw(RenderPass renderPass) {
+        draw(renderPass, null);
+    }
+
+    public void draw(RenderPass renderPass, HackGlState hackGlState) {
         renderPass.setVertexBuffer(0, vertBuf.impl);
         renderPass.setIndexBuffer(indexBuf.impl, indexBuf.indexType);
+
+        if (hackGlState != null) hackGlState.applyLater();
 
         if (instanceBuf != null) {
             renderPass.setUniform("InstanceBuffer", instanceBuf.impl);
@@ -78,6 +85,8 @@ public class VertArray implements Closeable {
         } else {
             renderPass.drawIndexed(0, 0, indexBuf.vertexCount, 1);
         }
+
+        if (hackGlState != null) hackGlState.restore();
     }
 
     public int getFaceCount() {
