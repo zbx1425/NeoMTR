@@ -52,31 +52,31 @@ public class RenderLiftPanel<T extends BlockLiftPanelBase.TileEntityLiftPanel1Ba
 
 	@Override
 	public void submit(LiftPanelRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
-		if(state.shouldRender) {
-			final Font textRenderer = Minecraft.getInstance().font;
+		if (!state.shouldRender) return;
 
-            poseStack.pushPose();
-			poseStack.translate(0.5, 0, 0.5);
-			RenderLiftButtons.renderLiftObjectLink(poseStack, submitNodeCollector, state.level, state.blockPos, state.linkedPosition, state.facing, state.holdingLinker);
+		final Font textRenderer = Minecraft.getInstance().font;
 
-			if (state.lift != null) {
-				final String[] text = ClientData.DATA_CACHE.requestLiftFloorText(state.lift.getCurrentFloorBlockPos());
-				UtilitiesClient.rotateYDegrees(poseStack, -state.facing.toYRot());
-				UtilitiesClient.rotateZDegrees(poseStack, 180);
-				poseStack.translate(isOdd ? 0 : 0.5, 0, 0);
+		poseStack.pushPose();
+		poseStack.translate(0.5, 0, 0.5);
+		RenderLiftButtons.renderLiftObjectLink(poseStack, submitNodeCollector, state.level, state.blockPos, state.linkedPosition, state.facing, state.holdingLinker);
 
-				// Floor Number
-				poseStack.pushPose();
-				poseStack.translate(0, 0, (isFlat ? 0.4375F : 0.25F) - SMALL_OFFSET * 2);
-				final MultiBufferSource.BufferSource immediate = Minecraft.getInstance().renderBuffers().bufferSource();
-				IDrawing.drawStringWithFont(new MatrixStackWrapper.PoseStack(poseStack), textRenderer, immediate, ClientData.DATA_CACHE.requestLiftFloorText(state.linkedPosition)[0], HorizontalAlignment.CENTER, VerticalAlignment.CENTER, 0, -0.47F, 0.1875F, 0.1875F, 1, ARGB_BLACK, false, MAX_LIGHT_GLOWING, null, new IDrawing.TextDrawingCallback.World());
-				immediate.endBatch();
-				poseStack.popPose();
+		if (state.lift != null) {
+			final String[] text = ClientData.DATA_CACHE.requestLiftFloorText(state.lift.getCurrentFloorBlockPos());
+			UtilitiesClient.rotateYDegrees(poseStack, -state.facing.toYRot());
+			UtilitiesClient.rotateZDegrees(poseStack, 180);
+			poseStack.translate(isOdd ? 0 : 0.5, 0, 0);
 
-				renderLiftDisplay(poseStack, submitNodeCollector, isFlat ? 0.4375F : 0.25F, text[0], text[1], state.lift.getLiftDirection());
-			}
+			// Floor Number
+			poseStack.pushPose();
+			poseStack.translate(0, 0, (isFlat ? 0.4375F : 0.25F) - SMALL_OFFSET * 2);
+			final MultiBufferSource.BufferSource immediate = Minecraft.getInstance().renderBuffers().bufferSource();
+			IDrawing.drawStringWithFont(new MatrixStackWrapper.PoseStack(poseStack), textRenderer, immediate, ClientData.DATA_CACHE.requestLiftFloorText(state.linkedPosition)[0], HorizontalAlignment.CENTER, VerticalAlignment.CENTER, 0, -0.47F, 0.1875F, 0.1875F, 1, ARGB_BLACK, false, MAX_LIGHT_GLOWING, null, new IDrawing.TextDrawingCallback.World());
+			immediate.endBatch();
 			poseStack.popPose();
+
+			renderLiftDisplay(poseStack, submitNodeCollector, isFlat ? 0.4375F : 0.25F, text[0], text[1], state.lift.getLiftDirection());
 		}
+		poseStack.popPose();
 	}
 
 	@Override

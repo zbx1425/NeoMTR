@@ -28,28 +28,28 @@ public class RenderFreeNode extends BlockEntityRendererMapper<BlockFreeNode.Tile
 
 	@Override
 	public void submit(FreeNodeRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
-		if(state.shouldRender) {
-			poseStack.pushPose();
-			final float angle = state.angle;
-			final RenderType renderType = MoreRenderLayers.getExterior(Identifier.parse("textures/block/oak_log.png"));
+		if (!state.shouldRender) return;
 
-			if (Float.isNaN(angle)) {
-				// Undetermined: thin vertical pole
-				submitNodeCollector.submitCustomGeometry(poseStack, renderType, (pose, vertexConsumer) -> {
-					IDrawing.drawTexture(pose, vertexConsumer, 0.45F, 0.25F, 0.45F, 0.55F, 0.25F, 0.55F, 0.45F, 1, 0.45F, 0.55F, 1, 0.55F, 0.45F, 0.45F, 0.55F, 0.55F, Direction.UP, -1, state.lightCoords);
-				});
-			} else {
-				poseStack.translate(0.5, 0.125, 0.5);
-				poseStack.mulPose(Axis.YP.rotationDegrees(-angle));
-				poseStack.translate(-0.5, -0.125, -0.5);
-				final float y0 = state.nodeConnected ? 0.05F : 0.15F;
-				submitNodeCollector.submitCustomGeometry(poseStack, renderType, (pose, vertexConsumer) -> {
-					IDrawing.drawTexture(pose, vertexConsumer, 0.2F, y0, 0.45F, 0.8F, y0 + 0.1F, 0.55F, 0.2F, y0 + 0.1F, 0.55F, 0.8F, y0, 0.45F, 0.2F, 0.45F, 0.8F, 0.55F, Direction.UP, -1, state.lightCoords);
-				});
-			}
+		poseStack.pushPose();
+		final float angle = state.angle;
+		final RenderType renderType = MoreRenderLayers.getExterior(Identifier.parse("textures/block/oak_log.png"));
 
-			poseStack.popPose();
+		if (Float.isNaN(angle)) {
+			// Undetermined: thin vertical pole
+			submitNodeCollector.submitCustomGeometry(poseStack, renderType, (pose, vertexConsumer) -> {
+				IDrawing.drawTexture(pose, vertexConsumer, 0.45F, 0.25F, 0.45F, 0.55F, 0.25F, 0.55F, 0.45F, 1, 0.45F, 0.55F, 1, 0.55F, 0.45F, 0.45F, 0.55F, 0.55F, Direction.UP, -1, state.lightCoords);
+			});
+		} else {
+			poseStack.translate(0.5, 0.125, 0.5);
+			poseStack.mulPose(Axis.YP.rotationDegrees(-angle));
+			poseStack.translate(-0.5, -0.125, -0.5);
+			final float y0 = state.nodeConnected ? 0.05F : 0.15F;
+			submitNodeCollector.submitCustomGeometry(poseStack, renderType, (pose, vertexConsumer) -> {
+				IDrawing.drawTexture(pose, vertexConsumer, 0.2F, y0, 0.45F, 0.8F, y0 + 0.1F, 0.55F, 0.2F, y0 + 0.1F, 0.55F, 0.8F, y0, 0.45F, 0.2F, 0.45F, 0.8F, 0.55F, Direction.UP, -1, state.lightCoords);
+			});
 		}
+
+		poseStack.popPose();
 	}
 
 	@Override

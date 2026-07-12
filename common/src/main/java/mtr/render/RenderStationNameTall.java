@@ -22,13 +22,13 @@ public class RenderStationNameTall<T extends BlockStationNameTallBase.TileEntity
 
 	@Override
 	protected void drawStationName(StationNameTallRenderState state, BlockPos pos, Direction facing, StoredMatrixTransformations storedMatrixTransformations, String stationName, int stationColor, int color, int light) {
-		if (state.shouldRender) {
-			RenderTrains.scheduleRender(ClientData.DATA_CACHE.getTallStationName(color, stationName, stationColor, WIDTH / HEIGHT).resourceLocation, false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matrices, vertexConsumer) -> {
-				storedMatrixTransformations.transform(matrices);
-				IDrawing.drawTexture(matrices.last(), vertexConsumer, -WIDTH / 2, -HEIGHT / 2, WIDTH, HEIGHT, 0, 0, 1, 1, facing, ARGB_WHITE, light);
-				matrices.popPose();
-			});
-		}
+		if (!state.shouldRender) return;
+
+		RenderTrains.scheduleRender(ClientData.DATA_CACHE.getTallStationName(color, stationName, stationColor, WIDTH / HEIGHT).resourceLocation, false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matrices, vertexConsumer) -> {
+			storedMatrixTransformations.transform(matrices);
+			IDrawing.drawTexture(matrices.last(), vertexConsumer, -WIDTH / 2, -HEIGHT / 2, WIDTH, HEIGHT, 0, 0, 1, 1, facing, ARGB_WHITE, light);
+			matrices.popPose();
+		});
 	}
 
 	@Override

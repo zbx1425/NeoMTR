@@ -46,45 +46,45 @@ public abstract class RenderRouteBase<T extends BlockPSDTop.TileEntityRouteBase,
 
 	@Override
 	public void submit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
-		if(state.shouldRender) {
-			final StoredMatrixTransformations storedMatrixTransformations = new StoredMatrixTransformations();
+		if (!state.shouldRender) return;
+
+		final StoredMatrixTransformations storedMatrixTransformations = new StoredMatrixTransformations();
+		storedMatrixTransformations.add(matricesNew -> {
+			matricesNew.translate(0.5 + state.blockPos.getX(), state.blockPos.getY(), 0.5 + state.blockPos.getZ());
+			UtilitiesClient.rotateYDegrees(matricesNew, -state.facing.toYRot());
+		});
+
+		renderAdditionalUnmodified(state, storedMatrixTransformations.copy(), state.facing, state.lightCoords);
+
+		if (state.platformId != 0) {
 			storedMatrixTransformations.add(matricesNew -> {
-				matricesNew.translate(0.5 + state.blockPos.getX(), state.blockPos.getY(), 0.5 + state.blockPos.getZ());
-				UtilitiesClient.rotateYDegrees(matricesNew, -state.facing.toYRot());
+				matricesNew.translate(0, 1, 0);
+				UtilitiesClient.rotateZDegrees(matricesNew, 180);
+				matricesNew.translate(-0.5, -state.additionalYOffset, z);
 			});
 
-			renderAdditionalUnmodified(state, storedMatrixTransformations.copy(), state.facing, state.lightCoords);
+			final int color = getShadingColor(state.facing, ARGB_WHITE);
 
-			if (state.platformId != 0) {
-				storedMatrixTransformations.add(matricesNew -> {
-					matricesNew.translate(0, 1, 0);
-					UtilitiesClient.rotateZDegrees(matricesNew, 180);
-					matricesNew.translate(-0.5, -state.additionalYOffset, z);
-				});
+			RenderType routeRenderType = state.routeRenderType;
+			if ((routeRenderType == RenderType.ARROW || routeRenderType == RenderType.ROUTE) && state.sideExtended != EnumSide.SINGLE) {
+				final float width = state.leftBlocks + state.rightBlocks + 1 - sidePadding * 2;
+				final float height = 1 - topPadding - bottomPadding;
 
-				final int color = getShadingColor(state.facing, ARGB_WHITE);
-
-				RenderType routeRenderType = state.routeRenderType;
-				if ((routeRenderType == RenderType.ARROW || routeRenderType == RenderType.ROUTE) && state.sideExtended != EnumSide.SINGLE) {
-					final float width = state.leftBlocks + state.rightBlocks + 1 - sidePadding * 2;
-					final float height = 1 - topPadding - bottomPadding;
-
-					final Identifier resourceLocation;
-					if (routeRenderType == RenderType.ARROW) {
-						resourceLocation = ClientData.DATA_CACHE.getDirectionArrow(state.platformId, (state.arrowDirection & 0b01) > 0, (state.arrowDirection & 0b10) > 0, HorizontalAlignment.CENTER, true, 0.25F, width / height, ARGB_WHITE, ARGB_BLACK, transparentWhite ? ARGB_WHITE : 0).resourceLocation;
-					} else {
-						resourceLocation = ClientData.DATA_CACHE.getRouteMap(state.platformId, false, state.arrowDirection == 2, width / height, transparentWhite).resourceLocation;
-					}
-
-					RenderTrains.scheduleRender(resourceLocation, false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matricesNew, vertexConsumer) -> {
-						storedMatrixTransformations.transform(matricesNew);
-						IDrawing.drawTexture(matricesNew.last(), vertexConsumer, state.leftBlocks == 0 ? sidePadding : 0, topPadding, 0, 1 - (state.rightBlocks == 0 ? sidePadding : 0), 1 - bottomPadding, 0, (state.leftBlocks - (state.leftBlocks == 0 ? 0 : sidePadding)) / width, 0, (width - state.rightBlocks + (state.rightBlocks == 0 ? 0 : sidePadding)) / width, 1, state.facing.getOpposite(), color, state.lightCoords);
-						matricesNew.popPose();
-					});
+				final Identifier resourceLocation;
+				if (routeRenderType == RenderType.ARROW) {
+					resourceLocation = ClientData.DATA_CACHE.getDirectionArrow(state.platformId, (state.arrowDirection & 0b01) > 0, (state.arrowDirection & 0b10) > 0, HorizontalAlignment.CENTER, true, 0.25F, width / height, ARGB_WHITE, ARGB_BLACK, transparentWhite ? ARGB_WHITE : 0).resourceLocation;
+				} else {
+					resourceLocation = ClientData.DATA_CACHE.getRouteMap(state.platformId, false, state.arrowDirection == 2, width / height, transparentWhite).resourceLocation;
 				}
 
-				renderAdditional(state, storedMatrixTransformations, state.platformId, state.leftBlocks, state.rightBlocks, state.facing.getOpposite(), color, state.lightCoords);
+				RenderTrains.scheduleRender(resourceLocation, false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matricesNew, vertexConsumer) -> {
+					storedMatrixTransformations.transform(matricesNew);
+					IDrawing.drawTexture(matricesNew.last(), vertexConsumer, state.leftBlocks == 0 ? sidePadding : 0, topPadding, 0, 1 - (state.rightBlocks == 0 ? sidePadding : 0), 1 - bottomPadding, 0, (state.leftBlocks - (state.leftBlocks == 0 ? 0 : sidePadding)) / width, 0, (width - state.rightBlocks + (state.rightBlocks == 0 ? 0 : sidePadding)) / width, 1, state.facing.getOpposite(), color, state.lightCoords);
+					matricesNew.popPose();
+				});
 			}
+
+			renderAdditional(state, storedMatrixTransformations, state.platformId, state.leftBlocks, state.rightBlocks, state.facing.getOpposite(), color, state.lightCoords);
 		}
 	}
 
@@ -103,18 +103,18 @@ public abstract class RenderRouteBase<T extends BlockPSDTop.TileEntityRouteBase,
 		state.sideExtended = IBlock.getStatePropertySafe(blockState, SIDE_EXTENDED);
 		state.shouldRender = !RenderTrains.shouldNotRender(blockEntity.getBlockPos(), RenderTrains.maxTrainRenderDistance, null);
 
-		if (state.shouldRender) {
-			final long platformId = blockEntity.getPlatformId(ClientData.PLATFORMS, ClientData.DATA_CACHE);
-			state.platformId = platformId;
-			state.shouldRender = platformId != 0;
+		if (!state.shouldRender) return;
 
-			if (platformId != 0) {
-				state.leftBlocks = getTextureNumber(level, pos, state.facing, true);
-				state.rightBlocks = getTextureNumber(level, pos, state.facing, false);
-				state.routeRenderType = getRenderType(level, pos.relative(state.facing.getCounterClockWise(), state.leftBlocks), blockState);
-				state.arrowDirection = IBlock.getStatePropertySafe(blockState, arrowDirectionProperty);
-				state.additionalYOffset = -getAdditionalOffset(blockState);
-			}
+		final long platformId = blockEntity.getPlatformId(ClientData.PLATFORMS, ClientData.DATA_CACHE);
+		state.platformId = platformId;
+		state.shouldRender = platformId != 0;
+
+		if (platformId != 0) {
+			state.leftBlocks = getTextureNumber(level, pos, state.facing, true);
+			state.rightBlocks = getTextureNumber(level, pos, state.facing, false);
+			state.routeRenderType = getRenderType(level, pos.relative(state.facing.getCounterClockWise(), state.leftBlocks), blockState);
+			state.arrowDirection = IBlock.getStatePropertySafe(blockState, arrowDirectionProperty);
+			state.additionalYOffset = -getAdditionalOffset(blockState);
 		}
 	}
 

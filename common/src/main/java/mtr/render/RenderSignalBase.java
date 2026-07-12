@@ -44,24 +44,23 @@ public abstract class RenderSignalBase<T extends BlockEntityMapper, S extends Re
 
 	@Override
 	public void submit(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
-		if(state.shouldRender) {
-			poseStack.pushPose();
-			poseStack.translate(0.5, 0, 0.5);
+		if (!state.shouldRender) return;
+		poseStack.pushPose();
+		poseStack.translate(0.5, 0, 0.5);
 
-			for (int i = 0; i < (isSingleSided ? 1 : 2); i++) {
-				final Direction newFacing = (i == 1 ? state.facing.getOpposite() : state.facing);
-				int aspect = i == 0 ? state.occupiedAspect : state.occupiedAspectOpposite;
+		for (int i = 0; i < (isSingleSided ? 1 : 2); i++) {
+			final Direction newFacing = (i == 1 ? state.facing.getOpposite() : state.facing);
+			int aspect = i == 0 ? state.occupiedAspect : state.occupiedAspectOpposite;
 
-				if (aspect >= 0) {
-					poseStack.pushPose();
-					UtilitiesClient.rotateYDegrees(poseStack, -newFacing.toYRot());
-					drawSignal(state, poseStack, submitNodeCollector, MoreRenderLayers.getLight(Identifier.parse("mtr:textures/block/white.png"), false), newFacing, state.occupiedAspect, i == 1);
-					poseStack.popPose();
-				}
+			if (aspect >= 0) {
+				poseStack.pushPose();
+				UtilitiesClient.rotateYDegrees(poseStack, -newFacing.toYRot());
+				drawSignal(state, poseStack, submitNodeCollector, MoreRenderLayers.getLight(Identifier.parse("mtr:textures/block/white.png"), false), newFacing, state.occupiedAspect, i == 1);
+				poseStack.popPose();
 			}
-
-			poseStack.popPose();
 		}
+
+		poseStack.popPose();
 	}
 
 	@Override

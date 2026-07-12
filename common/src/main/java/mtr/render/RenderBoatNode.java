@@ -25,14 +25,14 @@ public class RenderBoatNode extends BlockEntityRendererMapper<BlockNode.TileEnti
 
 	@Override
 	public void submit(BoatNodeRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
-		if(state.shouldRender) {
-			poseStack.pushPose();
-			submitNodeCollector.submitCustomGeometry(poseStack, MoreRenderLayers.getExterior(Identifier.parse("textures/block/oak_log.png")), (pose, vertexConsumer) -> {
-				IDrawing.drawTexture(pose, vertexConsumer, 0.25F, 0, 0.25F, 0.25F, 0, 0.75F, 0.75F, 0, 0.75F, 0.75F, 0, 0.25F, 0.25F, 0.25F, 0.75F, 0.75F, Direction.EAST, -1, state.lightCoords);
-				IDrawing.drawTexture(pose, vertexConsumer, 0.75F, 0, 0.25F, 0.75F, 0, 0.75F, 0.25F, 0, 0.75F, 0.25F, 0, 0.25F, 0.25F, 0.25F, 0.75F, 0.75F, Direction.DOWN, -1, state.lightCoords);
-			});
-			poseStack.popPose();
-		}
+		if (!state.shouldRender) return;
+
+		poseStack.pushPose();
+		submitNodeCollector.submitCustomGeometry(poseStack, MoreRenderLayers.getExterior(Identifier.parse("textures/block/oak_log.png")), (pose, vertexConsumer) -> {
+			IDrawing.drawTexture(pose, vertexConsumer, 0.25F, 0, 0.25F, 0.25F, 0, 0.75F, 0.75F, 0, 0.75F, 0.75F, 0, 0.25F, 0.25F, 0.25F, 0.75F, 0.75F, Direction.EAST, -1, state.lightCoords);
+			IDrawing.drawTexture(pose, vertexConsumer, 0.75F, 0, 0.25F, 0.75F, 0, 0.75F, 0.25F, 0, 0.75F, 0.25F, 0, 0.25F, 0.25F, 0.25F, 0.75F, 0.75F, Direction.DOWN, -1, state.lightCoords);
+		});
+		poseStack.popPose();
 	}
 
 	@Override

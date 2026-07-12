@@ -43,6 +43,8 @@ public class RenderRouteSign<T extends BlockRouteSignBase.TileEntityRouteSignBas
 
 	@Override
 	public void submit(RouteSignRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
+		if (!state.shouldRender) return;
+
 		poseStack.pushPose();
 		poseStack.translate(0.5, 0, 0.5);
 		UtilitiesClient.rotateYDegrees(poseStack, -state.facing.toYRot());

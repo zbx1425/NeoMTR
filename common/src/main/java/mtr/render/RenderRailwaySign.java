@@ -41,6 +41,8 @@ public class RenderRailwaySign<T extends BlockRailwaySign.TileEntityRailwaySign>
 
 	@Override
 	public void submit(RailwaySignRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
+		if (!state.shouldRender) return;
+
 		final StoredMatrixTransformations storedMatrixTransformations = new StoredMatrixTransformations();
 		storedMatrixTransformations.add(matricesNew -> {
 			matricesNew.translate(0.5 + state.blockPos.getX(), 0.53125 + state.blockPos.getY(), 0.5 + state.blockPos.getZ());
