@@ -1,11 +1,13 @@
 package cn.zbx1425.sowcerext.reuse;
 
 import cn.zbx1425.sowcer.batch.BatchType;
+import cn.zbx1425.sowcer.model.Mesh;
 import cn.zbx1425.sowcer.model.Model;
 // import cn.zbx1425.sowcer.vertex.VertAttrMapping;
 // import cn.zbx1425.sowcer.vertex.VertAttrSrc;
 // import cn.zbx1425.sowcer.vertex.VertAttrType;
 import cn.zbx1425.sowcerext.model.ModelCluster;
+import cn.zbx1425.sowcerext.model.RawMesh;
 import cn.zbx1425.sowcerext.model.RawModel;
 import cn.zbx1425.sowcerext.model.loader.CsvModelLoader;
 import cn.zbx1425.sowcerext.model.loader.NmbModelLoader;
@@ -15,15 +17,14 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class ModelManager {
 
-    public HashMap<Identifier, Model> uploadedModels = new HashMap<>();
-    public HashMap<Identifier, ModelCluster> uploadedVertArrays = new HashMap<>();
-    public HashMap<Identifier, RawModel> loadedRawModels = new HashMap<>();
+    public HashMap<Identifier, Model> modelCache = new HashMap<>();
+    public IdentityHashMap<Model, RawModel> modelSources = new IdentityHashMap<>();
+    public HashMap<Identifier, ModelCluster> modelClusterCache = new HashMap<>();
+    public HashMap<Identifier, RawModel> rawModelCache = new HashMap<>();
 
     public int vaoCount, vboCount;
 
@@ -39,38 +40,44 @@ public class ModelManager {
 
     public void clear() {
         vaoCount = 0;
-        for (ModelCluster vertArrays : uploadedVertArrays.values()) {
+        for (ModelCluster vertArrays : modelClusterCache.values()) {
             vertArrays.close();
         }
-        uploadedVertArrays.clear();
+        modelClusterCache.clear();
         vboCount = 0;
-        for (Model model : uploadedModels.values()) {
+        for (Model model : modelSources.keySet()) {
             model.close();
         }
-        uploadedModels.clear();
-        loadedRawModels.clear();
+        modelCache.clear();
+        modelSources.clear();
+        rawModelCache.clear();
     }
 
     public void clearNamespace(String namespace) {
-        uploadedVertArrays.entrySet().stream()
+        modelClusterCache.entrySet().stream()
                 .filter(k -> k.getKey().getNamespace().equals(namespace))
                 .forEach(k -> {
                     vaoCount -= k.getValue().uploadedOpaqueParts == null ? 0 : k.getValue().uploadedOpaqueParts.meshList.size();
                     k.getValue().close();
                 });
-        uploadedVertArrays.keySet().removeIf(k -> k.getNamespace().equals(namespace));
-        uploadedModels.entrySet().stream()
+        modelClusterCache.keySet().removeIf(k -> k.getNamespace().equals(namespace));
+        Set<Model> removedModels = new HashSet<>();
+        modelCache.entrySet().stream()
                 .filter(k -> k.getKey().getNamespace().equals(namespace))
                 .forEach(k -> {
                     vboCount -= k.getValue().meshList.size();
+                    removedModels.add(k.getValue());
                     k.getValue().close();
                 });
-        uploadedModels.keySet().removeIf(k -> k.getNamespace().equals(namespace));
-        loadedRawModels.keySet().removeIf(k -> k.getNamespace().equals(namespace));
+        modelCache.keySet().removeIf(k -> k.getNamespace().equals(namespace));
+        for (Model removed : removedModels) {
+            modelSources.remove(removed);
+        }
+        rawModelCache.keySet().removeIf(k -> k.getNamespace().equals(namespace));
     }
 
     public RawModel loadRawModel(ResourceManager resourceManager, Identifier objLocation, AtlasManager atlasManager) throws IOException {
-        if (loadedRawModels.containsKey(objLocation)) return loadedRawModels.get(objLocation);
+        if (rawModelCache.containsKey(objLocation)) return rawModelCache.get(objLocation);
         String crntStatExt = FilenameUtils.getExtension(objLocation.getPath());
         RawModel result;
         switch (crntStatExt) {
@@ -89,7 +96,7 @@ public class ModelManager {
             default:
                 throw new IllegalArgumentException("Unknown model format: " + resourceManager);
         };
-        loadedRawModels.put(objLocation, result);
+        rawModelCache.put(objLocation, result);
         return result;
     }
 
@@ -112,17 +119,37 @@ public class ModelManager {
     }
 
     public Model uploadModel(RawModel rawModel) {
-        if (rawModel.sourceLocation == null) {
-            Model result = rawModel.upload(/*DEFAULT_MAPPING*/ BatchType.REGULAR);
-            vboCount += result.meshList.size();
-            uploadedModels.put(Identifier.parse("sowcerext-anonymous:model/" + UUID.randomUUID()), result);
-            return result;
-        } else {
-            if (uploadedModels.containsKey(rawModel.sourceLocation)) return uploadedModels.get(rawModel.sourceLocation);
-            Model result = rawModel.upload(/*DEFAULT_MAPPING*/ BatchType.REGULAR);
-            vboCount += result.meshList.size();
-            uploadedModels.put(rawModel.sourceLocation, result);
-            return result;
+        if (rawModel.sourceLocation != null) {
+            Model cached = modelCache.get(rawModel.sourceLocation);
+            if (cached != null) return cached;
+        }
+        Model result = rawModel.upload(/*DEFAULT_MAPPING*/ BatchType.REGULAR);
+        vboCount += result.meshList.size();
+        modelSources.put(result, rawModel);
+        if (rawModel.sourceLocation != null) {
+            modelCache.put(rawModel.sourceLocation, result);
+        }
+        return result;
+    }
+
+    public void closeModel(Model model) {
+        modelSources.remove(model);
+        modelCache.values().remove(model);
+        vboCount -= model.meshList.size();
+        model.close();
+    }
+
+    public void reUploadAllModels() {
+        for (Map.Entry<Model, RawModel> entry : modelSources.entrySet()) {
+            Model model = entry.getKey();
+            RawModel rawModel = entry.getValue();
+            Iterator<Mesh> meshIt = model.meshList.iterator();
+            for (RawMesh rawMesh : rawModel.meshList.values()) {
+                if (rawMesh.faces.isEmpty()) continue;
+                if (!meshIt.hasNext()) break;
+                Mesh mesh = meshIt.next();
+                rawMesh.upload(mesh, BatchType.REGULAR);
+            }
         }
     }
 
@@ -130,13 +157,13 @@ public class ModelManager {
         if (rawModel.sourceLocation == null) {
             ModelCluster result = new ModelCluster(rawModel, /*DEFAULT_MAPPING*/ BatchType.REGULAR, this);
             vaoCount += result.uploadedOpaqueParts == null ? 0 : result.uploadedOpaqueParts.meshList.size();
-            uploadedVertArrays.put(Identifier.parse("sowcerext-anonymous:vertarrays/" + UUID.randomUUID()), result);
+            modelClusterCache.put(Identifier.parse("sowcerext-anonymous:vertarrays/" + UUID.randomUUID()), result);
             return result;
         } else {
-            if (uploadedVertArrays.containsKey(rawModel.sourceLocation)) return uploadedVertArrays.get(rawModel.sourceLocation);
+            if (modelClusterCache.containsKey(rawModel.sourceLocation)) return modelClusterCache.get(rawModel.sourceLocation);
             ModelCluster result = new ModelCluster(rawModel, /*DEFAULT_MAPPING*/ BatchType.REGULAR, this);
             vaoCount += result.uploadedOpaqueParts == null ? 0 : result.uploadedOpaqueParts.meshList.size();
-            uploadedVertArrays.put(rawModel.sourceLocation, result);
+            modelClusterCache.put(rawModel.sourceLocation, result);
             return result;
         }
     }

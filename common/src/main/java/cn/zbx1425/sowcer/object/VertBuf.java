@@ -34,6 +34,7 @@ public class VertBuf implements Closeable {
     }*/
 
     public void upload(ByteBuffer buffer, int usage) {
+        if (impl != null) impl.close();
         impl = RenderSystem.getDevice().createBuffer(null, usage, buffer);
         /*int vboPrev = GL33.glGetInteger(GL33.GL_ARRAY_BUFFER_BINDING);
         GL33.glBindBuffer(GL33.GL_ARRAY_BUFFER, id);
@@ -43,6 +44,7 @@ public class VertBuf implements Closeable {
     }
 
     public void upload(ByteBuffer buffer, int size, int usage) {
+        if (impl != null) impl.close();
         impl = RenderSystem.getDevice().createBuffer(null, usage, size);
 
         RenderSystem.getDevice().createCommandEncoder().writeToBuffer(impl.slice(0, size), buffer);

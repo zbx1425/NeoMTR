@@ -52,7 +52,7 @@ public class RenderUtil {
                 + "\n"
                 + "Faces via Blaze3D: " + MainClient.drawContext.blazeFaceCount
                 + "\n"
-                + "Uploaded Models: " + MainClient.modelManager.uploadedVertArrays.size()
+                + "Uploaded Models: " + MainClient.modelManager.modelClusterCache.size()
                 + " (" + MainClient.modelManager.vaoCount + " VAOs, "
                 + MainClient.modelManager.vboCount + " VBOs)"
                 + "\n"

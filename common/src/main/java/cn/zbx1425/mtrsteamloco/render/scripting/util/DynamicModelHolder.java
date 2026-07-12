@@ -1,10 +1,10 @@
 package cn.zbx1425.mtrsteamloco.render.scripting.util;
 
+import cn.zbx1425.mtrsteamloco.MainClient;
 import cn.zbx1425.sowcer.batch.BatchType;
 import cn.zbx1425.sowcer.util.GlStateTracker;
 import cn.zbx1425.sowcerext.model.ModelCluster;
 import cn.zbx1425.sowcerext.model.RawModel;
-import cn.zbx1425.sowcerext.reuse.ModelManager;
 import net.minecraft.client.Minecraft;
 
 public class DynamicModelHolder {
@@ -18,7 +18,7 @@ public class DynamicModelHolder {
             boolean needProtection = !GlStateTracker.isStateProtected;
             if (needProtection) GlStateTracker.capture();
             ModelCluster lastUploadedModel = uploadedModel;
-            uploadedModel = new ModelCluster(finalRawModel, BatchType.REGULAR);
+            uploadedModel = new ModelCluster(finalRawModel, BatchType.REGULAR, MainClient.modelManager);
             if (lastUploadedModel != null) lastUploadedModel.close();
             if (needProtection) GlStateTracker.restore();
         });

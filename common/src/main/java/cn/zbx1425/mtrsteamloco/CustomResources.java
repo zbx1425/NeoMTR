@@ -54,7 +54,7 @@ public class CustomResources {
         initHardcodedTrains(resourceManager);
 
         Main.LOGGER.info("MTR-NTE: "
-                + "Uploaded Models: " + MainClient.modelManager.uploadedVertArrays.size()
+                + "Uploaded Models: " + MainClient.modelManager.modelClusterCache.size()
                 + " (" + MainClient.modelManager.vaoCount + " VAOs, "
                 + MainClient.modelManager.vboCount + " VBOs)"
         );

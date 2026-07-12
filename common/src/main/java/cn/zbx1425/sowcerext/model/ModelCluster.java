@@ -4,6 +4,7 @@ import cn.zbx1425.sowcer.batch.BatchManager;
 import cn.zbx1425.sowcer.batch.BatchType;
 import cn.zbx1425.sowcer.batch.EnqueueProp;
 import cn.zbx1425.sowcer.batch.ShaderProp;
+import cn.zbx1425.sowcer.model.Model;
 import cn.zbx1425.sowcer.model.VertArrays;
 import cn.zbx1425.sowcer.util.AttrUtil;
 import cn.zbx1425.sowcer.util.DrawContext;
@@ -21,10 +22,14 @@ public class ModelCluster implements Closeable {
 
     public final VertArrays uploadedOpaqueParts;
     public final RawModel opaqueParts;
+    private final Model opaqueModel;
     public final VertArrays uploadedTranslucentParts;
     public final RawModel translucentParts;
+    private final Model translucentModel;
+    private final ModelManager modelManager;
 
     public ModelCluster(RawModel source, /*VertAttrMapping*/ BatchType mapping, ModelManager modelManager) {
+        this.modelManager = modelManager;
         this.translucentParts = new RawModel();
         this.opaqueParts = new RawModel();
         for (RawMesh mesh : source.meshList.values()) {
@@ -34,30 +39,16 @@ public class ModelCluster implements Closeable {
                 opaqueParts.append(mesh);
             }
         }
-        this.uploadedOpaqueParts = VertArrays.createAll(
-                modelManager.uploadModel(opaqueParts), mapping, null);
-        this.uploadedTranslucentParts = VertArrays.createAll(
-                modelManager.uploadModel(translucentParts), mapping, null);
-    }
-
-    public ModelCluster(RawModel source, /*VertAttrMapping*/ BatchType mapping) {
-        // Untracked variant
-        this.translucentParts = new RawModel();
-        this.opaqueParts = new RawModel();
-        for (RawMesh mesh : source.meshList.values()) {
-            if (mesh.materialProp.translucent) {
-                translucentParts.append(mesh);
-            } else {
-                opaqueParts.append(mesh);
-            }
-        }
-        this.uploadedOpaqueParts = VertArrays.createAll(
-                opaqueParts.upload(mapping), mapping, null);
-        this.uploadedTranslucentParts = VertArrays.createAll(
-                translucentParts.upload(mapping), mapping, null);
+        this.opaqueModel = modelManager.uploadModel(opaqueParts);
+        this.uploadedOpaqueParts = VertArrays.createAll(opaqueModel, mapping, null);
+        this.translucentModel = modelManager.uploadModel(translucentParts);
+        this.uploadedTranslucentParts = VertArrays.createAll(translucentModel, mapping, null);
     }
 
     private ModelCluster(VertArrays uploadedOpaqueParts, RawModel opaqueParts, VertArrays uploadedTranslucentParts, RawModel translucentParts) {
+        this.modelManager = null;
+        this.opaqueModel = null;
+        this.translucentModel = null;
         this.uploadedOpaqueParts = uploadedOpaqueParts;
         this.opaqueParts = opaqueParts;
         this.uploadedTranslucentParts = uploadedTranslucentParts;
@@ -98,6 +89,10 @@ public class ModelCluster implements Closeable {
     public void close(){
         uploadedOpaqueParts.close();
         uploadedTranslucentParts.close();
+        if (modelManager != null) {
+            if (opaqueModel != null) modelManager.closeModel(opaqueModel);
+            if (translucentModel != null) modelManager.closeModel(translucentModel);
+        }
     }
 
 

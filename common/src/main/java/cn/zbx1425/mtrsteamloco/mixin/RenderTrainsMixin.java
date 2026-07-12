@@ -4,6 +4,7 @@ import cn.zbx1425.mtrsteamloco.ClientConfig;
 import cn.zbx1425.mtrsteamloco.MainClient;
 import cn.zbx1425.mtrsteamloco.render.RailPicker;
 import cn.zbx1425.mtrsteamloco.render.RenderUtil;
+import cn.zbx1425.mtrsteamloco.render.ShadersModHandler;
 import cn.zbx1425.mtrsteamloco.render.rail.RailRenderDispatcher;
 import cn.zbx1425.mtrsteamloco.render.scripting.ScriptContextManager;
 import cn.zbx1425.sowcer.util.GlStateTracker;
@@ -38,6 +39,10 @@ public class RenderTrainsMixin {
     @Inject(at = @At("TAIL"), method = "render")
     private static void renderTail(float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, CallbackInfo ci) {
         // Already once per frame, since TAIL
+
+        if (ShadersModHandler.checkAndResetShaderStateChanged()) {
+            MainClient.modelManager.reUploadAllModels();
+        }
 
         Profiler.get().popPush("NTERailwayData");
         Matrix4f viewMatrix = new Matrix4f(matrices.last().pose());

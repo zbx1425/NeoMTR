@@ -9,6 +9,7 @@ import java.util.function.BooleanSupplier;
 public final class ShadersModHandler {
 
     private static InternalHandler internalHandler;
+    private static boolean previousShaderPackInUse = false;
 
     public static void init() {
         internalHandler = new InternalHandler() { };
@@ -34,6 +35,15 @@ public final class ShadersModHandler {
 
     public static boolean canDrawWithBuffer() {
         return !(internalHandler instanceof Optifine) || canUseCustomShader();
+    }
+
+    public static boolean checkAndResetShaderStateChanged() {
+        boolean current = internalHandler.isShaderPackInUse();
+        if (current != previousShaderPackInUse) {
+            previousShaderPackInUse = current;
+            return true;
+        }
+        return false;
     }
 
     public static boolean isRenderingShadowPass() {
