@@ -77,6 +77,11 @@ public class TrainServer extends Train {
 	}
 
 	@Override
+	public int messagePackLength() {
+		return super.messagePackLength() + 1;
+	}
+
+	@Override
 	protected void startUp(Level world, int trainCars, int trainSpacing, boolean isOppositeRail) {
 		canDeploy = false;
 		isOnRoute = true;
