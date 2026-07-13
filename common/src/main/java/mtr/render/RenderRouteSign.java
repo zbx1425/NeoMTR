@@ -55,7 +55,7 @@ public class RenderRouteSign<T extends BlockRouteSignBase.TileEntityRouteSignBas
 		});
 
 		submitNodeCollector.submitCustomGeometry(poseStack, MoreRenderLayers.getExterior(ClientData.DATA_CACHE.getRouteMap(state.platformId, true, false, HEIGHT_BOTTOM / WIDTH, false).resourceLocation), (pose, vertexConsumer) -> {
-			IDrawing.drawTexture(poseStack.last(), vertexConsumer, 1 - SIDE, MIDDLE + (state.isTop ? 0 : 1), 0, 1 - SIDE, state.isTop ? 0 : BOTTOM, 0, SIDE, state.isTop ? 0 : BOTTOM, 0, SIDE, MIDDLE + (state.isTop ? 0 : 1), 0, 0, 0, state.isTop ? TEXTURE_BREAK : 1, 1, state.facing.getOpposite(), -1, state.lightCoords);
+			IDrawing.drawTexture(pose, vertexConsumer, 1 - SIDE, MIDDLE + (state.isTop ? 0 : 1), 0, 1 - SIDE, state.isTop ? 0 : BOTTOM, 0, SIDE, state.isTop ? 0 : BOTTOM, 0, SIDE, MIDDLE + (state.isTop ? 0 : 1), 0, 0, 0, state.isTop ? TEXTURE_BREAK : 1, 1, state.facing.getOpposite(), -1, state.lightCoords);
 		});
 
 		poseStack.popPose();
