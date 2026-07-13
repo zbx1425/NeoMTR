@@ -13,7 +13,6 @@ public interface IPacket {
 	Identifier PACKET_OPEN_RAILWAY_SIGN_SCREEN = MTR.id("packet_open_railway_sign_screen");
 	Identifier PACKET_OPEN_TICKET_MACHINE_SCREEN = MTR.id("packet_open_ticket_machine_screen");
 	Identifier PACKET_OPEN_TRAIN_SENSOR_SCREEN = MTR.id("packet_open_train_sensor_screen");
-	Identifier PACKET_OPEN_FREE_NODE_SCREEN = MTR.id("packet_open_free_node_screen");
 	Identifier PACKET_OPEN_LIFT_TRACK_FLOOR_SCREEN = MTR.id("packet_open_lift_track_floor_screen");
 	Identifier PACKET_OPEN_LIFT_CUSTOMIZATION_SCREEN = MTR.id("packet_open_lift_customization_screen");
 	Identifier PACKET_OPEN_RESOURCE_PACK_CREATOR_SCREEN = MTR.id("packet_open_resource_pack_creator_screen");

@@ -470,7 +470,6 @@ public class MTR implements IPacket {
 		Registry.registerNetworkPacket(PACKET_OPEN_RAILWAY_SIGN_SCREEN);
 		Registry.registerNetworkPacket(PACKET_OPEN_TICKET_MACHINE_SCREEN);
 		Registry.registerNetworkPacket(PACKET_OPEN_TRAIN_SENSOR_SCREEN);
-		Registry.registerNetworkPacket(PACKET_OPEN_FREE_NODE_SCREEN);
 		Registry.registerNetworkPacket(PACKET_OPEN_RESOURCE_PACK_CREATOR_SCREEN);
 		Registry.registerNetworkPacket(PACKET_ANNOUNCE);
 		Registry.registerNetworkPacket(PACKET_GENERATE_PATH);
