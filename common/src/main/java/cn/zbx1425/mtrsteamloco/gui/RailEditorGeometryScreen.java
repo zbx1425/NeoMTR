@@ -20,10 +20,8 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -38,8 +36,12 @@ public class RailEditorGeometryScreen extends MTRScreen {
     private static Rail pickedRail = null;
     private static BlockPos pickedPosStart = BlockPos.ZERO;
     private static BlockPos pickedPosEnd = BlockPos.ZERO;
+    private static BlockPos clickedNodePos = BlockPos.ZERO;
+
+    private enum EditContext { CONNECTED_ENDPOINT, SINGLE_FREE_NODE }
 
     private int currentTab = 0; // 0 = node pose, 1 = vertical curve
+    private EditContext editContext = EditContext.SINGLE_FREE_NODE;
 
     // Node pose state
     private boolean editingStartNode = true;
@@ -52,28 +54,39 @@ public class RailEditorGeometryScreen extends MTRScreen {
     private WidgetBetterTextField textFieldAngle;
     private AngleSlider slider;
 
-    private static final int COMPASS_RADIUS = 75;
-    private static final int DIR_RING_RADIUS = 45;
-    private static final int STEP_RING_RADIUS = 70;
-    private static final int LINE_LENGTH = 80;
-    private static final int DIR_BTN_SIZE = 18;
-    private static final int STEP_BTN_SIZE = 18;
-    private static final int TEXT_FIELD_WIDTH = 50;
-    private static final int SLIDER_WIDTH = 130;
+    private static final int PREVIEW_RADIUS = 55;
+    private static final int PREVIEW_COL_WIDTH = PREVIEW_RADIUS * 2 + 16;
+    private static final int LINE_LENGTH = 48;
     private static final int LINE_THICKNESS = 2;
+    private static final int LINE_COLOR = 0xFFFF4444;
+    private static final int RING_COLOR = 0xFFAAAAAA;
+    private static final int TICK_COLOR_MAJOR = 0xFFAAAAAA;
+    private static final int TICK_COLOR_MINOR = 0xFF666666;
+    private static final int PREVIEW_BG_COLOR = 0xFF222222;
+    private static final int SLIDER_HEIGHT = 20;
+    private static final int TEXT_FIELD_WIDTH = 55;
+    private static final int CONTENT_GAP = 10;
+
+    private static final float[] PRESET_ANGLES = {-90, -45, 0, 45};
+    private static final String[] PRESET_LABELS = {"-90°", "-45°", "0°", "45°"};
     private static final int[] STEP_DELTAS = {-5, -1, 1, 5};
     private static final String[] STEP_LABELS = {"-5", "-1", "+1", "+5"};
-    private static final float[] STEP_ANGULAR_OFFSETS = {-30, -13, 13, 30};
-    private static final int LINE_COLOR = 0xFFFF4444;
-    private static final int RING_COLOR = 0xFF999999;
-
-    private final Button[] directionButtons = new Button[16];
-    private final Button[] stepButtons = new Button[4];
 
     public RailEditorGeometryScreen() {
         super(Text.translatable("gui.mtrsteamloco.rail_editor_geometry.title"));
-        if (pickedRail == null) acquirePickInfoWhenUse();
+        if (pickedRail == null && clickedNodePos.equals(BlockPos.ZERO)) {
+            acquirePickInfoWhenUse(null);
+        }
+        detectContext();
         loadNodeState();
+    }
+
+    private void detectContext() {
+        if (pickedRail != null) {
+            editContext = EditContext.CONNECTED_ENDPOINT;
+        } else {
+            editContext = EditContext.SINGLE_FREE_NODE;
+        }
     }
 
     @Override
@@ -98,9 +111,9 @@ public class RailEditorGeometryScreen extends MTRScreen {
                 sender -> { currentTab = 1; Minecraft.getInstance().execute(this::loadPage); }
         );
         tabVerticalCurve.active = (currentTab != 1);
+        if (editContext == EditContext.SINGLE_FREE_NODE) tabVerticalCurve.active = false;
         IDrawing.setPositionAndWidth(addRenderableWidget(tabVerticalCurve), 0, SQUARE_SIZE * 2, LEFT_PANEL_WIDTH);
 
-        // Right panel content
         switch (currentTab) {
             case 0 -> loadNodePoseTab();
             case 1 -> loadVerticalCurveTab();
@@ -110,7 +123,7 @@ public class RailEditorGeometryScreen extends MTRScreen {
     // ==================== Node Pose Tab ====================
 
     private void loadNodeState() {
-        BlockPos nodePos = editingStartNode ? pickedPosStart : pickedPosEnd;
+        BlockPos nodePos = getEditingNodePos();
         Level world = Minecraft.getInstance().level;
         if (world == null) return;
 
@@ -122,15 +135,22 @@ public class RailEditorGeometryScreen extends MTRScreen {
                 currentAngle = 0;
             } else {
                 isUndetermined = false;
-                currentAngle = tile.getAngleDegrees();
+                currentAngle = normalizeLineAngle(tile.getAngleDegrees());
             }
         } else {
             BlockState state = world.getBlockState(nodePos);
             if (state.getBlock() instanceof BlockNode) {
                 isUndetermined = false;
-                currentAngle = BlockNode.getAngle(state);
+                currentAngle = normalizeLineAngle(BlockNode.getAngle(state));
             }
         }
+    }
+
+    private BlockPos getEditingNodePos() {
+        if (editContext == EditContext.SINGLE_FREE_NODE) {
+            return clickedNodePos;
+        }
+        return editingStartNode ? pickedPosStart : pickedPosEnd;
     }
 
     private boolean isNodeFree(BlockPos pos) {
@@ -141,120 +161,116 @@ public class RailEditorGeometryScreen extends MTRScreen {
     }
 
     private void loadNodePoseTab() {
-        int rightPanelWidth = Math.min(width - LEFT_PANEL_WIDTH - SQUARE_SIZE * 2, 380);
-        int rightPanelX = LEFT_PANEL_WIDTH + (width - LEFT_PANEL_WIDTH - rightPanelWidth) / 2;
+        int contentWidth = Math.min(width - LEFT_PANEL_WIDTH - 20, 500);
+        int contentX = LEFT_PANEL_WIDTH + (width - LEFT_PANEL_WIDTH - contentWidth) / 2;
+        int controlWidth = contentWidth - PREVIEW_COL_WIDTH - CONTENT_GAP;
+        int controlX = contentX;
         int y = SQUARE_SIZE;
 
-        // Node selector buttons
-        int halfW = rightPanelWidth / 2 - 2;
+        if (editContext == EditContext.CONNECTED_ENDPOINT) {
+            int halfW = controlWidth / 2 - 2;
 
-        Button btnThisNode = UtilitiesClient.newButton(
-                Text.translatable("gui.mtrsteamloco.rail_editor_geometry.this_node"),
-                sender -> {
-                    if (!editingStartNode) {
-                        saveNodeAngleIfChanged();
-                        editingStartNode = true;
-                        loadNodeState();
-                        Minecraft.getInstance().execute(this::loadPage);
+            Button btnThisNode = UtilitiesClient.newButton(
+                    Text.translatable("gui.mtrsteamloco.rail_editor_geometry.this_node"),
+                    sender -> {
+                        if (!editingStartNode) {
+                            saveNodeAngleIfChanged();
+                            editingStartNode = true;
+                            loadNodeState();
+                            Minecraft.getInstance().execute(this::loadPage);
+                        }
                     }
-                }
-        );
-        btnThisNode.active = !editingStartNode;
-        if (!isNodeFree(pickedPosStart)) btnThisNode.active = false;
-        IDrawing.setPositionAndWidth(addRenderableWidget(btnThisNode), rightPanelX, y, halfW);
+            );
+            btnThisNode.active = !editingStartNode;
+            if (!isNodeFree(pickedPosStart)) btnThisNode.active = false;
+            IDrawing.setPositionAndWidth(addRenderableWidget(btnThisNode), controlX, y, halfW);
 
-        Button btnOtherNode = UtilitiesClient.newButton(
-                Text.translatable("gui.mtrsteamloco.rail_editor_geometry.other_node"),
-                sender -> {
-                    if (editingStartNode) {
-                        saveNodeAngleIfChanged();
-                        editingStartNode = false;
-                        loadNodeState();
-                        Minecraft.getInstance().execute(this::loadPage);
+            Button btnOtherNode = UtilitiesClient.newButton(
+                    Text.translatable("gui.mtrsteamloco.rail_editor_geometry.other_node"),
+                    sender -> {
+                        if (editingStartNode) {
+                            saveNodeAngleIfChanged();
+                            editingStartNode = false;
+                            loadNodeState();
+                            Minecraft.getInstance().execute(this::loadPage);
+                        }
                     }
-                }
-        );
-        btnOtherNode.active = editingStartNode;
-        if (!isNodeFree(pickedPosEnd)) btnOtherNode.active = false;
-        IDrawing.setPositionAndWidth(addRenderableWidget(btnOtherNode), rightPanelX + halfW + 4, y, halfW);
-        y += SQUARE_SIZE + 2;
+            );
+            btnOtherNode.active = editingStartNode;
+            if (!isNodeFree(pickedPosEnd)) btnOtherNode.active = false;
+            IDrawing.setPositionAndWidth(addRenderableWidget(btnOtherNode), controlX + halfW + 4, y, halfW);
+            y += SQUARE_SIZE + 2;
+        }
 
-        // Show coordinates
-        BlockPos currentNodePos = editingStartNode ? pickedPosStart : pickedPosEnd;
+        // Coordinates
+        BlockPos currentNodePos = getEditingNodePos();
         String coordLabel = String.format("(%d, %d, %d)", currentNodePos.getX(), currentNodePos.getY(), currentNodePos.getZ());
-        addRenderableWidget(new WidgetLabel(rightPanelX, y + 4, rightPanelWidth, Text.literal(coordLabel)));
+        addRenderableWidget(new WidgetLabel(controlX, y + 4, controlWidth, Text.literal(coordLabel)));
         y += SQUARE_SIZE;
 
         boolean isFree = isNodeFree(currentNodePos);
         if (!isFree) {
-            addRenderableWidget(new WidgetLabel(rightPanelX, y + 4, rightPanelWidth,
+            addRenderableWidget(new WidgetLabel(controlX, y + 4, controlWidth,
                     Text.translatable("gui.mtrsteamloco.rail_editor_geometry.not_free_node")));
             return;
         }
 
-        // Compass area
-        int compassCx = rightPanelX + rightPanelWidth / 2;
-        int compassCy = y + COMPASS_RADIUS + 10;
+        // Slider (full control width)
+        slider = new AngleSlider(controlX, y, controlWidth, SLIDER_HEIGHT, isUndetermined ? 0 : currentAngle);
+        addRenderableWidget(slider);
+        y += SLIDER_HEIGHT + 4;
 
-        // Angle text field at center of compass
+        // Row: text field + step buttons
         textFieldAngle = new WidgetBetterTextField("0.00", 10);
         textFieldAngle.setResponder(this::onTextFieldChanged);
-        IDrawing.setPositionAndWidth(addRenderableWidget(textFieldAngle), compassCx - TEXT_FIELD_WIDTH / 2, compassCy - SQUARE_SIZE / 2, TEXT_FIELD_WIDTH);
+        IDrawing.setPositionAndWidth(addRenderableWidget(textFieldAngle), controlX, y, TEXT_FIELD_WIDTH);
 
-        // 16 direction buttons around compass
-        for (int i = 0; i < 16; i++) {
-            float angle = -180 + i * 22.5f;
-            double rad = Math.toRadians(angle);
-            int bx = compassCx + (int) (DIR_RING_RADIUS * Math.cos(rad)) - DIR_BTN_SIZE / 2;
-            int by = compassCy + (int) (DIR_RING_RADIUS * Math.sin(rad)) - DIR_BTN_SIZE / 2;
-            final float finalAngle = angle;
-            Button btn = UtilitiesClient.newButton(DIR_BTN_SIZE, Text.literal(""), b -> setAngleInternal(finalAngle, false));
-            IDrawing.setPositionAndWidth(addRenderableWidget(btn), bx, by, DIR_BTN_SIZE);
-            directionButtons[i] = btn;
-        }
-
-        // Step buttons
+        int stepBtnWidth = 28;
+        int stepStartX = controlX + TEXT_FIELD_WIDTH + 8;
         for (int i = 0; i < 4; i++) {
             int delta = STEP_DELTAS[i];
-            Button btn = UtilitiesClient.newButton(STEP_BTN_SIZE, Text.literal(STEP_LABELS[i]), b -> setAngleInternal(currentAngle + delta, false));
-            double stepRad = Math.toRadians(currentAngle + STEP_ANGULAR_OFFSETS[i]);
-            int bx = compassCx + (int) (STEP_RING_RADIUS * Math.cos(stepRad)) - STEP_BTN_SIZE / 2;
-            int by = compassCy + (int) (STEP_RING_RADIUS * Math.sin(stepRad)) - STEP_BTN_SIZE / 2;
-            IDrawing.setPositionAndWidth(addRenderableWidget(btn), bx, by, STEP_BTN_SIZE);
-            btn.active = !isUndetermined;
-            stepButtons[i] = btn;
+            Button btn = UtilitiesClient.newButton(SQUARE_SIZE, Text.literal(STEP_LABELS[i]),
+                    b -> setAngleInternal(currentAngle + delta, false));
+            IDrawing.setPositionAndWidth(addRenderableWidget(btn), stepStartX + i * (stepBtnWidth + 2), y, stepBtnWidth);
         }
+        y += SQUARE_SIZE + 4;
 
-        y = compassCy + COMPASS_RADIUS + 16;
-
-        // Slider
-        slider = new AngleSlider(rightPanelX, y, SLIDER_WIDTH, SQUARE_SIZE, isUndetermined ? 0 : currentAngle);
-        slider.active = !isUndetermined;
-        addRenderableWidget(slider);
-
-        // Reset button
-        Button resetButton = UtilitiesClient.newButton(
-                Text.translatable("gui.mtrsteamloco.rail_editor_geometry.reset_undetermined"),
-                b -> {
-                    isUndetermined = true;
-                    currentAngle = 0;
-                    nodeAngleChanged = true;
-                    syncAllWidgets();
-                }
-        );
-        Map<BlockPos, Rail> neighborMap = ClientData.RAILS.get(currentNodePos);
-        boolean hasConnections = neighborMap != null && !neighborMap.isEmpty();
-        resetButton.active = !hasConnections;
-        IDrawing.setPositionAndWidth(addRenderableWidget(resetButton), rightPanelX + SLIDER_WIDTH + 4, y, rightPanelWidth - SLIDER_WIDTH - 4);
+        // Row: preset angle buttons
+        int presetBtnWidth = (controlWidth - 12) / 4;
+        for (int i = 0; i < PRESET_ANGLES.length; i++) {
+            float angle = PRESET_ANGLES[i];
+            Button btn = UtilitiesClient.newButton(SQUARE_SIZE, Text.literal(PRESET_LABELS[i]),
+                    b -> setAngleInternal(angle, false));
+            IDrawing.setPositionAndWidth(addRenderableWidget(btn), controlX + i * (presetBtnWidth + 4), y, presetBtnWidth);
+        }
         y += SQUARE_SIZE + 6;
 
-        // Derive button
-        BlockPos otherPos = editingStartNode ? pickedPosEnd : pickedPosStart;
-        Button deriveButton = UtilitiesClient.newButton(
-                Text.translatable("gui.mtrsteamloco.rail_editor_geometry.derive_angle"),
-                b -> deriveAngleFromNeighbor(currentNodePos, otherPos)
-        );
-        IDrawing.setPositionAndWidth(addRenderableWidget(deriveButton), rightPanelX, y, rightPanelWidth);
+        // Single action button: auto_max_radius OR reset_nan
+        Map<BlockPos, Rail> neighborMap = ClientData.RAILS.get(currentNodePos);
+        boolean hasConnections = neighborMap != null && !neighborMap.isEmpty();
+
+        if (hasConnections && editContext == EditContext.CONNECTED_ENDPOINT) {
+            BlockPos otherPos = editingStartNode ? pickedPosEnd : pickedPosStart;
+            Button actionButton = UtilitiesClient.newButton(
+                    Text.translatable("gui.mtrsteamloco.rail_editor_geometry.auto_max_radius"),
+                    b -> deriveAngleFromNeighbor(currentNodePos, otherPos)
+            );
+            float neighborAngle = readRawAngle(Minecraft.getInstance().level, otherPos);
+            actionButton.active = !Float.isNaN(neighborAngle);
+            IDrawing.setPositionAndWidth(addRenderableWidget(actionButton), controlX, y, controlWidth);
+        } else {
+            Button actionButton = UtilitiesClient.newButton(
+                    Text.translatable("gui.mtrsteamloco.rail_editor_geometry.reset_nan"),
+                    b -> {
+                        isUndetermined = true;
+                        currentAngle = 0;
+                        nodeAngleChanged = true;
+                        syncAllWidgets();
+                    }
+            );
+            actionButton.active = !hasConnections;
+            IDrawing.setPositionAndWidth(addRenderableWidget(actionButton), controlX, y, controlWidth);
+        }
 
         syncAllWidgets();
     }
@@ -262,7 +278,7 @@ public class RailEditorGeometryScreen extends MTRScreen {
     private void setAngleInternal(float degrees, boolean fromTextField) {
         if (updatingFromCode) return;
         updatingFromCode = true;
-        currentAngle = RailAngle.quantizeAngle(degrees);
+        currentAngle = normalizeLineAngle(RailAngle.quantizeAngle(degrees));
         isUndetermined = false;
         nodeAngleChanged = true;
         if (!fromTextField && textFieldAngle != null) {
@@ -270,40 +286,18 @@ public class RailEditorGeometryScreen extends MTRScreen {
         }
         if (slider != null) {
             slider.setAngle(currentAngle);
-            slider.active = true;
-        }
-        for (Button btn : stepButtons) {
-            if (btn != null) btn.active = true;
         }
         updatingFromCode = false;
     }
 
     private void syncAllWidgets() {
         updatingFromCode = true;
-        if (isUndetermined) {
-            if (textFieldAngle != null) {
-                textFieldAngle.setValue("");
-                textFieldAngle.setEditable(false);
-            }
-            if (slider != null) {
-                slider.setAngle(0);
-                slider.active = false;
-            }
-            for (Button btn : stepButtons) {
-                if (btn != null) btn.active = false;
-            }
-        } else {
-            if (textFieldAngle != null) {
-                textFieldAngle.setValue(formatAngle(currentAngle));
-                textFieldAngle.setEditable(true);
-            }
-            if (slider != null) {
-                slider.setAngle(currentAngle);
-                slider.active = true;
-            }
-            for (Button btn : stepButtons) {
-                if (btn != null) btn.active = true;
-            }
+        if (textFieldAngle != null) {
+            textFieldAngle.setValue(isUndetermined ? "" : formatAngle(currentAngle));
+            textFieldAngle.setEditable(true);
+        }
+        if (slider != null) {
+            slider.setAngle(isUndetermined ? 0 : currentAngle);
         }
         updatingFromCode = false;
     }
@@ -336,6 +330,7 @@ public class RailEditorGeometryScreen extends MTRScreen {
     }
 
     private static float readRawAngle(Level world, BlockPos nodePos) {
+        if (world == null) return Float.NaN;
         BlockState state = world.getBlockState(nodePos);
         if (state.getBlock() instanceof BlockFreeNode) {
             BlockEntity entity = world.getBlockEntity(nodePos);
@@ -352,7 +347,7 @@ public class RailEditorGeometryScreen extends MTRScreen {
 
     private void saveNodeAngleIfChanged() {
         if (!nodeAngleChanged) return;
-        BlockPos nodePos = editingStartNode ? pickedPosStart : pickedPosEnd;
+        BlockPos nodePos = getEditingNodePos();
         if (!isNodeFree(nodePos)) return;
         float angle = isUndetermined ? 0 : currentAngle;
         PacketTrainDataGuiClient.sendFreeNodeC2S(nodePos, isUndetermined, angle, transportMode);
@@ -539,12 +534,14 @@ public class RailEditorGeometryScreen extends MTRScreen {
         PacketUpdateRail.sendUpdateC2S(pickedRail, pickedPosStart, pickedPosEnd);
     }
 
-    // ==================== Batch Apply (called from mixin) ====================
+    // ==================== Entry & Batch Apply ====================
 
-    public static void acquirePickInfoWhenUse() {
+    public static void acquirePickInfoWhenUse(BlockPos clickedPos) {
         pickedRail = RailPicker.pickedRail;
         pickedPosStart = RailPicker.pickedPosStart;
         pickedPosEnd = RailPicker.pickedPosEnd;
+        clickedNodePos = clickedPos != null ? clickedPos :
+                (pickedPosStart != null ? pickedPosStart : BlockPos.ZERO);
     }
 
     public static void batchApply(CompoundTag toolTag) {
@@ -577,18 +574,39 @@ public class RailEditorGeometryScreen extends MTRScreen {
     public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(guiGraphics, mouseX, mouseY, partialTick);
 
-        if (currentTab == 0 && !isUndetermined && isNodeFree(editingStartNode ? pickedPosStart : pickedPosEnd)) {
-            int rightPanelWidth = Math.min(width - LEFT_PANEL_WIDTH - SQUARE_SIZE * 2, 380);
-            int rightPanelX = LEFT_PANEL_WIDTH + (width - LEFT_PANEL_WIDTH - rightPanelWidth) / 2;
-            int compassCx = rightPanelX + rightPanelWidth / 2;
-            int compassCy = SQUARE_SIZE + SQUARE_SIZE + 2 + SQUARE_SIZE + COMPASS_RADIUS + 10;
+        if (currentTab == 0 && isNodeFree(getEditingNodePos())) {
+            int contentWidth = Math.min(width - LEFT_PANEL_WIDTH - 20, 500);
+            int contentX = LEFT_PANEL_WIDTH + (width - LEFT_PANEL_WIDTH - contentWidth) / 2;
+            int controlWidth = contentWidth - PREVIEW_COL_WIDTH - CONTENT_GAP;
+            int previewX = contentX + controlWidth + CONTENT_GAP;
 
-            drawCompassRing(guiGraphics, compassCx, compassCy, COMPASS_RADIUS, RING_COLOR);
-            for (float i = 0; i < 360; i += 22.5f) {
-                drawTick(guiGraphics, compassCx, compassCy, i, COMPASS_RADIUS - 4, COMPASS_RADIUS, 1, RING_COLOR);
+            int previewTop = SQUARE_SIZE;
+            int compassCx = previewX + PREVIEW_COL_WIDTH / 2;
+            int compassCy = previewTop + PREVIEW_COL_WIDTH / 2;
+
+            // Dark gray background for preview area
+            guiGraphics.fill(previewX, previewTop, previewX + PREVIEW_COL_WIDTH, previewTop + PREVIEW_COL_WIDTH, PREVIEW_BG_COLOR);
+
+            // Draw ring
+            drawCompassRing(guiGraphics, compassCx, compassCy, PREVIEW_RADIUS, RING_COLOR);
+
+            // Draw tick marks: 45° = large, 22.5° = small
+            for (int i = 0; i < 16; i++) {
+                float tickAngle = i * 22.5f;
+                boolean isMajor = (i % 2 == 0);
+                int innerR = isMajor ? PREVIEW_RADIUS - 7 : PREVIEW_RADIUS - 4;
+                int thickness = isMajor ? 2 : 1;
+                int color = isMajor ? TICK_COLOR_MAJOR : TICK_COLOR_MINOR;
+                drawTick(guiGraphics, compassCx, compassCy, tickAngle, innerR, PREVIEW_RADIUS, thickness, color);
             }
-            drawLine(guiGraphics, compassCx, compassCy, currentAngle, 12, LINE_LENGTH, LINE_THICKNESS, LINE_COLOR);
-            drawLine(guiGraphics, compassCx, compassCy, currentAngle + 180, 12, LINE_LENGTH, LINE_THICKNESS, LINE_COLOR);
+
+            // Draw direction line (both sides)
+            if (!isUndetermined) {
+                drawLine(guiGraphics, compassCx, compassCy, currentAngle, 8, LINE_LENGTH, LINE_THICKNESS, LINE_COLOR);
+                drawLine(guiGraphics, compassCx, compassCy, currentAngle + 180, 8, LINE_LENGTH, LINE_THICKNESS, LINE_COLOR);
+                drawLine(guiGraphics, compassCx, compassCy, currentAngle + 90, 0, 20, LINE_THICKNESS, TICK_COLOR_MAJOR);
+                drawLine(guiGraphics, compassCx, compassCy, currentAngle - 90, 0, 20, LINE_THICKNESS, TICK_COLOR_MAJOR);
+            }
         }
     }
 
@@ -632,9 +650,7 @@ public class RailEditorGeometryScreen extends MTRScreen {
     private static void drawLine(GuiGraphicsExtractor guiGraphics, int cx, int cy, float angleDeg, int rStart, int rEnd, int thickness, int color) {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(cx, cy);
-        // FIXME: Check if this is correct
-        guiGraphics.pose().rotate(angleDeg);
-//        guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(angleDeg));
+        guiGraphics.pose().rotate((float)Math.toRadians(angleDeg));
         guiGraphics.fill(rStart, -thickness / 2, rEnd, -thickness / 2 + thickness, color);
         guiGraphics.pose().popMatrix();
     }
@@ -644,14 +660,23 @@ public class RailEditorGeometryScreen extends MTRScreen {
         float dy = y2 - y1;
         float len = (float) Math.sqrt(dx * dx + dy * dy);
         if (len < 0.001F) return;
-        float angleDeg = (float) Math.toDegrees(Math.atan2(dy, dx));
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(x1, y1);
-        // FIXME: Check if this is correct
-        guiGraphics.pose().rotate(angleDeg);
-//        guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(angleDeg));
+        guiGraphics.pose().rotate((float)Math.atan2(dy, dx));
         guiGraphics.fill(0, -thickness / 2, (int) Math.ceil(len), -thickness / 2 + thickness, color);
         guiGraphics.pose().popMatrix();
+    }
+
+    // ==================== Angle Utilities ====================
+
+    /**
+     * Normalize an angle to [-90, 90) representing a line direction (180° equivalent).
+     */
+    private static float normalizeLineAngle(float degrees) {
+        float n = RailAngle.normalizeAngle(degrees);
+        if (n >= 90) return n - 180;
+        if (n < -90) return n + 180;
+        return n;
     }
 
     private static String formatAngle(float angle) {
@@ -688,11 +713,11 @@ public class RailEditorGeometryScreen extends MTRScreen {
         }
 
         private float sliderToAngle() {
-            return (float) (value * 360.0 - 180.0);
+            return (float) (value * 180.0 - 90.0);
         }
 
         private static double angleToSlider(float degrees) {
-            return (degrees + 180.0) / 360.0;
+            return (degrees + 90.0) / 180.0;
         }
     }
 }

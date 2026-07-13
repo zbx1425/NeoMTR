@@ -6,12 +6,10 @@ import cn.zbx1425.mtrsteamloco.gui.RailEditorVisualScreen;
 import cn.zbx1425.mtrsteamloco.network.PacketScreen;
 import mtr.item.ItemWithCreativeTabBase;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -61,14 +59,14 @@ public abstract class ItemWithCreativeTabBaseMixin extends Item {
             if (blockState.getBlock() instanceof mtr.block.BlockNode) {
                 if (context.isSecondaryUseActive()) {
                     if (level.isClientSide()) {
-                        RailEditorGeometryScreen.acquirePickInfoWhenUse();
+                        RailEditorGeometryScreen.acquirePickInfoWhenUse(context.getClickedPos());
                         return super.useOn(context);
                     } else {
-                        PacketScreen.sendScreenBlockS2C((ServerPlayer) context.getPlayer(), "rail_editor_geometry", BlockPos.ZERO);
+                        PacketScreen.sendScreenBlockS2C((ServerPlayer) context.getPlayer(), "rail_editor_geometry", context.getClickedPos());
                     }
                 } else {
                     if (level.isClientSide()) {
-                        RailEditorGeometryScreen.acquirePickInfoWhenUse();
+                        RailEditorGeometryScreen.acquirePickInfoWhenUse(context.getClickedPos());
                         CompoundTag toolTag = context.getPlayer().getMainHandItem().getOrDefault(Main.TOOL_TAG.get(), new CompoundTag()).copy();
                         RailEditorGeometryScreen.batchApply(toolTag);
                     } else {

@@ -42,6 +42,7 @@ public class PacketScreen {
                         UtilitiesClient.setScreen(minecraftClient, new RailEditorVisualScreen());
                         break;
                     case "rail_editor_geometry":
+                        RailEditorGeometryScreen.acquirePickInfoWhenUse(pos);
                         UtilitiesClient.setScreen(minecraftClient, new RailEditorGeometryScreen());
                         break;
                 }

@@ -26,6 +26,8 @@
     "gui.mtrsteamloco.rail_editor_geometry.other_node": "另一端",
     "gui.mtrsteamloco.rail_editor_geometry.not_free_node": "非自由节点",
     "gui.mtrsteamloco.rail_editor_geometry.reset_undetermined": "重置",
+    "gui.mtrsteamloco.rail_editor_geometry.reset_nan": "重置为未定向",
+    "gui.mtrsteamloco.rail_editor_geometry.auto_max_radius": "自动(最大半径)",
     "gui.mtrsteamloco.rail_editor_geometry.derive_angle": "从相邻节点推导",
     "gui.mtrsteamloco.rail_editor_geometry.vertical_curve_radius": "纵曲线半径",
     "gui.mtrsteamloco.rail_editor_geometry.radius_set_max": "最大(默认)",

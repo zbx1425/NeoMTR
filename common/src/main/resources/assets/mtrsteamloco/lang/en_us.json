@@ -34,6 +34,8 @@
     "gui.mtrsteamloco.rail_editor_geometry.other_node": "Other End",
     "gui.mtrsteamloco.rail_editor_geometry.not_free_node": "Not a free node",
     "gui.mtrsteamloco.rail_editor_geometry.reset_undetermined": "Reset",
+    "gui.mtrsteamloco.rail_editor_geometry.reset_nan": "Reset to Undetermined",
+    "gui.mtrsteamloco.rail_editor_geometry.auto_max_radius": "Auto (Max Radius)",
     "gui.mtrsteamloco.rail_editor_geometry.derive_angle": "Derive from Neighbor",
     "gui.mtrsteamloco.rail_editor_geometry.vertical_curve_radius": "Vertical Curve Radius",
     "gui.mtrsteamloco.rail_editor_geometry.radius_set_max": "Max (Default)",
