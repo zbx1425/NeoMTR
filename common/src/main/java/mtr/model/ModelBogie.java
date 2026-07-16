@@ -16,7 +16,7 @@ import java.util.Map;
 public class ModelBogie extends EntityModel<EntityRenderState> {
 
 	private final ModelMapper bogie;
-	private final Identifier texture = Identifier.parse("mtr:textures/entity/bogie_1.png");
+	private final Identifier texture = Identifier.parse("mtr:textures/vehicle/bogie_1.png");
 
 	public ModelBogie() {
 		super(new ModelPart(List.of(), Map.of()));

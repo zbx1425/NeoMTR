@@ -93,7 +93,7 @@ public class RenderPSDAPGDoor<T extends BlockPSDAPGDoorBase.TileEntityPSDAPGDoor
 					});
 				}
 				if (state.end) {
-					RenderTrains.scheduleRender(Identifier.parse(String.format("mtr:textures/entity/psd_apg_door/psd_door_end_%s_%s_2_%s.png", state.half ? "top" : "bottom", state.side ? "right" : "left", type == 1 ? "2" : "1")), false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matricesNew, vertexConsumer) -> {
+					RenderTrains.scheduleRender(Identifier.parse(String.format("mtr:textures/vehicle/psd_apg_door/psd_door_end_%s_%s_2_%s.png", state.half ? "top" : "bottom", state.side ? "right" : "left", type == 1 ? "2" : "1")), false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matricesNew, vertexConsumer) -> {
 						storedMatrixTransformationsLight.transform(matricesNew);
 						matricesNew.translate(state.open / 2 * (state.side ? -1 : 1), 0, 0);
 						(state.side ? MODEL_PSD_END_RIGHT_2 : MODEL_PSD_END_LEFT_2).renderToBuffer(matricesNew, vertexConsumer, state.lightCoords, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
@@ -120,13 +120,13 @@ public class RenderPSDAPGDoor<T extends BlockPSDAPGDoorBase.TileEntityPSDAPGDoor
 			case 0:
 			case 1:
 				if (state.end) {
-					RenderTrains.scheduleRender(Identifier.parse(String.format("mtr:textures/entity/psd_apg_door/psd_door_end_%s_%s_1_%s.png", state.half ? "top" : "bottom", state.side ? "right" : "left", type == 1 ? "2" : "1")), false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matricesNew, vertexConsumer) -> {
+					RenderTrains.scheduleRender(Identifier.parse(String.format("mtr:textures/vehicle/psd_apg_door/psd_door_end_%s_%s_1_%s.png", state.half ? "top" : "bottom", state.side ? "right" : "left", type == 1 ? "2" : "1")), false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matricesNew, vertexConsumer) -> {
 						storedMatrixTransformations.transform(matricesNew);
 						(state.side ? MODEL_PSD_END_RIGHT_1 : MODEL_PSD_END_LEFT_1).renderToBuffer(matricesNew, vertexConsumer, state.lightCoords, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
 						matricesNew.popPose();
 					});
 				} else {
-					RenderTrains.scheduleRender(Identifier.parse(String.format("mtr:textures/entity/psd_apg_door/psd_door_%s_%s_%s.png", state.half ? "top" : "bottom", state.side ? "right" : "left", type == 1 ? "2" : "1")), false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matricesNew, vertexConsumer) -> {
+					RenderTrains.scheduleRender(Identifier.parse(String.format("mtr:textures/vehicle/psd_apg_door/psd_door_%s_%s_%s.png", state.half ? "top" : "bottom", state.side ? "right" : "left", type == 1 ? "2" : "1")), false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matricesNew, vertexConsumer) -> {
 						storedMatrixTransformations.transform(matricesNew);
 						MODEL_PSD.renderToBuffer(matricesNew, vertexConsumer, state.lightCoords, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
 						matricesNew.popPose();
@@ -144,7 +144,7 @@ public class RenderPSDAPGDoor<T extends BlockPSDAPGDoorBase.TileEntityPSDAPGDoor
 				}
 				break;
 			case 2:
-				RenderTrains.scheduleRender(Identifier.parse(String.format("mtr:textures/entity/psd_apg_door/apg_door_%s_%s.png", state.half ? "top" : "bottom", state.side ? "right" : "left")), false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matricesNew, vertexConsumer) -> {
+				RenderTrains.scheduleRender(Identifier.parse(String.format("mtr:textures/vehicle/psd_apg_door/apg_door_%s_%s.png", state.half ? "top" : "bottom", state.side ? "right" : "left")), false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matricesNew, vertexConsumer) -> {
 					storedMatrixTransformations.transform(matricesNew);
 					(state.half ? MODEL_APG_TOP : MODEL_APG_BOTTOM).renderToBuffer(matricesNew, vertexConsumer, state.lightCoords, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
 					matricesNew.popPose();
@@ -163,7 +163,7 @@ public class RenderPSDAPGDoor<T extends BlockPSDAPGDoorBase.TileEntityPSDAPGDoor
 				}
 				storedMatrixTransformations.add(matricesNew -> matricesNew.translate(state.side ? 0.5 : -0.5, 0, 0));
 			case 3:
-				RenderTrains.scheduleRender(Identifier.parse(String.format("mtr:textures/entity/psd_apg_door/lift_door_%s_%s_1.png", state.half ? "top" : "bottom", state.side ? "right" : "left")), false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matricesNew, vertexConsumer) -> {
+				RenderTrains.scheduleRender(Identifier.parse(String.format("mtr:textures/vehicle/psd_apg_door/lift_door_%s_%s_1.png", state.half ? "top" : "bottom", state.side ? "right" : "left")), false, RenderTrains.QueuedRenderLayer.EXTERIOR, (matricesNew, vertexConsumer) -> {
 					storedMatrixTransformations.transform(matricesNew);
 					(state.side ? MODEL_LIFT_RIGHT : MODEL_LIFT_LEFT).renderToBuffer(matricesNew, vertexConsumer, state.lightCoords, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
 					matricesNew.popPose();

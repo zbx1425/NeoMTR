@@ -16,7 +16,7 @@ import java.util.Map;
 public class ModelCableCarGrip extends EntityModel<EntityRenderState> {
 
 	private final ModelMapper grip;
-	private final Identifier texture = Identifier.parse("mtr:textures/entity/cable_car_grip.png");
+	private final Identifier texture = Identifier.parse("mtr:textures/vehicle/cable_car_grip.png");
 
 	public ModelCableCarGrip() {
 		super(new ModelPart(List.of(), Map.of()));

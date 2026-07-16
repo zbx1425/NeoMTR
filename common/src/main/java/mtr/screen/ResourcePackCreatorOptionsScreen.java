@@ -65,8 +65,8 @@ public class ResourcePackCreatorOptionsScreen extends MTRScreen implements IReso
 		textFieldId = new WidgetBetterTextField("my_custom_train_id");
 		textFieldName = new WidgetBetterTextField("My Custom Train Name");
 		colorSelector = new WidgetColorSelector(this, true, this::onUpdateColor);
-		textFieldGangwayConnectionId = new WidgetBetterTextField("mtr:textures/entity/sp1900");
-		textFieldTrainBarrierId = new WidgetBetterTextField("mtr:textures/entity/r211");
+		textFieldGangwayConnectionId = new WidgetBetterTextField("mtr:textures/vehicle/sp1900");
+		textFieldTrainBarrierId = new WidgetBetterTextField("mtr:textures/vehicle/r211");
 		sliderRiderOffset = new WidgetShorterSlider(0, PANEL_WIDTH, 18, value -> {
 			RenderTrains.creatorProperties.editCustomResourcesRiderOffset((value - 2) / 4F);
 			updateControls(true);

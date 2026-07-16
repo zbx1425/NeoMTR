@@ -66,7 +66,7 @@ public class RenderTrains implements IGui {
 	private static final int TOTAL_RENDER_STAGES = 2;
 	private static final List<List<Map<Identifier, Set<BiConsumer<PoseStack, VertexConsumer>>>>> RENDERS = new ArrayList<>(TOTAL_RENDER_STAGES);
 	private static final List<List<Map<Identifier, Set<BiConsumer<PoseStack, VertexConsumer>>>>> CURRENT_RENDERS = new ArrayList<>(TOTAL_RENDER_STAGES);
-	private static final Identifier LIFT_TEXTURE = Identifier.parse("mtr:textures/entity/lift_1.png");
+	private static final Identifier LIFT_TEXTURE = Identifier.parse("mtr:textures/vehicle/lift_1.png");
 	private static final Identifier ARROW_TEXTURE = Identifier.parse("mtr:textures/block/sign/lift_arrow.png");
 
 	private static final List<Runnable> queuedTasks = new ArrayList<>();
