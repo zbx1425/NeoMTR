@@ -800,9 +800,9 @@ public class RouteMapGenerator implements IGui {
 			if (percent > 0) {
 				final int existingPixel = nativeImage.getPixel(x, y);
 				final boolean existingTransparent = ((existingPixel >> 24) & 0xFF) == 0;
-				final int r1 = existingTransparent ? 0xFF : (existingPixel & 0xFF);
+				final int r1 = existingTransparent ? 0xFF : ((existingPixel >> 16) & 0xFF);
 				final int g1 = existingTransparent ? 0xFF : ((existingPixel >> 8) & 0xFF);
-				final int b1 = existingTransparent ? 0xFF : ((existingPixel >> 16) & 0xFF);
+				final int b1 = existingTransparent ? 0xFF : (existingPixel & 0xFF);
 				final int r2 = (color >> 16) & 0xFF;
 				final int g2 = (color >> 8) & 0xFF;
 				final int b2 = color & 0xFF;
@@ -820,7 +820,7 @@ public class RouteMapGenerator implements IGui {
 	}
 
 	private static int invertColor(int color) {
-		return ((color & ARGB_BLACK) != 0 ? ARGB_BLACK : 0) + ((color & 0xFF) << 16) + (color & 0xFF00) + ((color & 0xFF0000) >> 16);
+		return color; // NativeImage.get/setPixel now expects ARGB
 	}
 
 	private static void clearColor(NativeImage nativeImage, int color) {
