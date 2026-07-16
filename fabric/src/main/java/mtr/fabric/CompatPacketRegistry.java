@@ -43,6 +43,7 @@ public class CompatPacketRegistry {
             CompatPacket packet = packets.get(packetC2S.getKey());
             ServerPlayNetworking.registerGlobalReceiver(packet.TYPE, (payload, context) -> {
                 handlerC2S.packetCallback(context.server(), context.player(), payload.buffer);
+                payload.buffer.release();
             });
         }
     }
@@ -53,6 +54,7 @@ public class CompatPacketRegistry {
             CompatPacket packet = packets.get(packetS2C.getKey());
             ClientPlayNetworking.registerGlobalReceiver(packet.TYPE, (payload, context) -> {
                 handlerS2C.accept(payload.buffer);
+                payload.buffer.release();
             });
         }
     }

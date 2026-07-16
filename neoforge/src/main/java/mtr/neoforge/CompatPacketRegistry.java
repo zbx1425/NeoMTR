@@ -38,9 +38,18 @@ public class CompatPacketRegistry {
             NetworkUtilities.PacketCallback handlerC2S = packetsC2S.getOrDefault(packets.getKey(), (server, player, arg) -> {});
             CompatPacket packet = packets.getValue();
             registrar.playBidirectional(packet.TYPE, packet.STREAM_CODEC,
-                    (arg, iPayloadContext) -> handlerC2S.packetCallback(
-                    ((ServerPlayer)iPayloadContext.player()).level().getServer(), (ServerPlayer)iPayloadContext.player(), arg.buffer),
-                    (arg, iPayloadContext) -> handlerS2C.accept(arg.buffer)
+                    (arg, iPayloadContext) -> {
+                        handlerC2S.packetCallback(
+                            ((ServerPlayer) iPayloadContext.player()).level().getServer(),
+                            (ServerPlayer) iPayloadContext.player(),
+                            arg.buffer
+                        );
+                        arg.buffer.release();
+                    },
+                    (arg, iPayloadContext) -> {
+                        handlerS2C.accept(arg.buffer);
+                        arg.buffer.release();
+                    }
             );
         }
     }
