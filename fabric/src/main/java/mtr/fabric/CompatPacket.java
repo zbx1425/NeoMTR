@@ -43,7 +43,7 @@ public class CompatPacket {
             ByteBuf data;
             if (src.isDirect()) {
                 data = Unpooled.buffer(src.readableBytes(), src.readableBytes());
-                data.readBytes(src);
+                src.readBytes(data);
             } else {
                 data = src.retainedDuplicate();
                 src.readerIndex(src.readerIndex() + src.readableBytes());
