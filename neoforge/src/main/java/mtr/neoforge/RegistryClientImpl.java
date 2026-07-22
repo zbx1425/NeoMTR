@@ -21,10 +21,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.ArrayList;
@@ -93,9 +90,9 @@ public class RegistryClientImpl {
 	public static class ClientForgeEventBusListener {
 
 		@SubscribeEvent
-		public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-			if (!event.getEntity().level().isClientSide()) return;
-			PLAYER_JOIN_EVENT.invoker().accept((LocalPlayer) event.getEntity());
+		public static void onPlayerLoggedIn(ClientPlayerNetworkEvent.LoggingIn event) {
+			if (!event.getPlayer().level().isClientSide()) return;
+			PLAYER_JOIN_EVENT.invoker().accept(event.getPlayer());
 		}
 
 		@SubscribeEvent
