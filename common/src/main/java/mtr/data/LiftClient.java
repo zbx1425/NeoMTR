@@ -29,6 +29,10 @@ public class LiftClient extends Lift {
 	public void tickClient(Level world, float deltaTime) {
 		tick(world, deltaTime);
 
+		if(liftModel != null && liftModel.shouldInvalidate(liftWidth, liftDepth, isDoubleSided)) {
+			liftModel = null;
+		}
+
 		vehicleRidingClient.begin();
 		if (deltaTime > 0) {
 			vehicleRidingClient.movePlayer(uuid -> {

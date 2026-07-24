@@ -427,6 +427,10 @@ public class ModelLift1 extends ModelTrainBase {
 		}
 	}
 
+	public boolean shouldInvalidate(int width, int depth, boolean isDoubleSided) {
+		return this.width == width && this.depth == depth && this.isDoubleSided == isDoubleSided;
+	}
+
 	@Override
 	protected int getDoorMax() {
 		return Lift.DOOR_MAX / 4;
