@@ -17,7 +17,7 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 public class GraphicsTexture implements Closeable {
 
-    private final DynamicTexture dynamicTexture;
+    private DynamicTexture dynamicTexture;
     public final Identifier identifier;
 
     public BufferedImage bufferedImage;
@@ -29,14 +29,14 @@ public class GraphicsTexture implements Closeable {
         this.width = width;
         this.height = height;
 
-        NativeImage backingNativeImage = new NativeImage(width, height, false);
 
         bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         identifier = Identifier.fromNamespaceAndPath(Main.MOD_ID, String.format("dynamic/graphics/%s", UUID.randomUUID()));
         graphics = bufferedImage.createGraphics();
 
-        dynamicTexture = new DynamicTexture(() -> "MTR-NTE GraphicsTexture (" + this.identifier.toString() + ")", backingNativeImage);
         Minecraft.getInstance().execute(() -> {
+            NativeImage backingNativeImage = new NativeImage(width, height, false);
+            dynamicTexture = new DynamicTexture(() -> "MTR-NTE GraphicsTexture (" + this.identifier.toString() + ")", backingNativeImage);
             Minecraft.getInstance().getTextureManager().register(identifier, dynamicTexture);
         });
         graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -52,6 +52,7 @@ public class GraphicsTexture implements Closeable {
     }
 
     public void upload() {
+        if(dynamicTexture == null) return; // TODO: Will this cause issues for first-time upload?
         IntBuffer imgData = IntBuffer.wrap(((DataBufferInt)bufferedImage.getRaster().getDataBuffer()).getData());
         long pixelAddr = dynamicTexture.getPixels().getPointer();
         ByteBuffer target = MemoryUtil.memByteBuffer(pixelAddr, width * height * 4);
