@@ -1,5 +1,6 @@
 package mtr.data;
 
+import cn.zbx1425.mtrsteamloco.block.BlockEyeCandy;
 import mtr.Items;
 import mtr.Keys;
 import mtr.MTR;
@@ -730,6 +731,12 @@ public abstract class Train extends NameColorDataBase implements IPacket {
 				for (int checkY = 3; checkY >= -2; checkY--) {
 					final BlockPos checkPos = RailwayData.newBlockPos(trainX + offsetVec.x * checkX + traverseVec.x * checkZ, trainY + checkY, trainZ + offsetVec.z * checkX + traverseVec.z * checkZ);
 					final BlockState state = world.getBlockState(checkPos);
+					// TODO: TEMP Code for custom PSD
+					if(state.getBlock() instanceof BlockEyeCandy) {
+						if (shouldOpenDoors) openDoors(world, state.getBlock(), checkPos, dwellTicks);
+						hasPlatform = true;
+					}
+
 					if (state.getBlock() instanceof BlockPSDAPGBase) {
 						// PSD/APG glass are not considered platform since you can't exit from there
 						if (state.getBlock() instanceof BlockPSDAPGDoorBase) {

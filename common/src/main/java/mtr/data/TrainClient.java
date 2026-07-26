@@ -1,6 +1,7 @@
 package mtr.data;
 
 import cn.zbx1425.mtrsteamloco.ClientConfig;
+import cn.zbx1425.mtrsteamloco.block.BlockEyeCandy;
 import cn.zbx1425.mtrsteamloco.game.TrainVirtualDrive;
 import mtr.MTR;
 import mtr.MTRClient;
@@ -314,14 +315,19 @@ public class TrainClient extends Train implements IGui {
 
 	@Override
 	protected void openDoors(Level world, Block block, BlockPos checkPos, int dwellTicks) {
+		final float doorStateValue = Mth.clamp(doorValue * DOOR_MOVE_TIME / BlockPSDAPGDoorBase.MAX_OPEN_VALUE, 0, 1);
 		for (int i = -1; i <= 1; i++) {
 			final BlockPos doorPos = checkPos.above(i);
 			final BlockState state = world.getBlockState(doorPos);
 			final Block doorBlock = state.getBlock();
 			final BlockEntity entity = world.getBlockEntity(doorPos);
 			if (doorBlock instanceof BlockPSDAPGDoorBase && entity instanceof BlockPSDAPGDoorBase.TileEntityPSDAPGDoorBase && IBlock.getStatePropertySafe(state, BlockPSDAPGDoorBase.UNLOCKED)) {
-				final float doorStateValue = Mth.clamp(doorValue * DOOR_MOVE_TIME / BlockPSDAPGDoorBase.MAX_OPEN_VALUE, 0, 1);
 				((BlockPSDAPGDoorBase.TileEntityPSDAPGDoorBase) entity).setOpen(doorStateValue);
+			}
+
+			// TODO: TEMP Code for custom PSD
+			if (entity instanceof BlockEyeCandy.BlockEntityEyeCandy) {
+				((BlockEyeCandy.BlockEntityEyeCandy) entity).setOpen(doorStateValue);
 			}
 		}
 	}

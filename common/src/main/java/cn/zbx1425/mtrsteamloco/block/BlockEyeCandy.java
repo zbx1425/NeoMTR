@@ -4,6 +4,7 @@ import cn.zbx1425.mtrsteamloco.Main;
 import cn.zbx1425.mtrsteamloco.network.PacketScreen;
 import cn.zbx1425.mtrsteamloco.render.scripting.eyecandy.EyeCandyScriptContext;
 import cn.zbx1425.sowcer.math.Vector3f;
+import mtr.MTRClient;
 import mtr.mappings.BlockDirectionalMapper;
 import mtr.mappings.BlockEntityClientSerializableMapper;
 import mtr.mappings.BlockEntityMapper;
@@ -69,6 +70,17 @@ public class BlockEyeCandy extends BlockDirectionalMapper implements EntityBlock
 
         public float translateX = 0, translateY = 0, translateZ = 0;
         public float rotateX = 0, rotateY = 0, rotateZ = 0;
+
+        // TODO: TEMP Code for custom PSD
+        public float doorOpen = 0;
+        private double lastDoorOpen = 0;
+        public void setOpen(float doorValue) {
+            doorOpen = doorValue;
+            lastDoorOpen = MTRClient.getGameTick();
+        }
+        public void tickDoor() {
+            if(MTRClient.getGameTick() - lastDoorOpen > 10) doorOpen = 0;
+        }
 
         public boolean fullLight = false;
 

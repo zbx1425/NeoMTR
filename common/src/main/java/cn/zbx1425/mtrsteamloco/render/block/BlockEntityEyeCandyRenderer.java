@@ -92,6 +92,8 @@ public class BlockEntityEyeCandyRenderer extends BlockEntityRendererMapper<Block
             state.prop.script.tryCallRenderFunctionAsync(state.scriptContext);
         }
 
+        // TODO: Temp code for custom PSD
+        blockEntity.tickDoor();
     }
 
     @Override
