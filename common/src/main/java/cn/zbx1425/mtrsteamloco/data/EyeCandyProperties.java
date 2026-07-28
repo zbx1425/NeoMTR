@@ -14,10 +14,14 @@ public class EyeCandyProperties implements Closeable {
     public ModelCluster model;
     public ScriptHolder script;
 
-    public EyeCandyProperties(Component name, ModelCluster model, ScriptHolder script) {
+    public int[] voxelShape;
+
+    public EyeCandyProperties(Component name, ModelCluster model, ScriptHolder script, int[] voxelShape) {
         this.name = name;
         this.model = model;
         this.script = script;
+        this.voxelShape = voxelShape;
+        if(voxelShape != null && voxelShape.length != 6) throw new IllegalStateException("voxelShape expected to have 6 values!");
     }
 
     @Override

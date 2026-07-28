@@ -126,10 +126,18 @@ public class EyeCandyRegistry {
             }
             script.load("EyeCandy " + key, "Block", resourceManager, scripts);
         }
+        int[] voxelShape = !obj.has("voxelShape") ? null : new int[6];
+        if(voxelShape != null) {
+            JsonArray jsonArray = obj.get("voxelShape").getAsJsonArray();
+            for(int i = 0; i < jsonArray.size(); i++) {
+                voxelShape[i] = jsonArray.get(i).getAsInt();
+            }
+        }
+
         if (cluster == null && script == null) {
             throw new IllegalArgumentException("Invalid eye-candy json: " + key);
         } else {
-            return new EyeCandyProperties(Text.translatable(obj.get("name").getAsString()), cluster, script);
+            return new EyeCandyProperties(Text.translatable(obj.get("name").getAsString()), cluster, script, voxelShape);
         }
     }
 }

@@ -35,7 +35,7 @@ public class Debug {
     public static void registerAllModelsAsEyeCandy() {
         for (Map.Entry<Identifier, ModelCluster> entry : MainClient.modelManager.modelClusterCache.entrySet()) {
             String key = FilenameUtils.getBaseName(entry.getKey().getPath());
-            EyeCandyRegistry.register(key, new EyeCandyProperties(Text.literal(key), entry.getValue(), null));
+            EyeCandyRegistry.register(key, new EyeCandyProperties(Text.literal(key), entry.getValue(), null, null));
         }
     }
 }
