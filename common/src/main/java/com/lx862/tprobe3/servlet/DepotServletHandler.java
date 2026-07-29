@@ -130,7 +130,8 @@ public class DepotServletHandler extends HttpServlet {
                     Map<Long, JsonObject> sidingsData = new HashMap<>();
 
                     dataCache.sidingIdMap.values().forEach(siding -> {
-                        if(dataCache.sidingIdToDepot.get(siding.id).id == depotId) {
+                        Depot belongingDepot = dataCache.sidingIdToDepot.get(siding.id);
+                        if(belongingDepot != null && belongingDepot.id == depotId) {
                             JsonObject sidingObject = JsonDataSerializer.serialize(siding);
                             sidingObject.add("vehicles", new JsonArray());
                             sidingsData.put(siding.id, sidingObject);
