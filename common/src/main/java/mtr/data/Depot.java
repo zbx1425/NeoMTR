@@ -367,7 +367,7 @@ public class Depot extends AreaBase implements IReducedSaveData {
 			if (newMillis > thisDeparture && newMillis <= nextDeparture) {
 				if (offset > 1) {
 					if (offset <= tempDepartures.size()) {
-						return new Pair<>(i+offset, (int) (wrapTime(tempDepartures.get((i + offset) % tempDepartures.size()), millis) - millis));
+						return new Pair<>(i+offset % tempDepartures.size(), (int) (wrapTime(tempDepartures.get((i + offset) % tempDepartures.size()), millis) - millis));
 					}
 				} else {
 					return new Pair<>(i, wrapTime(lastDeployedMillis + currentTimeOffset, newMillis) - MILLISECONDS_PER_DAY >= thisDeparture ? (int) (nextDeparture - newMillis) : 0);
