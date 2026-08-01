@@ -103,7 +103,7 @@ public class RenderPSDAPGDoor<T extends BlockPSDAPGDoorBase.TileEntityPSDAPGDoor
 				break;
 			case 2:
 				if (state.half && state.nearbyBlockIsAPG) {
-					RenderTrains.scheduleRender(Identifier.parse(String.format("mtr:textures/block/apg_door_light_%s.png", state.open > 0 ? "on" : "off")), false, OverlayTexture.NO_OVERLAY > 0 ? RenderTrains.QueuedRenderLayer.LIGHT_TRANSLUCENT : RenderTrains.QueuedRenderLayer.EXTERIOR, (matricesNew, vertexConsumer) -> {
+					RenderTrains.scheduleRender(Identifier.parse(String.format("mtr:textures/block/apg_door_light_%s.png", state.open > 0 ? "on" : "off")), false, state.open > 0 ? RenderTrains.QueuedRenderLayer.LIGHT_TRANSLUCENT : RenderTrains.QueuedRenderLayer.EXTERIOR, (matricesNew, vertexConsumer) -> {
 						storedMatrixTransformationsLight.transform(matricesNew);
 						matricesNew.translate(state.side ? -0.515625 : 0.515625, 0, 0);
 						matricesNew.scale(0.5F, 1, 1);
