@@ -51,7 +51,7 @@ public class TrainVirtualDrive extends TrainClient {
     public boolean atpEmergencyBrake;
     public boolean atpCutout = false;
 
-    private int doorOpenedAtPlatformIndex = 0;
+    private int doorOpenedAtPlatformIndex = -1;
 
     public LongArrayList railAheadLookup = new LongArrayList();
     private final DelayedValue actualNotch = new DelayedValue(0.5);
@@ -85,12 +85,14 @@ public class TrainVirtualDrive extends TrainClient {
                     if (speed <= 0) {
                         railProgress = distances.get(repeatIndex1 - 1) + trainCars * spacing;
                         nextPlatformIndex = 0;
+                        doorOpenedAtPlatformIndex = -1;
                         reversed = !reversed;
                         Minecraft.getInstance().player.sendSystemMessage(Text.translatable("gui.mtrsteamloco.drive.change_end"));
                     }
                 } else {
                     railProgress = distances.get(repeatIndex1) + (railProgress - distances.get(repeatIndex2));
                     nextPlatformIndex = 0;
+                    doorOpenedAtPlatformIndex = -1;
                 }
             }
         }
@@ -167,7 +169,7 @@ public class TrainVirtualDrive extends TrainClient {
         atpTargetDistance = distances.getLast();
         double lookAheadDistance = Math.max(300, Math.pow(speed, 2) / (2 * accelerationConstant));
         for (int i = getIndex(railProgress - spacing * trainCars, true);
-            i < path.size() && distances.get(i) < railProgress + lookAheadDistance; i++) {
+            i < path.size() && (i == 0 || distances.get(i - 1) < railProgress + lookAheadDistance`); i++) {
             PathData pathSeg = path.get(i);
             railAheadLookup.add(pathSeg.startingPos.asLong());
             if (i > 0 && distances.get(i - 1) < railProgress && distances.get(i) > railProgress - spacing * trainCars) {
