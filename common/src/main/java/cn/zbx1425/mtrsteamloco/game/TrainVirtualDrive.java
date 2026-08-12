@@ -169,7 +169,7 @@ public class TrainVirtualDrive extends TrainClient {
         atpTargetDistance = distances.getLast();
         double lookAheadDistance = Math.max(300, Math.pow(speed, 2) / (2 * accelerationConstant));
         for (int i = getIndex(railProgress - spacing * trainCars, true);
-            i < path.size() && (i == 0 || distances.get(i - 1) < railProgress + lookAheadDistance`); i++) {
+            i < path.size() && (i == 0 || distances.get(i - 1) < railProgress + lookAheadDistance); i++) {
             PathData pathSeg = path.get(i);
             railAheadLookup.add(pathSeg.startingPos.asLong());
             if (i > 0 && distances.get(i - 1) < railProgress && distances.get(i) > railProgress - spacing * trainCars) {
