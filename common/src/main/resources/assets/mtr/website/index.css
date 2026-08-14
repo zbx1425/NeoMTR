@@ -75,7 +75,20 @@ img {
 	height: 3em;
 }
 
+.tviewer-link {
+    display: block;
+    text-align: right;
+    margin-right: 1rem;
+}
+
+.tviewer-link img {
+	width: 5em;
+	height: 4em;
+	filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.85));
+}
+
 #legend {
+    position: fixed;
 	bottom: 0;
 	left: 0;
 	display: flex;
@@ -85,10 +98,13 @@ img {
 	width: 24em;
 }
 
-#search {
+#search-wrapper {
+	position: fixed;
 	top: 0;
 	right: 0;
 	width: 24em;
+	margin: 0;
+	margin-bottom: 1em;
 }
 
 #station_arrivals {
@@ -110,7 +126,6 @@ img {
 	box-sizing: border-box;
 	margin: 1em;
 	padding: 0.4em;
-	position: fixed;
 	white-space: nowrap;
 }
 
