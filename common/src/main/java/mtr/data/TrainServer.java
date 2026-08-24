@@ -146,31 +146,6 @@ public class TrainServer extends Train {
 			}
 		});
 
-		final BlockPos frontPos = RailwayData.newBlockPos(reversed ? positions[positions.length - 1] : positions[0]);
-		if (RailwayData.chunkLoaded(world, frontPos)) {
-			checkBlock(frontPos, checkPos -> {
-				if (RailwayData.chunkLoaded(world, checkPos)) {
-					final BlockState state = world.getBlockState(checkPos);
-					final Block block = state.getBlock();
-
-					if (block instanceof BlockTrainRedstoneSensor && BlockTrainSensorBase.matchesFilter(world, checkPos, routeId, speed)) {
-						((BlockTrainRedstoneSensor) block).power(world, state, checkPos);
-					}
-				}
-			});
-		}
-
-		if (!ridingEntities.isEmpty() && RailwayData.chunkLoaded(world, frontPos)) {
-			checkBlock(frontPos, checkPos -> {
-				if (RailwayData.chunkLoaded(world, checkPos) && world.getBlockState(checkPos).getBlock() instanceof BlockTrainAnnouncer) {
-					final BlockEntity entity = world.getBlockEntity(checkPos);
-					if (entity instanceof BlockTrainAnnouncer.TileEntityTrainAnnouncer && ((BlockTrainAnnouncer.TileEntityTrainAnnouncer) entity).matchesFilter(routeId, speed)) {
-						ridingEntities.forEach(uuid -> ((BlockTrainAnnouncer.TileEntityTrainAnnouncer) entity).announce(world.getPlayerByUUID(uuid)));
-					}
-				}
-			});
-		}
-
 		return playerNearby[0];
 	}
 
