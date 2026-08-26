@@ -106,7 +106,7 @@ public class BveTrainSound extends TrainSoundBase {
 
 		// Rolling noise
 		if (soundLoopRun != null) {
-			soundLoopRun.setData(Math.min(1, speed * 0.04F), speed * 0.04F, pos);
+			soundLoopRun.setData(speed < 2.78f ? 0.36f * speed : 1.0f, speed * 0.04F, pos);
 		}
 
 		// Simulation of circuit breaker in traction controller
@@ -178,7 +178,7 @@ public class BveTrainSound extends TrainSoundBase {
 
 		// Brake shoe rubbing noise (below regeneration brake cutoff limit)
 		if (soundLoopShoe != null) {
-			final float shoePitch = 1 / (speed + 1) + 1;
+			final float shoePitch = 1;
 			float shoeGain = speed < config.soundCfg.regenerationLimit && accel < 0 ? 1 : 0;
 			if (speed < 1.39) {
 				double t = speed * speed;
