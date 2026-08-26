@@ -29,7 +29,7 @@ public class BlazeRenderType {
 
     public static RenderType entityCutout(Identifier resourceLocation) {
 //        return ENTITY_CUTOUT.apply(resourceLocation);
-        return RenderTypes.entityCutout(resourceLocation);
+        return RenderTypes.entityCutoutCull(resourceLocation);
     }
 
     public static RenderType entityTranslucentCull(Identifier resourceLocation) {
