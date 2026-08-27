@@ -106,7 +106,7 @@ public class BveTrainSound extends TrainSoundBase {
 
 		// Rolling noise
 		if (soundLoopRun != null) {
-			soundLoopRun.setData(speed < 2.78f ? 0.36f * speed : 1.0f, speed * 0.04F, pos);
+			soundLoopRun.setData(Math.min(1, speed * 0.08F), speed * 0.04F, pos);
 		}
 
 		// Simulation of circuit breaker in traction controller
