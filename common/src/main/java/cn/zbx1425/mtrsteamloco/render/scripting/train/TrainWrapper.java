@@ -241,6 +241,7 @@ public class TrainWrapper {
     @SuppressWarnings("unused") public boolean isCurrentlyManual() { return train.isCurrentlyManual(); }
     @SuppressWarnings("unused") public boolean isReversed() { return train.isReversed(); }
     @SuppressWarnings("unused") public boolean isOnRoute() { return train.isOnRoute(); }
+    @SuppressWarnings("unused") public int getDepartureIndex() { return train.getDepartureIndex(); }
 
     @SuppressWarnings("unused") public boolean justOpening() { return train.justOpening(); }
     @SuppressWarnings("unused") public boolean justClosing(float doorCloseTime) { return train.justClosing(doorCloseTime); }

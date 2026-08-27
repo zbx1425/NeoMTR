@@ -18,7 +18,6 @@ public interface IPacket {
 	Identifier PACKET_OPEN_RESOURCE_PACK_CREATOR_SCREEN = MTR.id("packet_open_resource_pack_creator_screen");
 
 	Identifier PACKET_ANNOUNCE = MTR.id("packet_announce");
-	Identifier PACKET_USE_TIME_AND_WIND_SYNC = MTR.id("packet_use_time_and_wind_sync");
 
 	Identifier PACKET_CREATE_RAIL = MTR.id("packet_create_rail");
 	Identifier PACKET_CREATE_SIGNAL = MTR.id("packet_create_signal");

@@ -32,8 +32,6 @@ public class TrainServer extends Train {
 	private long lastSimulateTrainMillis = 0;
 	private float realTicksElapsed = 1;
 
-	private int departureIndex = -1;
-
 	private final List<Siding.TimeSegment> timeSegments;
 
 	private static final String KEY_DEPARTURE_INDEX = "departure_index";
@@ -44,7 +42,6 @@ public class TrainServer extends Train {
 	public TrainServer(long id, long sidingId, float railLength, String trainId, String baseTrainType, int trainCars, List<PathData> path, List<Double> distances, int repeatIndex1, int repeatIndex2, float accelerationConstant, List<Siding.TimeSegment> timeSegments, boolean isManual, int maxManualSpeed, int manualToAutomaticTime) {
 		super(id, sidingId, railLength, trainId, baseTrainType, trainCars, path, distances, repeatIndex1, repeatIndex2, accelerationConstant, isManual, maxManualSpeed, manualToAutomaticTime);
 		this.timeSegments = timeSegments;
-		this.departureIndex = -1;
 	}
 
 	public TrainServer(
@@ -146,29 +143,32 @@ public class TrainServer extends Train {
 			}
 		});
 
-		final BlockPos frontPos = RailwayData.newBlockPos(reversed ? positions[positions.length - 1] : positions[0]);
-		if (RailwayData.chunkLoaded(world, frontPos)) {
-			checkBlock(frontPos, checkPos -> {
-				if (RailwayData.chunkLoaded(world, checkPos)) {
-					final BlockState state = world.getBlockState(checkPos);
-					final Block block = state.getBlock();
+		final RailwayData railwayData = RailwayData.getInstance(world);
+		if (railwayData != null && !railwayData.getDisableTrainBlockInteraction()) {
+			final BlockPos frontPos = RailwayData.newBlockPos(reversed ? positions[positions.length - 1] : positions[0]);
+			if (RailwayData.chunkLoaded(world, frontPos)) {
+				checkBlock(frontPos, checkPos -> {
+					if (RailwayData.chunkLoaded(world, checkPos)) {
+						final BlockState state = world.getBlockState(checkPos);
+						final Block block = state.getBlock();
 
-					if (block instanceof BlockTrainRedstoneSensor && BlockTrainSensorBase.matchesFilter(world, checkPos, routeId, speed)) {
-						((BlockTrainRedstoneSensor) block).power(world, state, checkPos);
+						if (block instanceof BlockTrainRedstoneSensor && BlockTrainSensorBase.matchesFilter(world, checkPos, routeId, speed)) {
+							((BlockTrainRedstoneSensor) block).power(world, state, checkPos);
+						}
 					}
-				}
-			});
-		}
+				});
+			}
 
-		if (!ridingEntities.isEmpty() && RailwayData.chunkLoaded(world, frontPos)) {
-			checkBlock(frontPos, checkPos -> {
-				if (RailwayData.chunkLoaded(world, checkPos) && world.getBlockState(checkPos).getBlock() instanceof BlockTrainAnnouncer) {
-					final BlockEntity entity = world.getBlockEntity(checkPos);
-					if (entity instanceof BlockTrainAnnouncer.TileEntityTrainAnnouncer && ((BlockTrainAnnouncer.TileEntityTrainAnnouncer) entity).matchesFilter(routeId, speed)) {
-						ridingEntities.forEach(uuid -> ((BlockTrainAnnouncer.TileEntityTrainAnnouncer) entity).announce(world.getPlayerByUUID(uuid)));
+			if (!ridingEntities.isEmpty() && RailwayData.chunkLoaded(world, frontPos)) {
+				checkBlock(frontPos, checkPos -> {
+					if (RailwayData.chunkLoaded(world, checkPos) && world.getBlockState(checkPos).getBlock() instanceof BlockTrainAnnouncer) {
+						final BlockEntity entity = world.getBlockEntity(checkPos);
+						if (entity instanceof BlockTrainAnnouncer.TileEntityTrainAnnouncer && ((BlockTrainAnnouncer.TileEntityTrainAnnouncer) entity).matchesFilter(routeId, speed)) {
+							ridingEntities.forEach(uuid -> ((BlockTrainAnnouncer.TileEntityTrainAnnouncer) entity).announce(world.getPlayerByUUID(uuid)));
+						}
 					}
-				}
-			});
+				});
+			}
 		}
 
 		return playerNearby[0];
@@ -351,10 +351,6 @@ public class TrainServer extends Train {
 	public void deployTrain(int departureIndex) {
 		canDeploy = true;
 		this.departureIndex = departureIndex;
-	}
-
-	public int getDepartureIndex() {
-		return this.departureIndex;
 	}
 
 	private int getNextStoppingIndex() {

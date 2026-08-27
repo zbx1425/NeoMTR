@@ -30,6 +30,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -65,8 +66,9 @@ public class MTRForge {
 		ForgeUtilities.registerCreativeModeTabsToDeferredRegistry(CREATIVE_MODE_TABS);
 		CREATIVE_MODE_TABS.register(eventBus);
 
-		eventBus.register(MTRModEventBus.class);
+		eventBus.register(MTRModEventBusListeners.class);
 		eventBus.register(ForgeUtilities.RegisterCreativeTabs.class);
+		NeoForge.EVENT_BUS.register(MTRForgeEventBusListeners.class);
 		NeoForge.EVENT_BUS.register(RegistryImpl.ServerForgeEventBusListener.class);
 
 		if (FMLEnvironment.getDist().isClient()) {
@@ -155,7 +157,7 @@ public class MTRForge {
 		SOUND_EVENTS.register(path, () -> soundEvent);
 	}
 
-	private static class MTRModEventBus {
+	private static class MTRModEventBusListeners {
 
 		@SubscribeEvent
 		public static void onClientSetupEvent(FMLClientSetupEvent event) {
@@ -170,6 +172,14 @@ public class MTRForge {
 		public static void registerPayloadHandlers(final RegisterPayloadHandlersEvent event) {
 			PayloadRegistrar registrar = event.registrar("1");
 			MTRForge.PACKET_REGISTRY.commit(registrar);
+		}
+	}
+
+	private static class MTRForgeEventBusListeners {
+
+		@SubscribeEvent
+		public static void registerCommands(final RegisterCommandsEvent event) {
+			MTRCommands.register(event.getDispatcher());
 		}
 	}
 

@@ -71,10 +71,9 @@ public class PacketTrainDataGuiClient extends PacketTrainDataBase {
 
 	public static void openDashboardScreenS2C(FriendlyByteBuf packet) {
 		final TransportMode transportMode = EnumHelper.valueOf(TransportMode.TRAIN, packet.readUtf());
-		final boolean useTimeAndWindSync = packet.readBoolean();
 		Minecraft.getInstance().execute(() -> {
 			if (!(Minecraft.getInstance().screen instanceof DashboardScreen)) {
-				UtilitiesClient.setScreen(Minecraft.getInstance(), new DashboardScreen(transportMode, useTimeAndWindSync));
+				UtilitiesClient.setScreen(Minecraft.getInstance(), new DashboardScreen(transportMode));
 			}
 		});
 	}
@@ -414,9 +413,4 @@ public class PacketTrainDataGuiClient extends PacketTrainDataBase {
 		RegistryClient.sendToServer(PACKET_ARRIVAL_PROJECTOR_UPDATE, packet);
 	}
 
-	public static void sendUseTimeAndWindSyncC2S(boolean useTimeAndWindSync) {
-		final FriendlyByteBuf packet = new FriendlyByteBuf(Unpooled.buffer());
-		packet.writeBoolean(useTimeAndWindSync);
-		RegistryClient.sendToServer(PACKET_USE_TIME_AND_WIND_SYNC, packet);
-	}
 }

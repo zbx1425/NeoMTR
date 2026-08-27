@@ -13,7 +13,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.permissions.Permissions;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.ProblemReporter;
@@ -43,10 +42,9 @@ public class PacketTrainDataGuiServer extends PacketTrainDataBase {
 		Registry.sendToPlayer(player, PACKET_VERSION_CHECK, packet);
 	}
 
-	public static void openDashboardScreenS2C(ServerPlayer player, TransportMode transportMode, boolean useTimeAndWindSync) {
+	public static void openDashboardScreenS2C(ServerPlayer player, TransportMode transportMode) {
 		final FriendlyByteBuf packet = new FriendlyByteBuf(Unpooled.buffer());
 		packet.writeUtf(transportMode.toString());
-		packet.writeBoolean(useTimeAndWindSync);
 		Registry.sendToPlayer(player, PACKET_OPEN_DASHBOARD_SCREEN, packet);
 	}
 
@@ -549,23 +547,6 @@ public class PacketTrainDataGuiServer extends PacketTrainDataBase {
 		});
 	}
 
-	public static void receiveUseTimeAndWindSyncC2S(MinecraftServer minecraftServer, ServerPlayer player, FriendlyByteBuf packet) {
-		if (RailwayData.hasNoPermission(player) || !player.permissions().hasPermission(Permissions.COMMANDS_MODERATOR)) {
-			return;
-		}
-
-		final Level world = player.level();
-		final RailwayData railwayData = RailwayData.getInstance(world);
-		if (railwayData != null) {
-			final boolean useTimeAndWindSync = packet.readBoolean();
-			minecraftServer.execute(() -> {
-				final boolean useTimeAndWindSyncOld = railwayData.getUseTimeAndWindSync();
-				railwayData.setUseTimeAndWindSync(useTimeAndWindSync);
-				final String key = "\"use_time_and_wind_sync\":";
-				railwayData.railwayDataLoggingModule.addEvent(player, RailwayData.class, Collections.singletonList(key + useTimeAndWindSyncOld), Collections.singletonList(key + useTimeAndWindSync));
-			});
-		}
-	}
 
 	public static void receiveRemoveRailAction(MinecraftServer minecraftServer, Player player, FriendlyByteBuf packet) {
 		final Level world = player.level();

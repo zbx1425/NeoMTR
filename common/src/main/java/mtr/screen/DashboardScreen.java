@@ -54,7 +54,7 @@ public class DashboardScreen extends MTRScreen implements IGui, IPacket {
 	public static final int MAX_COLOR_ZONE_LENGTH = 6;
 	private static final int COLOR_WIDTH = 48;
 
-	public DashboardScreen(TransportMode transportMode, boolean useTimeAndWindSync) {
+	public DashboardScreen(TransportMode transportMode) {
 		super(Text.literal(""));
 		this.transportMode = transportMode;
 
@@ -79,7 +79,7 @@ public class DashboardScreen extends MTRScreen implements IGui, IPacket {
             UtilitiesClient.setScreen(minecraft, new RailActionsScreen())
         );
 		buttonOptions = UtilitiesClient.newButton(Text.translatable("menu.options"), button ->
-            UtilitiesClient.setScreen(minecraft, new ConfigScreen(useTimeAndWindSync))
+            UtilitiesClient.setScreen(minecraft, new ConfigScreen())
         );
 
 		dashboardList = new DashboardList(this::onFind, this::onDrawArea, this::onEdit, this::onSort, null, this::onDelete, this::getList, () -> ClientData.DASHBOARD_SEARCH, text -> ClientData.DASHBOARD_SEARCH = text);

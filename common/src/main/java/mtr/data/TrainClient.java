@@ -530,6 +530,7 @@ public class TrainClient extends Train implements IGui {
 		isOnRoute = train.isOnRoute;
 		isCurrentlyManual = train.isCurrentlyManual;
 		manualNotch = train.manualNotch;
+		departureIndex = train.departureIndex;
 	}
 
 	public final float speedChange() {

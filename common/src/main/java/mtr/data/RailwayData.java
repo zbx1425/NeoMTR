@@ -55,6 +55,7 @@ public class RailwayData /*extends PersistentStateMapper*/ implements IPacket {
 	private int prevPlatformCount;
 	private int prevSidingCount;
 	private boolean useTimeAndWindSync;
+	private boolean disableTrainBlockInteraction;
 
 	private final Level world;
 	private final Map<BlockPos, Map<BlockPos, Rail>> rails = new HashMap<>();
@@ -87,6 +88,7 @@ public class RailwayData /*extends PersistentStateMapper*/ implements IPacket {
 	private static final String KEY_RAILS = "rails";
 	private static final String KEY_SIGNAL_BLOCKS = "signal_blocks";
 	private static final String KEY_USE_TIME_AND_WIND_SYNC = "use_time_and_wind_sync";
+	private static final String KEY_DISABLE_TRAIN_BLOCK_INTERACTION = "disable_train_block_interaction";
 
 	public RailwayData(Level world) {
 //		super(NAME);
@@ -222,6 +224,7 @@ public class RailwayData /*extends PersistentStateMapper*/ implements IPacket {
 		signalBlocks.writeCache();
 
 		useTimeAndWindSync = compoundTag.getBooleanOr(KEY_USE_TIME_AND_WIND_SYNC, false);
+		disableTrainBlockInteraction = compoundTag.getBooleanOr(KEY_DISABLE_TRAIN_BLOCK_INTERACTION, false);
 		runRealTimeSync();
 
 		try {
@@ -254,6 +257,7 @@ public class RailwayData /*extends PersistentStateMapper*/ implements IPacket {
 
 	public CompoundTag save(CompoundTag compoundTag) {
 		compoundTag.putBoolean(KEY_USE_TIME_AND_WIND_SYNC, useTimeAndWindSync);
+		compoundTag.putBoolean(KEY_DISABLE_TRAIN_BLOCK_INTERACTION, disableTrainBlockInteraction);
 		return compoundTag;
 	}
 
@@ -511,6 +515,14 @@ public class RailwayData /*extends PersistentStateMapper*/ implements IPacket {
 	public void setUseTimeAndWindSync(boolean useTimeAndWindSync) {
 		this.useTimeAndWindSync = useTimeAndWindSync;
 		runRealTimeSync();
+	}
+
+	public boolean getDisableTrainBlockInteraction() {
+		return disableTrainBlockInteraction;
+	}
+
+	public void setDisableTrainBlockInteraction(boolean disableTrainBlockInteraction) {
+		this.disableTrainBlockInteraction = disableTrainBlockInteraction;
 	}
 
 	private void validateData() {

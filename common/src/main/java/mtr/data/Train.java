@@ -42,6 +42,7 @@ public abstract class Train extends NameColorDataBase implements IPacket {
 	protected boolean isOnRoute = false;
 	protected boolean isCurrentlyManual;
 	protected int manualNotch;
+	protected int departureIndex = -1;
 
 	public final long sidingId;
 	public final String trainId;
@@ -248,6 +249,7 @@ public abstract class Train extends NameColorDataBase implements IPacket {
 		for (int i = 0; i < ridingEntitiesCount; i++) {
 			ridingEntities.add(packet.readUUID());
 		}
+		departureIndex = packet.readVarInt();
 
 	}
 
@@ -313,6 +315,7 @@ public abstract class Train extends NameColorDataBase implements IPacket {
 		packet.writeBoolean(doorTarget);
 		packet.writeVarInt(ridingEntities.size());
 		ridingEntities.forEach(packet::writeUUID);
+		packet.writeVarInt(departureIndex);
 	}
 
 	@Override
@@ -398,6 +401,10 @@ public abstract class Train extends NameColorDataBase implements IPacket {
 
 	public int getNextStopIndex() {
 		return nextStoppingIndex;
+	}
+
+	public final int getDepartureIndex() {
+		return departureIndex;
 	}
 
 	public final float getSpeed() {
