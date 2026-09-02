@@ -111,6 +111,7 @@ public class RenderTrains implements IGui {
 						player.sendOverlayMessage(Text.translatable("gui.mtr.vehicle_speed", RailwayData.round(speed, 1), RailwayData.round(speed * 3.6F, 1)));
 					}
 				} else {
+					/*
 					final Component text;
 					switch ((int) ((System.currentTimeMillis() / 1000) % 3)) {
 						default:
@@ -128,6 +129,7 @@ public class RenderTrains implements IGui {
 							break;
 					}
 					player.sendOverlayMessage(text);
+					*/
 				}
 			}
 		}, (stopIndex, routeIds) -> {
