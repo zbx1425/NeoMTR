@@ -53,19 +53,21 @@ public class BakedRail {
                 case MANUAL -> 0;
             };
 
-            int totalPositions = posResult.interior.size() + posResult.boundary.size();
-
             for (IndexedPosition ip : posResult.interior) {
+                RailModelInstanceOverride ipOv = repeater.instanceOverrides.get(ip.originalIndex);
+                if (ipOv != null && ipOv.suppressed) continue;
                 List<RepeaterAttachment> effectiveAttachments = resolveAttachments(repeater, ip.originalIndex);
                 placeAttachments(rail, ip.tCanon, isCanonical, isSecondaryDir, railLength,
                         chordHalfSpan, interval, effectiveAttachments,
-                        ip.originalIndex, totalPositions, repeater.offsetFromStart, true, 0, canonStart);
+                        ip.originalIndex, repeater.offsetFromStart, true, 0, canonStart);
             }
             for (BoundaryPosition bp : posResult.boundary) {
+                RailModelInstanceOverride bpOv = repeater.instanceOverrides.get(bp.originalIndex);
+                if (bpOv != null && bpOv.suppressed) continue;
                 List<RepeaterAttachment> effectiveAttachments = resolveAttachments(repeater, bp.originalIndex);
                 placeAttachments(rail, bp.tCanon, isCanonical, isSecondaryDir, railLength,
                         chordHalfSpan, interval, effectiveAttachments,
-                        bp.originalIndex, totalPositions, repeater.offsetFromStart, false, bp.blockPosHash, canonStart);
+                        bp.originalIndex, repeater.offsetFromStart, false, bp.blockPosHash, canonStart);
             }
         }
     }
@@ -79,7 +81,7 @@ public class BakedRail {
     private void placeAttachments(Rail rail, double tCanon, boolean isCanonical, boolean isSecondaryDir,
                                   double railLength, double chordHalfSpan, float interval,
                                   List<RepeaterAttachment> attachments,
-                                  int positionIndex, int totalPositions, boolean offsetFromStart,
+                                  int placementIndex, boolean offsetFromStart,
                                   boolean isInterior, long blockPosHash, BlockPos canonStart) {
         for (RepeaterAttachment attachment : attachments) {
             String resolvedTypeKey = RailRenderDispatcher.getModelKeyForRender(rail, attachment.modelTypeKey);
@@ -88,10 +90,9 @@ public class BakedRail {
             RailModelProperties props = RailModelRegistry.getProperty(resolvedTypeKey);
             if (props.getModelCount() == 0) continue;
 
-            int modelIndex = computeModelIndex(attachment, positionIndex, totalPositions,
-                    offsetFromStart, props.getModelCount());
+            int modelIndex = computeModelIndex(attachment, placementIndex, props.getModelCount());
 
-            boolean effectiveReversed = isSecondaryDir ^ attachment.reversed;
+            boolean effectiveReversed = isSecondaryDir ^ offsetFromStart ^ attachment.reversed;
 
             ModelRef modelRef = new ModelRef(resolvedTypeKey, modelIndex);
 
@@ -119,11 +120,9 @@ public class BakedRail {
         }
     }
 
-    private int computeModelIndex(RepeaterAttachment attachment, int positionIndex, int totalPositions,
-                                  boolean offsetFromStart, int modelCount) {
-        int effectiveIndex = offsetFromStart ? positionIndex : (totalPositions - 1 - positionIndex);
+    private int computeModelIndex(RepeaterAttachment attachment, int placementIndex, int modelCount) {
         int fmi = attachment.firstModelIndex % modelCount;
-        return (fmi + effectiveIndex) % modelCount;
+        return (fmi + placementIndex) % modelCount;
     }
 
     private record IndexedPosition(double tCanon, int originalIndex) {}
@@ -198,13 +197,14 @@ public class BakedRail {
                 int N = Math.max(2, Math.round((float) (L / I)) + 1);
                 double actualI = L / (N - 1);
                 for (int k = 0; k < N; k++) {
+                    int placementIdx = p.offsetFromStart ? k : (N - 1 - k);
                     double t = k * actualI;
                     if (k == 0) {
-                        boundary.add(new BoundaryPosition(t, canonStart.asLong(), k));
+                        boundary.add(new BoundaryPosition(t, canonStart.asLong(), placementIdx));
                     } else if (k == N - 1) {
-                        boundary.add(new BoundaryPosition(t, canonEnd.asLong(), k));
+                        boundary.add(new BoundaryPosition(t, canonEnd.asLong(), placementIdx));
                     } else {
-                        interior.add(new IndexedPosition(t, k));
+                        interior.add(new IndexedPosition(t, placementIdx));
                     }
                 }
                 break;
@@ -221,17 +221,32 @@ public class BakedRail {
                     }
                     Collections.reverse(rawPositions);
                 }
+                int unclippedCount = rawPositions.size();
+
+                double canonMin = 0, canonMax = L;
+                if (p.rangeStart >= 0 || p.rangeEnd >= 0) {
+                    float effStart = (p.rangeStart < 0) ? 0 : p.rangeStart;
+                    float effEnd = (p.rangeEnd < 0) ? (float) L : Math.min(p.rangeEnd, (float) L);
+                    if (p.offsetFromStart) {
+                        canonMin = effStart; canonMax = effEnd;
+                    } else {
+                        canonMin = L - effEnd; canonMax = L - effStart;
+                    }
+                }
                 for (int i = 0; i < rawPositions.size(); i++) {
                     double t = rawPositions.get(i)[0];
-                    classifyPosition(t, i, L, canonStart, canonEnd, interior, boundary);
+                    if (t < canonMin - 0.001 || t > canonMax + 0.001) continue;
+                    int placementIdx = p.offsetFromStart ? i : (unclippedCount - 1 - i);
+                    classifyPosition(t, placementIdx, L, canonStart, canonEnd, interior, boundary);
                 }
                 break;
             }
             case MANUAL: {
                 for (int i = 0; i < p.manualPositions.size(); i++) {
-                    float pos = p.manualPositions.get(i);
-                    if (pos >= 0 && pos <= L) {
-                        classifyPosition(pos, i, L, canonStart, canonEnd, interior, boundary);
+                    float placementT = p.manualPositions.get(i);
+                    double canonT = p.offsetFromStart ? placementT : (L - placementT);
+                    if (canonT >= 0 && canonT <= L) {
+                        classifyPosition(canonT, i, L, canonStart, canonEnd, interior, boundary);
                     }
                 }
                 break;

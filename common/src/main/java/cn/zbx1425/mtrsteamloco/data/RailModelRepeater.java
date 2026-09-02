@@ -26,6 +26,8 @@ public class RailModelRepeater {
     public float offset;
     public boolean offsetFromStart;
     public float intervalOverride;
+    public float rangeStart;
+    public float rangeEnd;
     public List<Float> manualPositions;
     public List<RepeaterAttachment> attachments;
     public Map<Integer, RailModelInstanceOverride> instanceOverrides;
@@ -36,6 +38,8 @@ public class RailModelRepeater {
         this.offset = 0;
         this.offsetFromStart = true;
         this.intervalOverride = 0;
+        this.rangeStart = -1;
+        this.rangeEnd = -1;
         this.manualPositions = Collections.emptyList();
         this.attachments = new ArrayList<>();
         this.attachments.add(new RepeaterAttachment());
@@ -67,6 +71,8 @@ public class RailModelRepeater {
         copy.offset = this.offset;
         copy.offsetFromStart = this.offsetFromStart;
         copy.intervalOverride = this.intervalOverride;
+        copy.rangeStart = this.rangeStart;
+        copy.rangeEnd = this.rangeEnd;
         copy.manualPositions = new ArrayList<>(this.manualPositions);
         copy.attachments = new ArrayList<>(this.attachments.size());
         for (RepeaterAttachment att : this.attachments) {
@@ -85,6 +91,8 @@ public class RailModelRepeater {
                 && offset == 0
                 && offsetFromStart
                 && intervalOverride == 0
+                && rangeStart == -1
+                && rangeEnd == -1
                 && manualPositions.isEmpty()
                 && instanceOverrides.isEmpty()
                 && attachments.size() == 1
@@ -115,6 +123,8 @@ public class RailModelRepeater {
 
         int fieldCount = 6;
         if (!id.isEmpty()) fieldCount++;
+        if (rangeStart != -1) fieldCount++;
+        if (rangeEnd != -1) fieldCount++;
         if (!nonDefaultOv.isEmpty()) fieldCount++;
 
         packer.packMapHeader(fieldCount);
@@ -125,6 +135,8 @@ public class RailModelRepeater {
         packer.packString("offset").packFloat(offset);
         packer.packString("offset_from_start").packBoolean(offsetFromStart);
         packer.packString("interval_override").packFloat(intervalOverride);
+        if (rangeStart != -1) packer.packString("range_start").packFloat(rangeStart);
+        if (rangeEnd != -1) packer.packString("range_end").packFloat(rangeEnd);
         packer.packString("manual_positions").packArrayHeader(manualPositions.size());
         for (float pos : manualPositions) {
             packer.packFloat(pos);
@@ -178,6 +190,12 @@ public class RailModelRepeater {
                     break;
                 case "interval_override":
                     repeater.intervalOverride = val.asFloatValue().toFloat();
+                    break;
+                case "range_start":
+                    repeater.rangeStart = val.asFloatValue().toFloat();
+                    break;
+                case "range_end":
+                    repeater.rangeEnd = val.asFloatValue().toFloat();
                     break;
                 case "manual_positions":
                     ArrayValue arr = val.asArrayValue();
@@ -287,6 +305,8 @@ public class RailModelRepeater {
         packet.writeFloat(offset);
         packet.writeBoolean(offsetFromStart);
         packet.writeFloat(intervalOverride);
+        packet.writeFloat(rangeStart);
+        packet.writeFloat(rangeEnd);
         packet.writeVarInt(manualPositions.size());
         for (float pos : manualPositions) {
             packet.writeFloat(pos);
@@ -316,6 +336,8 @@ public class RailModelRepeater {
         repeater.offset = packet.readFloat();
         repeater.offsetFromStart = packet.readBoolean();
         repeater.intervalOverride = packet.readFloat();
+        repeater.rangeStart = packet.readFloat();
+        repeater.rangeEnd = packet.readFloat();
         int posCount = packet.readVarInt();
         List<Float> positions = new ArrayList<>(posCount);
         for (int i = 0; i < posCount; i++) {

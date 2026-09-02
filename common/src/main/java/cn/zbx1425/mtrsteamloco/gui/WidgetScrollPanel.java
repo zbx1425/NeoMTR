@@ -7,7 +7,8 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
-import org.joml.Matrix3x2fStack;
+import net.minecraft.client.input.PreeditEvent;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -25,10 +26,15 @@ public class WidgetScrollPanel extends AbstractScrollWidget {
 
     @Override
     protected void renderContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        Matrix3x2fStack poseStack = guiGraphics.pose();
-        poseStack.translate(this.getX(), this.getY());
+        int offsetY = (int) getOffset();
         for (AbstractWidget widget : children) {
-            widget.extractRenderState(guiGraphics, mouseX - this.getX(), (int) (mouseY + getOffset()) - this.getY(), partialTick);
+            int origX = widget.getX();
+            int origY = widget.getY();
+            widget.setX(origX + this.getX());
+            widget.setY(origY + this.getY() - offsetY);
+            widget.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
+            widget.setX(origX);
+            widget.setY(origY);
         }
     }
 
@@ -109,6 +115,12 @@ public class WidgetScrollPanel extends AbstractScrollWidget {
     public boolean charTyped(CharacterEvent event) {
         if (focusedChild != null && focusedChild.charTyped(event)) return true;
         return super.charTyped(event);
+    }
+
+    @Override
+    public boolean preeditUpdated(@Nullable PreeditEvent event) {
+        if (focusedChild != null && focusedChild.preeditUpdated(event)) return true;
+        return super.preeditUpdated(event);
     }
 
     @Override

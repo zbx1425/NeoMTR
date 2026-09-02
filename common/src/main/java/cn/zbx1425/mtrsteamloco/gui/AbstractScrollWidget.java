@@ -6,7 +6,6 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
-import org.joml.Matrix3x2fStack;
 
 public abstract class AbstractScrollWidget extends AbstractWidget {
     private double offset;
@@ -54,7 +53,7 @@ public abstract class AbstractScrollWidget extends AbstractWidget {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double delta) {
-        if (!this.visible || !this.isFocused()) return false;
+        if (!this.visible || !this.isMouseInside(mouseX, mouseY)) return false;
         this.setOffset(this.offset - delta * this.getScrollInterval());
         return true;
     }
@@ -64,13 +63,9 @@ public abstract class AbstractScrollWidget extends AbstractWidget {
         if (!this.visible) {
             return;
         }
-        Matrix3x2fStack poseStack = guiGraphics.pose();
-        poseStack.pushMatrix();
         this.renderBackground(guiGraphics);
         guiGraphics.enableScissor(getX(), getY(), getX() + this.width, getY() + this.height);
-        poseStack.translate(0, (float)-this.offset);
         this.renderContents(guiGraphics, mouseX, mouseY, partialTick);
-        poseStack.popMatrix();
         guiGraphics.disableScissor();
         if (this.getScrollBarVisible()) {
             this.renderScrollBar(guiGraphics);
@@ -129,6 +124,17 @@ public abstract class AbstractScrollWidget extends AbstractWidget {
 
     protected boolean isMouseInside(double x, double y) {
         return x >= (double)this.getX() && x < (double)(this.getX() + this.width) && y >= (double)this.getY() && y < (double)(this.getY() + this.height);
+    }
+
+    @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        if (!this.isActive()) return false;
+        if (super.isMouseOver(mouseX, mouseY)) return true;
+        return this.getScrollBarVisible()
+                && mouseX >= this.getX() + this.width
+                && mouseX <= this.getX() + this.width + 8
+                && mouseY >= this.getY()
+                && mouseY < this.getY() + this.height;
     }
 
     protected abstract int getContentHeight();

@@ -472,15 +472,15 @@ public class RailEditorGeometryScreen extends MTRScreen {
                 double L = pickedRail.getLength();
                 double maxRadius = (H == 0) ? 0 : (H * H + L * L) / (H * 4.0);
                 if (newRadius < maxRadius) {
-                    radiusInput.setTextColor(0xE0E0E0);
+                    radiusInput.setTextColor(0xFFE0E0E0);
                 } else {
-                    radiusInput.setTextColor(0xEEEE00);
+                    radiusInput.setTextColor(0xFFEEEE00);
                 }
                 extra.setVerticalCurveRadius(newRadius);
                 sendRailUpdate();
                 btnSaveToTool.active = batchEnabled && toolRadius != newRadius;
             } catch (NumberFormatException e) {
-                radiusInput.setTextColor(0xFF0000);
+                radiusInput.setTextColor(0xFFFF0000);
             }
         });
     }

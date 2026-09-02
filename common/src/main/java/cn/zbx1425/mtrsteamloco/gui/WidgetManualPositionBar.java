@@ -22,6 +22,7 @@ public class WidgetManualPositionBar extends AbstractWidget {
 
     private boolean editable = true;
     private Set<Integer> overrideIndices = Collections.emptySet();
+    private Set<Integer> suppressedIndices = Collections.emptySet();
     private float playerProgress = -1;
 
     private float viewCenter = 50f;
@@ -56,6 +57,10 @@ public class WidgetManualPositionBar extends AbstractWidget {
 
     public void setOverrideIndices(Set<Integer> indices) {
         this.overrideIndices = indices != null ? indices : Collections.emptySet();
+    }
+
+    public void setSuppressedIndices(Set<Integer> indices) {
+        this.suppressedIndices = indices != null ? indices : Collections.emptySet();
     }
 
     public void setPlayerProgress(float progress) {
@@ -220,6 +225,7 @@ public class WidgetManualPositionBar extends AbstractWidget {
             int px = ovPosToPixel(positions.get(i));
             int color;
             if (i == selectedIndex) color = 0xFFFFFF00;
+            else if (suppressedIndices.contains(i)) color = 0xFF555555;
             else if (overrideIndices.contains(i)) color = 0xFFFF8800;
             else color = 0xFF00CC00;
             dfill(g, px, ot + 1, px + 1, ot + OVERVIEW_H - 1, color);
@@ -251,6 +257,7 @@ public class WidgetManualPositionBar extends AbstractWidget {
             if (px < dl - HANDLE_HALF_W || px > dr + HANDLE_HALF_W) continue;
             int color;
             if (i == selectedIndex) color = 0xFFFFFF00;
+            else if (suppressedIndices.contains(i)) color = 0xFF555555;
             else if (overrideIndices.contains(i)) color = 0xFFFF8800;
             else color = 0xFF00FF00;
             dfill(g, px - HANDLE_HALF_W, dcy - hh, px + HANDLE_HALF_W, dcy + hh, color);

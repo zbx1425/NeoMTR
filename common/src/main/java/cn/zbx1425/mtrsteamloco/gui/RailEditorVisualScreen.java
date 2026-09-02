@@ -54,9 +54,12 @@ public class RailEditorVisualScreen extends SelectListScreen {
     private final WidgetScrollList layerScrollList = new WidgetScrollList(0, 0, 100, 100);
     private final WidgetScrollPanel rightScrollPanel = new WidgetScrollPanel(0, 0, 100, 100);
 
+    private record PositionEntry(float canonicalT, int placementIndex) {}
+
     private int savedBarSelectedIndex = -1;
     private int savedBarZoomIndex = 0;
     private float savedBarViewCenter = -1;
+    private int[] displayToPlacement = new int[0];
 
     public RailEditorVisualScreen() {
         super(Text.translatable("gui.mtr.rail_editor_visual.title"));
@@ -99,7 +102,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
         } else if (modelSelectTarget == ModelSelectTarget.ATTACHMENT_INSTANCE && currentBar != null) {
             int posIdx = currentBar.getSelectedIndex();
             RailModelInstanceOverride ov = repeater.instanceOverrides.get(
-                    displayIndexToCanonIndex(posIdx, getPositionCount(repeater)));
+                    displayIndexToPlacementIndex(posIdx));
             if (ov != null && ov.attachments != null
                     && selectedOvAttIndex >= 0 && selectedOvAttIndex < ov.attachments.size()) {
                 return ov.attachments.get(selectedOvAttIndex);
@@ -233,26 +236,6 @@ public class RailEditorVisualScreen extends SelectListScreen {
         int halfW = w / 2 - 2;
         int y = 0;
 
-        // -- Interval override --
-        rightScrollPanel.children.add(new WidgetLabel(0, y + 6, halfW,
-                Text.translatable("gui.mtr.rail_editor_visual.interval")));
-
-        WidgetBetterTextField intervalField = new WidgetBetterTextField("0", 8);
-        IDrawing.setPositionAndWidth(intervalField, halfW + 4, y, halfW);
-        intervalField.setValue(selected.intervalOverride > 0 ? String.format("%.2f", selected.intervalOverride) : "");
-        intervalField.setResponder(text -> {
-            try {
-                selected.intervalOverride = text.isEmpty() ? 0 : Float.parseFloat(text);
-                intervalField.setTextColor(0xE0E0E0);
-                sendUpdate();
-            } catch (NumberFormatException e) {
-                intervalField.setTextColor(0xFF0000);
-            }
-        });
-        intervalField.active = selected.repeaterMode != RepeaterMode.MANUAL;
-        rightScrollPanel.children.add(intervalField);
-        y += SQUARE_SIZE + 4;
-
         // -- Mode selector --
         int modeButtonWidth = w / 3;
         Button btnStretch = UtilitiesClient.newButton(
@@ -266,9 +249,6 @@ public class RailEditorVisualScreen extends SelectListScreen {
         Button btnFixed = UtilitiesClient.newButton(
                 Text.translatable("gui.mtr.rail_editor_visual.fixed_interval"),
                 sender -> {
-                    if (selected.repeaterMode != RepeaterMode.FIXED_INTERVAL) {
-                        selected.offsetFromStart = userIsAtCanonStart();
-                    }
                     selected.repeaterMode = RepeaterMode.FIXED_INTERVAL;
                     sendUpdate();
                     Minecraft.getInstance().execute(this::loadPage);
@@ -282,7 +262,18 @@ public class RailEditorVisualScreen extends SelectListScreen {
                 Text.translatable("gui.mtr.rail_editor_visual.manual"),
                 sender -> {
                     if (selected.repeaterMode != RepeaterMode.MANUAL) {
-                        selected.manualPositions = computePositionsForCurrentMode(selected);
+                        List<Float> canonPositions = computePositionsForCurrentMode(selected);
+                        if (selected.offsetFromStart) {
+                            selected.manualPositions = canonPositions;
+                        } else {
+                            float railLen = pickedRail != null ? (float) pickedRail.getLength() : 100f;
+                            List<Float> placementPositions = new ArrayList<>();
+                            for (float pos : canonPositions) {
+                                placementPositions.add(quantizePosition(railLen - pos));
+                            }
+                            Collections.reverse(placementPositions);
+                            selected.manualPositions = placementPositions;
+                        }
                     }
                     selected.repeaterMode = RepeaterMode.MANUAL;
                     sendUpdate();
@@ -293,6 +284,51 @@ public class RailEditorVisualScreen extends SelectListScreen {
         IDrawing.setPositionAndWidth(btnManual, modeButtonWidth * 2, y, w - modeButtonWidth * 2);
         rightScrollPanel.children.add(btnManual);
         y += SQUARE_SIZE + 4;
+
+        // -- Interval override (hidden in Manual mode) --
+        if (selected.repeaterMode != RepeaterMode.MANUAL) {
+            rightScrollPanel.children.add(new WidgetLabel(0, y + 6, halfW,
+                    Text.translatable("gui.mtr.rail_editor_visual.interval")));
+
+            WidgetBetterTextField intervalField = new WidgetBetterTextField("0", 8);
+            IDrawing.setPositionAndWidth(intervalField, halfW + 4, y, halfW);
+            intervalField.setValue(selected.intervalOverride > 0 ? String.format("%.2f", selected.intervalOverride) : "");
+            intervalField.setResponder(text -> {
+                try {
+                    selected.intervalOverride = text.isEmpty() ? 0 : Float.parseFloat(text);
+                    intervalField.setTextColor(0xFFE0E0E0);
+                    sendUpdate();
+                } catch (NumberFormatException e) {
+                    intervalField.setTextColor(0xFFFF0000);
+                }
+            });
+            rightScrollPanel.children.add(intervalField);
+            y += SQUARE_SIZE + 4;
+        }
+
+        // -- Placement direction (all modes) --
+        boolean fromThisNode = selected.offsetFromStart == userIsAtCanonStart();
+
+        rightScrollPanel.children.add(new WidgetLabel(0, y + 6, halfW,
+                Text.translatable("gui.mtr.rail_editor_visual.placement_direction")));
+
+        int dirBtnW = (w - halfW - 4) / 2 - 1;
+        Button btnFromThis = UtilitiesClient.newButton(
+                Text.translatable("gui.mtr.rail_editor_visual.from_this_node"),
+                sender -> { selected.offsetFromStart = userIsAtCanonStart(); sendUpdate(); Minecraft.getInstance().execute(this::loadPage); }
+        );
+        btnFromThis.active = !fromThisNode;
+        IDrawing.setPositionAndWidth(btnFromThis, halfW + 4, y, dirBtnW);
+        rightScrollPanel.children.add(btnFromThis);
+
+        Button btnFromOther = UtilitiesClient.newButton(
+                Text.translatable("gui.mtr.rail_editor_visual.from_other_node"),
+                sender -> { selected.offsetFromStart = !userIsAtCanonStart(); sendUpdate(); Minecraft.getInstance().execute(this::loadPage); }
+        );
+        btnFromOther.active = fromThisNode;
+        IDrawing.setPositionAndWidth(btnFromOther, halfW + 4 + dirBtnW + 2, y, dirBtnW);
+        rightScrollPanel.children.add(btnFromOther);
+        y += SQUARE_SIZE + 2;
 
         // -- Mode-specific settings --
         if (selected.repeaterMode == RepeaterMode.FIXED_INTERVAL) {
@@ -315,27 +351,53 @@ public class RailEditorVisualScreen extends SelectListScreen {
     }
 
     private int loadFixedPanel(RailModelRepeater repeater, int y, int w) {
-        boolean fromThisNode = repeater.offsetFromStart == userIsAtCanonStart();
         int halfW = w / 2 - 2;
 
+        // -- Placement range (start/end) --
         rightScrollPanel.children.add(new WidgetLabel(0, y + 6, halfW,
-                Text.translatable("gui.mtr.rail_editor_visual.offset_direction")));
+                Text.translatable("gui.mtr.rail_editor_visual.placement_range")));
 
-        Button btnFromThis = UtilitiesClient.newButton(
-                Text.translatable("gui.mtr.rail_editor_visual.from_this_node"),
-                sender -> { repeater.offsetFromStart = userIsAtCanonStart(); sendUpdate(); Minecraft.getInstance().execute(this::loadPage); }
-        );
-        btnFromThis.active = !fromThisNode;
-        IDrawing.setPositionAndWidth(btnFromThis, halfW + 4, y, (w - halfW - 4) / 2 - 1);
-        rightScrollPanel.children.add(btnFromThis);
+        int rangeFieldW = (w - halfW - 4) / 2 - 1;
+        WidgetBetterTextField rangeStartField = new WidgetBetterTextField("", 8);
+        IDrawing.setPositionAndWidth(rangeStartField, halfW + 4, y, rangeFieldW);
+        rangeStartField.setValue(repeater.rangeStart >= 0 ? String.format("%.2f", repeater.rangeStart) : "");
+        rangeStartField.setResponder(text -> {
+            try {
+                if (text.isEmpty()) {
+                    repeater.rangeStart = -1;
+                } else {
+                    float val = Float.parseFloat(text);
+                    repeater.rangeStart = val < 0 ? -1 : val;
+                }
+                rangeStartField.setTextColor(0xFFE0E0E0);
+                sendUpdate();
+                refreshBarData(repeater);
+            } catch (NumberFormatException e) {
+                rangeStartField.setTextColor(0xFFFF0000);
+            }
+        });
+        rightScrollPanel.children.add(rangeStartField);
 
-        Button btnFromOther = UtilitiesClient.newButton(
-                Text.translatable("gui.mtr.rail_editor_visual.from_other_node"),
-                sender -> { repeater.offsetFromStart = !userIsAtCanonStart(); sendUpdate(); Minecraft.getInstance().execute(this::loadPage); }
-        );
-        btnFromOther.active = fromThisNode;
-        IDrawing.setPositionAndWidth(btnFromOther, halfW + 4 + (w - halfW - 4) / 2 + 1, y, (w - halfW - 4) / 2 - 1);
-        rightScrollPanel.children.add(btnFromOther);
+        WidgetBetterTextField rangeEndField = new WidgetBetterTextField("", 8);
+        IDrawing.setPositionAndWidth(rangeEndField, halfW + 4 + rangeFieldW + 2, y, rangeFieldW);
+        float railLen = pickedRail != null ? (float) pickedRail.getLength() : Float.MAX_VALUE;
+        rangeEndField.setValue(repeater.rangeEnd >= 0 ? String.format("%.2f", repeater.rangeEnd) : "");
+        rangeEndField.setResponder(text -> {
+            try {
+                if (text.isEmpty()) {
+                    repeater.rangeEnd = -1;
+                } else {
+                    float val = Float.parseFloat(text);
+                    repeater.rangeEnd = (val < 0 || val > railLen) ? -1 : val;
+                }
+                rangeEndField.setTextColor(0xFFE0E0E0);
+                sendUpdate();
+                refreshBarData(repeater);
+            } catch (NumberFormatException e) {
+                rangeEndField.setTextColor(0xFFFF0000);
+            }
+        });
+        rightScrollPanel.children.add(rangeEndField);
         y += SQUARE_SIZE + 2;
 
         rightScrollPanel.children.add(new WidgetLabel(0, y + 6, halfW,
@@ -347,10 +409,10 @@ public class RailEditorVisualScreen extends SelectListScreen {
         offsetField.setResponder(text -> {
             try {
                 repeater.offset = text.isEmpty() ? 0 : Float.parseFloat(text);
-                offsetField.setTextColor(0xE0E0E0);
+                offsetField.setTextColor(0xFFE0E0E0);
                 sendUpdate();
             } catch (NumberFormatException e) {
-                offsetField.setTextColor(0xFF0000);
+                offsetField.setTextColor(0xFFFF0000);
             }
         });
         rightScrollPanel.children.add(offsetField);
@@ -537,8 +599,8 @@ public class RailEditorVisualScreen extends SelectListScreen {
         IDrawing.setPositionAndWidth(fieldX, leftMargin, y, thirdW);
         fieldX.setValue(String.format("%.3f", att.offsetX));
         fieldX.setResponder(text -> {
-            try { att.offsetX = text.isEmpty() ? 0 : Float.parseFloat(text); fieldX.setTextColor(0xE0E0E0); sendUpdate(); }
-            catch (NumberFormatException e) { fieldX.setTextColor(0xFF0000); }
+            try { att.offsetX = text.isEmpty() ? 0 : Float.parseFloat(text); fieldX.setTextColor(0xFFE0E0E0); sendUpdate(); }
+            catch (NumberFormatException e) { fieldX.setTextColor(0xFFFF0000); }
         });
         rightScrollPanel.children.add(fieldX);
 
@@ -546,8 +608,8 @@ public class RailEditorVisualScreen extends SelectListScreen {
         IDrawing.setPositionAndWidth(fieldY, leftMargin + thirdW + 2, y, thirdW);
         fieldY.setValue(String.format("%.3f", att.offsetY));
         fieldY.setResponder(text -> {
-            try { att.offsetY = text.isEmpty() ? 0 : Float.parseFloat(text); fieldY.setTextColor(0xE0E0E0); sendUpdate(); }
-            catch (NumberFormatException e) { fieldY.setTextColor(0xFF0000); }
+            try { att.offsetY = text.isEmpty() ? 0 : Float.parseFloat(text); fieldY.setTextColor(0xFFE0E0E0); sendUpdate(); }
+            catch (NumberFormatException e) { fieldY.setTextColor(0xFFFF0000); }
         });
         rightScrollPanel.children.add(fieldY);
 
@@ -555,8 +617,8 @@ public class RailEditorVisualScreen extends SelectListScreen {
         IDrawing.setPositionAndWidth(fieldZ, leftMargin + thirdW * 2 + 4, y, thirdW);
         fieldZ.setValue(String.format("%.3f", att.offsetZ));
         fieldZ.setResponder(text -> {
-            try { att.offsetZ = text.isEmpty() ? 0 : Float.parseFloat(text); fieldZ.setTextColor(0xE0E0E0); sendUpdate(); }
-            catch (NumberFormatException e) { fieldZ.setTextColor(0xFF0000); }
+            try { att.offsetZ = text.isEmpty() ? 0 : Float.parseFloat(text); fieldZ.setTextColor(0xFFE0E0E0); sendUpdate(); }
+            catch (NumberFormatException e) { fieldZ.setTextColor(0xFFFF0000); }
         });
         rightScrollPanel.children.add(fieldZ);
         y += SQUARE_SIZE + 2;
@@ -612,23 +674,23 @@ public class RailEditorVisualScreen extends SelectListScreen {
         float railLength = pickedRail != null ? (float) pickedRail.getLength() : 100f;
         boolean flipForDisplay = !userIsAtCanonStart();
         boolean isManual = repeater.repeaterMode == RepeaterMode.MANUAL;
+        boolean flipDP = repeater.offsetFromStart != userIsAtCanonStart();
 
-        List<Float> computedPositions;
-        if (isManual) {
-            computedPositions = repeater.manualPositions;
-        } else {
-            computedPositions = computePositionsForCurrentMode(repeater);
-        }
+        List<PositionEntry> indexed = computePositionsWithIndices(repeater);
 
-        List<Float> displayPositions;
+        List<Float> displayPositions = new ArrayList<>(indexed.size());
+        displayToPlacement = new int[indexed.size()];
         if (flipForDisplay) {
-            displayPositions = new ArrayList<>(computedPositions.size());
-            for (float pos : computedPositions) {
-                displayPositions.add(railLength - pos);
+            for (int i = indexed.size() - 1; i >= 0; i--) {
+                int displayIdx = indexed.size() - 1 - i;
+                displayPositions.add(railLength - indexed.get(i).canonicalT);
+                displayToPlacement[displayIdx] = indexed.get(i).placementIndex;
             }
-            Collections.reverse(displayPositions);
         } else {
-            displayPositions = new ArrayList<>(computedPositions);
+            for (int i = 0; i < indexed.size(); i++) {
+                displayPositions.add(indexed.get(i).canonicalT);
+                displayToPlacement[i] = indexed.get(i).placementIndex;
+            }
         }
 
         rightScrollPanel.children.add(new WidgetLabel(0, y + 6, w,
@@ -637,13 +699,13 @@ public class RailEditorVisualScreen extends SelectListScreen {
 
         currentBar = new WidgetManualPositionBar(0, y, w, positions -> {
             if (!isManual) return;
-            if (flipForDisplay) {
-                List<Float> canonPositions = new ArrayList<>(positions.size());
+            if (flipDP) {
+                List<Float> placementPositions = new ArrayList<>(positions.size());
                 for (float pos : positions) {
-                    canonPositions.add(quantizePosition(railLength - pos));
+                    placementPositions.add(quantizePosition(railLength - pos));
                 }
-                Collections.reverse(canonPositions);
-                repeater.manualPositions = canonPositions;
+                Collections.reverse(placementPositions);
+                repeater.manualPositions = placementPositions;
             } else {
                 repeater.manualPositions = new ArrayList<>(positions);
             }
@@ -663,14 +725,20 @@ public class RailEditorVisualScreen extends SelectListScreen {
         }
 
         Set<Integer> ovIndices = new HashSet<>();
-        int posCount = computedPositions.size();
-        for (int canonIdx : repeater.instanceOverrides.keySet()) {
-            int displayIdx = flipForDisplay ? (posCount - 1 - canonIdx) : canonIdx;
-            if (displayIdx >= 0 && displayIdx < posCount) {
-                ovIndices.add(displayIdx);
+        Set<Integer> suppressedDisplayIndices = new HashSet<>();
+        for (int dispIdx = 0; dispIdx < displayToPlacement.length; dispIdx++) {
+            int pIdx = displayToPlacement[dispIdx];
+            RailModelInstanceOverride ov = repeater.instanceOverrides.get(pIdx);
+            if (ov != null) {
+                if (ov.suppressed) {
+                    suppressedDisplayIndices.add(dispIdx);
+                } else if (!ov.isEmpty()) {
+                    ovIndices.add(dispIdx);
+                }
             }
         }
         currentBar.setOverrideIndices(ovIndices);
+        currentBar.setSuppressedIndices(suppressedDisplayIndices);
 
         float playerProgress = computePlayerProgress();
         if (playerProgress >= 0) {
@@ -698,9 +766,9 @@ public class RailEditorVisualScreen extends SelectListScreen {
                     float val = Float.parseFloat(text);
                     val = quantizePosition(val);
                     currentBar.setPositionAt(sel, val);
-                    positionInputField.setTextColor(0xE0E0E0);
+                    positionInputField.setTextColor(0xFFE0E0E0);
                 } catch (NumberFormatException e) {
-                    positionInputField.setTextColor(0xFF0000);
+                    positionInputField.setTextColor(0xFFFF0000);
                 }
             });
             y += SQUARE_SIZE + 4;
@@ -718,40 +786,38 @@ public class RailEditorVisualScreen extends SelectListScreen {
         int sel = currentBar.getSelectedIndex();
         if (sel < 0) return;
 
-        int posCount = getPositionCount(repeater);
-        int canonIdx = displayIndexToCanonIndex(sel, posCount);
-        if (canonIdx < 0 || canonIdx >= posCount) return;
+        int placementIdx = displayIndexToPlacementIndex(sel);
+        if (placementIdx < 0) return;
 
-        RailModelInstanceOverride override = repeater.instanceOverrides.get(canonIdx);
-        boolean hasOverride = override != null && !override.isEmpty();
+        RailModelInstanceOverride override = repeater.instanceOverrides.get(placementIdx);
+        boolean isSuppressed = override != null && override.suppressed;
+        boolean hasAttOverride = override != null && !override.suppressed && override.attachments != null && !override.attachments.isEmpty();
 
         rightScrollPanel.children.add(new WidgetLabel(0, y + 6, w,
                 Text.translatable("gui.mtr.rail_editor_visual.instance_override")));
         y += SQUARE_SIZE - 2;
 
-        final int cIdx = canonIdx;
-        if (!hasOverride) {
-            Button btnAddOverride = UtilitiesClient.newButton(
-                    Text.translatable("gui.mtr.rail_editor_visual.override_model"),
+        final int pIdx = placementIdx;
+        int halfW = w / 2 - 1;
+
+        if (isSuppressed) {
+            // State C: suppressed — show cancel button
+            Button btnCancelSuppress = UtilitiesClient.newButton(
+                    Text.translatable("gui.mtr.rail_editor_visual.cancel_suppress"),
                     sender -> {
-                        RailModelInstanceOverride newOv = new RailModelInstanceOverride();
-                        newOv.attachments = new ArrayList<>(repeater.attachments.size());
-                        for (RepeaterAttachment att : repeater.attachments) {
-                            newOv.attachments.add(att.copy());
-                        }
-                        repeater.instanceOverrides.put(cIdx, newOv);
-                        selectedOvAttIndex = 0;
+                        repeater.instanceOverrides.remove(pIdx);
                         sendUpdate();
                         Minecraft.getInstance().execute(this::loadPage);
                     }
             );
-            IDrawing.setPositionAndWidth(btnAddOverride, 0, y, w);
-            rightScrollPanel.children.add(btnAddOverride);
-        } else {
+            IDrawing.setPositionAndWidth(btnCancelSuppress, 0, y, w);
+            rightScrollPanel.children.add(btnCancelSuppress);
+        } else if (hasAttOverride) {
+            // State B: attachment override — show cancel + editor
             Button btnRemoveOverride = UtilitiesClient.newButton(
                     Text.translatable("gui.mtr.rail_editor_visual.cancel_override_model"),
                     sender -> {
-                        repeater.instanceOverrides.remove(cIdx);
+                        repeater.instanceOverrides.remove(pIdx);
                         sendUpdate();
                         Minecraft.getInstance().execute(this::loadPage);
                     }
@@ -762,19 +828,171 @@ public class RailEditorVisualScreen extends SelectListScreen {
 
             y = loadAttachmentListEditor(override.attachments, y, w,
                     20, ModelSelectTarget.ATTACHMENT_INSTANCE);
+        } else {
+            // State A: no override — two buttons side by side
+            Button btnAddOverride = UtilitiesClient.newButton(
+                    Text.translatable("gui.mtr.rail_editor_visual.override_model"),
+                    sender -> {
+                        RailModelInstanceOverride newOv = new RailModelInstanceOverride();
+                        newOv.attachments = new ArrayList<>(repeater.attachments.size());
+                        for (RepeaterAttachment att : repeater.attachments) {
+                            newOv.attachments.add(att.copy());
+                        }
+                        repeater.instanceOverrides.put(pIdx, newOv);
+                        selectedOvAttIndex = 0;
+                        sendUpdate();
+                        Minecraft.getInstance().execute(this::loadPage);
+                    }
+            );
+            IDrawing.setPositionAndWidth(btnAddOverride, 0, y, halfW);
+            rightScrollPanel.children.add(btnAddOverride);
+
+            Button btnSuppress = UtilitiesClient.newButton(
+                    Text.translatable("gui.mtr.rail_editor_visual.suppress_instance"),
+                    sender -> {
+                        RailModelInstanceOverride newOv = new RailModelInstanceOverride();
+                        newOv.suppressed = true;
+                        repeater.instanceOverrides.put(pIdx, newOv);
+                        sendUpdate();
+                        Minecraft.getInstance().execute(this::loadPage);
+                    }
+            );
+            IDrawing.setPositionAndWidth(btnSuppress, halfW + 2, y, w - halfW - 2);
+            rightScrollPanel.children.add(btnSuppress);
         }
     }
 
-    private int getPositionCount(RailModelRepeater repeater) {
+    private int getUnclippedPositionCount(RailModelRepeater repeater) {
         if (repeater.repeaterMode == RepeaterMode.MANUAL) {
             return repeater.manualPositions.size();
         }
-        return computePositionsForCurrentMode(repeater).size();
+        double L = pickedRail != null ? pickedRail.getLength() : 100.0;
+        double I = resolveInterval(repeater);
+        if (repeater.repeaterMode == RepeaterMode.STRETCH_INTERVAL) {
+            if (L < I * 0.5) return 1;
+            return Math.max(2, Math.round((float) (L / I)) + 1);
+        }
+        // FIXED_INTERVAL: count ignoring range
+        int count = 0;
+        if (repeater.offsetFromStart) {
+            for (double t = repeater.offset; t < L - 0.001; t += I) count++;
+        } else {
+            for (double t = L - repeater.offset; t > 0.001; t -= I) count++;
+        }
+        return count;
     }
 
-    private int displayIndexToCanonIndex(int displayIdx, int posCount) {
+    private List<PositionEntry> computePositionsWithIndices(RailModelRepeater p) {
+        double L = pickedRail != null ? pickedRail.getLength() : 100.0;
+        double I = resolveInterval(p);
+        List<PositionEntry> result = new ArrayList<>();
+
+        switch (p.repeaterMode) {
+            case STRETCH_INTERVAL: {
+                if (L < I * 0.5) {
+                    result.add(new PositionEntry(quantizePosition((float) (L / 2)), 0));
+                    break;
+                }
+                int N = Math.max(2, Math.round((float) (L / I)) + 1);
+                double actualI = L / (N - 1);
+                for (int k = 0; k < N; k++) {
+                    int placementIdx = p.offsetFromStart ? k : (N - 1 - k);
+                    result.add(new PositionEntry(quantizePosition((float) (k * actualI)), placementIdx));
+                }
+                break;
+            }
+            case FIXED_INTERVAL: {
+                List<Float> allPositions = new ArrayList<>();
+                if (p.offsetFromStart) {
+                    for (double t = p.offset; t < L - 0.001; t += I) {
+                        allPositions.add(quantizePosition((float) t));
+                    }
+                } else {
+                    List<Float> tmp = new ArrayList<>();
+                    for (double t = L - p.offset; t > 0.001; t -= I) {
+                        tmp.add(quantizePosition((float) t));
+                    }
+                    Collections.reverse(tmp);
+                    allPositions.addAll(tmp);
+                }
+                int unclippedCount = allPositions.size();
+
+                double canonMin = 0, canonMax = L;
+                if (p.rangeStart >= 0 || p.rangeEnd >= 0) {
+                    float effStart = (p.rangeStart < 0) ? 0 : p.rangeStart;
+                    float effEnd = (p.rangeEnd < 0) ? (float) L : Math.min(p.rangeEnd, (float) L);
+                    if (p.offsetFromStart) {
+                        canonMin = effStart; canonMax = effEnd;
+                    } else {
+                        canonMin = L - effEnd; canonMax = L - effStart;
+                    }
+                }
+                for (int i = 0; i < allPositions.size(); i++) {
+                    float t = allPositions.get(i);
+                    if (t < canonMin - 0.001f || t > canonMax + 0.001f) continue;
+                    int placementIdx = p.offsetFromStart ? i : (unclippedCount - 1 - i);
+                    result.add(new PositionEntry(t, placementIdx));
+                }
+                break;
+            }
+            case MANUAL: {
+                for (int i = 0; i < p.manualPositions.size(); i++) {
+                    float placementT = p.manualPositions.get(i);
+                    float canonT = p.offsetFromStart ? placementT : quantizePosition((float) (L - placementT));
+                    result.add(new PositionEntry(canonT, i));
+                }
+                result.sort(Comparator.comparingDouble(e -> e.canonicalT));
+                break;
+            }
+        }
+        return result;
+    }
+
+    private void refreshBarData(RailModelRepeater repeater) {
+        if (currentBar == null) return;
+        float railLength = pickedRail != null ? (float) pickedRail.getLength() : 100f;
         boolean flipForDisplay = !userIsAtCanonStart();
-        return flipForDisplay ? (posCount - 1 - displayIdx) : displayIdx;
+
+        List<PositionEntry> indexed = computePositionsWithIndices(repeater);
+
+        List<Float> newDisplayPositions = new ArrayList<>(indexed.size());
+        displayToPlacement = new int[indexed.size()];
+        if (flipForDisplay) {
+            for (int i = indexed.size() - 1; i >= 0; i--) {
+                int displayIdx = indexed.size() - 1 - i;
+                newDisplayPositions.add(railLength - indexed.get(i).canonicalT);
+                displayToPlacement[displayIdx] = indexed.get(i).placementIndex;
+            }
+        } else {
+            for (int i = 0; i < indexed.size(); i++) {
+                newDisplayPositions.add(indexed.get(i).canonicalT);
+                displayToPlacement[i] = indexed.get(i).placementIndex;
+            }
+        }
+        currentBar.setPositions(newDisplayPositions);
+
+        Set<Integer> ovIndices = new HashSet<>();
+        Set<Integer> suppressedDisplayIndices = new HashSet<>();
+        for (int dispIdx = 0; dispIdx < displayToPlacement.length; dispIdx++) {
+            int pIdx = displayToPlacement[dispIdx];
+            RailModelInstanceOverride ov = repeater.instanceOverrides.get(pIdx);
+            if (ov != null) {
+                if (ov.suppressed) {
+                    suppressedDisplayIndices.add(dispIdx);
+                } else if (!ov.isEmpty()) {
+                    ovIndices.add(dispIdx);
+                }
+            }
+        }
+        currentBar.setOverrideIndices(ovIndices);
+        currentBar.setSuppressedIndices(suppressedDisplayIndices);
+    }
+
+    private int displayIndexToPlacementIndex(int displayIdx) {
+        if (displayIdx >= 0 && displayIdx < displayToPlacement.length) {
+            return displayToPlacement[displayIdx];
+        }
+        return -1;
     }
 
     private void updatePositionInputField(boolean editable) {
@@ -783,7 +1001,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
         if (sel >= 0) {
             positionInputField.active = editable;
             positionInputField.setValue(String.format("%.3f", currentBar.getSelectedPosition()));
-            positionInputField.setTextColor(0xE0E0E0);
+            positionInputField.setTextColor(0xFFE0E0E0);
         } else {
             positionInputField.active = false;
             positionInputField.setValue("");
@@ -867,6 +1085,18 @@ public class RailEditorVisualScreen extends SelectListScreen {
                     }
                     Collections.reverse(tmp);
                     result.addAll(tmp);
+                }
+                // Apply placement range clipping
+                if (p.rangeStart >= 0 || p.rangeEnd >= 0) {
+                    float effStart = (p.rangeStart < 0) ? 0 : p.rangeStart;
+                    float effEnd = (p.rangeEnd < 0) ? (float) L : Math.min(p.rangeEnd, (float) L);
+                    float canonMin, canonMax;
+                    if (p.offsetFromStart) {
+                        canonMin = effStart; canonMax = effEnd;
+                    } else {
+                        canonMin = (float) L - effEnd; canonMax = (float) L - effStart;
+                    }
+                    result.removeIf(t -> t < canonMin - 0.001f || t > canonMax + 0.001f);
                 }
                 break;
             }
@@ -987,6 +1217,8 @@ public class RailEditorVisualScreen extends SelectListScreen {
                         if (tp.repeaterMode == RepeaterMode.MANUAL) continue;
                         existing.repeaterMode = tp.repeaterMode;
                         existing.intervalOverride = tp.intervalOverride;
+                        existing.rangeStart = tp.rangeStart;
+                        existing.rangeEnd = tp.rangeEnd;
                         existing.attachments = new ArrayList<>();
                         for (RepeaterAttachment att : tp.attachments) {
                             existing.attachments.add(att.copy());
@@ -1025,6 +1257,8 @@ public class RailEditorVisualScreen extends SelectListScreen {
             layerTag.putString("Id", p.id);
             layerTag.putInt("Mode", p.repeaterMode.ordinal());
             layerTag.putFloat("IntervalOverride", p.intervalOverride);
+            layerTag.putFloat("RangeStart", p.rangeStart);
+            layerTag.putFloat("RangeEnd", p.rangeEnd);
             layerTag.putInt("AttachmentCount", p.attachments.size());
             for (int j = 0; j < p.attachments.size(); j++) {
                 RepeaterAttachment att = p.attachments.get(j);
@@ -1051,6 +1285,8 @@ public class RailEditorVisualScreen extends SelectListScreen {
             p.id = layerTag.getStringOr("Id", "");
             p.repeaterMode = RepeaterMode.fromIndex(layerTag.getIntOr("Mode", 0));
             p.intervalOverride = layerTag.getFloatOr("IntervalOverride", 0);
+            p.rangeStart = layerTag.getFloatOr("RangeStart", -1);
+            p.rangeEnd = layerTag.getFloatOr("RangeEnd", -1);
 
             int attCount = layerTag.getIntOr("AttachmentCount", 0);
             if (attCount > 0) {
@@ -1103,7 +1339,7 @@ public class RailEditorVisualScreen extends SelectListScreen {
     }
 
     private void pruneOverrides(RailModelRepeater repeater) {
-        int posCount = getPositionCount(repeater);
+        int posCount = getUnclippedPositionCount(repeater);
         repeater.pruneOverrides(posCount);
         if (pickedRail != null) sendUpdate();
     }
