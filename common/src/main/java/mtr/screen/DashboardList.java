@@ -1,5 +1,6 @@
 package mtr.screen;
 
+import cn.zbx1425.mtrsteamloco.render.Oklch;
 import mtr.client.ClientData;
 import mtr.client.IDrawing;
 import mtr.data.IGui;
@@ -52,6 +53,14 @@ public class DashboardList implements IGui {
 	private boolean hasAdd;
 	private boolean hasDelete;
 
+	private final BiConsumer<NameColorDataBase, Integer> onFind;
+	private final BiConsumer<NameColorDataBase, Integer> onDrawArea;
+	private final BiConsumer<NameColorDataBase, Integer> onEdit;
+	private final BiConsumer<NameColorDataBase, Integer> onAdd;
+	private final BiConsumer<NameColorDataBase, Integer> onDelete;
+	private final ImageButton buttonOneHot;
+	private BiConsumer<NameColorDataBase, Integer> oneHotAction;
+
 	private static final int TOP_OFFSET = SQUARE_SIZE + TEXT_FIELD_PADDING;
 
 	public static final long ID_DISABLED = -1;
@@ -63,6 +72,11 @@ public class DashboardList implements IGui {
 	public <T> DashboardList(BiConsumer<NameColorDataBase, Integer> onFind, BiConsumer<NameColorDataBase, Integer> onDrawArea, BiConsumer<NameColorDataBase, Integer> onEdit, Runnable onSort, BiConsumer<NameColorDataBase, Integer> onAdd, BiConsumer<NameColorDataBase, Integer> onDelete, Supplier<List<T>> getList, Supplier<String> getSearch, Consumer<String> setSearch, boolean playSound) {
 		this.getSearch = getSearch;
 		this.setSearch = setSearch;
+		this.onFind = onFind;
+		this.onDrawArea = onDrawArea;
+		this.onEdit = onEdit;
+		this.onAdd = onAdd;
+		this.onDelete = onDelete;
 		textFieldSearch = new WidgetBetterTextField(Text.translatable("gui.mtr.search").getString());
 		buttonPrevPage = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_left.png"), 20, 40, button -> setPage(page - 1));
 		buttonNextPage = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_right.png"), 20, 40, button -> setPage(page + 1));
@@ -79,6 +93,7 @@ public class DashboardList implements IGui {
 		});
 		buttonAdd = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_add.png"), 20, 40, button -> onClick(onAdd));
 		buttonDelete = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, Identifier.parse("mtr:textures/gui/icon_delete.png"), 20, 40, button -> onClick(onDelete));
+		buttonOneHot = new ImageButton(0, 0, 0, SQUARE_SIZE, 0, 0, 20, null, 20, 40, button -> onClickOneHot());
 	}
 
 	public void init(Consumer<AbstractWidget> addDrawableChild) {
@@ -96,6 +111,7 @@ public class DashboardList implements IGui {
 		buttonDown.visible = false;
 		buttonAdd.visible = false;
 		buttonDelete.visible = false;
+		buttonOneHot.visible = false;
 
 		addDrawableChild.accept(buttonPrevPage);
 		addDrawableChild.accept(buttonNextPage);
@@ -109,6 +125,8 @@ public class DashboardList implements IGui {
 		addDrawableChild.accept(buttonDelete);
 
 		addDrawableChild.accept(textFieldSearch);
+
+		addDrawableChild.accept(buttonOneHot);
 	}
 
 	public void tick() {
@@ -156,6 +174,13 @@ public class DashboardList implements IGui {
 				Collections.sort(sortedKeys);
 				final NameColorDataBase data = dataFiltered.get(sortedKeys.get(i + itemsToShow * page));
 
+				if (i == hoverIndex && isOneHotRow(data)) {
+					float[] dataColorOklch = Oklch.srgbToOklchIF(data.color & 0x00FFFFFF);
+					dataColorOklch[0] = 0.35f;
+					final int backgroundColor = Oklch.oklchToSrgbFFI(dataColorOklch) | 0x88000000;
+					guiGraphics.fill(x, y + SQUARE_SIZE * i + TOP_OFFSET, x + width, y + SQUARE_SIZE * i + TOP_OFFSET + SQUARE_SIZE, backgroundColor);
+				}
+
 				guiGraphics.fill(x + TEXT_PADDING, y + drawY, x + TEXT_PADDING + TEXT_HEIGHT, y + drawY + TEXT_HEIGHT, ARGB_BLACK | data.color);
 
 				final String drawString = IGui.formatStationName(data.name);
@@ -181,6 +206,8 @@ public class DashboardList implements IGui {
 		buttonDown.visible = false;
 		buttonAdd.visible = false;
 		buttonDelete.visible = false;
+		buttonOneHot.visible = false;
+		oneHotAction = null;
 
 		if (mouseX >= x && mouseX < x + width && mouseY >= y + TOP_OFFSET && mouseY < y + TOP_OFFSET + SQUARE_SIZE * itemsToShow()) {
 			hoverIndex = ((int) mouseY - y - TOP_OFFSET) / SQUARE_SIZE;
@@ -213,6 +240,17 @@ public class DashboardList implements IGui {
 				IDrawing.setPositionAndWidth(buttonDown, x + width - SQUARE_SIZE * (1 + (hasDelete ? 1 : 0) + (hasAdd ? 1 : 0)), renderOffset, SQUARE_SIZE);
 				IDrawing.setPositionAndWidth(buttonAdd, x + width - SQUARE_SIZE * (1 + (hasDelete ? 1 : 0)), renderOffset, SQUARE_SIZE);
 				IDrawing.setPositionAndWidth(buttonDelete, x + width - SQUARE_SIZE, renderOffset, SQUARE_SIZE);
+
+				if (isOneHotRow(data)) {
+					oneHotAction = hasFind ? onFind :
+						hasDrawArea ? onDrawArea :
+							hasEdit ? onEdit :
+								hasAdd ? onAdd :
+									hasDelete ? onDelete : null;
+					buttonOneHot.visible = true;
+					IDrawing.setPositionAndWidth(buttonOneHot, x, renderOffset, width - SQUARE_SIZE);
+					buttonOneHot.setWidth(width - SQUARE_SIZE); // IDrawing.setPositionAndWidth has a clamp on width, so...
+				}
 			}
 		}
 	}
@@ -283,5 +321,25 @@ public class DashboardList implements IGui {
 
 	private int itemsToShow() {
 		return (height - TOP_OFFSET) / SQUARE_SIZE;
+	}
+
+	private boolean isOneHotRow(NameColorDataBase data) {
+		return data.id != ID_DISABLED && !hasSort && countOneHotActions() == 1;
+	}
+
+	private int countOneHotActions() {
+		int count = 0;
+		if (hasFind) count++;
+		if (hasDrawArea) count++;
+		if (hasEdit) count++;
+		if (hasAdd) count++;
+		if (hasDelete) count++;
+		return count;
+	}
+
+	private void onClickOneHot() {
+		if (oneHotAction != null) {
+			onClick(oneHotAction);
+		}
 	}
 }

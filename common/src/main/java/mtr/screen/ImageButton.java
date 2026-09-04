@@ -58,6 +58,8 @@ public class ImageButton extends Button {
     }
 
     public void renderTexture(GuiGraphicsExtractor var1, Identifier textureId, int var3, int var4, int var5, int var6, int var7, int var8, int var9, int var10, int var11) {
+        if (textureId == null) return;
+
         int var12 = var6;
         if (!this.isActive()) {
             var12 = var6 + var7 * 2;
