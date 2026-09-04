@@ -57,6 +57,8 @@ public class TrainClient extends Train implements IGui {
 
 	private final Set<Runnable> trainTranslucentRenders = new HashSet<>();
 
+	private boolean trainShouldBeHiddenByVirtDriveTrain = false;
+
 	private static final float CONNECTION_HEIGHT = 2.25F;
 	private static final float CONNECTION_Z_OFFSET = 0.5F;
 	private static final float CONNECTION_X_OFFSET = 0.25F;
@@ -140,16 +142,8 @@ public class TrainClient extends Train implements IGui {
 		if (world == null) {
 			return;
 		}
-
-		// Hide trains near TrainVirtualDrive
-		if (TrainVirtualDrive.activeTrain != null && TrainVirtualDrive.activeTrain != this) {
-			for (int i = getIndex(railProgress - spacing * trainCars, true);
-				 i < path.size() && distances.get(i) < railProgress + 300; i++) {
-				if (TrainVirtualDrive.activeTrain.railAheadLookup.contains(path.get(i).startingPos.asLong())) {
-					trainSound.stopAll();
-					return;
-				}
-			}
+		if (trainShouldBeHiddenByVirtDriveTrain) {
+			return;
 		}
 
 		try {
@@ -412,6 +406,18 @@ public class TrainClient extends Train implements IGui {
 			trainSound.stopAll();
 			return;
 		}
+		// Hide trains near TrainVirtualDrive
+		if (TrainVirtualDrive.activeTrain != null && TrainVirtualDrive.activeTrain != this) {
+			for (int i = getIndex(railProgress - spacing * trainCars, true);
+				 i < path.size() && (i == 0 || distances.get(i - 1) < railProgress + 300); i++) {
+				if (TrainVirtualDrive.activeTrain.railAheadLookup.contains(path.get(i).startingPos.asLong())) {
+					trainShouldBeHiddenByVirtDriveTrain = true;
+					trainSound.stopAll();
+					return;
+				}
+			}
+		}
+		trainShouldBeHiddenByVirtDriveTrain = false;
 
 		final Entity camera = Minecraft.getInstance().getCameraEntity();
 		final Vec3 cameraPos = camera == null ? Vec3.ZERO : camera.position();

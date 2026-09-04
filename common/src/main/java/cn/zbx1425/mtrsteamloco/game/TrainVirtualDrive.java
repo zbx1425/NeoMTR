@@ -167,7 +167,7 @@ public class TrainVirtualDrive extends TrainClient {
         float targetPatternSpeed = vdMaxSpeed;
         float effectiveLimit = vdMaxSpeed;
         atpTargetDistance = distances.getLast();
-        double lookAheadDistance = Math.max(300, Math.pow(speed, 2) / (2 * accelerationConstant));
+        double lookAheadDistance = Math.max(300, Math.pow(vdMaxSpeed, 2) / (2 * accelerationConstant));
         for (int i = getIndex(railProgress - spacing * trainCars, true);
             i < path.size() && (i == 0 || distances.get(i - 1) < railProgress + lookAheadDistance); i++) {
             PathData pathSeg = path.get(i);

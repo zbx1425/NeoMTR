@@ -42,6 +42,9 @@ public class VirtualDriveOverlay {
         Font font = Minecraft.getInstance().font;
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(0, guiGraphics.guiHeight());
+        final float vdGuiScale = (float) Math.round((Minecraft.getInstance().getWindow().getHeight() * 0.35f) / (PADDING + GAUGE_SIZE))
+            / Minecraft.getInstance().getWindow().getGuiScale();
+        guiGraphics.pose().scale(vdGuiScale, vdGuiScale);
 
         final LocalPlayer player = Minecraft.getInstance().player;
         final int currentRidingCar = Mth.clamp(

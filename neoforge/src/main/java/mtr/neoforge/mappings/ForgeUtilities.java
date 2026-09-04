@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 
 import java.util.*;
@@ -109,7 +110,7 @@ public class ForgeUtilities {
 
 		@SubscribeEvent
 		public static void onRenderGameOverlayEvent(RenderGuiLayerEvent.Post event) {
-//			if (event.getLayer() != VanillaGuiLayers.SCOREBOARD_SIDEBAR) return;
+			if (!event.getName().equals(VanillaGuiLayers.SCOREBOARD_SIDEBAR)) return;
 			renderGameOverlayAction.accept(event.getGuiGraphics());
 		}
 
