@@ -339,6 +339,14 @@ public final class ClientData {
 		target.putAll(source);
 	}
 
+	public static void dismountClientPlayer() {
+		final LocalPlayer player = Minecraft.getInstance().player;
+		if (player == null) return;
+		final UUID uuid = player.getUUID();
+		TRAINS.forEach(train -> train.vehicleRidingClient.stopRiding(uuid));
+		LIFTS.forEach(lift -> lift.stopRidingClient(uuid));
+	}
+
 	private static TrainClient getTrainById(long id) {
 		try {
 			return TRAINS.stream().filter(item -> item.id == id).findFirst().orElse(null);

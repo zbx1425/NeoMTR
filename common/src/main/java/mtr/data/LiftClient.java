@@ -117,6 +117,10 @@ public class LiftClient extends Lift {
 		sendPacket.accept(packet);
 	}
 
+	public void stopRidingClient(UUID uuid) {
+		vehicleRidingClient.stopRiding(uuid);
+	}
+
 	public void startRidingClient(UUID uuid, float percentageX, float percentageZ) {
 		vehicleRidingClient.startRiding(uuid, percentageX, percentageZ);
 	}

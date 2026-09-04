@@ -26,7 +26,8 @@
     "TrainAccessor",
     "TrainClientAccessor",
     "TrainClientMixin",
-    "TrainClientRegistryMixin"
+    "TrainClientRegistryMixin",
+    "ClientTeleportDismountMixin"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -36,6 +37,7 @@
     "PackMixin",
     "RailActionsMixin",
     "RailMixin",
-    "RailwayDataAccessor"
+    "RailwayDataAccessor",
+    "TeleportDismountMixin"
   ]
 }

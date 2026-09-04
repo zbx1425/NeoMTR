@@ -114,4 +114,15 @@ public class RailwayDataCoolDownModule extends RailwayDataModuleBase {
 	public boolean shouldDismount(Player player) {
 		return playerShiftCoolDowns.getOrDefault(player, 0) == SHIFT_ACTIVATE_TICKS;
 	}
+
+	public void dismountPlayer(Player player) {
+		if (!playerRidingCoolDown.containsKey(player)) {
+			return;
+		}
+		railwayData.sidings.forEach(siding -> siding.unmountPlayer(player));
+		railwayData.lifts.forEach(lift -> lift.ridingEntities.remove(player.getUUID()));
+		updatePlayerRiding(player, 0);
+		playerRidingCoolDown.remove(player);
+		playerRidingRoute.remove(player);
+	}
 }
