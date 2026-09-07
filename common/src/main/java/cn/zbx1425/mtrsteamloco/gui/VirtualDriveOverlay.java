@@ -36,6 +36,12 @@ public class VirtualDriveOverlay {
     public static void render(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaT) {
         if (TrainVirtualDrive.activeTrain == null) return;
         TrainVirtualDrive train = TrainVirtualDrive.activeTrain;
+        final LocalPlayer player = Minecraft.getInstance().player;
+        if (!train.vehicleRidingClient.isRiding(player.getUUID())) {
+            // It gets into this situation somehow from timing issue? Not understanding why yet
+            TrainVirtualDrive.stopDriving();
+            return;
+        }
 
         final int PADDING = 24;
         final int GAUGE_SIZE = 96;
@@ -46,7 +52,6 @@ public class VirtualDriveOverlay {
             / Minecraft.getInstance().getWindow().getGuiScale();
         guiGraphics.pose().scale(vdGuiScale, vdGuiScale);
 
-        final LocalPlayer player = Minecraft.getInstance().player;
         final int currentRidingCar = Mth.clamp(
                 (int) Math.floor(train.vehicleRidingClient.getPercentageZ(player.getUUID())),
                 0, train.trainCars - 1);

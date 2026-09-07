@@ -23,9 +23,11 @@ public abstract class TeleportDismountMixin {
 
 	@Inject(method = "teleport(Lnet/minecraft/world/entity/PositionMoveRotation;Ljava/util/Set;)V", at = @At("HEAD"))
 	private void mtr$onTeleport(PositionMoveRotation destination, Set<Relative> relatives, CallbackInfo ci) {
-		final RailwayData railwayData = RailwayData.getInstance(player.level());
-		if (railwayData != null) {
-			railwayData.railwayDataCoolDownModule.dismountPlayer(player);
-		}
+		player.level().getServer().execute(() -> {
+			final RailwayData railwayData = RailwayData.getInstance(player.level());
+			if (railwayData != null) {
+				railwayData.railwayDataCoolDownModule.dismountPlayer(player);
+			}
+		});
 	}
 }

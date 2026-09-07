@@ -193,6 +193,10 @@ public class VehicleRidingClient {
 		riderRatioPosNew.get(uuid).set(percentageX, 0, percentageZ);
 	}
 
+	public boolean isRiding(UUID uuid) {
+		return ridingEntities.contains(uuid);
+	}
+
 	public float getPercentageX(UUID uuid) {
 		return riderRatioPos.get(uuid).x;
 	}
