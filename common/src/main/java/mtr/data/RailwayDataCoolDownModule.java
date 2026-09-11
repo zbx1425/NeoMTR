@@ -47,15 +47,16 @@ public class RailwayDataCoolDownModule extends RailwayDataModuleBase {
 		final Set<Player> playersToRemove = new HashSet<>();
 		playerRidingCoolDown.forEach((player, coolDown) -> {
 			if (coolDown <= 0) {
-				updatePlayerRiding(player, 0);
 				playersToRemove.add(player);
-				player.stopRiding();
+			} else {
+				playerRidingCoolDown.put(player, coolDown - 1);
 			}
-			playerRidingCoolDown.put(player, coolDown - 1);
 		});
 		playersToRemove.forEach(player -> {
+			updatePlayerRiding(player, 0);
 			playerRidingCoolDown.remove(player);
 			playerRidingRoute.remove(player);
+			player.stopRiding();
 		});
 	}
 
@@ -67,6 +68,8 @@ public class RailwayDataCoolDownModule extends RailwayDataModuleBase {
 	public void onPlayerDisconnect(Player player) {
 		playerShiftCoolDowns.remove(player);
 		playerInVirtualDrive.remove(player);
+		playerRidingCoolDown.remove(player);
+		playerRidingRoute.remove(player);
 	}
 
 	public void updatePlayerRiding(Player player, long routeId) {
