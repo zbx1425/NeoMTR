@@ -49,11 +49,9 @@ public class BlockEntityEyeCandyRenderer extends BlockEntityRendererMapper<Block
         }
         if (state.prop == null) return;
 
-        // RenderLevelStageEvent is NOT fired during shadow pass.
-        // Enqueueing geometry when submit is called during shadow pass will result in them being drawn in later pass
-        // instead, and with a wrong transform.
-        // Need to investigate how to actually support drawing things in Iris's shadow pass.
-        if (ShadersModHandler.isRenderingShadowPass()) return;
+        // When shadow render hook is available via Iris Mixin, allow enqueue during shadow pass
+        // (the hook will commit them at the correct point). Otherwise, skip to prevent falling through to main pass.
+        if (ShadersModHandler.isRenderingShadowPass() && !ShadersModHandler.isShadowRenderHookAvailable()) return;
 
         candyPose.translate(0.5f, 0f, 0.5f);
         candyPose.translate(state.translateX, state.translateY, state.translateZ);

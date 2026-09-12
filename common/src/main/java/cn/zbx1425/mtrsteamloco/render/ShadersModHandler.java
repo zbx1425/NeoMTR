@@ -5,11 +5,13 @@ import cn.zbx1425.sowcer.ContextCapability;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 public final class ShadersModHandler {
 
     private static InternalHandler internalHandler;
     private static boolean previousShaderPackInUse = false;
+    private static boolean shadowRenderHookAvailable = false;
 
     public static void init() {
         internalHandler = new InternalHandler() { };
@@ -50,20 +52,35 @@ public final class ShadersModHandler {
         return internalHandler.isRenderingShadowPass();
     }
 
+    public static boolean isShadowRenderHookAvailable() {
+        return shadowRenderHookAvailable;
+    }
+
+    public static void setShadowRenderHookAvailable(boolean available) {
+        shadowRenderHookAvailable = available;
+    }
+
+    public static org.joml.Matrix4f getShadowModelView() {
+        return internalHandler.getShadowModelView();
+    }
+
     private interface InternalHandler {
         default boolean isShaderPackInUse() {
             return false;
         }
-        default boolean isRenderingShadowPass() { return false; };
+        default boolean isRenderingShadowPass() { return false; }
+        default org.joml.Matrix4f getShadowModelView() { return null; }
     }
 
     private static class Iris implements InternalHandler {
         private final BooleanSupplier shadersEnabledSupplier;
         private final BooleanSupplier isRenderingShadowPassSupplier;
+        private final Supplier<org.joml.Matrix4f> shadowModelViewSupplier;
 
         Iris() {
             shadersEnabledSupplier = createShadersEnabledSupplier();
             isRenderingShadowPassSupplier = createIsRenderingShadowPassSupplier();
+            shadowModelViewSupplier = createShadowModelViewSupplier();
         }
 
         @Override
@@ -107,6 +124,27 @@ public final class ShadersModHandler {
                 };
             } catch (Exception ignored) {
                 return () -> false;
+            }
+        }
+
+        @Override
+        public org.joml.Matrix4f getShadowModelView() {
+            return shadowModelViewSupplier.get();
+        }
+
+        private static Supplier<org.joml.Matrix4f> createShadowModelViewSupplier() {
+            try {
+                Class<?> shadowRendererClass = Class.forName("net.irisshaders.iris.shadows.ShadowRenderer");
+                Field modelViewField = shadowRendererClass.getField("MODELVIEW");
+                return () -> {
+                    try {
+                        return (org.joml.Matrix4f) modelViewField.get(null);
+                    } catch (Exception ignored) {
+                        return null;
+                    }
+                };
+            } catch (Exception ignored) {
+                return () -> null;
             }
         }
     }

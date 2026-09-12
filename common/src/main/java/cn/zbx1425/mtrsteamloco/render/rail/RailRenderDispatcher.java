@@ -5,7 +5,6 @@ import cn.zbx1425.mtrsteamloco.Main;
 import cn.zbx1425.mtrsteamloco.data.RailExtraSupplier;
 import cn.zbx1425.mtrsteamloco.data.RailModelRegistry;
 import cn.zbx1425.mtrsteamloco.gui.SelectListScreen;
-import cn.zbx1425.mtrsteamloco.mixin.LevelRendererAccessor;
 import cn.zbx1425.sowcer.batch.BatchManager;
 import cn.zbx1425.sowcer.batch.ShaderProp;
 import cn.zbx1425.sowcer.math.Matrix4f;
@@ -179,7 +178,7 @@ public class RailRenderDispatcher {
         }
     }
 
-    public void drawRails(Level level, BatchManager batchManager, Matrix4f viewMatrix) {
+    public void drawRailsAndHousekeep(Level level, BatchManager batchManager, Matrix4f viewMatrix) {
         boolean shouldBeInstanced = ClientConfig.getRailRenderLevel() == 3;
         if (isInstanced != shouldBeInstanced) clearRail();
         isInstanced = shouldBeInstanced;
@@ -225,6 +224,15 @@ public class RailRenderDispatcher {
                 buffersRebuilt++;
             }
             if (chunk.bufferBuilt && cullingFrustum.isVisible(chunk.boundingBox)) {
+                chunk.enqueue(batchManager, shaderProp);
+            }
+        }
+    }
+
+    public void drawRailsWithoutHousekeeping(BatchManager batchManager, Matrix4f viewMatrix) {
+        ShaderProp shaderProp = new ShaderProp().setViewMatrix(viewMatrix);
+        for (RailChunkBase chunk : railChunkList) {
+            if (chunk.bufferBuilt) {
                 chunk.enqueue(batchManager, shaderProp);
             }
         }

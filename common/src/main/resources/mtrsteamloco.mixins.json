@@ -27,7 +27,8 @@
     "TrainClientAccessor",
     "TrainClientMixin",
     "TrainClientRegistryMixin",
-    "ClientTeleportDismountMixin"
+    "ClientTeleportDismountMixin",
+    "IrisShadowRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

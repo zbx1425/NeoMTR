@@ -1,7 +1,6 @@
 package mtr.neoforge.mappings;
 
 import cn.zbx1425.mtrsteamloco.MainClient;
-import cn.zbx1425.sowcerext.model.integration.BufferSourceProxy;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mtr.neoforge.DeferredRegisterHolder;
 import mtr.render.RenderTrains;
@@ -16,7 +15,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -122,14 +120,6 @@ public class ForgeUtilities {
 			matrices.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 			RenderTrains.render(0, matrices, Minecraft.getInstance().renderBuffers().bufferSource());
 			matrices.popPose();
-		}
-
-		@SubscribeEvent
-		public static void onAfterBlockEntitiesRenderLevelEvent(RenderLevelStageEvent.AfterTranslucentFeatures event) {
-			Profiler.get().popPush("NTEBlockEntities");
-			BufferSourceProxy vertexConsumersProxy = new BufferSourceProxy(Minecraft.getInstance().renderBuffers().bufferSource());
-			MainClient.drawScheduler.commit(vertexConsumersProxy, MainClient.drawContext);
-			vertexConsumersProxy.commit();
 		}
 
 		@SubscribeEvent
