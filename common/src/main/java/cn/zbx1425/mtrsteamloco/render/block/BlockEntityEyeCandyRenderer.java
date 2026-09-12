@@ -4,6 +4,7 @@ import cn.zbx1425.mtrsteamloco.MainClient;
 import cn.zbx1425.mtrsteamloco.block.BlockEyeCandy;
 import cn.zbx1425.mtrsteamloco.data.EyeCandyProperties;
 import cn.zbx1425.mtrsteamloco.data.EyeCandyRegistry;
+import cn.zbx1425.mtrsteamloco.render.ShadersModHandler;
 import cn.zbx1425.mtrsteamloco.render.rail.RailRenderDispatcher;
 import cn.zbx1425.mtrsteamloco.render.scripting.eyecandy.EyeCandyScriptContext;
 import cn.zbx1425.sowcer.math.Matrix4f;
@@ -47,6 +48,12 @@ public class BlockEntityEyeCandyRenderer extends BlockEntityRendererMapper<Block
             poseStack.popPose();
         }
         if (state.prop == null) return;
+
+        // RenderLevelStageEvent is NOT fired during shadow pass.
+        // Enqueueing geometry when submit is called during shadow pass will result in them being drawn in later pass
+        // instead, and with a wrong transform.
+        // Need to investigate how to actually support drawing things in Iris's shadow pass.
+        if (ShadersModHandler.isRenderingShadowPass()) return;
 
         candyPose.translate(0.5f, 0f, 0.5f);
         candyPose.translate(state.translateX, state.translateY, state.translateZ);
