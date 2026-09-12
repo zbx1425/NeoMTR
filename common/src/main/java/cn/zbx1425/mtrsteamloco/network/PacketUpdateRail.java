@@ -3,6 +3,7 @@ package cn.zbx1425.mtrsteamloco.network;
 import cn.zbx1425.mtrsteamloco.Main;
 import cn.zbx1425.mtrsteamloco.data.RailExtraSupplier;
 import cn.zbx1425.mtrsteamloco.data.RailModelRepeater;
+import cn.zbx1425.mtrsteamloco.data.RepeaterAttachment;
 import cn.zbx1425.mtrsteamloco.mixin.RailwayDataAccessor;
 import io.netty.buffer.Unpooled;
 import mtr.Registry;
@@ -20,6 +21,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class PacketUpdateRail {
@@ -53,7 +56,9 @@ public class PacketUpdateRail {
             RailExtraSupplier extraForward = (RailExtraSupplier) railForward;
             RailExtraSupplier extraBackward = (RailExtraSupplier) railBackward;
 
-            java.util.List<RailModelRepeater> repeaters = new java.util.ArrayList<>();
+            List<String> oldData = serializeRailExtra(extraForward);
+
+            List<RailModelRepeater> repeaters = new ArrayList<>();
             for (RailModelRepeater p : extraTarget.getRepeaters()) {
                 repeaters.add(p.copy());
             }
@@ -61,6 +66,9 @@ public class PacketUpdateRail {
             extraBackward.setRepeaters(repeaters);
             extraForward.setVerticalCurveRadius(extraTarget.getVerticalCurveRadius());
             extraBackward.setVerticalCurveRadius(extraTarget.getVerticalCurveRadius());
+
+            List<String> newData = serializeRailExtra(extraForward);
+            railwayData.railwayDataLoggingModule.addEvent(player, Rail.class, oldData, newData, posStart, posEnd);
 
             final FriendlyByteBuf outboundPacket = new FriendlyByteBuf(Unpooled.buffer());
             outboundPacket.writeUtf(railForward.transportMode.toString());
@@ -74,5 +82,36 @@ public class PacketUpdateRail {
                 Registry.sendToPlayer(levelPlayer, IPacket.PACKET_CREATE_RAIL, outboundPacket);
             }
         });
+    }
+
+    static List<String> serializeRailExtra(RailExtraSupplier extra) {
+        List<String> data = new ArrayList<>();
+        data.add("verticalCurveRadius:" + extra.getVerticalCurveRadius());
+        List<RailModelRepeater> repeaters = extra.getRepeaters();
+        data.add("repeaterCount:" + repeaters.size());
+        for (int i = 0; i < repeaters.size(); i++) {
+            RailModelRepeater r = repeaters.get(i);
+            String p = "repeater_" + i + "_";
+            data.add(p + "id:\"" + r.getId() + "\"");
+            data.add(p + "mode:" + r.repeaterMode);
+            data.add(p + "intervalOverride:" + r.intervalOverride);
+            data.add(p + "offset:" + r.offset);
+            data.add(p + "offsetFromStart:" + r.offsetFromStart);
+            data.add(p + "rangeStart:" + r.rangeStart);
+            data.add(p + "rangeEnd:" + r.rangeEnd);
+            data.add(p + "manualPositionCount:" + r.manualPositions.size());
+            data.add(p + "overrideCount:" + r.instanceOverrides.size());
+            for (int j = 0; j < r.attachments.size(); j++) {
+                RepeaterAttachment att = r.attachments.get(j);
+                String ap = p + "att_" + j + "_";
+                data.add(ap + "modelTypeKey:\"" + att.modelTypeKey + "\"");
+                data.add(ap + "reversed:" + att.reversed);
+                data.add(ap + "offsetX:" + att.offsetX);
+                data.add(ap + "offsetY:" + att.offsetY);
+                data.add(ap + "offsetZ:" + att.offsetZ);
+                data.add(ap + "firstModelIndex:" + att.firstModelIndex);
+            }
+        }
+        return data;
     }
 }

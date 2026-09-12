@@ -360,7 +360,12 @@ public class PacketTrainDataGuiServer extends PacketTrainDataBase {
 				PacketTrainDataGuiServer.removeRailConnectionS2C(level, pos, other);
 			}
 
+			final float oldRaw = tileEntityFreeNode.getAngleDegrees();
 			tileEntityFreeNode.setAngleAndMode(newRaw, newTransportMode);
+
+			final List<String> oldAngleData = Collections.singletonList(String.format("angle:%s", Float.isNaN(oldRaw) ? "undetermined" : oldRaw));
+			final List<String> newAngleData = Collections.singletonList(String.format("angle:%s", Float.isNaN(newRaw) ? "undetermined" : newRaw));
+			railwayData.railwayDataLoggingModule.addEvent(player, BlockFreeNode.class, oldAngleData, newAngleData, pos);
 
 			for (int i = 0; i < newForwards.size(); i++) {
 				final BlockPos other = others.get(i);
